@@ -54,6 +54,7 @@ import Models from './pages/Models';
 import ModelDetail from './pages/ModelDetail';
 import Payments from './pages/Payments';
 import Tasks from './pages/Tasks';
+import ChatterPortal from './pages/ChatterPortal';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +66,7 @@ export const PAGES = {
     "ModelDetail": ModelDetail,
     "Payments": Payments,
     "Tasks": Tasks,
+    "ChatterPortal": ChatterPortal,
 }
 
 export const pagesConfig = {
