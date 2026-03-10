@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Users, Bot, CreditCard, ListTodo, Receipt,
+  LayoutDashboard, Users, Bot, CreditCard,
   ChevronLeft, ChevronRight, LogOut,
   Menu, X, UserCircle, ShieldCheck
 } from "lucide-react";
@@ -14,16 +14,13 @@ const navItems = [
   { name: "Zákazníci", icon: Users, page: "Customers" },
   { name: "Modelky", icon: Bot, page: "Models" },
   { name: "Platby", icon: CreditCard, page: "Payments" },
-  { name: "Úkoly", icon: ListTodo, page: "Tasks" },
-  { name: "Výdaje", icon: Receipt, page: "Expenses" },
-  { name: "Správa uživatelů", icon: ShieldCheck, page: "AdminUsers" },
+  { name: "Admin Portál", icon: ShieldCheck, page: "AdminUsers" },
 ];
 
 const chatterNav = [
   { name: "Můj přehled", icon: LayoutDashboard, page: "ChatterPortal" },
   { name: "Zákazníci", icon: Users, page: "Customers" },
   { name: "Platby", icon: CreditCard, page: "Payments" },
-  { name: "Úkoly", icon: ListTodo, page: "Tasks" },
 ];
 
 export default function Sidebar({ currentPage, user, onLogout }) {
