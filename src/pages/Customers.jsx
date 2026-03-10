@@ -72,9 +72,9 @@ export default function Customers({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader title="Customers" subtitle={`${customers.length} total customers`}>
+      <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
         <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" /> Add Customer
+          <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
         </Button>
       </PageHeader>
 
@@ -82,34 +82,34 @@ export default function Customers({ currentUser }) {
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search customers..." className="pl-10" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat zákazníky..." className="pl-10" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="all">Všechny stavy</SelectItem>
+            <SelectItem value="active">Aktivní</SelectItem>
+            <SelectItem value="inactive">Neaktivní</SelectItem>
             <SelectItem value="vip">VIP</SelectItem>
-            <SelectItem value="blocked">Blocked</SelectItem>
+            <SelectItem value="blocked">Blokovaný</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* Table */}
       {filtered.length === 0 && !isLoading ? (
-        <EmptyState icon={UserCircle} title="No customers found" description="Add your first customer to get started" actionLabel="Add Customer" onAction={() => setShowForm(true)} />
+        <EmptyState icon={UserCircle} title="Žádní zákazníci" description="Přidej prvního zákazníka a začni" actionLabel="Přidat zákazníka" onAction={() => setShowForm(true)} />
       ) : (
         <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Name</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Jméno</th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Email</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Model</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Status</th>
-                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Spent</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Stav</th>
+                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Utraceno</th>
                   <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 w-12"></th>
                 </tr>
               </thead>
