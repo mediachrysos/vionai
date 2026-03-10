@@ -76,10 +76,20 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>Přidat platbu</DialogTitle></DialogHeader>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-5 rounded-t-lg">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-white">Přidat platbu</h2>
+              <p className="text-emerald-100 text-xs">Zaznamenejte novou příchozí platbu</p>
+            </div>
+          </div>
+        </div>
 
-        <div className="space-y-4 mt-2">
+        <div className="space-y-4 p-6">
           {/* Customer Search */}
           <div className="relative">
             <Label>Zákazník *</Label>
