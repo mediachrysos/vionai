@@ -113,7 +113,10 @@ export default function Customers({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" onClick={downloadXlsx} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+            <Download className="w-4 h-4 mr-2" /> Export .xlsx
+          </Button>
           <Button variant="outline" onClick={() => setShowOnboarding(true)} className="border-indigo-200 text-indigo-600 hover:bg-indigo-50">
             <Link2 className="w-4 h-4 mr-2" /> Onboarding odkaz
           </Button>
