@@ -58,21 +58,21 @@ export default function Models({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader title="Models" subtitle={`${models.length} total models`}>
+      <PageHeader title="Modelky" subtitle={`${models.length} modelek celkem`}>
         {currentUser?.role === "admin" && (
           <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-indigo-600 hover:bg-indigo-700">
-            <Plus className="w-4 h-4 mr-2" /> Add Model
+            <Plus className="w-4 h-4 mr-2" /> Přidat modelku
           </Button>
         )}
       </PageHeader>
 
       <div className="relative max-w-md mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search models..." className="pl-10" />
+        <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat modelky..." className="pl-10" />
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon={Bot} title="No models found" actionLabel="Add Model" onAction={() => setShowForm(true)} />
+        <EmptyState icon={Bot} title="Žádné modelky" actionLabel="Přidat modelku" onAction={() => setShowForm(true)} />
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((m, i) => (
@@ -102,11 +102,11 @@ export default function Models({ currentUser }) {
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-slate-400">Revenue</p>
+                  <p className="text-xs text-slate-400">Tržby</p>
                   <p className="text-lg font-bold text-slate-900">${(modelRevenue[m.id] || 0).toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Payments</p>
+                  <p className="text-xs text-slate-400">Platby</p>
                   <p className="text-lg font-bold text-slate-900">{modelPaymentCount[m.id] || 0}</p>
                 </div>
               </div>
