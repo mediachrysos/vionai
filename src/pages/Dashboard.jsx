@@ -57,22 +57,22 @@ export default function Dashboard({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader
-        title={`Welcome back, ${currentUser?.full_name?.split(" ")[0] || "there"}`}
-        subtitle="Here's your business overview"
+        title={`Vítej zpět, ${currentUser?.full_name?.split(" ")[0] || ""}`}
+        subtitle="Přehled tvého podnikání"
       />
 
       <QuickActions />
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mt-6">
-        <StatCard title="Today" value={`$${todayRev.toLocaleString()}`} icon={DollarSign} subtitle={`${todayPayments.length} payments`} />
-        <StatCard title="This Week" value={`$${weekRev.toLocaleString()}`} icon={CreditCard} subtitle={`${weekPayments.length} payments`} />
-        <StatCard title="Monthly Revenue" value={`$${monthRev.toLocaleString()}`} icon={DollarSign} subtitle={`${monthPayments.length} payments`} />
-        <StatCard title="Monthly Expenses" value={`$${monthExpTotal.toLocaleString()}`} icon={TrendingDown} subtitle={`${monthExpenses.length} entries`} />
+        <StatCard title="Dnes" value={`$${todayRev.toLocaleString()}`} icon={DollarSign} subtitle={`${todayPayments.length} plateb`} />
+        <StatCard title="Tento týden" value={`$${weekRev.toLocaleString()}`} icon={CreditCard} subtitle={`${weekPayments.length} plateb`} />
+        <StatCard title="Tržby (měsíc)" value={`$${monthRev.toLocaleString()}`} icon={DollarSign} subtitle={`${monthPayments.length} plateb`} />
+        <StatCard title="Výdaje (měsíc)" value={`$${monthExpTotal.toLocaleString()}`} icon={TrendingDown} subtitle={`${monthExpenses.length} záznamů`} />
         <StatCard
-          title="Net Profit"
+          title="Čistý zisk"
           value={`$${monthNetProfit.toLocaleString()}`}
           icon={monthNetProfit >= 0 ? TrendingUp : TrendingDown}
-          subtitle={`All time: $${totalNetProfit.toLocaleString()}`}
+          subtitle={`Celkem: $${totalNetProfit.toLocaleString()}`}
         />
       </div>
 
