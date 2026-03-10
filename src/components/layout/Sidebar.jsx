@@ -41,13 +41,13 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       )}>
         {!collapsed ? (
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm shadow-indigo-200">
               <span className="text-white text-xs font-bold tracking-tight">A</span>
             </div>
             <span className="font-semibold text-gray-900 text-base tracking-tight">Amira Media</span>
           </div>
         ) : (
-          <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm shadow-indigo-200">
             <span className="text-white text-xs font-bold">A</span>
           </div>
         )}
@@ -66,12 +66,12 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50",
+                  ? "bg-indigo-50 text-indigo-700"
+                  : "text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/60",
                 collapsed && "justify-center px-2"
               )}
             >
-              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-gray-900" : "text-gray-400")} />
+              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-indigo-600" : "text-gray-400")} />
               {!collapsed && <span>{item.name}</span>}
             </Link>
           );
@@ -84,8 +84,8 @@ export default function Sidebar({ currentPage, user, onLogout }) {
           "flex items-center gap-3 px-2 py-2 rounded-lg",
           collapsed && "justify-center px-0"
         )}>
-          <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-            <UserCircle className="w-4 h-4 text-gray-400" />
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center flex-shrink-0">
+            <UserCircle className="w-4 h-4 text-indigo-400" />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
@@ -96,7 +96,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
           {!collapsed && (
             <button
               onClick={onLogout}
-              className="text-gray-300 hover:text-gray-600 transition-colors p-1 rounded"
+              className="text-gray-300 hover:text-indigo-400 transition-colors p-1 rounded"
             >
               <LogOut className="w-3.5 h-3.5" />
             </button>
@@ -107,7 +107,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="hidden lg:flex items-center justify-center h-9 border-t border-gray-100 text-gray-300 hover:text-gray-600 transition-colors hover:bg-gray-50"
+        className="hidden lg:flex items-center justify-center h-9 border-t border-gray-100 text-gray-300 hover:text-indigo-500 transition-colors hover:bg-indigo-50/40"
       >
         {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
       </button>
