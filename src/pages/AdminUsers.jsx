@@ -136,6 +136,9 @@ export default function AdminUsers({ currentUser }) {
 
       {/* Add customer tab */}
       {tab === "add-customer" && <AddCustomerTab users={users} />}
+
+      {/* Bank accounts tab */}
+      {tab === "bank-accounts" && <BankAccountsTab />}
     </div>
   );
 }
