@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { base44 } from "@/api/base44Client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,11 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Search, UserPlus } from "lucide-react";
+import { Search, UserPlus, CreditCard, Zap } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 const quickAmounts = [300, 500, 1000, 1500, 2000];
 
 export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers, models, users, currentUser }) {
+  const { data: bankAccounts = [] } = useQuery({
+    queryKey: ["bankAccounts"],
+    queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
+  });
   const [form, setForm] = useState({
     customer_id: "", customer_name: "", amount: "", service_type: "",
     model_id: "", model_name: "", chatter_email: "", chatter_name: "",
