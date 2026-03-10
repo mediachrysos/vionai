@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Pencil, Trash2, Search } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Pencil, Trash2, Search, Building2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import AdminPayments from "../components/admin/AdminPayments";
