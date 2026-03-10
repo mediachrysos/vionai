@@ -46,6 +46,14 @@ export default function Dashboard({ currentUser }) {
   const activeCustomers = customers.filter(c => c.status === "active").length;
   const activeModels = models.filter(m => m.status === "active").length;
 
+  const monthExpenses = expenses.filter(e => (e.expense_date || e.created_date?.split("T")[0]) >= monthStart);
+  const monthExpTotal = monthExpenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const monthNetProfit = monthRev - monthExpTotal;
+
+  const totalRev = payments.reduce((s, p) => s + (p.amount || 0), 0);
+  const totalExp = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const totalNetProfit = totalRev - totalExp;
+
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader
