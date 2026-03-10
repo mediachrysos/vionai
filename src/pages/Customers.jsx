@@ -26,6 +26,7 @@ export default function Customers({ currentUser }) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const qc = useQueryClient();
 
   const urlParams = new URLSearchParams(window.location.search);
