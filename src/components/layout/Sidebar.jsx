@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, Bot, CreditCard, ListTodo, Receipt,
-  ChevronLeft, ChevronRight, Search, LogOut, Settings,
+  ChevronLeft, ChevronRight, LogOut,
   Menu, X, UserCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,26 +35,28 @@ export default function Sidebar({ currentPage, user, onLogout }) {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className={cn("flex items-center h-16 px-4 border-b border-slate-800/50", collapsed && "justify-center")}>
-        {!collapsed && (
+      <div className={cn(
+        "flex items-center h-16 px-5 border-b border-gray-100",
+        collapsed && "justify-center px-3"
+      )}>
+        {!collapsed ? (
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
-              <Bot className="w-4.5 h-4.5 text-white" />
+            <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
+              <span className="text-white text-xs font-bold tracking-tight">A</span>
             </div>
-            <span className="font-semibold text-white text-lg tracking-tight">AgencyOS</span>
+            <span className="font-semibold text-gray-900 text-base tracking-tight">Amira Media</span>
           </div>
-        )}
-        {collapsed && (
-          <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
-            <Bot className="w-4.5 h-4.5 text-white" />
+        ) : (
+          <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
+            <span className="text-white text-xs font-bold">A</span>
           </div>
         )}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 px-3 space-y-1">
+      <nav className="flex-1 py-5 px-3 space-y-0.5">
         {items.map((item) => {
-          const isActive = currentPage === item.page || 
+          const isActive = currentPage === item.page ||
             (item.page === "Dashboard" && currentPage === "Home");
           return (
             <Link
@@ -62,14 +64,14 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               to={createPageUrl(item.page)}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "bg-indigo-500/20 text-indigo-300"
-                  : "text-slate-400 hover:text-white hover:bg-white/5",
+                  ? "bg-gray-100 text-gray-900"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50",
                 collapsed && "justify-center px-2"
               )}
             >
-              <item.icon className={cn("w-5 h-5 flex-shrink-0", isActive && "text-indigo-400")} />
+              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-gray-900" : "text-gray-400")} />
               {!collapsed && <span>{item.name}</span>}
             </Link>
           );
@@ -77,32 +79,37 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       </nav>
 
       {/* User */}
-      <div className={cn("p-3 border-t border-slate-800/50", collapsed && "px-2")}>
-        <div className={cn("flex items-center gap-3 px-3 py-2", collapsed && "justify-center px-0")}>
-          <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
-            <UserCircle className="w-5 h-5 text-slate-400" />
+      <div className={cn("p-3 border-t border-gray-100", collapsed && "px-2")}>
+        <div className={cn(
+          "flex items-center gap-3 px-2 py-2 rounded-lg",
+          collapsed && "justify-center px-0"
+        )}>
+          <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <UserCircle className="w-4 h-4 text-gray-400" />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user?.full_name || "User"}</p>
-              <p className="text-xs text-slate-500 truncate">{isAdmin ? "Admin" : "Chatter"}</p>
-
+              <p className="text-xs font-medium text-gray-800 truncate">{user?.full_name || "Uživatel"}</p>
+              <p className="text-[11px] text-gray-400 truncate">{isAdmin ? "Admin" : "Chatter"}</p>
             </div>
           )}
           {!collapsed && (
-            <button onClick={onLogout} className="text-slate-500 hover:text-white transition-colors">
-              <LogOut className="w-4 h-4" />
+            <button
+              onClick={onLogout}
+              className="text-gray-300 hover:text-gray-600 transition-colors p-1 rounded"
+            >
+              <LogOut className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
       </div>
 
-      {/* Collapse toggle - desktop only */}
+      {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="hidden lg:flex items-center justify-center h-10 border-t border-slate-800/50 text-slate-500 hover:text-white transition-colors"
+        className="hidden lg:flex items-center justify-center h-9 border-t border-gray-100 text-gray-300 hover:text-gray-600 transition-colors hover:bg-gray-50"
       >
-        {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
       </button>
     </div>
   );
@@ -112,9 +119,9 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-slate-900 text-white shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white border border-gray-200 text-gray-700 shadow-sm"
       >
-        <Menu className="w-5 h-5" />
+        <Menu className="w-4 h-4" />
       </button>
 
       {/* Mobile overlay */}
@@ -124,7 +131,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            className="lg:hidden fixed inset-0 bg-black/20 z-40 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
         )}
@@ -137,14 +144,14 @@ export default function Sidebar({ currentPage, user, onLogout }) {
             initial={{ x: -280 }}
             animate={{ x: 0 }}
             exit={{ x: -280 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="lg:hidden fixed left-0 top-0 bottom-0 w-[260px] bg-slate-950 z-50"
+            transition={{ type: "spring", damping: 28, stiffness: 320 }}
+            className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] bg-white border-r border-gray-100 z-50 shadow-xl"
           >
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 p-1"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
             <SidebarContent />
           </motion.aside>
@@ -152,12 +159,10 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       </AnimatePresence>
 
       {/* Desktop sidebar */}
-      <aside
-        className={cn(
-          "hidden lg:flex flex-col bg-slate-950 h-screen sticky top-0 transition-all duration-300",
-          collapsed ? "w-[72px]" : "w-[240px]"
-        )}
-      >
+      <aside className={cn(
+        "hidden lg:flex flex-col bg-white border-r border-gray-100 h-screen sticky top-0 transition-all duration-300 ease-out",
+        collapsed ? "w-[60px]" : "w-[220px]"
+      )}>
         <SidebarContent />
       </aside>
     </>

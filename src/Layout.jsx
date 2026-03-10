@@ -26,17 +26,17 @@ export default function Layout({ children, currentPageName }) {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-slate-50">
+      <div className="h-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-slate-500">Loading...</p>
+          <div className="w-6 h-6 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-gray-400 tracking-wide">Načítám...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-gray-50/50">
       <Sidebar currentPage={currentPageName} user={user} onLogout={handleLogout} />
       <main className="flex-1 min-w-0">
         <div className="page-transition">

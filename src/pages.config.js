@@ -51,11 +51,11 @@ import ChatterPortal from './pages/ChatterPortal';
 import CustomerDetail from './pages/CustomerDetail';
 import Customers from './pages/Customers';
 import Dashboard from './pages/Dashboard';
+import Expenses from './pages/Expenses';
 import ModelDetail from './pages/ModelDetail';
 import Models from './pages/Models';
 import Payments from './pages/Payments';
 import Tasks from './pages/Tasks';
-import Expenses from './pages/Expenses';
 import __Layout from './Layout.jsx';
 
 
@@ -64,11 +64,11 @@ export const PAGES = {
     "CustomerDetail": CustomerDetail,
     "Customers": Customers,
     "Dashboard": Dashboard,
+    "Expenses": Expenses,
     "ModelDetail": ModelDetail,
     "Models": Models,
     "Payments": Payments,
     "Tasks": Tasks,
-    "Expenses": Expenses,
 }
 
 export const pagesConfig = {
