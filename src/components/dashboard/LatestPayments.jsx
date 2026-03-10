@@ -9,10 +9,10 @@ export default function LatestPayments({ payments }) {
 
   return (
     <div className="bg-white rounded-xl border border-slate-200/60 p-5">
-      <h3 className="text-sm font-semibold text-slate-700 mb-4">Latest Payments</h3>
+      <h3 className="text-sm font-semibold text-slate-700 mb-4">Poslední platby</h3>
       <div className="space-y-3">
         {recent.length === 0 && (
-          <p className="text-sm text-slate-400 text-center py-8">No payments yet</p>
+          <p className="text-sm text-slate-400 text-center py-8">Zatím žádné platby</p>
         )}
         {recent.map(p => (
           <div key={p.id} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors">

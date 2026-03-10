@@ -4,10 +4,10 @@ import { createPageUrl } from "@/utils";
 import { UserPlus, CreditCard, Bot, ListPlus } from "lucide-react";
 
 const actions = [
-  { label: "Add Customer", icon: UserPlus, page: "Customers", params: "?action=new", color: "bg-blue-50 text-blue-600" },
-  { label: "Add Payment", icon: CreditCard, page: "Payments", params: "?action=new", color: "bg-emerald-50 text-emerald-600" },
-  { label: "Add Model", icon: Bot, page: "Models", params: "?action=new", color: "bg-purple-50 text-purple-600" },
-  { label: "Add Task", icon: ListPlus, page: "Tasks", params: "?action=new", color: "bg-amber-50 text-amber-600" },
+  { label: "Přidat zákazníka", icon: UserPlus, page: "Customers", params: "?action=new", color: "bg-blue-50 text-blue-600" },
+  { label: "Přidat platbu", icon: CreditCard, page: "Payments", params: "?action=new", color: "bg-emerald-50 text-emerald-600" },
+  { label: "Přidat modelku", icon: Bot, page: "Models", params: "?action=new", color: "bg-purple-50 text-purple-600" },
+  { label: "Přidat úkol", icon: ListPlus, page: "Tasks", params: "?action=new", color: "bg-amber-50 text-amber-600" },
 ];
 
 export default function QuickActions() {
