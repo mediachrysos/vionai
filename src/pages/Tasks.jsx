@@ -61,7 +61,7 @@ export default function Tasks({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Úkoly" subtitle={`${filtered.length} úkolů`}>
-        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gray-900 hover:bg-gray-800 text-white">
+        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm shadow-indigo-200">
           <Plus className="w-4 h-4 mr-2" /> Přidat úkol
         </Button>
       </PageHeader>
