@@ -77,48 +77,48 @@ export default function Payments({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader title="Payments" subtitle={`${payments.length} total · $${totalAmount.toLocaleString()}`}>
+      <PageHeader title="Platby" subtitle={`${payments.length} celkem · $${totalAmount.toLocaleString()}`}>
         <Button onClick={() => setShowForm(true)} className="bg-emerald-600 hover:bg-emerald-700" size="lg">
-          <Plus className="w-4 h-4 mr-2" /> Add Payment
+          <Plus className="w-4 h-4 mr-2" /> Přidat platbu
         </Button>
       </PageHeader>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by customer, model, chatter..." className="pl-10" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat podle zákazníka, modelky, chattera..." className="pl-10" />
         </div>
         <Select value={modelFilter} onValueChange={setModelFilter}>
           <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Models</SelectItem>
+            <SelectItem value="all">Všechny modelky</SelectItem>
             {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Newest</SelectItem>
-            <SelectItem value="highest">Highest</SelectItem>
-            <SelectItem value="lowest">Lowest</SelectItem>
+            <SelectItem value="newest">Nejnovější</SelectItem>
+            <SelectItem value="highest">Nejvyšší</SelectItem>
+            <SelectItem value="lowest">Nejnižší</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {filtered.length === 0 && !isLoading ? (
-        <EmptyState icon={CreditCard} title="No payments found" description="Add your first payment" actionLabel="Add Payment" onAction={() => setShowForm(true)} />
+        <EmptyState icon={CreditCard} title="Žádné platby" description="Přidej první platbu" actionLabel="Přidat platbu" onAction={() => setShowForm(true)} />
       ) : (
         <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Customer</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Model</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Zákazník</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Modelka</th>
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Date</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Status</th>
-                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Amount</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Stav</th>
+                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Částka</th>
                 </tr>
               </thead>
               <tbody>
