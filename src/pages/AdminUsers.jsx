@@ -250,42 +250,49 @@ function AddCustomerTab({ users }) {
   };
 
   return (
-    <div className="max-w-md bg-white rounded-xl border border-gray-100 p-6 space-y-4">
-      <h2 className="font-semibold text-gray-800">Přidat nového zákazníka</h2>
-      <div>
-        <label className="text-sm font-medium text-gray-700 block mb-1">Celé jméno *</label>
-        <Input value={form.full_name} onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))} placeholder="Jan Novák" />
-      </div>
-      <div>
-        <label className="text-sm font-medium text-gray-700 block mb-1">Email</label>
-        <Input value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="jan@example.com" />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-sm font-medium text-gray-700 block mb-1">Název banky</label>
-          <Input value={form.bank_name} onChange={e => setForm(p => ({ ...p, bank_name: e.target.value }))} />
+    <div className="max-w-lg">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-indigo-500 to-blue-600 px-6 py-5">
+          <h2 className="text-lg font-bold text-white">Přidat nového zákazníka</h2>
+          <p className="text-indigo-200 text-sm mt-0.5">Ručně zadejte údaje zákazníka do systému</p>
         </div>
-        <div>
-          <label className="text-sm font-medium text-gray-700 block mb-1">Číslo účtu</label>
-          <Input value={form.bank_account_number} onChange={e => setForm(p => ({ ...p, bank_account_number: e.target.value }))} />
+        <div className="p-6 space-y-5">
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Celé jméno *</label>
+            <Input value={form.full_name} onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))} placeholder="Jan Novák" className="h-10" />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Email</label>
+            <Input value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="jan@example.com" className="h-10" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-1.5">Název banky</label>
+              <Input value={form.bank_name} onChange={e => setForm(p => ({ ...p, bank_name: e.target.value }))} className="h-10" />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-1.5">Číslo účtu</label>
+              <Input value={form.bank_account_number} onChange={e => setForm(p => ({ ...p, bank_account_number: e.target.value }))} className="h-10" />
+            </div>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Přiřazený chatter</label>
+            <Select value={form.assigned_chatter} onValueChange={v => setForm(p => ({ ...p, assigned_chatter: v }))}>
+              <SelectTrigger className="h-10"><SelectValue placeholder="Vybrat chattera" /></SelectTrigger>
+              <SelectContent>
+                {users.map(u => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Poznámky</label>
+            <Input value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} className="h-10" />
+          </div>
+          <Button onClick={handleSave} disabled={!form.full_name || saving} className="bg-indigo-600 hover:bg-indigo-700 w-full h-10 font-semibold">
+            {done ? "✓ Zákazník přidán!" : saving ? "Ukládám..." : "Vytvořit zákazníka"}
+          </Button>
         </div>
       </div>
-      <div>
-        <label className="text-sm font-medium text-gray-700 block mb-1">Přiřazený chatter</label>
-        <Select value={form.assigned_chatter} onValueChange={v => setForm(p => ({ ...p, assigned_chatter: v }))}>
-          <SelectTrigger><SelectValue placeholder="Vybrat chattera" /></SelectTrigger>
-          <SelectContent>
-            {users.map(u => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <label className="text-sm font-medium text-gray-700 block mb-1">Poznámky</label>
-        <Input value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} />
-      </div>
-      <Button onClick={handleSave} disabled={!form.full_name || saving} className="bg-indigo-600 hover:bg-indigo-700 w-full">
-        {done ? "✓ Uloženo!" : saving ? "Ukládám..." : "Vytvořit zákazníka"}
-      </Button>
     </div>
   );
 }
