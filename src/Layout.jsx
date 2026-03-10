@@ -35,6 +35,38 @@ export default function Layout({ children, currentPageName }) {
     );
   }
 
+  // Blocked users
+  if (user?.account_status === "blocked") {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center max-w-sm p-8">
+          <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">🚫</span>
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Přístup zablokován</h2>
+          <p className="text-sm text-gray-500 mb-4">Váš účet byl zablokován. Kontaktujte administrátora.</p>
+          <button onClick={handleLogout} className="text-xs text-gray-400 hover:text-gray-600 underline">Odhlásit se</button>
+        </div>
+      </div>
+    );
+  }
+
+  // Pending approval (skip for admins)
+  if (user?.account_status === "pending" && user?.role !== "admin") {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center max-w-sm p-8">
+          <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">⏳</span>
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Čeká se na schválení</h2>
+          <p className="text-sm text-gray-500 mb-4">Váš účet čeká na schválení administrátorem. Jakmile bude schválen, budete mít plný přístup.</p>
+          <button onClick={handleLogout} className="text-xs text-gray-400 hover:text-gray-600 underline">Odhlásit se</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50/50">
       <Sidebar currentPage={currentPageName} user={user} onLogout={handleLogout} />
