@@ -16,6 +16,7 @@ const navItems = [
   { name: "Platby", icon: CreditCard, page: "Payments" },
   { name: "Úkoly", icon: ListTodo, page: "Tasks" },
   { name: "Výdaje", icon: Receipt, page: "Expenses" },
+  { name: "Správa uživatelů", icon: ShieldCheck, page: "AdminUsers" },
 ];
 
 const chatterNav = [
