@@ -109,20 +109,36 @@ export default function OnboardingLinkModal({ open, onClose, models, users }) {
             </div>
           </div>
         ) : (
-          <div className="space-y-4 mt-2">
-            <p className="text-sm text-gray-500">
-              Odkaz byl vygenerován. Pošlete ho zákazníkovi <strong>{name}</strong> do chatu.
-              Po vyplnění formuláře se automaticky zobrazí v databázi zákazníků.
-            </p>
-            <div className="flex gap-2 items-center bg-gray-50 rounded-lg border border-gray-200 px-3 py-2">
-              <span className="text-xs text-gray-600 flex-1 truncate">{generatedLink}</span>
-              <Button size="sm" variant="ghost" onClick={handleCopy} className="shrink-0">
-                {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4 text-gray-500" />}
+          <div className="space-y-5 mt-2">
+            <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <Check className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-emerald-800">Odkaz úspěšně vygenerován</p>
+                <p className="text-xs text-emerald-600 mt-0.5">Pošlete odkaz zákazníkovi <strong>{name}</strong> do chatu.</p>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Onboarding odkaz</p>
+              <div className="flex gap-2 items-center bg-gray-50 rounded-xl border border-gray-200 px-4 py-3">
+                <span className="text-xs text-gray-700 flex-1 break-all font-mono leading-relaxed">{generatedLink}</span>
+              </div>
+              <Button
+                onClick={handleCopy}
+                variant={copied ? "outline" : "default"}
+                className={`w-full mt-2 ${copied ? "border-emerald-300 text-emerald-600" : "bg-indigo-600 hover:bg-indigo-700 text-white"}`}
+              >
+                {copied ? <><Check className="w-4 h-4 mr-2" /> Zkopírováno!</> : <><Copy className="w-4 h-4 mr-2" /> Kopírovat odkaz</>}
               </Button>
             </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={reset}>Nový odkaz</Button>
-              <Button onClick={handleClose} className="bg-indigo-600 hover:bg-indigo-700 text-white">Hotovo</Button>
+
+            <p className="text-xs text-gray-400 text-center">Po vyplnění formuláře zákazníkem se záznam automaticky uloží do databáze.</p>
+
+            <div className="flex justify-between gap-2 pt-1">
+              <Button variant="outline" onClick={reset} className="flex-1">Nový odkaz</Button>
+              <Button onClick={handleClose} className="flex-1 bg-gray-900 hover:bg-gray-800 text-white">Zavřít</Button>
             </div>
           </div>
         )}
