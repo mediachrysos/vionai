@@ -1,14 +1,14 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { DollarSign, Users, Bot, CreditCard, TrendingDown, TrendingUp } from "lucide-react";
+import { DollarSign, CreditCard, TrendingDown, TrendingUp } from "lucide-react";
 import StatCard from "../components/ui-custom/StatCard";
 import RevenueChart from "../components/dashboard/RevenueChart";
 import RevenueByModel from "../components/dashboard/RevenueByModel";
 import LatestPayments from "../components/dashboard/LatestPayments";
 import GoalWidget from "../components/dashboard/GoalWidget";
 import QuickActions from "../components/dashboard/QuickActions";
-import PageHeader from "../components/ui-custom/PageHeader";
+import NotesWidget from "../components/dashboard/NotesWidget";
 
 export default function Dashboard({ currentUser }) {
   const { data: payments = [] } = useQuery({
