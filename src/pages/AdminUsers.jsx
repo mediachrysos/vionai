@@ -201,29 +201,36 @@ function AddModelTab() {
   };
 
   return (
-    <div className="max-w-md bg-white rounded-xl border border-gray-100 p-6 space-y-4">
-      <h2 className="font-semibold text-gray-800">Přidat novou modelku</h2>
-      <div>
-        <label className="text-sm font-medium text-gray-700 block mb-1">Jméno *</label>
-        <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" />
+    <div className="max-w-lg">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-6 py-5">
+          <h2 className="text-lg font-bold text-white">Přidat novou modelku</h2>
+          <p className="text-violet-200 text-sm mt-0.5">Vytvořte nový profil modelky v systému</p>
+        </div>
+        <div className="p-6 space-y-5">
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Jméno *</label>
+            <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" className="h-10" />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Status</label>
+            <Select value={form.status} onValueChange={v => setForm(p => ({ ...p, status: v }))}>
+              <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">✅ Aktivní</SelectItem>
+                <SelectItem value="inactive">⏸️ Neaktivní</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Poznámky</label>
+            <Input value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} placeholder="Interní poznámka" className="h-10" />
+          </div>
+          <Button onClick={handleSave} disabled={!form.name || saving} className="bg-violet-600 hover:bg-violet-700 w-full h-10 font-semibold">
+            {done ? "✓ Modelka vytvořena!" : saving ? "Ukládám..." : "Vytvořit modelku"}
+          </Button>
+        </div>
       </div>
-      <div>
-        <label className="text-sm font-medium text-gray-700 block mb-1">Status</label>
-        <Select value={form.status} onValueChange={v => setForm(p => ({ ...p, status: v }))}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="active">Aktivní</SelectItem>
-            <SelectItem value="inactive">Neaktivní</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <label className="text-sm font-medium text-gray-700 block mb-1">Poznámky</label>
-        <Input value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} placeholder="Interní poznámka" />
-      </div>
-      <Button onClick={handleSave} disabled={!form.name || saving} className="bg-indigo-600 hover:bg-indigo-700 w-full">
-        {done ? "✓ Uloženo!" : saving ? "Ukládám..." : "Vytvořit modelku"}
-      </Button>
     </div>
   );
 }
