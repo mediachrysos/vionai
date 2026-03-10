@@ -25,6 +25,18 @@ export default function CustomerOnboarding() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!termsAccepted) return;
+    // Validate 18+ years and 1 day
+    if (dateOfBirth) {
+      const dob = new Date(dateOfBirth);
+      const threshold = new Date();
+      threshold.setFullYear(threshold.getFullYear() - 18);
+      threshold.setDate(threshold.getDate() - 1);
+      if (dob > threshold) {
+        setDobError("Musíte být starší 18 let a 1 dne.");
+        return;
+      }
+    }
+    setDobError("");
     setStatus("loading");
     try {
       const res = await base44.functions.invoke("completeOnboarding", {
