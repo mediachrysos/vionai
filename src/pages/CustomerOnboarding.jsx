@@ -13,8 +13,10 @@ export default function CustomerOnboarding() {
 
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error | invalid
   const [errorMsg, setErrorMsg] = useState("");
+  const [dobError, setDobError] = useState("");
 
   useEffect(() => {
     if (!token) setStatus("invalid");
