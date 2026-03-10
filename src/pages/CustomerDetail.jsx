@@ -102,7 +102,7 @@ export default function CustomerDetail({ currentUser }) {
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Info */}
         <Card>
-          <CardHeader><CardTitle className="text-base">Details</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Detaily</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {customer.email && <div className="flex items-center gap-3 text-sm"><Mail className="w-4 h-4 text-slate-400" /> {customer.email}</div>}
             {customer.bank_name && <div className="flex items-center gap-3 text-sm"><Building className="w-4 h-4 text-slate-400" /> {customer.bank_name} — {customer.bank_account_number}</div>}
@@ -113,17 +113,27 @@ export default function CustomerDetail({ currentUser }) {
 
         {/* Payment History */}
         <Card>
-          <CardHeader><CardTitle className="text-base">Payment History</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Historie plateb</CardTitle></CardHeader>
           <CardContent>
             {payments.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-6">No payments yet</p>
+              <p className="text-sm text-slate-400 text-center py-6">Zatím žádné platby</p>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {payments.map(p => (
-                  <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50">
-                    <div>
-                      <p className="text-sm font-medium text-slate-700">${(p.amount || 0).toLocaleString()}</p>
-                      <p className="text-xs text-slate-400">{p.service_type || "Payment"} · {p.created_date ? format(new Date(p.created_date), "MMM d, yyyy") : "—"}</p>
+                  <div key={p.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                        <CreditCard className="w-3.5 h-3.5 text-emerald-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-800">{(p.amount || 0).toLocaleString()} Kč</p>
+                        <p className="text-xs text-slate-400">
+                          {p.model_name || "—"}
+                          {p.service_type ? ` · ${p.service_type}` : ""}
+                          {" · "}
+                          {p.payment_date ? format(new Date(p.payment_date), "d. M. yyyy") : p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}
+                        </p>
+                      </div>
                     </div>
                     <Badge variant="outline" className="text-xs">{p.status || "completed"}</Badge>
                   </div>
