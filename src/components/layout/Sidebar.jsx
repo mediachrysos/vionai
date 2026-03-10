@@ -10,19 +10,19 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
-  { name: "Customers", icon: Users, page: "Customers" },
-  { name: "Models", icon: Bot, page: "Models" },
-  { name: "Payments", icon: CreditCard, page: "Payments" },
-  { name: "Tasks", icon: ListTodo, page: "Tasks" },
-  { name: "Expenses", icon: Receipt, page: "Expenses" },
+  { name: "Přehled", icon: LayoutDashboard, page: "Dashboard" },
+  { name: "Zákazníci", icon: Users, page: "Customers" },
+  { name: "Modelky", icon: Bot, page: "Models" },
+  { name: "Platby", icon: CreditCard, page: "Payments" },
+  { name: "Úkoly", icon: ListTodo, page: "Tasks" },
+  { name: "Výdaje", icon: Receipt, page: "Expenses" },
 ];
 
 const chatterNav = [
-  { name: "My Dashboard", icon: LayoutDashboard, page: "ChatterPortal" },
-  { name: "Customers", icon: Users, page: "Customers" },
-  { name: "Payments", icon: CreditCard, page: "Payments" },
-  { name: "Tasks", icon: ListTodo, page: "Tasks" },
+  { name: "Můj přehled", icon: LayoutDashboard, page: "ChatterPortal" },
+  { name: "Zákazníci", icon: Users, page: "Customers" },
+  { name: "Platby", icon: CreditCard, page: "Payments" },
+  { name: "Úkoly", icon: ListTodo, page: "Tasks" },
 ];
 
 export default function Sidebar({ currentPage, user, onLogout }) {
