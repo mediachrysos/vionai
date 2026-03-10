@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Users, Bot, CreditCard, ListTodo,
+  LayoutDashboard, Users, Bot, CreditCard, ListTodo, Receipt,
   ChevronLeft, ChevronRight, Search, LogOut, Settings,
   Menu, X, UserCircle
 } from "lucide-react";

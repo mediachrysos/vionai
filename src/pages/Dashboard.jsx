@@ -1,7 +1,7 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { DollarSign, Users, Bot, CreditCard, ListTodo } from "lucide-react";
+import { DollarSign, Users, Bot, CreditCard, TrendingDown, TrendingUp } from "lucide-react";
 import StatCard from "../components/ui-custom/StatCard";
 import RevenueChart from "../components/dashboard/RevenueChart";
 import RevenueByModel from "../components/dashboard/RevenueByModel";
