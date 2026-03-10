@@ -80,21 +80,21 @@ export default function CustomerDetail({ currentUser }) {
       <div className="grid lg:grid-cols-3 gap-4 mb-6">
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Total Spent</p>
-            <p className="text-2xl font-bold text-slate-900 mt-1">${totalSpent.toLocaleString()}</p>
-            <p className="text-xs text-slate-400 mt-1">{payments.length} payments</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Celkem utraceno</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{totalSpent.toLocaleString()} Kč</p>
+            <p className="text-xs text-slate-400 mt-1">{payments.length} plateb</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Model</p>
-            <p className="text-lg font-semibold text-slate-900 mt-1">{modelMap[customer.assigned_model] || "Not assigned"}</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Modelka</p>
+            <p className="text-lg font-semibold text-slate-900 mt-1">{modelMap[customer.assigned_model] || "Nepřiřazena"}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
             <p className="text-xs text-slate-500 uppercase tracking-wider">Chatter</p>
-            <p className="text-lg font-semibold text-slate-900 mt-1">{customer.assigned_chatter || "Not assigned"}</p>
+            <p className="text-lg font-semibold text-slate-900 mt-1">{customer.assigned_chatter || "Nepřiřazen"}</p>
           </CardContent>
         </Card>
       </div>
