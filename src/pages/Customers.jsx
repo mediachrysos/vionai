@@ -46,6 +46,44 @@ export default function Customers({ currentUser }) {
     queryKey: ["users"],
     queryFn: () => base44.entities.User.list(),
   });
+  const { data: allPayments = [] } = useQuery({
+    queryKey: ["payments"],
+    queryFn: () => base44.entities.Payment.list("-payment_date", 2000),
+  });
+
+  // Build per-customer payment stats
+  const customerStats = {};
+  allPayments.forEach(p => {
+    if (!p.customer_id) return;
+    if (!customerStats[p.customer_id]) customerStats[p.customer_id] = { total: 0, lastDate: null, lastAmount: null };
+    customerStats[p.customer_id].total += (p.amount || 0);
+    const d = p.payment_date || p.created_date?.split("T")[0];
+    if (!customerStats[p.customer_id].lastDate || d > customerStats[p.customer_id].lastDate) {
+      customerStats[p.customer_id].lastDate = d;
+      customerStats[p.customer_id].lastAmount = p.amount;
+    }
+  });
+
+  const downloadXlsx = async () => {
+    const { utils, writeFile } = await import("https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs");
+    const rows = customers.map(c => {
+      const s = customerStats[c.id] || {};
+      return {
+        "Jméno": c.full_name || "",
+        "Email": c.email || "",
+        "Telefon": c.phone || "",
+        "Celkem (Kč)": s.total || 0,
+        "Počet plateb": (allPayments.filter(p => p.customer_id === c.id).length),
+        "Poslední platba": s.lastDate || "",
+        "Poslední částka (Kč)": s.lastAmount || "",
+        "Stav": c.status || "",
+      };
+    });
+    const ws = utils.json_to_sheet(rows);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Zákazníci");
+    writeFile(wb, "zakaznici.xlsx");
+  };
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
