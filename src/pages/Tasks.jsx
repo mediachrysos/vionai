@@ -21,7 +21,7 @@ const priorityColors = {
   high: "bg-orange-100 text-orange-700",
   urgent: "bg-red-100 text-red-700",
 };
-const statusLabels = { todo: "To Do", in_progress: "In Progress", done: "Done" };
+const statusLabels = { todo: "K vyřízení", in_progress: "Probíhá", done: "Hotovo" };
 
 export default function Tasks({ currentUser }) {
   const [search, setSearch] = useState("");
@@ -60,24 +60,24 @@ export default function Tasks({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader title="Tasks" subtitle={`${filtered.length} tasks`}>
+      <PageHeader title="Úkoly" subtitle={`${filtered.length} úkolů`}>
         <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" /> Add Task
+          <Plus className="w-4 h-4 mr-2" /> Přidat úkol
         </Button>
       </PageHeader>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-10" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat úkoly..." className="pl-10" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="todo">To Do</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="done">Done</SelectItem>
+            <SelectItem value="all">Všechny stavy</SelectItem>
+            <SelectItem value="todo">K vyřízení</SelectItem>
+            <SelectItem value="in_progress">Probíhá</SelectItem>
+            <SelectItem value="done">Hotovo</SelectItem>
           </SelectContent>
         </Select>
         <Tabs value={view} onValueChange={setView}>
@@ -89,7 +89,7 @@ export default function Tasks({ currentUser }) {
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon={ListTodo} title="No tasks found" actionLabel="Add Task" onAction={() => setShowForm(true)} />
+        <EmptyState icon={ListTodo} title="Žádné úkoly" actionLabel="Přidat úkol" onAction={() => setShowForm(true)} />
       ) : view === "board" ? (
         <KanbanBoard
           tasks={filtered}
@@ -101,11 +101,11 @@ export default function Tasks({ currentUser }) {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Task</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Assignee</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Priority</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Status</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Due</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Úkol</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Přiřazeno</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Priorita</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Stav</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Termín</th>
                 </tr>
               </thead>
               <tbody>
