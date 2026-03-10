@@ -66,9 +66,14 @@ export default function Dashboard({ currentUser }) {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mt-6">
         <StatCard title="Today" value={`$${todayRev.toLocaleString()}`} icon={DollarSign} subtitle={`${todayPayments.length} payments`} />
         <StatCard title="This Week" value={`$${weekRev.toLocaleString()}`} icon={CreditCard} subtitle={`${weekPayments.length} payments`} />
-        <StatCard title="This Month" value={`$${monthRev.toLocaleString()}`} icon={DollarSign} subtitle={`${monthPayments.length} payments`} />
-        <StatCard title="Customers" value={activeCustomers} icon={Users} subtitle={`${customers.length} total`} />
-        <StatCard title="Models" value={activeModels} icon={Bot} subtitle={`${models.length} total`} />
+        <StatCard title="Monthly Revenue" value={`$${monthRev.toLocaleString()}`} icon={DollarSign} subtitle={`${monthPayments.length} payments`} />
+        <StatCard title="Monthly Expenses" value={`$${monthExpTotal.toLocaleString()}`} icon={TrendingDown} subtitle={`${monthExpenses.length} entries`} />
+        <StatCard
+          title="Net Profit"
+          value={`$${monthNetProfit.toLocaleString()}`}
+          icon={monthNetProfit >= 0 ? TrendingUp : TrendingDown}
+          subtitle={`All time: $${totalNetProfit.toLocaleString()}`}
+        />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4 mt-6">
