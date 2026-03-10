@@ -47,38 +47,38 @@ export default function ChatterPortal({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-6xl mx-auto">
       <PageHeader
-        title={`Hey, ${currentUser?.full_name?.split(" ")[0] || "there"} 👋`}
-        subtitle="Here's your personal dashboard"
+        title={`Ahoj, ${currentUser?.full_name?.split(" ")[0] || ""} 👋`}
+        subtitle="Tvůj osobní přehled"
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard title="This Month" value={`$${monthRev.toLocaleString()}`} icon={DollarSign} />
-        <StatCard title="Total Revenue" value={`$${totalRev.toLocaleString()}`} icon={CreditCard} />
-        <StatCard title="My Customers" value={customers.length} icon={Users} />
-        <StatCard title="Open Tasks" value={openTasks.length} icon={ListTodo} />
+        <StatCard title="Tento měsíc" value={`$${monthRev.toLocaleString()}`} icon={DollarSign} />
+        <StatCard title="Celkové tržby" value={`$${totalRev.toLocaleString()}`} icon={CreditCard} />
+        <StatCard title="Moji zákazníci" value={customers.length} icon={Users} />
+        <StatCard title="Otevřené úkoly" value={openTasks.length} icon={ListTodo} />
       </div>
 
       {/* Task progress */}
       <Card className="mb-6">
         <CardContent className="p-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-slate-700">Task Completion</span>
+            <span className="text-sm font-medium text-slate-700">Splnění úkolů</span>
             <span className="text-sm font-bold text-indigo-600">{taskCompletionPct}%</span>
           </div>
           <Progress value={taskCompletionPct} className="h-2" />
-          <p className="text-xs text-slate-400 mt-2">{doneTasks.length} of {tasks.length} tasks completed</p>
+          <p className="text-xs text-slate-400 mt-2">{doneTasks.length} z {tasks.length} úkolů dokončeno</p>
         </CardContent>
       </Card>
 
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Active Tasks */}
         <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><ListTodo className="w-4 h-4" /> Active Tasks</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base flex items-center gap-2"><ListTodo className="w-4 h-4" /> Aktivní úkoly</CardTitle></CardHeader>
           <CardContent>
             {openTasks.length === 0 ? (
               <div className="text-center py-6">
                 <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-                <p className="text-sm text-slate-400">All caught up! No open tasks.</p>
+                <p className="text-sm text-slate-400">Vše vyřízeno! Žádné otevřené úkoly.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -95,7 +95,7 @@ export default function ChatterPortal({ currentUser }) {
                         )}
                       </div>
                     </div>
-                    <Badge variant="outline" className="text-xs">{t.status === "in_progress" ? "In Progress" : "To Do"}</Badge>
+                    <Badge variant="outline" className="text-xs">{t.status === "in_progress" ? "Probíhá" : "K vyřízení"}</Badge>
                   </div>
                 ))}
               </div>
@@ -105,10 +105,10 @@ export default function ChatterPortal({ currentUser }) {
 
         {/* Recent Payments */}
         <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><CreditCard className="w-4 h-4" /> Recent Payments</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base flex items-center gap-2"><CreditCard className="w-4 h-4" /> Poslední platby</CardTitle></CardHeader>
           <CardContent>
             {payments.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-6">No payments logged yet</p>
+              <p className="text-sm text-slate-400 text-center py-6">Zatím žádné platby</p>
             ) : (
               <div className="space-y-2">
                 {payments.slice(0, 8).map(p => (
