@@ -119,10 +119,11 @@ export default function CustomerOnboarding() {
             <Input
               type="date"
               value={dateOfBirth}
-              onChange={e => setDateOfBirth(e.target.value)}
+              onChange={e => { setDateOfBirth(e.target.value); setDobError(""); }}
               required
               className="mt-1"
             />
+            {dobError && <p className="text-xs text-red-500 mt-1">{dobError}</p>}
           </div>
 
           {/* Terms */}
@@ -132,12 +133,48 @@ export default function CustomerOnboarding() {
               id="terms"
               checked={termsAccepted}
               onChange={e => setTermsAccepted(e.target.checked)}
-              className="mt-0.5 w-4 h-4 rounded accent-indigo-600 cursor-pointer"
+              className="mt-0.5 w-4 h-4 rounded accent-indigo-600 cursor-pointer flex-shrink-0"
             />
-            <label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
-              Souhlasím s podmínkami chatovacích služeb a beru na vědomí, že mé osobní údaje budou zpracovány v souladu se zásadami ochrany osobních údajů.
-            </label>
+            <div className="flex-1">
+              <label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
+                Souhlasím s podmínkami chatovacích služeb a beru na vědomí, že mé osobní údaje budou zpracovány v souladu se zásadami ochrany osobních údajů.
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowTerms(true)}
+                className="mt-1 inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
+              >
+                <ScrollText className="w-3 h-3" /> Přečíst podmínky
+              </button>
+            </div>
           </div>
+
+          {/* Terms modal */}
+          <Dialog open={showTerms} onOpenChange={setShowTerms}>
+            <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Podmínky chatovacích služeb</DialogTitle>
+              </DialogHeader>
+              <div className="text-sm text-gray-700 space-y-4 leading-relaxed">
+                <p>Tyto podmínky upravují používání chatovacích služeb poskytovaných naší společností.</p>
+                <h4 className="font-semibold text-gray-900">1. Souhlas s podmínkami</h4>
+                <p>Registrací a používáním našich služeb souhlasíte s těmito podmínkami v plném rozsahu. Pokud s podmínkami nesouhlasíte, nevyužívejte naše služby.</p>
+                <h4 className="font-semibold text-gray-900">2. Věkové omezení</h4>
+                <p>Naše služby jsou určeny výhradně pro osoby starší 18 let a 1 dne. Registrací potvrzujete, že splňujete tuto podmínku.</p>
+                <h4 className="font-semibold text-gray-900">3. Ochrana osobních údajů</h4>
+                <p>Vaše osobní údaje (jméno, datum narození, bankovní údaje) zpracováváme v souladu s GDPR výhradně za účelem poskytování dohodnutých služeb. Vaše data nepředáváme třetím stranám bez vašeho souhlasu.</p>
+                <h4 className="font-semibold text-gray-900">4. Platební podmínky</h4>
+                <p>Platby za služby jsou prováděny předem na základě vzájemné dohody. Veškeré transakce jsou zaznamenávány v systému.</p>
+                <h4 className="font-semibold text-gray-900">5. Ukončení spolupráce</h4>
+                <p>Obě strany mají právo kdykoliv ukončit spolupráci s přiměřenou výpovědní lhůtou. Veškeré dosud provedené platby jsou nevratné.</p>
+                <h4 className="font-semibold text-gray-900">6. Kontakt</h4>
+                <p>V případě dotazů nebo stížností nás kontaktujte prostřednictvím vámi přiděleného chattera.</p>
+              </div>
+              <div className="mt-4">
+                <Button onClick={() => setShowTerms(false)} className="w-full bg-indigo-600 hover:bg-indigo-700">Zavřít</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <Button
             type="submit"
