@@ -138,7 +138,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                       : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
                   )}
                 >
-                  ${a.toLocaleString()}
+                  {a.toLocaleString()} Kč
                 </button>
               ))}
             </div>
