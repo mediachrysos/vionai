@@ -60,14 +60,14 @@ export default function Models({ currentUser }) {
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Modelky" subtitle={`${models.length} modelek celkem`}>
         {currentUser?.role === "admin" && (
-          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-indigo-600 hover:bg-indigo-700">
+          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gray-900 hover:bg-gray-800 text-white">
             <Plus className="w-4 h-4 mr-2" /> Přidat modelku
           </Button>
         )}
       </PageHeader>
 
       <div className="relative max-w-md mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat modelky..." className="pl-10" />
       </div>
 
@@ -81,33 +81,33 @@ export default function Models({ currentUser }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white rounded-xl border border-slate-200/60 p-5 hover:shadow-md transition-all cursor-pointer"
+              className="bg-white rounded-xl border border-gray-100 p-5 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer"
               onClick={() => { setEditing(m); setShowForm(true); }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-purple-500" />
+                  <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-gray-400" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-800">{m.name}</h3>
-                    <Badge variant="outline" className={m.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-slate-50 text-slate-500"}>
-                      {m.status}
+                    <h3 className="text-sm font-semibold text-gray-800">{m.name}</h3>
+                    <Badge variant="outline" className={m.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-100 text-xs" : "bg-gray-50 text-gray-400 border-gray-200 text-xs"}>
+                      {m.status === "active" ? "Aktivní" : "Neaktivní"}
                     </Badge>
                   </div>
                 </div>
                 <Link to={createPageUrl("ModelDetail") + `?id=${m.id}`} onClick={e => e.stopPropagation()}>
-                  <ExternalLink className="w-4 h-4 text-slate-400 hover:text-indigo-500" />
+                  <ExternalLink className="w-4 h-4 text-gray-300 hover:text-gray-600" />
                 </Link>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-slate-400">Tržby</p>
-                  <p className="text-lg font-bold text-slate-900">${(modelRevenue[m.id] || 0).toLocaleString()}</p>
+                  <p className="text-xs text-gray-400">Tržby</p>
+                  <p className="text-lg font-semibold text-gray-900">${(modelRevenue[m.id] || 0).toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Platby</p>
-                  <p className="text-lg font-bold text-slate-900">{modelPaymentCount[m.id] || 0}</p>
+                  <p className="text-xs text-gray-400">Platby</p>
+                  <p className="text-lg font-semibold text-gray-900">{modelPaymentCount[m.id] || 0}</p>
                 </div>
               </div>
               {m.assigned_chatters?.length > 0 && (
