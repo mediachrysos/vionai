@@ -1,13 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { UserPlus, CreditCard, Bot, ListPlus } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
 const actions = [
-  { label: "Přidat zákazníka", icon: UserPlus, page: "Customers", params: "?action=new", color: "bg-indigo-50 text-indigo-500 group-hover:bg-indigo-100" },
   { label: "Přidat platbu", icon: CreditCard, page: "Payments", params: "?action=new", color: "bg-violet-50 text-violet-500 group-hover:bg-violet-100" },
-  { label: "Přidat modelku", icon: Bot, page: "Models", params: "?action=new", color: "bg-blue-50 text-blue-500 group-hover:bg-blue-100" },
-  { label: "Přidat úkol", icon: ListPlus, page: "Tasks", params: "?action=new", color: "bg-purple-50 text-purple-500 group-hover:bg-purple-100" },
 ];
 
 export default function QuickActions() {

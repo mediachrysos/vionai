@@ -83,15 +83,15 @@ export default function Dashboard({ currentUser }) {
       <QuickActions />
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mt-6">
-        <StatCard title="Dnes" value={`$${todayRev.toLocaleString()}`} icon={DollarSign} subtitle={`${todayPayments.length} plateb`} colorIndex={0} />
-        <StatCard title="Tento týden" value={`$${weekRev.toLocaleString()}`} icon={CreditCard} subtitle={`${weekPayments.length} plateb`} colorIndex={1} />
-        <StatCard title="Tržby (měsíc)" value={`$${monthRev.toLocaleString()}`} icon={DollarSign} subtitle={`${monthPayments.length} plateb`} colorIndex={2} />
-        <StatCard title="Výdaje (měsíc)" value={`$${monthExpTotal.toLocaleString()}`} icon={TrendingDown} subtitle={`${monthExpenses.length} záznamů`} colorIndex={3} />
+        <StatCard title="Dnes" value={`${todayRev.toLocaleString()} Kč`} icon={DollarSign} subtitle={`${todayPayments.length} plateb`} colorIndex={0} />
+        <StatCard title="Tento týden" value={`${weekRev.toLocaleString()} Kč`} icon={CreditCard} subtitle={`${weekPayments.length} plateb`} colorIndex={1} />
+        <StatCard title="Tržby (měsíc)" value={`${monthRev.toLocaleString()} Kč`} icon={DollarSign} subtitle={`${monthPayments.length} plateb`} colorIndex={2} />
+        <StatCard title="Výdaje (měsíc)" value={`${monthExpTotal.toLocaleString()} Kč`} icon={TrendingDown} subtitle={`${monthExpenses.length} záznamů`} colorIndex={3} />
         <StatCard
           title="Čistý zisk"
-          value={`$${monthNetProfit.toLocaleString()}`}
+          value={`${monthNetProfit.toLocaleString()} Kč`}
           icon={monthNetProfit >= 0 ? TrendingUp : TrendingDown}
-          subtitle={`Celkem: $${totalNetProfit.toLocaleString()}`}
+          subtitle={`Celkem: ${totalNetProfit.toLocaleString()} Kč`}
           colorIndex={4}
         />
       </div>
