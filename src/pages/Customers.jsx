@@ -170,6 +170,13 @@ export default function Customers({ currentUser }) {
         users={users}
         allCustomers={customers}
       />
+
+      <OnboardingLinkModal
+        open={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        models={models}
+        users={users}
+      />
     </div>
   );
 }
