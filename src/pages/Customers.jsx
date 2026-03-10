@@ -14,10 +14,10 @@ import EmptyState from "../components/ui-custom/EmptyState";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 
 const statusColors = {
-  active: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  inactive: "bg-slate-50 text-slate-600 border-slate-200",
-  vip: "bg-amber-50 text-amber-700 border-amber-200",
-  blocked: "bg-red-50 text-red-600 border-red-200",
+  active: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  inactive: "bg-gray-50 text-gray-500 border-gray-200",
+  vip: "bg-amber-50 text-amber-700 border-amber-100",
+  blocked: "bg-red-50 text-red-600 border-red-100",
 };
 
 export default function Customers({ currentUser }) {
@@ -73,7 +73,7 @@ export default function Customers({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
-        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-indigo-600 hover:bg-indigo-700">
+        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gray-900 hover:bg-gray-800 text-white">
           <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
         </Button>
       </PageHeader>
@@ -81,7 +81,7 @@ export default function Customers({ currentUser }) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat zákazníky..." className="pl-10" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -100,17 +100,17 @@ export default function Customers({ currentUser }) {
       {filtered.length === 0 && !isLoading ? (
         <EmptyState icon={UserCircle} title="Žádní zákazníci" description="Přidej prvního zákazníka a začni" actionLabel="Přidat zákazníka" onAction={() => setShowForm(true)} />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Jméno</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Email</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Stav</th>
-                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Utraceno</th>
-                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 w-12"></th>
+                <tr className="border-b border-gray-100 bg-gray-50/50">
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Jméno</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Email</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Utraceno</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 w-12"></th>
                 </tr>
               </thead>
               <tbody>
@@ -120,30 +120,30 @@ export default function Customers({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors cursor-pointer"
+                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
                     onClick={() => { setEditing(c); setShowForm(true); }}
                   >
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-xs font-semibold text-indigo-600">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
                           {c.full_name?.[0]?.toUpperCase() || "?"}
                         </div>
-                        <span className="text-sm font-medium text-slate-800">{c.full_name}</span>
+                        <span className="text-sm font-medium text-gray-800">{c.full_name}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-slate-500 hidden md:table-cell">{c.email || "—"}</td>
-                    <td className="px-5 py-3.5 text-sm text-slate-500 hidden lg:table-cell">{modelMap[c.assigned_model] || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">{c.email || "—"}</td>
+                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">{modelMap[c.assigned_model] || "—"}</td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[c.status] || statusColors.active}>
                         {c.status || "active"}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-right text-sm font-medium text-slate-800">
+                    <td className="px-5 py-3.5 text-right text-sm font-medium text-gray-800">
                       ${(c.total_spent || 0).toLocaleString()}
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <Link to={createPageUrl("CustomerDetail") + `?id=${c.id}`} onClick={e => e.stopPropagation()}>
-                        <ExternalLink className="w-4 h-4 text-slate-400 hover:text-indigo-500" />
+                        <ExternalLink className="w-4 h-4 text-gray-300 hover:text-gray-600" />
                       </Link>
                     </td>
                   </motion.tr>
