@@ -13,10 +13,10 @@ import EmptyState from "../components/ui-custom/EmptyState";
 import PaymentFormModal from "../components/payments/PaymentFormModal";
 
 const statusColors = {
-  completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  pending: "bg-amber-50 text-amber-700 border-amber-200",
-  failed: "bg-red-50 text-red-600 border-red-200",
-  refunded: "bg-slate-50 text-slate-600 border-slate-200",
+  completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  pending: "bg-amber-50 text-amber-700 border-amber-100",
+  failed: "bg-red-50 text-red-600 border-red-100",
+  refunded: "bg-gray-50 text-gray-500 border-gray-200",
 };
 
 export default function Payments({ currentUser }) {
@@ -78,14 +78,14 @@ export default function Payments({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Platby" subtitle={`${payments.length} celkem · $${totalAmount.toLocaleString()}`}>
-        <Button onClick={() => setShowForm(true)} className="bg-emerald-600 hover:bg-emerald-700" size="lg">
+        <Button onClick={() => setShowForm(true)} className="bg-gray-900 hover:bg-gray-800 text-white">
           <Plus className="w-4 h-4 mr-2" /> Přidat platbu
         </Button>
       </PageHeader>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat podle zákazníka, modelky, chattera..." className="pl-10" />
         </div>
         <Select value={modelFilter} onValueChange={setModelFilter}>
@@ -108,17 +108,17 @@ export default function Payments({ currentUser }) {
       {filtered.length === 0 && !isLoading ? (
         <EmptyState icon={CreditCard} title="Žádné platby" description="Přidej první platbu" actionLabel="Přidat platbu" onAction={() => setShowForm(true)} />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Zákazník</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Modelka</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Stav</th>
-                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Částka</th>
+                <tr className="border-b border-gray-100 bg-gray-50/50">
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Zákazník</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Modelka</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,19 +128,19 @@ export default function Payments({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.015 }}
-                    className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
+                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
                   >
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center text-xs font-semibold text-indigo-600">
+                        <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
                           {p.customer_name?.[0]?.toUpperCase() || "?"}
                         </div>
-                        <span className="text-sm font-medium text-slate-700">{p.customer_name || "—"}</span>
+                        <span className="text-sm font-medium text-gray-800">{p.customer_name || "—"}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-slate-500 hidden md:table-cell">{p.model_name || "—"}</td>
-                    <td className="px-5 py-3.5 text-sm text-slate-500 hidden lg:table-cell">{p.chatter_name || "—"}</td>
-                    <td className="px-5 py-3.5 text-sm text-slate-500 hidden md:table-cell">
+                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">{p.model_name || "—"}</td>
+                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">{p.chatter_name || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">
                       {p.payment_date ? format(new Date(p.payment_date), "MMM d, yyyy") : p.created_date ? format(new Date(p.created_date), "MMM d") : "—"}
                     </td>
                     <td className="px-5 py-3.5">
@@ -148,7 +148,7 @@ export default function Payments({ currentUser }) {
                         {p.status || "completed"}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-900">
+                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-900">
                       ${(p.amount || 0).toLocaleString()}
                     </td>
                   </motion.tr>
