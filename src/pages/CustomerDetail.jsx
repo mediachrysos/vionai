@@ -56,7 +56,7 @@ export default function CustomerDetail({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
       <Link to={createPageUrl("Customers")} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-4">
-        <ArrowLeft className="w-4 h-4" /> Back to Customers
+        <ArrowLeft className="w-4 h-4" /> Zpět na zákazníky
       </Link>
 
       <div className="flex items-start justify-between mb-6">
