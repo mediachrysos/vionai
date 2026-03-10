@@ -96,7 +96,12 @@ export default function Dashboard({ currentUser }) {
         />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-4 mt-6">
+      {/* Latest payments right below stat cards */}
+      <div className="mt-4">
+        <LatestPayments payments={payments} />
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4 mt-4">
         <div className="lg:col-span-2">
           <RevenueChart payments={payments} />
         </div>
@@ -105,7 +110,7 @@ export default function Dashboard({ currentUser }) {
 
       <div className="grid lg:grid-cols-2 gap-4 mt-4">
         <RevenueByModel payments={payments} models={models} />
-        <LatestPayments payments={payments} />
+        <NotesWidget currentUser={currentUser} />
       </div>
     </div>
   );
