@@ -27,6 +27,16 @@ export default function Layout({ children, currentPageName }) {
     base44.auth.logout();
   };
 
+  useEffect(() => {
+    const unsubscribe = base44.entities.Payment.subscribe((event) => {
+      if (event.type === "create" && event.data) {
+        setPaymentAlert(event.data);
+        setTimeout(() => setPaymentAlert(null), 5000);
+      }
+    });
+    return unsubscribe;
+  }, []);
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-white">
