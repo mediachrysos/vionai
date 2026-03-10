@@ -140,44 +140,47 @@ function UserRow({ user, onUpdate }) {
   const statusCfg = statusConfig[status] || statusConfig.pending;
   const StatusIcon = statusCfg.icon;
 
+  const avatarColors = ["from-indigo-400 to-violet-500", "from-pink-400 to-rose-500", "from-emerald-400 to-teal-500", "from-amber-400 to-orange-500", "from-blue-400 to-cyan-500"];
+  const colorIndex = (user.full_name || user.email || "").charCodeAt(0) % avatarColors.length;
+
   return (
-    <div className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl px-4 py-3 shadow-sm flex-wrap">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center flex-shrink-0">
-        <span className="text-xs font-semibold text-indigo-500">
+    <div className="flex items-center gap-4 bg-white border border-gray-100 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-shadow flex-wrap">
+      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${avatarColors[colorIndex]} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+        <span className="text-sm font-bold text-white">
           {(user.full_name || user.email || "?")[0].toUpperCase()}
         </span>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-800 truncate">{user.full_name || "—"}</p>
+        <p className="text-sm font-semibold text-gray-800 truncate">{user.full_name || "—"}</p>
         <p className="text-xs text-gray-400 truncate">{user.email}</p>
       </div>
-      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusCfg.color}`}>
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${statusCfg.color}`}>
         <StatusIcon className="w-3 h-3" />
         {statusCfg.label}
       </span>
       <Select value={role} onValueChange={(val) => onUpdate(user.id, { role: val })}>
-        <SelectTrigger className="w-32 h-8 text-xs">
+        <SelectTrigger className="w-36 h-8 text-xs border-gray-200">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="admin">Admin</SelectItem>
-          <SelectItem value="user">Uživatel</SelectItem>
-          <SelectItem value="chatter">Chatter</SelectItem>
+          <SelectItem value="admin">👑 Admin</SelectItem>
+          <SelectItem value="user">👤 Uživatel</SelectItem>
+          <SelectItem value="chatter">💬 Chatter</SelectItem>
         </SelectContent>
       </Select>
-      <div className="flex gap-1.5">
+      <div className="flex gap-2">
         {status !== "approved" && (
-          <Button size="sm" className="h-7 text-xs bg-green-600 hover:bg-green-700 text-white px-3" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
+          <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-4 rounded-lg font-semibold" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
             Schválit
           </Button>
         )}
         {status !== "blocked" && (
-          <Button size="sm" variant="outline" className="h-7 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3" onClick={() => onUpdate(user.id, { account_status: "blocked" })}>
+          <Button size="sm" variant="outline" className="h-8 text-xs text-red-500 border-red-200 hover:bg-red-50 px-4 rounded-lg font-semibold" onClick={() => onUpdate(user.id, { account_status: "blocked" })}>
             Blokovat
           </Button>
         )}
         {status === "blocked" && (
-          <Button size="sm" variant="outline" className="h-7 text-xs px-3" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
+          <Button size="sm" variant="outline" className="h-8 text-xs px-4 rounded-lg font-semibold" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
             Odblokovat
           </Button>
         )}
