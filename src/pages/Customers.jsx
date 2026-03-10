@@ -157,12 +157,16 @@ export default function Customers({ currentUser }) {
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Email</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Utraceno</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Celkem</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Poslední platba</th>
                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 w-12"></th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((c, i) => (
+                {filtered.map((c, i) => {
+                  const st = customerStats[c.id] || {};
+                  const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
+                  return (
                   <motion.tr
                     key={c.id}
                     initial={{ opacity: 0 }}
@@ -180,14 +184,22 @@ export default function Customers({ currentUser }) {
                       </div>
                     </td>
                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">{c.email || "—"}</td>
-                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">{modelMap[c.assigned_model] || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">{modelMap[c.assigned_model] || "—"}</td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[c.status] || statusColors.active}>
                         {c.status || "active"}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-right text-sm font-medium text-gray-800">
-                      ${(c.total_spent || 0).toLocaleString()}
+                    <td className="px-5 py-3.5 text-right">
+                      <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
+                    </td>
+                    <td className="px-5 py-3.5 text-right hidden xl:table-cell">
+                      {daysSinceLast !== null ? (
+                        <div>
+                          <p className="text-xs font-medium text-gray-600">{st.lastAmount?.toLocaleString()} Kč</p>
+                          <p className="text-xs text-gray-400">před {daysSinceLast} dny</p>
+                        </div>
+                      ) : <span className="text-xs text-gray-300">—</span>}
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <Link to={createPageUrl("CustomerDetail") + `?id=${c.id}`} onClick={e => e.stopPropagation()}>
@@ -195,7 +207,8 @@ export default function Customers({ currentUser }) {
                       </Link>
                     </td>
                   </motion.tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
