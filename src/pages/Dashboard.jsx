@@ -27,6 +27,10 @@ export default function Dashboard({ currentUser }) {
     queryKey: ["tasks"],
     queryFn: () => base44.entities.Task.list("-created_date", 100),
   });
+  const { data: expenses = [] } = useQuery({
+    queryKey: ["expenses"],
+    queryFn: () => base44.entities.Expense.list("-expense_date", 500),
+  });
 
   const today = new Date().toISOString().split("T")[0];
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
