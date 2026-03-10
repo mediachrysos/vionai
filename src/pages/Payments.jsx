@@ -23,6 +23,8 @@ const statusColors = {
 export default function Payments({ currentUser }) {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [showCustomerForm, setShowCustomerForm] = useState(false);
+  const [newCustomerName, setNewCustomerName] = useState("");
   const [modelFilter, setModelFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const qc = useQueryClient();
