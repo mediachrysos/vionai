@@ -78,6 +78,19 @@ export default function Payments({ currentUser }) {
 
   const totalAmount = filtered.reduce((s, p) => s + (p.amount || 0), 0);
 
+  const handleAddNewCustomer = (name) => {
+    setNewCustomerName(name);
+    setShowForm(false);
+    setShowCustomerForm(true);
+  };
+
+  const handleCustomerSave = async (form) => {
+    const newCust = await base44.entities.Customer.create(form);
+    qc.invalidateQueries({ queryKey: ["customers"] });
+    setShowCustomerForm(false);
+    setShowForm(true);
+  };
+
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Platby" subtitle={`${payments.length} celkem · ${totalAmount.toLocaleString()} Kč`}>
