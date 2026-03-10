@@ -63,44 +63,44 @@ export default function Expenses({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-6xl mx-auto">
-      <PageHeader title="Expenses" subtitle={`$${totalFiltered.toLocaleString()} shown · $${monthTotal.toLocaleString()} this month`}>
+      <PageHeader title="Výdaje" subtitle={`$${totalFiltered.toLocaleString()} zobrazeno · $${monthTotal.toLocaleString()} tento měsíc`}>
         <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" /> Record Expense
+          <Plus className="w-4 h-4 mr-2" /> Zaznamenat výdaj
         </Button>
       </PageHeader>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search expenses..." className="pl-10" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat výdaje..." className="pl-10" />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
           <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all">Všechny kategorie</SelectItem>
             <SelectItem value="marketing">Marketing</SelectItem>
             <SelectItem value="software">Software</SelectItem>
-            <SelectItem value="salaries">Salaries</SelectItem>
-            <SelectItem value="infrastructure">Infrastructure</SelectItem>
-            <SelectItem value="taxes">Taxes</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
+            <SelectItem value="salaries">Mzdy</SelectItem>
+            <SelectItem value="infrastructure">Infrastruktura</SelectItem>
+            <SelectItem value="taxes">Daně</SelectItem>
+            <SelectItem value="other">Ostatní</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon={Receipt} title="No expenses found" actionLabel="Record Expense" onAction={() => setShowForm(true)} />
+        <EmptyState icon={Receipt} title="Žádné výdaje" actionLabel="Zaznamenat výdaj" onAction={() => setShowForm(true)} />
       ) : (
         <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Title</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Category</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Date</th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Linked Payment</th>
-                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Amount</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Název</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Kategorie</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Propojená platba</th>
+                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Částka</th>
                   <th className="px-5 py-3"></th>
                 </tr>
               </thead>
@@ -136,7 +136,7 @@ export default function Expenses({ currentUser }) {
               </tbody>
               <tfoot>
                 <tr className="bg-slate-50 border-t border-slate-200">
-                  <td colSpan={4} className="px-5 py-3 text-sm font-semibold text-slate-700">Total</td>
+                  <td colSpan={4} className="px-5 py-3 text-sm font-semibold text-slate-700">Celkem</td>
                   <td className="px-5 py-3 text-right text-sm font-bold text-red-600">-${totalFiltered.toLocaleString()}</td>
                   <td />
                 </tr>

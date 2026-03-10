@@ -13,9 +13,9 @@ const priorityColors = {
 };
 
 const columns = [
-  { key: "todo", label: "To Do", color: "border-t-slate-400" },
-  { key: "in_progress", label: "In Progress", color: "border-t-blue-500" },
-  { key: "done", label: "Done", color: "border-t-emerald-500" },
+  { key: "todo", label: "K vyřízení", color: "border-t-slate-400" },
+  { key: "in_progress", label: "Probíhá", color: "border-t-blue-500" },
+  { key: "done", label: "Hotovo", color: "border-t-emerald-500" },
 ];
 
 export default function KanbanBoard({ tasks, onTaskClick, onStatusChange }) {
