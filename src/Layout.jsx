@@ -88,6 +88,31 @@ export default function Layout({ children, currentPageName }) {
           {React.cloneElement(children, { currentUser: user })}
         </div>
       </main>
+
+      {/* New payment alert */}
+      <AnimatePresence>
+        {paymentAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: 60, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 60, x: "-50%" }}
+            className="fixed bottom-6 left-1/2 z-50 bg-white border border-emerald-200 rounded-2xl shadow-xl px-5 py-3.5 flex items-center gap-3 min-w-[280px]"
+          >
+            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <CreditCard className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-800">Nová platba přidána!</p>
+              <p className="text-xs text-gray-500">
+                {paymentAlert.customer_name || "Zákazník"} · {(paymentAlert.amount || 0).toLocaleString()} Kč
+              </p>
+            </div>
+            <button onClick={() => setPaymentAlert(null)} className="text-gray-300 hover:text-gray-500">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
