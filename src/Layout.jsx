@@ -64,8 +64,8 @@ export default function Layout({ children, currentPageName }) {
     );
   }
 
-  // Pending approval (skip for admins)
-  if (user?.account_status === "pending" && user?.role !== "admin") {
+  // Pending approval (skip for admins) — new users without account_status set are also pending
+  if ((user?.account_status === "pending" || !user?.account_status) && user?.role !== "admin") {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-sm p-8">

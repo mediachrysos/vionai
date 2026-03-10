@@ -47,8 +47,10 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AdminUsers from './pages/AdminUsers';
 import ChatterPortal from './pages/ChatterPortal';
 import CustomerDetail from './pages/CustomerDetail';
+import CustomerOnboarding from './pages/CustomerOnboarding';
 import Customers from './pages/Customers';
 import Dashboard from './pages/Dashboard';
 import Expenses from './pages/Expenses';
@@ -56,14 +58,14 @@ import ModelDetail from './pages/ModelDetail';
 import Models from './pages/Models';
 import Payments from './pages/Payments';
 import Tasks from './pages/Tasks';
-import AdminUsers from './pages/AdminUsers';
-import CustomerOnboarding from './pages/CustomerOnboarding';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AdminUsers": AdminUsers,
     "ChatterPortal": ChatterPortal,
     "CustomerDetail": CustomerDetail,
+    "CustomerOnboarding": CustomerOnboarding,
     "Customers": Customers,
     "Dashboard": Dashboard,
     "Expenses": Expenses,
@@ -71,8 +73,6 @@ export const PAGES = {
     "Models": Models,
     "Payments": Payments,
     "Tasks": Tasks,
-    "AdminUsers": AdminUsers,
-    "CustomerOnboarding": CustomerOnboarding,
 }
 
 export const pagesConfig = {
