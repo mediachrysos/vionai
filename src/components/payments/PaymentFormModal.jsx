@@ -224,14 +224,14 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             <Textarea value={form.note} onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))} rows={2} />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={onClose}>Zrušit</Button>
+          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+            <Button variant="outline" onClick={onClose} className="rounded-xl">Zrušit</Button>
             <Button
               onClick={handleSubmit}
               disabled={!form.customer_id || !form.amount || saving}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-semibold px-6"
             >
-              {saving ? "Ukládám..." : "Přidat platbu"}
+              {saving ? <><Zap className="w-4 h-4 mr-1 animate-pulse" /> Ukládám...</> : <><CreditCard className="w-4 h-4 mr-1" /> Přidat platbu</>}
             </Button>
           </div>
         </div>
