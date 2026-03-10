@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield, Clock, CheckCircle, XCircle, Users } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Pencil, Trash2, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
+import AdminPayments from "../components/admin/AdminPayments";
 
 const statusConfig = {
   pending: { label: "Čeká na schválení", color: "bg-amber-100 text-amber-700", icon: Clock },
@@ -11,13 +13,8 @@ const statusConfig = {
   blocked: { label: "Zablokováno", color: "bg-red-100 text-red-700", icon: XCircle },
 };
 
-const roleConfig = {
-  admin: { label: "Admin", color: "bg-violet-100 text-violet-700" },
-  user: { label: "Uživatel", color: "bg-blue-100 text-blue-700" },
-  chatter: { label: "Chatter", color: "bg-indigo-100 text-indigo-700" },
-};
-
 export default function AdminUsers({ currentUser }) {
+  const [tab, setTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,50 +51,85 @@ export default function AdminUsers({ currentUser }) {
   const others = users.filter(u => u.account_status !== "pending");
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
+      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-          <Users className="w-4 h-4 text-white" />
+          <Shield className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Správa uživatelů</h1>
-          <p className="text-sm text-gray-500">Schvalujte a spravujte přístup uživatelů</p>
+          <h1 className="text-xl font-bold text-gray-900">Admin Portál</h1>
+          <p className="text-sm text-gray-500">Správa uživatelů, plateb a oprávnění</p>
         </div>
       </div>
 
-      {/* Pending section */}
-      {pending.length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Clock className="w-4 h-4 text-amber-500" />
-            <h2 className="font-semibold text-gray-800 text-sm">Čeká na schválení ({pending.length})</h2>
-          </div>
-          <div className="space-y-2">
-            {pending.map(u => (
-              <UserRow key={u.id} user={u} onUpdate={updateUser} />
-            ))}
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 w-fit">
+        <button
+          onClick={() => setTab("users")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "users" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          <Users className="w-4 h-4" /> Uživatelé
+          {pending.length > 0 && <span className="bg-amber-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{pending.length}</span>}
+        </button>
+        <button
+          onClick={() => setTab("payments")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "payments" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          <CreditCard className="w-4 h-4" /> Platby
+        </button>
+        <button
+          onClick={() => setTab("add-model")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "add-model" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          Přidat modelku
+        </button>
+        <button
+          onClick={() => setTab("add-customer")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "add-customer" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          Přidat zákazníka
+        </button>
+      </div>
+
+      {/* Users tab */}
+      {tab === "users" && (
+        <div>
+          {pending.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="w-4 h-4 text-amber-500" />
+                <h2 className="font-semibold text-gray-800 text-sm">Čeká na schválení ({pending.length})</h2>
+              </div>
+              <div className="space-y-2">
+                {pending.map(u => <UserRow key={u.id} user={u} onUpdate={updateUser} />)}
+              </div>
+            </div>
+          )}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="w-4 h-4 text-gray-400" />
+              <h2 className="font-semibold text-gray-800 text-sm">Všichni uživatelé ({others.length})</h2>
+            </div>
+            {loading ? (
+              <div className="text-sm text-gray-400 py-8 text-center">Načítám...</div>
+            ) : (
+              <div className="space-y-2">
+                {others.map(u => <UserRow key={u.id} user={u} onUpdate={updateUser} />)}
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* All users */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <Users className="w-4 h-4 text-gray-400" />
-          <h2 className="font-semibold text-gray-800 text-sm">Všichni uživatelé ({others.length})</h2>
-        </div>
-        {loading ? (
-          <div className="text-sm text-gray-400 py-8 text-center">Načítám...</div>
-        ) : others.length === 0 ? (
-          <div className="text-sm text-gray-400 py-8 text-center">Žádní uživatelé</div>
-        ) : (
-          <div className="space-y-2">
-            {others.map(u => (
-              <UserRow key={u.id} user={u} onUpdate={updateUser} />
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Payments tab */}
+      {tab === "payments" && <AdminPayments currentUser={currentUser} />}
+
+      {/* Add model tab */}
+      {tab === "add-model" && <AddModelTab />}
+
+      {/* Add customer tab */}
+      {tab === "add-customer" && <AddCustomerTab users={users} />}
     </div>
   );
 }
@@ -109,25 +141,20 @@ function UserRow({ user, onUpdate }) {
   const StatusIcon = statusCfg.icon;
 
   return (
-    <div className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl px-4 py-3 shadow-sm">
+    <div className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl px-4 py-3 shadow-sm flex-wrap">
       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center flex-shrink-0">
         <span className="text-xs font-semibold text-indigo-500">
           {(user.full_name || user.email || "?")[0].toUpperCase()}
         </span>
       </div>
-
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-800 truncate">{user.full_name || "—"}</p>
         <p className="text-xs text-gray-400 truncate">{user.email}</p>
       </div>
-
-      {/* Status badge */}
       <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusCfg.color}`}>
         <StatusIcon className="w-3 h-3" />
         {statusCfg.label}
       </span>
-
-      {/* Role selector */}
       <Select value={role} onValueChange={(val) => onUpdate(user.id, { role: val })}>
         <SelectTrigger className="w-32 h-8 text-xs">
           <SelectValue />
@@ -138,39 +165,120 @@ function UserRow({ user, onUpdate }) {
           <SelectItem value="chatter">Chatter</SelectItem>
         </SelectContent>
       </Select>
-
-      {/* Action buttons */}
       <div className="flex gap-1.5">
         {status !== "approved" && (
-          <Button
-            size="sm"
-            className="h-7 text-xs bg-green-600 hover:bg-green-700 text-white px-3"
-            onClick={() => onUpdate(user.id, { account_status: "approved" })}
-          >
+          <Button size="sm" className="h-7 text-xs bg-green-600 hover:bg-green-700 text-white px-3" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
             Schválit
           </Button>
         )}
         {status !== "blocked" && (
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3"
-            onClick={() => onUpdate(user.id, { account_status: "blocked" })}
-          >
+          <Button size="sm" variant="outline" className="h-7 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3" onClick={() => onUpdate(user.id, { account_status: "blocked" })}>
             Blokovat
           </Button>
         )}
         {status === "blocked" && (
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 text-xs px-3"
-            onClick={() => onUpdate(user.id, { account_status: "approved" })}
-          >
+          <Button size="sm" variant="outline" className="h-7 text-xs px-3" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
             Odblokovat
           </Button>
         )}
       </div>
+    </div>
+  );
+}
+
+function AddModelTab() {
+  const [form, setForm] = useState({ name: "", status: "active", notes: "" });
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    await base44.entities.Model.create(form);
+    setSaving(false);
+    setDone(true);
+    setForm({ name: "", status: "active", notes: "" });
+    setTimeout(() => setDone(false), 2000);
+  };
+
+  return (
+    <div className="max-w-md bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+      <h2 className="font-semibold text-gray-800">Přidat novou modelku</h2>
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">Jméno *</label>
+        <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" />
+      </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">Status</label>
+        <Select value={form.status} onValueChange={v => setForm(p => ({ ...p, status: v }))}>
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="active">Aktivní</SelectItem>
+            <SelectItem value="inactive">Neaktivní</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">Poznámky</label>
+        <Input value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} placeholder="Interní poznámka" />
+      </div>
+      <Button onClick={handleSave} disabled={!form.name || saving} className="bg-indigo-600 hover:bg-indigo-700 w-full">
+        {done ? "✓ Uloženo!" : saving ? "Ukládám..." : "Vytvořit modelku"}
+      </Button>
+    </div>
+  );
+}
+
+function AddCustomerTab({ users }) {
+  const [form, setForm] = useState({ full_name: "", email: "", bank_name: "", bank_account_number: "", notes: "", status: "active", assigned_chatter: "" });
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    await base44.entities.Customer.create(form);
+    setSaving(false);
+    setDone(true);
+    setForm({ full_name: "", email: "", bank_name: "", bank_account_number: "", notes: "", status: "active", assigned_chatter: "" });
+    setTimeout(() => setDone(false), 2000);
+  };
+
+  return (
+    <div className="max-w-md bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+      <h2 className="font-semibold text-gray-800">Přidat nového zákazníka</h2>
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">Celé jméno *</label>
+        <Input value={form.full_name} onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))} placeholder="Jan Novák" />
+      </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">Email</label>
+        <Input value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="jan@example.com" />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Název banky</label>
+          <Input value={form.bank_name} onChange={e => setForm(p => ({ ...p, bank_name: e.target.value }))} />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Číslo účtu</label>
+          <Input value={form.bank_account_number} onChange={e => setForm(p => ({ ...p, bank_account_number: e.target.value }))} />
+        </div>
+      </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">Přiřazený chatter</label>
+        <Select value={form.assigned_chatter} onValueChange={v => setForm(p => ({ ...p, assigned_chatter: v }))}>
+          <SelectTrigger><SelectValue placeholder="Vybrat chattera" /></SelectTrigger>
+          <SelectContent>
+            {users.map(u => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">Poznámky</label>
+        <Input value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} />
+      </div>
+      <Button onClick={handleSave} disabled={!form.full_name || saving} className="bg-indigo-600 hover:bg-indigo-700 w-full">
+        {done ? "✓ Uloženo!" : saving ? "Ukládám..." : "Vytvořit zákazníka"}
+      </Button>
     </div>
   );
 }
