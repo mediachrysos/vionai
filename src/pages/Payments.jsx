@@ -179,10 +179,21 @@ export default function Payments({ currentUser }) {
         open={showForm}
         onClose={() => setShowForm(false)}
         onSave={saveMutation.mutateAsync}
+        onAddNewCustomer={handleAddNewCustomer}
         customers={customers}
         models={models}
         users={users}
         currentUser={currentUser}
+      />
+
+      <CustomerFormModal
+        open={showCustomerForm}
+        onClose={() => { setShowCustomerForm(false); setShowForm(true); }}
+        onSave={handleCustomerSave}
+        customer={{ full_name: newCustomerName }}
+        models={models}
+        users={users}
+        allCustomers={customers}
       />
     </div>
   );
