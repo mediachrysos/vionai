@@ -15,9 +15,9 @@ export default function LatestPayments({ payments }) {
           <p className="text-sm text-gray-400 text-center py-8">Zatím žádné platby</p>
         )}
         {recent.map(p => (
-          <div key={p.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors">
-            <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
-              <ArrowUpRight className="w-3.5 h-3.5 text-gray-400" />
+          <div key={p.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-indigo-50/40 transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
+              <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-800 truncate">{p.customer_name || "Zákazník"}</p>

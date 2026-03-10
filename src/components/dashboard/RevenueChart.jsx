@@ -25,8 +25,8 @@ export default function RevenueChart({ payments }) {
           <AreaChart data={last7Days} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
             <defs>
               <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#111827" stopOpacity={0.08} />
-                <stop offset="100%" stopColor="#111827" stopOpacity={0} />
+                <stop offset="0%" stopColor="#6366f1" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
@@ -56,11 +56,11 @@ export default function RevenueChart({ payments }) {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="#111827"
-              strokeWidth={1.5}
+              stroke="#6366f1"
+              strokeWidth={2}
               fill="url(#revGrad)"
               dot={false}
-              activeDot={{ r: 3, fill: "#111827" }}
+              activeDot={{ r: 4, fill: "#6366f1", strokeWidth: 0 }}
             />
           </AreaChart>
         </ResponsiveContainer>

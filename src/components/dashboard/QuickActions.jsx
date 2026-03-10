@@ -4,10 +4,10 @@ import { createPageUrl } from "@/utils";
 import { UserPlus, CreditCard, Bot, ListPlus } from "lucide-react";
 
 const actions = [
-  { label: "Přidat zákazníka", icon: UserPlus, page: "Customers", params: "?action=new" },
-  { label: "Přidat platbu", icon: CreditCard, page: "Payments", params: "?action=new" },
-  { label: "Přidat modelku", icon: Bot, page: "Models", params: "?action=new" },
-  { label: "Přidat úkol", icon: ListPlus, page: "Tasks", params: "?action=new" },
+  { label: "Přidat zákazníka", icon: UserPlus, page: "Customers", params: "?action=new", color: "bg-indigo-50 text-indigo-500 group-hover:bg-indigo-100" },
+  { label: "Přidat platbu", icon: CreditCard, page: "Payments", params: "?action=new", color: "bg-violet-50 text-violet-500 group-hover:bg-violet-100" },
+  { label: "Přidat modelku", icon: Bot, page: "Models", params: "?action=new", color: "bg-blue-50 text-blue-500 group-hover:bg-blue-100" },
+  { label: "Přidat úkol", icon: ListPlus, page: "Tasks", params: "?action=new", color: "bg-purple-50 text-purple-500 group-hover:bg-purple-100" },
 ];
 
 export default function QuickActions() {
@@ -17,12 +17,12 @@ export default function QuickActions() {
         <Link
           key={a.label}
           to={createPageUrl(a.page) + a.params}
-          className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all duration-150 group"
+          className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-gray-100 hover:border-indigo-100 hover:shadow-sm hover:shadow-indigo-50 transition-all duration-150 group"
         >
-          <div className="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-gray-100 flex items-center justify-center transition-colors flex-shrink-0">
-            <a.icon className="w-4 h-4 text-gray-500" />
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0 ${a.color}`}>
+            <a.icon className="w-4 h-4" />
           </div>
-          <span className="text-xs font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{a.label}</span>
+          <span className="text-xs font-medium text-gray-600 group-hover:text-indigo-700 transition-colors">{a.label}</span>
         </Link>
       ))}
     </div>
