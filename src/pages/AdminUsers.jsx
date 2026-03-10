@@ -247,6 +247,103 @@ function AddModelTab() {
   );
 }
 
+function BankAccountsTab() {
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({ name: "", account_number: "", bank_name: "", is_active: true });
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => { loadAccounts(); }, []);
+  const loadAccounts = async () => {
+    setLoading(true);
+    const data = await base44.entities.BankAccount.list("-created_date", 100);
+    setAccounts(data);
+    setLoading(false);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    await base44.entities.BankAccount.create(form);
+    setSaving(false);
+    setDone(true);
+    setForm({ name: "", account_number: "", bank_name: "", is_active: true });
+    loadAccounts();
+    setTimeout(() => setDone(false), 2000);
+  };
+
+  const toggleActive = async (acc) => {
+    await base44.entities.BankAccount.update(acc.id, { is_active: !acc.is_active });
+    loadAccounts();
+  };
+
+  const deleteAccount = async (id) => {
+    await base44.entities.BankAccount.delete(id);
+    loadAccounts();
+  };
+
+  return (
+    <div className="max-w-2xl space-y-6">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-teal-500 to-emerald-600 px-6 py-5">
+          <h2 className="text-lg font-bold text-white">Přidat bankovní účet</h2>
+          <p className="text-teal-100 text-sm mt-0.5">Účty budou dostupné při přidávání plateb</p>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-1.5">Název / Popis *</label>
+              <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="např. Hlavní účet" className="h-10" />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-1.5">Číslo účtu *</label>
+              <Input value={form.account_number} onChange={e => setForm(p => ({ ...p, account_number: e.target.value }))} placeholder="123456/0100" className="h-10" />
+            </div>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-1.5">Název banky</label>
+            <Input value={form.bank_name} onChange={e => setForm(p => ({ ...p, bank_name: e.target.value }))} placeholder="např. Česká spořitelna" className="h-10" />
+          </div>
+          <Button onClick={handleSave} disabled={!form.name || !form.account_number || saving} className="bg-teal-600 hover:bg-teal-700 w-full h-10 font-semibold">
+            <Plus className="w-4 h-4 mr-1" />
+            {done ? "✓ Účet přidán!" : saving ? "Ukládám..." : "Přidat účet"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Building2 className="w-4 h-4 text-gray-400" />
+          <h3 className="font-semibold text-gray-800 text-sm">Uložené účty ({accounts.length})</h3>
+        </div>
+        {loading ? <p className="text-sm text-gray-400 text-center py-4">Načítám...</p> : (
+          <div className="space-y-2">
+            {accounts.length === 0 && <p className="text-sm text-gray-400 text-center py-4">Zatím žádné účty</p>}
+            {accounts.map(a => (
+              <div key={a.id} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 hover:bg-gray-50">
+                <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center flex-shrink-0">
+                  <Building2 className="w-4 h-4 text-teal-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-800">{a.name}</p>
+                  <p className="text-xs text-gray-400">{a.account_number}{a.bank_name ? ` · ${a.bank_name}` : ""}</p>
+                </div>
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${a.is_active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
+                  {a.is_active ? "Aktivní" : "Neaktivní"}
+                </span>
+                <button onClick={() => toggleActive(a)} className="text-xs text-indigo-500 hover:underline">{a.is_active ? "Deaktivovat" : "Aktivovat"}</button>
+                <button onClick={() => deleteAccount(a.id)} className="text-gray-300 hover:text-red-400">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function AddCustomerTab({ users }) {
   const [form, setForm] = useState({ full_name: "", email: "", bank_name: "", bank_account_number: "", notes: "", status: "active", assigned_chatter: "" });
   const [saving, setSaving] = useState(false);
