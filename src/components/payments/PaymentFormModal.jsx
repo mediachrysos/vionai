@@ -10,7 +10,7 @@ import { Search, UserPlus } from "lucide-react";
 
 const quickAmounts = [300, 500, 1000, 1500, 2000];
 
-export default function PaymentFormModal({ open, onClose, onSave, customers, models, users, currentUser }) {
+export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers, models, users, currentUser }) {
   const [form, setForm] = useState({
     customer_id: "", customer_name: "", amount: "", service_type: "",
     model_id: "", model_name: "", chatter_email: "", chatter_name: "",
@@ -88,7 +88,7 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
                 className="pl-10"
               />
             </div>
-            {showCustomerDropdown && filteredCustomers.length > 0 && (
+            {showCustomerDropdown && customerSearch && (
               <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                 {filteredCustomers.map(c => (
                   <button
@@ -105,6 +105,20 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
                     </div>
                   </button>
                 ))}
+                {filteredCustomers.length === 0 && (
+                  <button
+                    onClick={() => { onAddNewCustomer && onAddNewCustomer(customerSearch); setShowCustomerDropdown(false); }}
+                    className="w-full text-left px-4 py-2.5 hover:bg-indigo-50 text-sm flex items-center gap-3 text-indigo-600 border-t border-slate-100"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center">
+                      <UserPlus className="w-3.5 h-3.5 text-indigo-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Přidat nového zákazníka</p>
+                      <p className="text-xs text-indigo-400">"{customerSearch}"</p>
+                    </div>
+                  </button>
+                )}
               </div>
             )}
           </div>
