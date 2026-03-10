@@ -75,9 +75,14 @@ export default function Customers({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
-        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm shadow-indigo-200">
-          <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowOnboarding(true)} className="border-indigo-200 text-indigo-600 hover:bg-indigo-50">
+            <Link2 className="w-4 h-4 mr-2" /> Onboarding odkaz
+          </Button>
+          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm shadow-indigo-200">
+            <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
+          </Button>
+        </div>
       </PageHeader>
 
       {/* Filters */}
