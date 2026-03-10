@@ -7,6 +7,7 @@ import { CreditCard, X } from "lucide-react";
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [paymentAlert, setPaymentAlert] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
