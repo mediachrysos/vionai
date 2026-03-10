@@ -15,6 +15,7 @@ const navItems = [
   { name: "Models", icon: Bot, page: "Models" },
   { name: "Payments", icon: CreditCard, page: "Payments" },
   { name: "Tasks", icon: ListTodo, page: "Tasks" },
+  { name: "Expenses", icon: Receipt, page: "Expenses" },
 ];
 
 const chatterNav = [
