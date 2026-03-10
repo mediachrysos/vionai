@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import PageHeader from "../components/ui-custom/PageHeader";
 import EmptyState from "../components/ui-custom/EmptyState";
 import PaymentFormModal from "../components/payments/PaymentFormModal";
+import CustomerFormModal from "../components/customers/CustomerFormModal";
 
 const statusColors = {
   completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
