@@ -32,25 +32,25 @@ export default function ExpenseFormModal({ open, onClose, onSave, expense, payme
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{expense ? "Edit Expense" : "Record Expense"}</DialogTitle>
+          <DialogTitle>{expense ? "Upravit výdaj" : "Zaznamenat výdaj"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div className="space-y-1">
-            <Label>Title *</Label>
-            <Input value={form.title} onChange={e => set("title", e.target.value)} placeholder="e.g. Meta Ads - March" required />
+            <Label>Název *</Label>
+            <Input value={form.title} onChange={e => set("title", e.target.value)} placeholder="např. Meta Ads - Březen" required />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label>Amount *</Label>
+              <Label>Částka *</Label>
               <Input type="number" min="0" step="0.01" value={form.amount} onChange={e => set("amount", e.target.value)} placeholder="0.00" required />
             </div>
             <div className="space-y-1">
-              <Label>Date</Label>
+              <Label>Datum</Label>
               <Input type="date" value={form.expense_date} onChange={e => set("expense_date", e.target.value)} />
             </div>
           </div>
           <div className="space-y-1">
-            <Label>Category</Label>
+            <Label>Kategorie</Label>
             <Select value={form.category} onValueChange={v => set("category", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -59,11 +59,11 @@ export default function ExpenseFormModal({ open, onClose, onSave, expense, payme
             </Select>
           </div>
           <div className="space-y-1">
-            <Label>Link to Payment (optional)</Label>
+            <Label>Propojit s platbou (volitelné)</Label>
             <Select value={form.linked_payment_id || "none"} onValueChange={v => set("linked_payment_id", v === "none" ? "" : v)}>
-              <SelectTrigger><SelectValue placeholder="No linked payment" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Bez propojené platby" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">— None —</SelectItem>
+                <SelectItem value="none">— Žádná —</SelectItem>
                 {payments.slice(0, 50).map(p => (
                   <SelectItem key={p.id} value={p.id}>
                     {p.customer_name || "Customer"} — ${p.amount}
@@ -73,14 +73,14 @@ export default function ExpenseFormModal({ open, onClose, onSave, expense, payme
             </Select>
           </div>
           <div className="space-y-1">
-            <Label>Note</Label>
-            <Textarea value={form.note} onChange={e => set("note", e.target.value)} rows={2} placeholder="Optional note..." />
+            <Label>Poznámka</Label>
+            <Textarea value={form.note} onChange={e => set("note", e.target.value)} rows={2} placeholder="Volitelná poznámka..." />
           </div>
           <div className="flex justify-end gap-2 pt-1">
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={onClose}>Zrušit</Button>
             <Button type="submit" disabled={loading} className="bg-indigo-600 hover:bg-indigo-700">
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {expense ? "Save Changes" : "Record Expense"}
+              {expense ? "Uložit změny" : "Zaznamenat"}
             </Button>
           </div>
         </form>
