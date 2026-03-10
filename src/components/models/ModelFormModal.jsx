@@ -35,24 +35,24 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
-        <DialogHeader><DialogTitle>{model ? "Edit Model" : "Add Model"}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{model ? "Upravit modelku" : "Přidat modelku"}</DialogTitle></DialogHeader>
         <div className="space-y-4 mt-2">
           <div>
-            <Label>Model Name *</Label>
-            <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Model name" />
+            <Label>Jméno modelky *</Label>
+            <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Jméno modelky" />
           </div>
           <div>
             <Label>Status</Label>
             <Select value={form.status} onValueChange={v => setForm(prev => ({ ...prev, status: v }))}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="active">Aktivní</SelectItem>
+                <SelectItem value="inactive">Neaktivní</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label>Assigned Chatters</Label>
+            <Label>Přiřazení chatteři</Label>
             <div className="flex flex-wrap gap-2 mt-2">
               {users?.map(u => (
                 <Badge
@@ -68,13 +68,13 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
             </div>
           </div>
           <div>
-            <Label>Notes</Label>
+            <Label>Poznámky</Label>
             <Textarea value={form.notes} onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))} rows={3} />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button variant="outline" onClick={onClose}>Zrušit</Button>
             <Button onClick={handleSubmit} disabled={!form.name || saving} className="bg-indigo-600 hover:bg-indigo-700">
-              {saving ? "Saving..." : model ? "Update" : "Create"}
+              {saving ? "Ukládám..." : model ? "Uložit" : "Vytvořit"}
             </Button>
           </div>
         </div>
