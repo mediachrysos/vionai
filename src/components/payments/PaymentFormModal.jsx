@@ -71,12 +71,12 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>Add Payment</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>Přidat platbu</DialogTitle></DialogHeader>
 
         <div className="space-y-4 mt-2">
           {/* Customer Search */}
           <div className="relative">
-            <Label>Customer *</Label>
+            <Label>Zákazník *</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
@@ -84,7 +84,7 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
                 value={customerSearch}
                 onChange={e => { setCustomerSearch(e.target.value); setShowCustomerDropdown(true); }}
                 onFocus={() => customerSearch && setShowCustomerDropdown(true)}
-                placeholder="Search customer by name or email..."
+                placeholder="Hledat zákazníka podle jména nebo emailu..."
                 className="pl-10"
               />
             </div>
@@ -101,7 +101,7 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
                     </div>
                     <div>
                       <p className="font-medium text-slate-700">{c.full_name}</p>
-                      <p className="text-xs text-slate-400">{c.email || "No email"}</p>
+                      <p className="text-xs text-slate-400">{c.email || "Bez emailu"}</p>
                     </div>
                   </button>
                 ))}
@@ -111,7 +111,7 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
 
           {/* Quick Amount */}
           <div>
-            <Label>Amount *</Label>
+            <Label>Částka *</Label>
             <div className="flex flex-wrap gap-2 mb-2">
               {quickAmounts.map(a => (
                 <button
@@ -132,15 +132,15 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
               type="number"
               value={form.amount}
               onChange={e => setForm(prev => ({ ...prev, amount: e.target.value }))}
-              placeholder="Custom amount"
+              placeholder="Vlastní částka"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Model</Label>
+              <Label>Modelka</Label>
               <Select value={form.model_id} onValueChange={handleModelChange}>
-                <SelectTrigger><SelectValue placeholder="Select model" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Vybrat modelku" /></SelectTrigger>
                 <SelectContent>
                   {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
                 </SelectContent>
@@ -152,7 +152,7 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
                 const u = users.find(x => x.email === v);
                 setForm(prev => ({ ...prev, chatter_email: v, chatter_name: u?.full_name || v }));
               }}>
-                <SelectTrigger><SelectValue placeholder="Select chatter" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Vybrat chattera" /></SelectTrigger>
                 <SelectContent>
                   {users.map(u => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
                 </SelectContent>
@@ -162,33 +162,33 @@ export default function PaymentFormModal({ open, onClose, onSave, customers, mod
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Service Type</Label>
-              <Input value={form.service_type} onChange={e => setForm(prev => ({ ...prev, service_type: e.target.value }))} placeholder="e.g. Chat session" />
+              <Label>Typ služby</Label>
+              <Input value={form.service_type} onChange={e => setForm(prev => ({ ...prev, service_type: e.target.value }))} placeholder="např. Chat session" />
             </div>
             <div>
-              <Label>Payment Date</Label>
+              <Label>Datum platby</Label>
               <Input type="date" value={form.payment_date} onChange={e => setForm(prev => ({ ...prev, payment_date: e.target.value }))} />
             </div>
           </div>
 
           <div>
-            <Label>Destination Account</Label>
-            <Input value={form.destination_account} onChange={e => setForm(prev => ({ ...prev, destination_account: e.target.value }))} placeholder="Bank account / payment destination" />
+            <Label>Cílový účet</Label>
+            <Input value={form.destination_account} onChange={e => setForm(prev => ({ ...prev, destination_account: e.target.value }))} placeholder="Bankovní účet / cíl platby" />
           </div>
 
           <div>
-            <Label>Note</Label>
+            <Label>Poznámka</Label>
             <Textarea value={form.note} onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))} rows={2} />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button variant="outline" onClick={onClose}>Zrušit</Button>
             <Button
               onClick={handleSubmit}
               disabled={!form.customer_id || !form.amount || saving}
               className="bg-emerald-600 hover:bg-emerald-700"
             >
-              {saving ? "Saving..." : "Add Payment"}
+              {saving ? "Ukládám..." : "Přidat platbu"}
             </Button>
           </div>
         </div>
