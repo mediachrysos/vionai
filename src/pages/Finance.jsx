@@ -12,10 +12,6 @@ export default function Finance({ currentUser }) {
     queryKey: ["payments"],
     queryFn: () => base44.entities.Payment.list("-created_date", 500),
   });
-  const { data: models = [] } = useQuery({
-    queryKey: ["models"],
-    queryFn: () => base44.entities.Model.list(),
-  });
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses"],
     queryFn: () => base44.entities.Expense.list("-expense_date", 500),
