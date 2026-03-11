@@ -1,0 +1,60 @@
+import React from "react";
+import { CreditCard } from "lucide-react";
+import { format } from "date-fns";
+
+export default function TodayPaymentsWidget({ payments }) {
+  const today = new Date().toISOString().split("T")[0];
+  const todayPayments = payments
+    .filter((p) => (p.payment_date || p.created_date?.split("T")[0]) === today)
+    .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+
+  const total = todayPayments.reduce((s, p) => s + (p.amount || 0), 0);
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+            <CreditCard className="w-3.5 h-3.5 text-emerald-500" />
+          </div>
+          <h3 className="text-sm font-semibold text-gray-800">Dnešní platby</h3>
+        </div>
+        {todayPayments.length > 0 && (
+          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+            {total.toLocaleString()} Kč
+          </span>
+        )}
+      </div>
+
+      {todayPayments.length === 0 ? (
+        <p className="text-xs text-gray-400 text-center py-6">Dnes žádné platby</p>
+      ) : (
+        <div className="space-y-2 max-h-56 overflow-y-auto">
+          {todayPayments.map((p) => (
+            <div
+              key={p.id}
+              className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
+                  {p.customer_name?.[0]?.toUpperCase() || "?"}
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-800">
+                    {p.customer_name || "—"}
+                  </p>
+                  <p className="text-[11px] text-gray-400">
+                    {p.model_name || p.chatter_name || "—"}
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-gray-900">
+                {(p.amount || 0).toLocaleString()} Kč
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
