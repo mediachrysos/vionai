@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, CreditCard, Filter } from "lucide-react";
+import { Plus, Search, CreditCard, Filter, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import PageHeader from "../components/ui-custom/PageHeader";
@@ -41,6 +41,20 @@ export default function Payments({ currentUser }) {
   const { data: customers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list("-created_date", 500) });
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list() });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Payment.delete(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["payments"] });
+      qc.invalidateQueries({ queryKey: ["customers"] });
+    },
+  });
+
+  const handleDelete = (p) => {
+    if (window.confirm(`Opravdu chcete smazat platbu od "${p.customer_name || "?"}" (${(p.amount || 0).toLocaleString()} Kč)?`)) {
+      deleteMutation.mutate(p.id);
+    }
+  };
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
