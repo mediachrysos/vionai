@@ -24,7 +24,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
       setForm({
         full_name: "", email: "", bank_name: "", bank_account_number: "",
         date_of_birth: "", assigned_model: "", assigned_chatter: "",
-        notes: "", status: "active", tags: []
+        notes: "", status: "active", tags: [], pay_day_of_month: ""
       });
     }
     setDuplicate(null);
