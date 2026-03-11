@@ -36,11 +36,6 @@ export default function Dashboard({ currentUser }) {
         <TodayChatterStats payments={payments} />
       </div>
 
-      {/* Daily chatter report with date picker */}
-      <div className="mt-4">
-        <ChatterDailyReport payments={payments} currentUser={currentUser} users={users} />
-      </div>
-
       {/* Bottom section: Today payments + Recent customers */}
       <div className="grid lg:grid-cols-2 gap-4 mt-4">
         <TodayPaymentsWidget payments={payments} />
