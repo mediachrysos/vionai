@@ -47,7 +47,7 @@ export default function ExpenseFormModal({ open, onClose, onSave, expense, payme
             </div>
             <div className="space-y-1">
               <Label>Datum</Label>
-              <Input type="date" value={form.expense_date} onChange={e => set("expense_date", e.target.value)} />
+              <DatePicker value={form.expense_date} onChange={v => set("expense_date", v)} />
             </div>
           </div>
           <div className="space-y-1">

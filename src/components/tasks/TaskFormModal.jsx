@@ -83,7 +83,7 @@ export default function TaskFormModal({ open, onClose, onSave, task, users, curr
             </div>
             <div>
               <Label>Termín</Label>
-              <Input type="date" value={form.due_date} onChange={e => setForm(prev => ({ ...prev, due_date: e.target.value }))} />
+              <DatePicker value={form.due_date} onChange={v => setForm(prev => ({ ...prev, due_date: v }))} />
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">

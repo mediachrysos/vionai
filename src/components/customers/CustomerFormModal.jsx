@@ -94,7 +94,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Datum narození</Label>
-              <Input type="date" value={form.date_of_birth} onChange={e => handleChange("date_of_birth", e.target.value)} />
+              <DatePicker value={form.date_of_birth} onChange={v => handleChange("date_of_birth", v)} />
             </div>
             <div>
               <Label>Den výplaty (1–31)</Label>

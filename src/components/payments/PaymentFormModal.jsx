@@ -198,7 +198,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             </div>
             <div>
               <Label>Datum platby</Label>
-              <Input type="date" value={form.payment_date} onChange={e => setForm(prev => ({ ...prev, payment_date: e.target.value }))} />
+              <DatePicker value={form.payment_date} onChange={v => setForm(prev => ({ ...prev, payment_date: v }))} />
             </div>
           </div>
 
