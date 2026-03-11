@@ -54,11 +54,11 @@ import CustomerOnboarding from './pages/CustomerOnboarding';
 import Customers from './pages/Customers';
 import Dashboard from './pages/Dashboard';
 import Expenses from './pages/Expenses';
+import Finance from './pages/Finance';
 import ModelDetail from './pages/ModelDetail';
 import Models from './pages/Models';
 import Payments from './pages/Payments';
 import Tasks from './pages/Tasks';
-import Finance from './pages/Finance';
 import __Layout from './Layout.jsx';
 
 
@@ -70,11 +70,11 @@ export const PAGES = {
     "Customers": Customers,
     "Dashboard": Dashboard,
     "Expenses": Expenses,
+    "Finance": Finance,
     "ModelDetail": ModelDetail,
     "Models": Models,
     "Payments": Payments,
     "Tasks": Tasks,
-    "Finance": Finance,
 }
 
 export const pagesConfig = {
