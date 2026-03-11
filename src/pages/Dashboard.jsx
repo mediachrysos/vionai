@@ -6,7 +6,6 @@ import TodayNotesWidget from "../components/dashboard/TodayNotesWidget";
 import TodayPaymentsWidget from "../components/dashboard/TodayPaymentsWidget";
 import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget";
 import PaydayWidget from "../components/dashboard/PaydayWidget";
-import ChatterDailyReport from "../components/dashboard/ChatterDailyReport.jsx";
 
 export default function Dashboard({ currentUser }) {
   const { data: payments = [] } = useQuery({
