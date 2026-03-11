@@ -182,7 +182,15 @@ export default function Payments({ currentUser }) {
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-900">
                       {(p.amount || 0).toLocaleString()} Kč
                     </td>
-                  </motion.tr>
+                    <td className="px-5 py-3.5 text-right">
+                      <button
+                        onClick={() => handleDelete(p)}
+                        className="text-gray-300 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                    </motion.tr>
                 ))}
               </tbody>
             </table>
