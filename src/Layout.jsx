@@ -7,6 +7,11 @@ import PaymentFormModal from "./components/payments/PaymentFormModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function Layout({ children, currentPageName }) {
+  // CustomerOnboarding is a public page — skip auth entirely
+  if (currentPageName === "CustomerOnboarding") {
+    return <>{children}</>;
+  }
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentAlert, setPaymentAlert] = useState(null);
