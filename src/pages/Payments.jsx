@@ -149,7 +149,8 @@ export default function Payments({ currentUser }) {
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
-                </tr>
+                  <th className="px-5 py-3"></th>
+                  </tr>
               </thead>
               <tbody>
                 {filtered.map((p, i) => (
