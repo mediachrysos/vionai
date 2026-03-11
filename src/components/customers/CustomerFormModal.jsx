@@ -90,9 +90,22 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
               <Input value={form.bank_account_number} onChange={e => handleChange("bank_account_number", e.target.value)} />
             </div>
           </div>
-          <div>
-            <Label>Datum narození</Label>
-            <Input type="date" value={form.date_of_birth} onChange={e => handleChange("date_of_birth", e.target.value)} />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Datum narození</Label>
+              <Input type="date" value={form.date_of_birth} onChange={e => handleChange("date_of_birth", e.target.value)} />
+            </div>
+            <div>
+              <Label>Den výplaty (1–31)</Label>
+              <Input
+                type="number"
+                min={1}
+                max={31}
+                value={form.pay_day_of_month || ""}
+                onChange={e => handleChange("pay_day_of_month", e.target.value ? parseInt(e.target.value) : "")}
+                placeholder="např. 15"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
