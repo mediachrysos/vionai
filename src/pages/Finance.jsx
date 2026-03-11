@@ -6,6 +6,7 @@ import StatCard from "../components/ui-custom/StatCard";
 import RevenueChart from "../components/dashboard/RevenueChart";
 import GoalWidget from "../components/dashboard/GoalWidget";
 import PageHeader from "../components/ui-custom/PageHeader";
+import FinanceSheetTable from "../components/finance/FinanceSheetTable";
 
 export default function Finance({ currentUser }) {
   const { data: payments = [] } = useQuery({
