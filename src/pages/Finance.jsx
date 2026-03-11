@@ -100,9 +100,7 @@ export default function Finance({ currentUser }) {
         <GoalWidget monthlyRevenue={monthRev} />
       </div>
 
-      <div className="mt-4">
-        <RevenueByModel payments={payments} models={models} />
-      </div>
+
     </div>
   );
 }
