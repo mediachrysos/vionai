@@ -14,6 +14,7 @@ const navItems = [
   { name: "Zákazníci", icon: Users, page: "Customers" },
   { name: "Modelky", icon: Bot, page: "Models" },
   { name: "Platby", icon: CreditCard, page: "Payments" },
+  { name: "Finance", icon: BarChart2, page: "Finance" },
   { name: "Admin Portál", icon: ShieldCheck, page: "AdminUsers" },
 ];
 
