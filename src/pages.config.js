@@ -58,6 +58,7 @@ import ModelDetail from './pages/ModelDetail';
 import Models from './pages/Models';
 import Payments from './pages/Payments';
 import Tasks from './pages/Tasks';
+import Finance from './pages/Finance';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "Models": Models,
     "Payments": Payments,
     "Tasks": Tasks,
+    "Finance": Finance,
 }
 
 export const pagesConfig = {
