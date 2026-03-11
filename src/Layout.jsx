@@ -10,6 +10,33 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentAlert, setPaymentAlert] = useState(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const qc = useQueryClient();
+
+  const { data: customers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list("-created_date", 500), enabled: !!user });
+  const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list(), enabled: !!user });
+  const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list(), enabled: !!user });
+
+  const saveMutation = useMutation({
+    mutationFn: async (data) => {
+      const payment = await base44.entities.Payment.create(data);
+      if (data.customer_id) {
+        const cust = customers.find(c => c.id === data.customer_id);
+        if (cust) {
+          await base44.entities.Customer.update(data.customer_id, {
+            total_spent: (cust.total_spent || 0) + (data.amount || 0),
+            payment_count: (cust.payment_count || 0) + 1,
+          });
+        }
+      }
+      return payment;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["payments"] });
+      qc.invalidateQueries({ queryKey: ["customers"] });
+      setShowPaymentForm(false);
+    },
+  });
 
   useEffect(() => {
     const loadUser = async () => {
