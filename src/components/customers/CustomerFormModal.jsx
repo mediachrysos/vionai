@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
+import DatePicker from "@/components/ui-custom/DatePicker";
 
 export default function CustomerFormModal({ open, onClose, onSave, customer, models, users, allCustomers }) {
   const [form, setForm] = useState({
