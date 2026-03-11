@@ -117,13 +117,13 @@ export default function CustomerOnboarding() {
           {/* Date of birth */}
           <div>
             <Label className="text-sm font-medium text-gray-700">Datum narození *</Label>
-            <Input
-              type="date"
-              value={dateOfBirth}
-              onChange={e => { setDateOfBirth(e.target.value); setDobError(""); }}
-              required
-              className="mt-1"
-            />
+            <div className="mt-1">
+              <DatePicker
+                value={dateOfBirth}
+                onChange={(v) => { setDateOfBirth(v || ""); setDobError(""); }}
+                placeholder="Vyberte datum narození"
+              />
+            </div>
             {dobError && <p className="text-xs text-red-500 mt-1">{dobError}</p>}
           </div>
 
