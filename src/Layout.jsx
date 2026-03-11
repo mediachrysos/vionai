@@ -118,6 +118,29 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </main>
 
+      {/* Global FAB - Add payment */}
+      {user && (
+        <motion.button
+          onClick={() => setShowPaymentForm(true)}
+          whileHover={{ scale: 1.07 }}
+          whileTap={{ scale: 0.95 }}
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 shadow-lg shadow-indigo-300 flex items-center justify-center text-white hover:shadow-xl hover:shadow-indigo-300 transition-shadow"
+        >
+          <Plus className="w-6 h-6" />
+        </motion.button>
+      )}
+
+      {/* Global payment form modal */}
+      <PaymentFormModal
+        open={showPaymentForm}
+        onClose={() => setShowPaymentForm(false)}
+        onSave={saveMutation.mutateAsync}
+        customers={customers}
+        models={models}
+        users={users}
+        currentUser={user}
+      />
+
       {/* New payment alert */}
       <AnimatePresence>
         {paymentAlert && (
