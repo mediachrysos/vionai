@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import Sidebar from "./components/layout/Sidebar";
 import { AnimatePresence, motion } from "framer-motion";
-import { CreditCard, X } from "lucide-react";
+import { CreditCard, X, Plus } from "lucide-react";
+import PaymentFormModal from "./components/payments/PaymentFormModal";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
