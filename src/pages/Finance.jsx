@@ -97,6 +97,7 @@ export default function Finance({ currentUser }) {
         <GoalWidget monthlyRevenue={monthRev} />
       </div>
 
+      <FinanceSheetTable />
 
     </div>
   );
