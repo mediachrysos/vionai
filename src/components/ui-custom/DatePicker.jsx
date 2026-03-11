@@ -1,10 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format, getDaysInMonth, startOfMonth, getDay, addMonths, subMonths, isToday, parseISO } from "date-fns";
+import { getDaysInMonth, startOfMonth, getDay, format } from "date-fns";
 import { cs } from "date-fns/locale";
 
 const DAYS = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
+
+const MONTHS = [
+  "Leden","Únor","Březen","Duben","Květen","Červen",
+  "Červenec","Srpen","Září","Říjen","Listopad","Prosinec"
+];
+
+function getYearRange(centerYear) {
+  const start = centerYear - 80;
+  const end = centerYear + 5;
+  const years = [];
+  for (let y = end; y >= start; y--) years.push(y);
+  return years;
+}
 
 export default function DatePicker({ value, onChange, placeholder = "Vybrat datum", max }) {
   const [open, setOpen] = useState(false);
@@ -24,10 +37,9 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
   const daysInMonth = getDaysInMonth(viewDate);
-  // getDay returns 0=Sun, we want 0=Mon
   const firstDayOfWeek = (getDay(startOfMonth(viewDate)) + 6) % 7;
-
   const maxDate = max ? new Date(max) : null;
+  const years = getYearRange(year);
 
   const selectDay = (day) => {
     const d = new Date(year, month, day);
@@ -80,22 +92,40 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
 
       {open && (
         <div className="absolute z-50 mt-1 bg-white border border-gray-200 rounded-2xl shadow-xl p-4 w-72 left-0">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-3">
+          {/* Month + Year selectors */}
+          <div className="flex items-center gap-2 mb-3">
             <button
               type="button"
-              onClick={() => setViewDate(subMonths(viewDate, 1))}
-              className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
+              onClick={() => setViewDate(new Date(year, month - 1, 1))}
+              className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center"
             >
               <ChevronLeft className="w-4 h-4 text-gray-600" />
             </button>
-            <span className="text-sm font-semibold text-gray-800">
-              {format(viewDate, "LLLL yyyy", { locale: cs })}
-            </span>
+
+            <select
+              value={month}
+              onChange={e => setViewDate(new Date(year, parseInt(e.target.value), 1))}
+              className="flex-1 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-300 cursor-pointer"
+            >
+              {MONTHS.map((m, i) => (
+                <option key={i} value={i}>{m}</option>
+              ))}
+            </select>
+
+            <select
+              value={year}
+              onChange={e => setViewDate(new Date(parseInt(e.target.value), month, 1))}
+              className="w-20 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-300 cursor-pointer"
+            >
+              {years.map(y => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+
             <button
               type="button"
-              onClick={() => setViewDate(addMonths(viewDate, 1))}
-              className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
+              onClick={() => setViewDate(new Date(year, month + 1, 1))}
+              className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center"
             >
               <ChevronRight className="w-4 h-4 text-gray-600" />
             </button>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MessageSquare, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { subDays, addDays, format } from "date-fns";
+import DatePicker from "@/components/ui-custom/DatePicker";
 
 export default function TodayChatterStats({ payments }) {
   const todayStr = new Date().toISOString().split("T")[0];
