@@ -85,11 +85,9 @@ export default function TodayNotesWidget({ currentUser }) {
             </div>
             <div>
               <label className="text-xs font-medium text-gray-600 block mb-1">Datum</label>
-              <Input
-                type="date"
+              <DatePicker
                 value={form.note_date}
-                onChange={(e) => setForm((p) => ({ ...p, note_date: e.target.value }))}
-                className="h-8 text-sm"
+                onChange={(v) => setForm((p) => ({ ...p, note_date: v }))}
               />
             </div>
           </div>

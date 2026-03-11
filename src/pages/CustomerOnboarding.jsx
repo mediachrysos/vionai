@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle2, XCircle, Loader2, ScrollText } from "lucide-react";
+import DatePicker from "@/components/ui-custom/DatePicker";
 
 export default function CustomerOnboarding() {
   const urlParams = new URLSearchParams(window.location.search);

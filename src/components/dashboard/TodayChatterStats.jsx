@@ -44,13 +44,13 @@ export default function TodayChatterStats({ payments }) {
           <button onClick={prevDay} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
             <ChevronLeft className="w-4 h-4 text-gray-500" />
           </button>
-          <input
-            type="date"
-            value={selectedDate}
-            max={todayStr}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-300"
-          />
+          <div className="w-40">
+            <DatePicker
+              value={selectedDate}
+              onChange={(v) => v && setSelectedDate(v)}
+              max={todayStr}
+            />
+          </div>
           <button onClick={nextDay} disabled={isToday} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-30">
             <ChevronRight className="w-4 h-4 text-gray-500" />
           </button>
