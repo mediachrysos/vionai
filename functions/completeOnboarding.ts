@@ -3,9 +3,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { token, date_of_birth, terms_accepted } = await req.json();
+    const { token, terms_accepted } = await req.json();
 
-    if (!token || !date_of_birth || !terms_accepted) {
+    if (!token || !terms_accepted) {
       return Response.json({ error: "Chybí povinné údaje." }, { status: 400 });
     }
 
