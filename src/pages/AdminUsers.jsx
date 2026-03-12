@@ -18,6 +18,7 @@ export default function AdminUsers({ currentUser }) {
   const [models, setModels] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
 
   // Collapsible sections
   const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false });
@@ -41,6 +42,12 @@ export default function AdminUsers({ currentUser }) {
   const updateUser = async (userId, changes) => {
     await base44.entities.User.update(userId, changes);
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, ...changes } : u));
+  };
+
+  const deleteUser = async (userId, userName) => {
+    if (!window.confirm(`Opravdu smazat účet uživatele "${userName}"? Tato akce je nevratná a uživatel se nebude moct přihlásit.`)) return;
+    await base44.entities.User.delete(userId);
+    setUsers(prev => prev.filter(u => u.id !== userId));
   };
 
   if (currentUser?.role !== "admin") {
@@ -113,8 +120,15 @@ export default function AdminUsers({ currentUser }) {
 
       {/* ── SECTION: Zákazníci ── */}
       <Section label="Přidat zákazníka" icon={<span className="text-sm">👤</span>} open={openSections.customers} onToggle={() => toggle("customers")}>
-        <AddCustomerInline users={users} />
+        <AddCustomerInline users={users} onGenerateLink={() => setShowOnboardingModal(true)} />
       </Section>
+
+      <OnboardingLinkModal
+        open={showOnboardingModal}
+        onClose={() => setShowOnboardingModal(false)}
+        models={models}
+        users={users}
+      />
 
       {/* ── SECTION: Bankovní účty ── */}
       <Section label="Bankovní účty" icon={<Building2 className="w-4 h-4" />} open={openSections.accounts} onToggle={() => toggle("accounts")}>
