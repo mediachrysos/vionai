@@ -31,6 +31,7 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentAlert, setPaymentAlert] = useState(null);
+  const [customerAlert, setCustomerAlert] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const qc = useQueryClient();
 
