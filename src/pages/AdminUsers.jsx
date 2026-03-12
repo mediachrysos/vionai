@@ -3,7 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Trash2, Building2, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Trash2, Building2, Plus, ChevronDown, ChevronUp, Link2 } from "lucide-react";
+import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import AdminPayments from "../components/admin/AdminPayments";
 
 const statusConfig = {

@@ -44,6 +44,16 @@ export default function Models({ currentUser }) {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["models"] }); setShowForm(false); setEditing(null); },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Model.delete(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["models"] }),
+  });
+
+  const handleDelete = (e, m) => {
+    e.stopPropagation();
+    if (window.confirm(`Opravdu smazat modelku "${m.name}"?`)) deleteMutation.mutate(m.id);
+  };
+
   const filtered = models.filter(m => !search || m.name?.toLowerCase().includes(search.toLowerCase()));
 
   // Calc revenue per model
