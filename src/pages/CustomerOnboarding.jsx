@@ -98,21 +98,8 @@ export default function CustomerOnboarding() {
             </div>
           </div>
 
-          {/* Date of birth */}
-          <div>
-            <Label className="text-sm font-medium text-gray-700">Datum narození *</Label>
-            <div className="mt-1">
-              <DatePicker
-                value={dateOfBirth}
-                onChange={(v) => { setDateOfBirth(v || ""); setDobError(""); }}
-                placeholder="Vyberte datum narození"
-              />
-            </div>
-            {dobError && <p className="text-xs text-red-500 mt-1">{dobError}</p>}
-          </div>
-
           {/* GDPR */}
-          <div className="flex items-start gap-3 bg-blue-50 rounded-lg p-4 border border-blue-100">
+          <div className="flex items-start gap-3 bg-blue-50 rounded-lg p-3 border border-blue-100">
             <input
               type="checkbox"
               id="gdpr"
@@ -120,13 +107,13 @@ export default function CustomerOnboarding() {
               onChange={e => setGdprAccepted(e.target.checked)}
               className="mt-0.5 w-4 h-4 rounded accent-indigo-600 cursor-pointer flex-shrink-0"
             />
-            <label htmlFor="gdpr" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
-              Souhlasím se zpracováním osobních údajů v souladu s GDPR. Mé osobní údaje (jméno, datum narození, bankovní údaje) budou zpracovány výhradně za účelem poskytování dohodnutých služeb a nebudou předány třetím stranám bez mého souhlasu.
+            <label htmlFor="gdpr" className="text-xs text-gray-600 leading-relaxed cursor-pointer">
+              Souhlasím se zpracováním osobních údajů dle GDPR za účelem poskytování dohodnutých služeb. Data nebudou předána třetím stranám.
             </label>
           </div>
 
           {/* Terms */}
-          <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-4 border border-gray-100">
+          <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-3 border border-gray-100">
             <input
               type="checkbox"
               id="terms"
@@ -135,16 +122,16 @@ export default function CustomerOnboarding() {
               className="mt-0.5 w-4 h-4 rounded accent-indigo-600 cursor-pointer flex-shrink-0"
             />
             <div className="flex-1">
-              <label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
-                Souhlasím s podmínkami chatovacích služeb a beru na vědomí, že mé osobní údaje budou zpracovány v souladu se zásadami ochrany osobních údajů.
+              <label htmlFor="terms" className="text-xs text-gray-600 leading-relaxed cursor-pointer">
+                Souhlasím s podmínkami chatovacích služeb a zásadami ochrany osobních údajů.{" "}
+                <button
+                  type="button"
+                  onClick={() => setShowTerms(true)}
+                  className="inline-flex items-center gap-0.5 text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
+                >
+                  <ScrollText className="w-3 h-3" /> Přečíst
+                </button>
               </label>
-              <button
-                type="button"
-                onClick={() => setShowTerms(true)}
-                className="mt-1 inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 underline underline-offset-2"
-              >
-                <ScrollText className="w-3 h-3" /> Přečíst podmínky
-              </button>
             </div>
           </div>
 
