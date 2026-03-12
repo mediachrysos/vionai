@@ -308,8 +308,10 @@ export default function FinanceSheetTable() {
             </tr>
           </thead>
           <tbody>
-            {/* TOTALS ROW - pinned at top under headers */}
+            {/* TOTALS ROW */}
             <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-indigo-50/30" textClass="text-xs font-bold" />
+            {/* AVERAGE ROW */}
+            <SummaryRow label="PRŮMĚR / den" totals={averages} chatters={chatters} bg="bg-gray-50/80" textClass="text-xs font-medium" />
 
             {rows.map(row => {
               const isToday = row.dateStr === today;
