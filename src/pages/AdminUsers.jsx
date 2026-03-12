@@ -31,7 +31,8 @@ export default function AdminUsers({ currentUser }) {
   };
 
   useEffect(() => {
-    if (currentUser?.role !== "admin") return;
+    if (!currentUser) return;
+    if (currentUser?.role !== "admin") { setLoading(false); return; }
     Promise.all([
       base44.entities.User.list("-created_date", 100),
       base44.entities.Model.list(),
