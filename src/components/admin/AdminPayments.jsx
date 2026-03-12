@@ -55,22 +55,33 @@ export default function AdminPayments() {
     setPayments(prev => prev.filter(p => p.id !== id));
   };
 
-  const filtered = payments.filter(p =>
-    !search ||
-    p.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
-    p.model_name?.toLowerCase().includes(search.toLowerCase()) ||
-    p.chatter_name?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = payments.filter(p => {
+    const matchSearch = !search ||
+      p.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.model_name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.chatter_name?.toLowerCase().includes(search.toLowerCase());
+    const matchDate = !dateFilter || (p.payment_date || p.created_date?.split("T")[0]) === dateFilter;
+    return matchSearch && matchDate;
+  });
 
   const total = filtered.reduce((s, p) => s + (p.amount || 0), 0);
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="relative flex-1 min-w-[180px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat platby..." className="pl-10" />
         </div>
+        <Input
+          type="date"
+          value={dateFilter}
+          onChange={e => setDateFilter(e.target.value)}
+          className="w-40 h-9 text-sm"
+        />
+        {dateFilter && (
+          <button onClick={() => setDateFilter("")} className="text-xs text-gray-400 hover:text-gray-600 underline">Zrušit filtr</button>
+        )}
         <span className="text-sm text-gray-500">{filtered.length} plateb · <strong>{total.toLocaleString()} Kč</strong></span>
       </div>
 
