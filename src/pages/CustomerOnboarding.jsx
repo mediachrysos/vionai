@@ -5,20 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle2, XCircle, Loader2, ScrollText } from "lucide-react";
-import DatePicker from "@/components/ui-custom/DatePicker";
-
 export default function CustomerOnboarding() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("token");
   const name = urlParams.get("name");
 
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [gdprAccepted, setGdprAccepted] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error | invalid
   const [errorMsg, setErrorMsg] = useState("");
-  const [dobError, setDobError] = useState("");
 
   useEffect(() => {
     if (!token) setStatus("invalid");
