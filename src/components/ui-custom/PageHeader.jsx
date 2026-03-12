@@ -14,6 +14,8 @@ export default function PageHeader({ title, subtitle, children, goalCurrent, goa
         {children && <div className="flex items-center gap-2 flex-wrap">{children}</div>}
       </div>
       {showGoal && (
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Měsíční cíl</span>
         <div className="flex items-center gap-3">
           <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
             <div
