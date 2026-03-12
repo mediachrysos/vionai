@@ -207,16 +207,9 @@ function UserRow({ user, onUpdate, models }) {
               Schválit
             </Button>
           )}
-          {status !== "blocked" && (
-            <Button size="sm" variant="outline" className="h-8 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3 rounded-lg" onClick={() => onUpdate(user.id, { account_status: "blocked" })}>
-              Blokovat
-            </Button>
-          )}
-          {status === "blocked" && (
-            <Button size="sm" variant="outline" className="h-8 text-xs px-3 rounded-lg" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
-              Odblokovat
-            </Button>
-          )}
+          <Button size="sm" variant="outline" className="h-8 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3 rounded-lg" onClick={() => onDelete(user.id, user.full_name || user.email)}>
+            <Trash2 className="w-3 h-3 mr-1" /> Odstranit
+          </Button>
         </div>
       </div>
 
