@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Bot, ExternalLink } from "lucide-react";
+import { Plus, Search, Bot, ExternalLink, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import PageHeader from "../components/ui-custom/PageHeader";
 import EmptyState from "../components/ui-custom/EmptyState";
@@ -106,9 +106,16 @@ export default function Models({ currentUser }) {
                     </Badge>
                   </div>
                 </div>
-                <Link to={createPageUrl("ModelDetail") + `?id=${m.id}`} onClick={e => e.stopPropagation()}>
-                  <ExternalLink className="w-4 h-4 text-gray-300 hover:text-gray-600" />
-                </Link>
+                <div className="flex items-center gap-2">
+                  {currentUser?.role === "admin" && (
+                    <button onClick={(e) => handleDelete(e, m)} className="text-gray-200 hover:text-red-500 transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                  <Link to={createPageUrl("ModelDetail") + `?id=${m.id}`} onClick={e => e.stopPropagation()}>
+                    <ExternalLink className="w-4 h-4 text-gray-300 hover:text-gray-600" />
+                  </Link>
+                </div>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
