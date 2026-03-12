@@ -31,6 +31,7 @@ export default function PageHeader({ title, subtitle, children, goalCurrent, goa
           </span>
           <span className="text-xs font-semibold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">{pct}%</span>
         </div>
+        </div>
       )}
     </div>
   );
