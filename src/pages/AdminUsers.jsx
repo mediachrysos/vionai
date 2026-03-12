@@ -25,6 +25,11 @@ export default function AdminUsers({ currentUser }) {
 
   const toggle = (key) => setOpenSections(p => ({ ...p, [key]: !p[key] }));
 
+  const loadUsers = async () => {
+    const u = await base44.entities.User.list("-created_date", 100);
+    setUsers(u);
+  };
+
   useEffect(() => {
     if (currentUser?.role !== "admin") return;
     Promise.all([
@@ -37,6 +42,10 @@ export default function AdminUsers({ currentUser }) {
       setAccounts(a);
       setLoading(false);
     });
+
+    // Real-time subscription for new users
+    const unsub = base44.entities.User.subscribe(() => loadUsers());
+    return () => unsub();
   }, [currentUser]);
 
   const updateUser = async (userId, changes) => {
