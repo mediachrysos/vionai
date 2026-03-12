@@ -49,7 +49,7 @@ export default function Finance({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader title="Finance" subtitle="Přehled tržeb, výdajů a ziskovosti" />
+      <PageHeader title="Finance" subtitle="Přehled tržeb, výdajů a ziskovosti" goalCurrent={monthRev} goalTarget={100000} />
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mt-6">
         <StatCard
@@ -89,11 +89,8 @@ export default function Finance({ currentUser }) {
         />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-4 mt-6">
-        <div className="lg:col-span-2">
-          <RevenueChart payments={payments} />
-        </div>
-        <GoalWidget monthlyRevenue={monthRev} />
+      <div className="mt-6">
+        <RevenueChart payments={payments} />
       </div>
 
       <FinanceSheetTable />
