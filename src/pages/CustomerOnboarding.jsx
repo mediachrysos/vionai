@@ -164,7 +164,7 @@ export default function CustomerOnboarding() {
 
           <Button
             type="submit"
-            disabled={!dateOfBirth || !termsAccepted || !gdprAccepted || status === "loading"}
+            disabled={!termsAccepted || !gdprAccepted || status === "loading"}
             className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
           >
             {status === "loading" ? (
