@@ -40,14 +40,14 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       )}>
         {!collapsed ? (
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm shadow-indigo-200">
-              <span className="text-white text-xs font-bold tracking-tight">A</span>
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
+              <span className="text-white text-xs font-bold tracking-tight">C</span>
             </div>
-            <span className="font-semibold text-gray-900 text-base tracking-tight">Amira Media</span>
+            <span className="font-semibold text-gray-900 text-base tracking-tight">Chrisos Media</span>
           </div>
         ) : (
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm shadow-indigo-200">
-            <span className="text-white text-xs font-bold">A</span>
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
+            <span className="text-white text-xs font-bold">C</span>
           </div>
         )}
       </div>
@@ -65,12 +65,12 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "bg-violet-100 text-violet-700 shadow-sm shadow-violet-100"
-                  : "text-gray-500 hover:text-violet-600 hover:bg-violet-50/70",
+                  ? "bg-[#faf6e6] text-[#C9A227] shadow-sm shadow-amber-100"
+                  : "text-gray-500 hover:text-[#C9A227] hover:bg-[#faf6e6]/70",
                 collapsed && "justify-center px-2"
               )}
             >
-              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-violet-600" : "text-gray-400")} />
+              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-[#C9A227]" : "text-gray-400")} />
               {!collapsed && <span>{item.name}</span>}
             </Link>
           );
@@ -83,8 +83,8 @@ export default function Sidebar({ currentPage, user, onLogout }) {
           "flex items-center gap-3 px-2 py-2 rounded-lg",
           collapsed && "justify-center px-0"
         )}>
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center flex-shrink-0">
-            <UserCircle className="w-4 h-4 text-indigo-400" />
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-100 to-yellow-50 flex items-center justify-center flex-shrink-0">
+            <UserCircle className="w-4 h-4 text-[#C9A227]" />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
@@ -95,7 +95,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
           {!collapsed && (
             <button
               onClick={onLogout}
-              className="text-gray-300 hover:text-indigo-400 transition-colors p-1 rounded"
+              className="text-gray-300 hover:text-[#C9A227] transition-colors p-1 rounded"
             >
               <LogOut className="w-3.5 h-3.5" />
             </button>
@@ -106,7 +106,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="hidden lg:flex items-center justify-center h-9 border-t border-gray-100 text-gray-300 hover:text-indigo-500 transition-colors hover:bg-indigo-50/40"
+        className="hidden lg:flex items-center justify-center h-9 border-t border-gray-100 text-gray-300 hover:text-[#C9A227] transition-colors hover:bg-[#faf6e6]/60"
       >
         {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
       </button>
