@@ -21,7 +21,6 @@ Deno.serve(async (req) => {
     // Create the customer
     const customer = await base44.asServiceRole.entities.Customer.create({
       full_name: onboardingRequest.full_name,
-      date_of_birth,
       assigned_model: onboardingRequest.assigned_model || null,
       assigned_chatter: onboardingRequest.assigned_chatter || null,
       status: "active",
