@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { DollarSign, CreditCard, TrendingDown, TrendingUp } from "lucide-react";
 import StatCard from "../components/ui-custom/StatCard";
 import RevenueChart from "../components/dashboard/RevenueChart";
-import GoalWidget from "../components/dashboard/GoalWidget";
 import PageHeader from "../components/ui-custom/PageHeader";
 import FinanceSheetTable from "../components/finance/FinanceSheetTable";
 
