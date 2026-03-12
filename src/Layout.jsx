@@ -195,6 +195,29 @@ export default function Layout({ children, currentPageName }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* New customer alert */}
+      <AnimatePresence>
+        {customerAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: 60, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 60, x: "-50%" }}
+            className="fixed bottom-24 left-1/2 z-50 bg-white border border-indigo-200 rounded-2xl shadow-xl px-5 py-3.5 flex items-center gap-3 min-w-[280px]"
+          >
+            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+              <UserPlus className="w-4 h-4 text-indigo-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-800">Nový zákazník!</p>
+              <p className="text-xs text-gray-500">{customerAlert.full_name || "Nový zákazník"} se přidal do platformy</p>
+            </div>
+            <button onClick={() => setCustomerAlert(null)} className="text-gray-300 hover:text-gray-500">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
