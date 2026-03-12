@@ -60,6 +60,14 @@ export default function AdminUsers({ currentUser }) {
     setUsers(prev => prev.filter(u => u.id !== userId));
   };
 
+  if (!currentUser) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-6 h-6 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (currentUser?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-screen">
