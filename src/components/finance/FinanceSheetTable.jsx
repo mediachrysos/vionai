@@ -201,6 +201,20 @@ export default function FinanceSheetTable() {
     })),
   }), [rows, chatters]);
 
+  // Active days = days with any data
+  const activeDays = useMemo(() => rows.filter(r => r.totalRevenue > 0 || r.globalAdSpend > 0).length || 1, [rows]);
+
+  const averages = useMemo(() => ({
+    totalRevenue: totals.totalRevenue / activeDays,
+    adSpend: totals.adSpend / activeDays,
+    profit: totals.profit / activeDays,
+    chatterRevenues: chatters.map((c, ci) => ({
+      revenue: (totals.chatterRevenues[ci]?.revenue || 0) / activeDays,
+      adSpend: (totals.chatterRevenues[ci]?.adSpend || 0) / activeDays,
+      profit: (totals.chatterRevenues[ci]?.profit || 0) / activeDays,
+    })),
+  }), [totals, activeDays, chatters]);
+
   const prevMonth = () => {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
     else setViewMonth(m => m - 1);
