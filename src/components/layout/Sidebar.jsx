@@ -63,14 +63,14 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               to={createPageUrl(item.page)}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "bg-indigo-50 text-indigo-700"
-                  : "text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/60",
+                  ? "bg-violet-100 text-violet-700 shadow-sm shadow-violet-100"
+                  : "text-gray-500 hover:text-violet-600 hover:bg-violet-50/70",
                 collapsed && "justify-center px-2"
               )}
             >
-              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-indigo-600" : "text-gray-400")} />
+              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-violet-600" : "text-gray-400")} />
               {!collapsed && <span>{item.name}</span>}
             </Link>
           );

@@ -50,7 +50,7 @@ export default function RevenueChart({ payments }) {
   const data = buildChartData(payments, range.from, range.to);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5">
+    <div className="bg-white rounded-2xl border border-gray-100/80 shadow-sm shadow-gray-100 p-5">
       <div className="flex flex-col gap-3 mb-4">
         <h3 className="text-sm font-semibold text-gray-800">Tržby</h3>
 
@@ -63,8 +63,8 @@ export default function RevenueChart({ payments }) {
               onClick={() => handlePreset(p)}
               className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
                 activePreset === p.label
-                  ? "bg-indigo-600 text-white border-indigo-600"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"
+                  ? "bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-200"
+                  : "bg-white text-gray-500 border-gray-200 hover:border-violet-300 hover:text-violet-600"
               }`}
             >
               {p.label}
@@ -89,19 +89,24 @@ export default function RevenueChart({ payments }) {
           <AreaChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
             <defs>
               <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#6366f1" stopOpacity={0.15} />
+                <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.22} />
+                <stop offset="60%" stopColor="#6366f1" stopOpacity={0.08} />
                 <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
               </linearGradient>
+              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#7c3aed" />
+                <stop offset="100%" stopColor="#3b82f6" />
+              </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} tickFormatter={v => `${v.toLocaleString()} Kč`} />
+            <CartesianGrid strokeDasharray="4 4" stroke="#f1f0f5" vertical={false} />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#a0a0b0" }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 11, fill: "#a0a0b0" }} axisLine={false} tickLine={false} tickFormatter={v => `${v.toLocaleString()} Kč`} />
             <Tooltip
-              contentStyle={{ borderRadius: 8, border: "1px solid #f3f4f6", boxShadow: "0 4px 12px rgba(0,0,0,0.06)", fontSize: 12, padding: "6px 10px" }}
+              contentStyle={{ borderRadius: 12, border: "1px solid #ede9fe", boxShadow: "0 8px 24px rgba(109,40,217,0.10)", fontSize: 12, padding: "8px 12px" }}
               formatter={(v) => [`${v.toLocaleString()} Kč`, "Tržby"]}
-              labelStyle={{ color: "#6b7280", fontWeight: 500 }}
+              labelStyle={{ color: "#7c3aed", fontWeight: 600 }}
             />
-            <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} fill="url(#revGrad)" dot={false} activeDot={{ r: 4, fill: "#6366f1", strokeWidth: 0 }} />
+            <Area type="monotone" dataKey="revenue" stroke="url(#lineGrad)" strokeWidth={3} fill="url(#revGrad)" dot={false} activeDot={{ r: 5, fill: "#7c3aed", strokeWidth: 2, stroke: "#fff" }} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
