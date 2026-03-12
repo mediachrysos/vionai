@@ -79,13 +79,21 @@ export default function Layout({ children, currentPageName }) {
   };
 
   useEffect(() => {
-    const unsubscribe = base44.entities.Payment.subscribe((event) => {
+    const unsubPayment = base44.entities.Payment.subscribe((event) => {
       if (event.type === "create" && event.data) {
+        playAlertSound();
         setPaymentAlert(event.data);
         setTimeout(() => setPaymentAlert(null), 5000);
       }
     });
-    return unsubscribe;
+    const unsubCustomer = base44.entities.Customer.subscribe((event) => {
+      if (event.type === "create" && event.data) {
+        playAlertSound();
+        setCustomerAlert(event.data);
+        setTimeout(() => setCustomerAlert(null), 5000);
+      }
+    });
+    return () => { unsubPayment(); unsubCustomer(); };
   }, []);
 
   if (loading) {
