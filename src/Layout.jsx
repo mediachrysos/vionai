@@ -2,9 +2,25 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import Sidebar from "./components/layout/Sidebar";
 import { AnimatePresence, motion } from "framer-motion";
-import { CreditCard, X, Plus } from "lucide-react";
+import { CreditCard, X, Plus, UserPlus } from "lucide-react";
 import PaymentFormModal from "./components/payments/PaymentFormModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+function playAlertSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch (_) {}
+}
 
 export default function Layout({ children, currentPageName }) {
   // CustomerOnboarding is a public page — skip auth entirely
