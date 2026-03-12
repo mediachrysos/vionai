@@ -257,8 +257,8 @@ function AddModelInline({ models, setModels }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3 max-w-2xl">
-        <div className="col-span-1">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_160px_auto] gap-3">
+        <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Jméno *</label>
           <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" className="h-9" />
         </div>
@@ -273,7 +273,7 @@ function AddModelInline({ models, setModels }) {
           </Select>
         </div>
         <div className="flex items-end">
-          <Button onClick={handleSave} disabled={!form.name || saving} className="bg-violet-600 hover:bg-violet-700 h-9 w-full text-sm font-semibold">
+          <Button onClick={handleSave} disabled={!form.name || saving} className="bg-violet-600 hover:bg-violet-700 h-9 w-full text-sm font-semibold whitespace-nowrap px-6">
             {done ? "✓ Přidáno!" : saving ? "..." : "Přidat modelku"}
           </Button>
         </div>
@@ -307,7 +307,7 @@ function AddCustomerInline({ users, onGenerateLink }) {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-3 max-w-2xl">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div>
         <label className="text-xs font-semibold text-gray-600 block mb-1">Celé jméno *</label>
         <Input value={form.full_name} onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))} placeholder="Jan Novák" className="h-9" />
@@ -381,7 +381,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3 max-w-2xl">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3">
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Název *</label>
           <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Hlavní účet" className="h-9" />
@@ -391,7 +391,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
           <Input value={form.account_number} onChange={e => setForm(p => ({ ...p, account_number: e.target.value }))} placeholder="123456/0100" className="h-9" />
         </div>
         <div className="flex items-end">
-          <Button onClick={handleSave} disabled={!form.name || !form.account_number || saving} className="bg-teal-600 hover:bg-teal-700 h-9 w-full text-sm font-semibold">
+          <Button onClick={handleSave} disabled={!form.name || !form.account_number || saving} className="bg-teal-600 hover:bg-teal-700 h-9 w-full text-sm font-semibold whitespace-nowrap px-6">
             <Plus className="w-3.5 h-3.5 mr-1" />
             {done ? "✓ Přidáno!" : saving ? "..." : "Přidat účet"}
           </Button>
@@ -399,7 +399,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
       </div>
 
       {accounts.length > 0 && (
-        <div className="space-y-2 max-w-2xl">
+        <div className="space-y-2">
           {accounts.map(a => (
             <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50">
               <Building2 className="w-4 h-4 text-teal-500 flex-shrink-0" />
