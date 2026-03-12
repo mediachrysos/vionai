@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const iconColors = [
-  "bg-indigo-50 text-indigo-500",
-  "bg-violet-50 text-violet-500",
-  "bg-blue-50 text-blue-500",
-  "bg-purple-50 text-purple-500",
-  "bg-indigo-50 text-indigo-400",
+  "bg-amber-50 text-[#C9A227]",
+  "bg-yellow-50 text-[#A8841C]",
+  "bg-amber-50 text-[#C9A227]",
+  "bg-yellow-50 text-[#A8841C]",
+  "bg-amber-50 text-[#C9A227]",
 ];
 
 export default function StatCard({ title, value, subtitle, icon: Icon, trend, trendUp, className, colorIndex = 0 }) {
@@ -19,14 +19,14 @@ export default function StatCard({ title, value, subtitle, icon: Icon, trend, tr
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
       className={cn(
-        "bg-white rounded-2xl border border-gray-100/80 p-5 shadow-sm shadow-gray-100 hover:border-violet-100 hover:shadow-md hover:shadow-violet-50/60 transition-all duration-200",
+        "bg-white rounded-2xl border border-[#ececec] p-5 shadow-[0_6px_20px_rgba(0,0,0,0.04)] hover:border-[#e8d99a] hover:shadow-[0_8px_24px_rgba(201,162,39,0.09)] transition-all duration-200",
         className
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1 min-w-0">
           <p className="text-xs font-medium text-gray-400 uppercase tracking-widest">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 tracking-tight">{value}</p>
+          <p className="text-2xl font-bold text-[#C9A227] tracking-tight">{value}</p>
           {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
           {trend && (
             <div className={cn(
