@@ -96,13 +96,13 @@ export default function AdminUsers({ currentUser }) {
                   <Clock className="w-3 h-3" /> Čeká na schválení ({pending.length})
                 </p>
                 <div className="space-y-2">
-                  {pending.map(u => <UserRow key={u.id} user={u} onUpdate={updateUser} models={models} />)}
+                  {pending.map(u => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} />)}
                 </div>
               </div>
             )}
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Všichni uživatelé ({others.length})</p>
             <div className="space-y-2">
-              {others.map(u => <UserRow key={u.id} user={u} onUpdate={updateUser} models={models} />)}
+              {others.map(u => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} />)}
             </div>
           </>
         )}
@@ -161,7 +161,7 @@ function Section({ label, icon, badge, open, onToggle, children }) {
 }
 
 /* ── User row with model assignment ── */
-function UserRow({ user, onUpdate, models }) {
+function UserRow({ user, onUpdate, onDelete, models }) {
   const status = user.account_status || "pending";
   const role = user.role || "user";
   const statusCfg = statusConfig[status] || statusConfig.pending;
