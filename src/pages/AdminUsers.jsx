@@ -292,7 +292,7 @@ function AddModelInline({ models, setModels }) {
 }
 
 /* ── Add customer inline ── */
-function AddCustomerInline({ users }) {
+function AddCustomerInline({ users, onGenerateLink }) {
   const [form, setForm] = useState({ full_name: "", email: "", bank_name: "", bank_account_number: "", notes: "", status: "active", assigned_chatter: "" });
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
@@ -336,6 +336,16 @@ function AddCustomerInline({ users }) {
       <div className="flex items-end">
         <Button onClick={handleSave} disabled={!form.full_name || saving} className="bg-indigo-600 hover:bg-indigo-700 h-9 w-full text-sm font-semibold">
           {done ? "✓ Přidáno!" : saving ? "..." : "Vytvořit zákazníka"}
+        </Button>
+      </div>
+      <div className="col-span-2 flex items-center gap-2 pt-1">
+        <div className="flex-1 border-t border-gray-100" />
+        <span className="text-xs text-gray-400">nebo</span>
+        <div className="flex-1 border-t border-gray-100" />
+      </div>
+      <div className="col-span-2">
+        <Button variant="outline" onClick={onGenerateLink} className="w-full h-9 text-sm border-indigo-200 text-indigo-600 hover:bg-indigo-50">
+          <Link2 className="w-4 h-4 mr-2" /> Vygenerovat onboarding odkaz
         </Button>
       </div>
     </div>
