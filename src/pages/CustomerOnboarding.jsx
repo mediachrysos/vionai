@@ -14,6 +14,7 @@ export default function CustomerOnboarding() {
 
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [gdprAccepted, setGdprAccepted] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error | invalid
   const [errorMsg, setErrorMsg] = useState("");
@@ -25,7 +26,7 @@ export default function CustomerOnboarding() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!termsAccepted) return;
+    if (!termsAccepted || !gdprAccepted) return;
     // Validate 18+ years and 1 day
     if (dateOfBirth) {
       const dob = new Date(dateOfBirth);
@@ -127,6 +128,20 @@ export default function CustomerOnboarding() {
             {dobError && <p className="text-xs text-red-500 mt-1">{dobError}</p>}
           </div>
 
+          {/* GDPR */}
+          <div className="flex items-start gap-3 bg-blue-50 rounded-lg p-4 border border-blue-100">
+            <input
+              type="checkbox"
+              id="gdpr"
+              checked={gdprAccepted}
+              onChange={e => setGdprAccepted(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded accent-indigo-600 cursor-pointer flex-shrink-0"
+            />
+            <label htmlFor="gdpr" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
+              Souhlasím se zpracováním osobních údajů v souladu s GDPR. Mé osobní údaje (jméno, datum narození, bankovní údaje) budou zpracovány výhradně za účelem poskytování dohodnutých služeb a nebudou předány třetím stranám bez mého souhlasu.
+            </label>
+          </div>
+
           {/* Terms */}
           <div className="flex items-start gap-3 bg-gray-50 rounded-lg p-4 border border-gray-100">
             <input
@@ -179,7 +194,7 @@ export default function CustomerOnboarding() {
 
           <Button
             type="submit"
-            disabled={!dateOfBirth || !termsAccepted || status === "loading"}
+            disabled={!dateOfBirth || !termsAccepted || !gdprAccepted || status === "loading"}
             className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
           >
             {status === "loading" ? (
