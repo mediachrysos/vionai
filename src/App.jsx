@@ -70,7 +70,12 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
-          <AuthenticatedApp />
+          <Routes>
+            {/* Veřejná stránka — bez přihlášení */}
+            <Route path="/CustomerOnboarding" element={<CustomerOnboarding />} />
+            {/* Všechny ostatní stránky vyžadují auth */}
+            <Route path="*" element={<AuthenticatedApp />} />
+          </Routes>
         </Router>
         <Toaster />
       </QueryClientProvider>
