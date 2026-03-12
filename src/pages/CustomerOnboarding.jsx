@@ -86,7 +86,7 @@ export default function CustomerOnboarding() {
             <span className="text-white font-bold text-lg">C</span>
           </div>
           <h1 className="text-xl font-semibold text-gray-900">Vítejte!</h1>
-          <p className="text-sm text-gray-500 mt-1">Prosím, vyplňte níže uvedené údaje pro dokončení registrace.</p>
+          <p className="text-sm text-gray-500 mt-1">Vyplňte údaje pro dokončení registrace.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
