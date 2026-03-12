@@ -13,7 +13,8 @@ const statusConfig = {
   blocked: { label: "Zablokováno", color: "bg-red-100 text-red-700", icon: XCircle },
 };
 
-export default function AdminUsers({ currentUser }) {
+export default function AdminUsers({ currentUser: currentUserProp }) {
+  const [currentUser, setCurrentUser] = useState(currentUserProp || null);
   const [users, setUsers] = useState([]);
   const [models, setModels] = useState([]);
   const [accounts, setAccounts] = useState([]);
@@ -29,6 +30,15 @@ export default function AdminUsers({ currentUser }) {
     const u = await base44.entities.User.list("-created_date", 100);
     setUsers(u);
   };
+
+  // Load current user if not provided via prop
+  useEffect(() => {
+    if (currentUserProp) {
+      setCurrentUser(currentUserProp);
+    } else {
+      base44.auth.me().then(me => setCurrentUser(me)).catch(() => setCurrentUser(null));
+    }
+  }, [currentUserProp]);
 
   useEffect(() => {
     if (!currentUser) return;
