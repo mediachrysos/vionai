@@ -105,6 +105,33 @@ function SummaryRow({ label, totals, chatters, bg = "bg-gray-50", textClass = "t
   );
 }
 
+function exportCSV(rows, chatters, year, month) {
+  const monthName = MONTH_NAMES[month];
+  const headers = ["Datum", "Příjmy", "Ad Spend", "Profit", ...chatters.flatMap(c => [`${c.name} Příjmy`, `${c.name} Ad Spend`, `${c.name} Profit`])];
+  const csvRows = rows
+    .filter(r => r.totalRevenue > 0 || r.globalAdSpend > 0)
+    .map(r => [
+      r.dateStr, r.totalRevenue, r.globalAdSpend, r.globalProfit,
+      ...r.chatterRevenues.flatMap(cr => [cr.revenue, cr.adSpend, cr.profit])
+    ]);
+  const totalRow = ["CELKEM",
+    rows.reduce((s, r) => s + r.totalRevenue, 0),
+    rows.reduce((s, r) => s + r.globalAdSpend, 0),
+    rows.reduce((s, r) => s + r.globalProfit, 0),
+    ...chatters.flatMap((c, ci) => [
+      rows.reduce((s, r) => s + (r.chatterRevenues[ci]?.revenue || 0), 0),
+      rows.reduce((s, r) => s + (r.chatterRevenues[ci]?.adSpend || 0), 0),
+      rows.reduce((s, r) => s + (r.chatterRevenues[ci]?.profit || 0), 0),
+    ])
+  ];
+  const csv = [headers, ...csvRows, totalRow].map(r => r.join(";")).join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `finance_${year}_${String(month + 1).padStart(2, "0")}_${monthName}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
 export default function FinanceSheetTable() {
   const qc = useQueryClient();
   const now = new Date();
