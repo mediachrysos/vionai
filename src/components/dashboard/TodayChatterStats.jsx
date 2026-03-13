@@ -48,8 +48,8 @@ export default function TodayChatterStats({ payments }) {
             <DatePicker
               value={selectedDate}
               onChange={(v) => v && setSelectedDate(v)}
-              max={todayStr}
-            />
+              max={todayStr} />
+
           </div>
           <button onClick={nextDay} disabled={isToday} className="w-7 h-7 rounded-lg border border-white/30 flex items-center justify-center hover:bg-white/20 transition-colors disabled:opacity-30">
             <ChevronRight className="w-4 h-4 text-white" />
@@ -58,7 +58,7 @@ export default function TodayChatterStats({ payments }) {
       </div>
       <div className="p-5 flex-1">
 
-      {chatters.length === 0 ? (
+      {chatters.length === 0 ?
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mb-3">
             <TrendingUp className="w-5 h-5 text-gray-300" />
@@ -66,12 +66,12 @@ export default function TodayChatterStats({ payments }) {
           <p className="text-xs text-gray-400">
             {isToday ? "Dnes zatím žádné platby" : `Pro ${format(new Date(selectedDate), "d. M. yyyy")} nejsou žádné platby`}
           </p>
-        </div>
-      ) : (
+        </div> :
+
         <>
           <div className="space-y-2 mb-4">
-            {chatters.map((c) => (
-              <div key={c.name} className="flex items-center justify-between">
+            {chatters.map((c) =>
+            <div key={c.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center text-[10px] font-bold text-[#C9A227]">
                     {c.name[0]?.toUpperCase()}
@@ -84,12 +84,12 @@ export default function TodayChatterStats({ payments }) {
                   <span className="text-xs font-bold text-gray-900">
                     {c.total.toLocaleString()} Kč
                   </span>
-                  <span className="text-[10px] text-gray-400 ml-1">
-                    ({c.count}×)
-                  </span>
+                  
+
+
                 </div>
               </div>
-            ))}
+            )}
           </div>
           <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
             <span className="text-xs text-gray-500">Celkem {isToday ? "dnes" : format(new Date(selectedDate), "d. M. yyyy")}</span>
@@ -98,8 +98,8 @@ export default function TodayChatterStats({ payments }) {
             </span>
           </div>
         </>
-      )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 }
