@@ -5,6 +5,7 @@ import { DollarSign, CreditCard, TrendingDown, TrendingUp } from "lucide-react";
 import StatCard from "../components/ui-custom/StatCard";
 import RevenueChart from "../components/dashboard/RevenueChart";
 import PageHeader from "../components/ui-custom/PageHeader";
+import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import FinanceSheetTable from "../components/finance/FinanceSheetTable";
 
 export default function Finance({ currentUser }) {
@@ -49,6 +50,7 @@ export default function Finance({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <MonthlyGoalBar />
       <PageHeader title="Finance" subtitle="Přehled tržeb, výdajů a ziskovosti" goalCurrent={monthRev} goalTarget={100000} />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">

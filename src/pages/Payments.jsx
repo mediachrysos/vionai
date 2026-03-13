@@ -9,6 +9,7 @@ import { Plus, Search, CreditCard, Filter, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import PageHeader from "../components/ui-custom/PageHeader";
+import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
 import PaymentFormModal from "../components/payments/PaymentFormModal";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
@@ -107,6 +108,7 @@ export default function Payments({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <MonthlyGoalBar />
       <PageHeader title="Platby" subtitle={`${payments.length} celkem · ${totalAmount.toLocaleString()} Kč`}>
         <Button onClick={() => setShowForm(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
           <Plus className="w-4 h-4 mr-2" /> Přidat platbu

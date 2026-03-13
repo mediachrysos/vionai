@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Search, Bot, ExternalLink, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import PageHeader from "../components/ui-custom/PageHeader";
+import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
 import ModelFormModal from "../components/models/ModelFormModal";
 
@@ -68,6 +69,7 @@ export default function Models({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <MonthlyGoalBar />
       <PageHeader title="Modelky" subtitle={`${models.length} modelek celkem`}>
         {currentUser?.role === "admin" && (
           <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">

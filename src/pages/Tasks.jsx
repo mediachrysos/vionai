@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import PageHeader from "../components/ui-custom/PageHeader";
+import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
 import TaskFormModal from "../components/tasks/TaskFormModal";
 import KanbanBoard from "../components/tasks/KanbanBoard";
@@ -60,6 +61,7 @@ export default function Tasks({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <MonthlyGoalBar />
       <PageHeader title="Úkoly" subtitle={`${filtered.length} úkolů`}>
         <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
           <Plus className="w-4 h-4 mr-2" /> Přidat úkol

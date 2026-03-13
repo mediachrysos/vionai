@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, UserCircle, ExternalLink, Link2, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import PageHeader from "../components/ui-custom/PageHeader";
+import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
@@ -112,6 +113,7 @@ export default function Customers({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <MonthlyGoalBar />
       <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" onClick={downloadXlsx} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">

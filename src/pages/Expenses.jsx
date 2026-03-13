@@ -9,6 +9,7 @@ import { Plus, Search, Receipt, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import PageHeader from "../components/ui-custom/PageHeader";
+import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
 import ExpenseFormModal from "../components/expenses/ExpenseFormModal";
 
