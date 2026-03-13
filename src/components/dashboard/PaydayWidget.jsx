@@ -29,12 +29,12 @@ export default function PaydayWidget({ customers, models = [], currentUser }) {
   });
 
   return (
-    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5 mb-4">
+    <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-xl p-5 mb-6 shadow-sm shadow-amber-200">
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
-          <CalendarDays className="w-3.5 h-3.5 text-amber-600" />
+        <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
+          <CalendarDays className="w-3.5 h-3.5 text-white" />
         </div>
-        <h3 className="text-sm font-semibold text-amber-800">
+        <h3 className="text-sm font-semibold text-white">
           Dnes mají výplatu ({visible.length})
         </h3>
       </div>
@@ -42,21 +42,21 @@ export default function PaydayWidget({ customers, models = [], currentUser }) {
       <div className="space-y-3">
         {Object.entries(modelMap).map(([modelName, custs]) => (
           <div key={modelName}>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-amber-500 mb-1.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-white/70 mb-1.5">
               {modelName}
             </p>
             <div className="flex flex-wrap gap-2">
               {custs.map((c) => (
                 <div
                   key={c.id}
-                  className="flex items-center gap-1.5 bg-white border border-amber-200 rounded-lg px-3 py-1.5 shadow-sm"
+                  className="flex items-center gap-1.5 bg-white/20 border border-white/30 rounded-lg px-3 py-1.5"
                 >
-                  <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-700">
+                  <div className="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">
                     {c.full_name?.[0]?.toUpperCase()}
                   </div>
-                  <span className="text-xs font-semibold text-amber-900">{c.full_name}</span>
+                  <span className="text-xs font-semibold text-white">{c.full_name}</span>
                   {c.total_spent > 0 && (
-                    <span className="text-[10px] text-amber-500 ml-1">
+                    <span className="text-[10px] text-white/70 ml-1">
                       {c.total_spent.toLocaleString()} Kč
                     </span>
                   )}

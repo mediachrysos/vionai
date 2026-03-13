@@ -6,6 +6,7 @@ import TodayNotesWidget from "../components/dashboard/TodayNotesWidget";
 import TodayPaymentsWidget from "../components/dashboard/TodayPaymentsWidget";
 import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget";
 import PaydayWidget from "../components/dashboard/PaydayWidget";
+import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 
 export default function Dashboard({ currentUser }) {
   const { data: payments = [] } = useQuery({
@@ -27,6 +28,7 @@ export default function Dashboard({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <MonthlyGoalBar />
       {/* Payday alert */}
       <PaydayWidget customers={customers} models={models} currentUser={currentUser} />
 

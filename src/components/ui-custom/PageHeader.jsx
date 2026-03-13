@@ -19,7 +19,7 @@ export default function PageHeader({ title, subtitle, children, goalCurrent, goa
           <div className="flex items-center gap-3">
             <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-700"
+                className="h-full rounded-full bg-gradient-to-r from-[#C9A227] to-[#A8841C] transition-all duration-700"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -29,7 +29,7 @@ export default function PageHeader({ title, subtitle, children, goalCurrent, goa
                 : <>{goalCurrent.toLocaleString()} Kč <span className="text-gray-400 font-normal">/ {goalTarget.toLocaleString()} Kč</span></>
               }
             </span>
-            <span className="text-xs font-semibold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">{pct}%</span>
+            <span className="text-xs font-semibold bg-amber-50 text-[#C9A227] px-2 py-0.5 rounded-full">{pct}%</span>
           </div>
         </div>
       )}
