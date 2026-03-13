@@ -41,7 +41,7 @@ function EditableCell({ value, onSave, canCreate = false, highlight = "" }) {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter") save(); if (e.key === "Escape") cancel(); }}
-          className="w-20 text-right text-xs border border-indigo-400 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+          className="w-20 text-right text-xs border border-amber-400 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-amber-400"
         />
         <button onClick={save} className="text-emerald-500 hover:text-emerald-700"><Check className="w-3 h-3" /></button>
         <button onClick={cancel} className="text-red-400 hover:text-red-600"><X className="w-3 h-3" /></button>
@@ -55,9 +55,9 @@ function EditableCell({ value, onSave, canCreate = false, highlight = "" }) {
       onClick={start}
     >
       {value > 0 ? (
-        <span className="text-xs tabular-nums group-hover:text-indigo-600 transition-colors">{fmt(value)}</span>
+        <span className="text-xs tabular-nums group-hover:text-[#C9A227] transition-colors">{fmt(value)}</span>
       ) : (
-        <span className="text-gray-300 group-hover:text-indigo-400 transition-colors">
+        <span className="text-gray-300 group-hover:text-[#C9A227] transition-colors">
           {canCreate ? <Plus className="w-3 h-3" /> : "—"}
         </span>
       )}
@@ -344,7 +344,7 @@ export default function FinanceSheetTable() {
           </thead>
           <tbody>
             {/* TOTALS ROW */}
-            <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-indigo-50/30" textClass="text-xs font-bold" />
+            <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-amber-50/30" textClass="text-xs font-bold" />
             {/* AVERAGE ROW */}
             <SummaryRow label="PRŮMĚR / den" totals={averages} chatters={chatters} bg="bg-gray-50/80" textClass="text-xs font-medium" />
 
@@ -356,16 +356,16 @@ export default function FinanceSheetTable() {
                   key={row.day}
                   className={cn(
                     "border-b border-gray-50 transition-colors",
-                    isToday ? "bg-indigo-50/40" : "hover:bg-gray-50/40",
+                    isToday ? "bg-amber-50/40" : "hover:bg-gray-50/40",
                     !hasData && "opacity-40"
                   )}
                 >
                   <td className={cn(
                     "px-3 py-2 font-medium sticky left-0 z-10 whitespace-nowrap",
-                    isToday ? "bg-indigo-50/70 text-indigo-600" : "bg-white text-gray-500"
+                    isToday ? "bg-amber-50/70 text-[#C9A227]" : "bg-white text-gray-500"
                   )}>
                     {String(row.day).padStart(2, "0")}.{String(viewMonth + 1).padStart(2, "0")}.
-                    {isToday && <span className="ml-1 text-[10px] text-indigo-400">dnes</span>}
+                    {isToday && <span className="ml-1 text-[10px] text-amber-400">dnes</span>}
                   </td>
 
                   {/* Global Příjmy — read-only sum */}
