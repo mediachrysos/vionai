@@ -66,9 +66,9 @@ export default function ExpenseFormModal({ open, onClose, onSave, expense, payme
               <SelectContent>
                 <SelectItem value="none">— Žádná —</SelectItem>
                 {payments.slice(0, 50).map(p => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.customer_name || "Customer"} — ${p.amount}
-                  </SelectItem>
+                <SelectItem key={p.id} value={p.id}>
+                 {p.customer_name || "Customer"} — {(p.amount || 0).toLocaleString()} Kč
+                </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -79,7 +79,7 @@ export default function ExpenseFormModal({ open, onClose, onSave, expense, payme
           </div>
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="outline" onClick={onClose}>Zrušit</Button>
-            <Button type="submit" disabled={loading} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {expense ? "Uložit změny" : "Zaznamenat"}
             </Button>

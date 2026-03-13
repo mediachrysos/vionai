@@ -122,7 +122,7 @@ export default function Models({ currentUser }) {
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-xs text-gray-400">Tržby</p>
-                  <p className="text-lg font-semibold text-gray-900">${(modelRevenue[m.id] || 0).toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} Kč</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Platby</p>
