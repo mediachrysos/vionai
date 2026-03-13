@@ -64,6 +64,7 @@ export default function Expenses({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-6xl mx-auto">
+      <MonthlyGoalBar />
       <PageHeader title="Výdaje" subtitle={`$${totalFiltered.toLocaleString()} zobrazeno · $${monthTotal.toLocaleString()} tento měsíc`}>
         <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
           <Plus className="w-4 h-4 mr-2" /> Zaznamenat výdaj

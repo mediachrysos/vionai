@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Trash2, Building2, Plus, ChevronDown, ChevronUp, Link2 } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Trash2, Building2, Plus, ChevronDown, ChevronUp, Link2, Target } from "lucide-react";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import AdminPayments from "../components/admin/AdminPayments";
 
@@ -22,7 +22,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
 
   // Collapsible sections
-  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false });
+  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false });
 
   const toggle = (key) => setOpenSections(p => ({ ...p, [key]: !p[key] }));
 
@@ -161,6 +161,11 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       {/* ── SECTION: Bankovní účty ── */}
       <Section label="Bankovní účty" icon={<Building2 className="w-4 h-4" />} open={openSections.accounts} onToggle={() => toggle("accounts")}>
         <BankAccountsInline accounts={accounts} setAccounts={setAccounts} />
+      </Section>
+
+      {/* ── SECTION: Měsíční cíl ── */}
+      <Section label="Měsíční cíl" icon={<Target className="w-4 h-4" />} open={openSections.goal} onToggle={() => toggle("goal")}>
+        <GoalSettingsInline />
       </Section>
     </div>
   );
