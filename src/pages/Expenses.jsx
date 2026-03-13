@@ -65,7 +65,7 @@ export default function Expenses({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-6xl mx-auto">
       <MonthlyGoalBar />
-      <PageHeader title="Výdaje" subtitle={`$${totalFiltered.toLocaleString()} zobrazeno · $${monthTotal.toLocaleString()} tento měsíc`}>
+      <PageHeader title="Výdaje" subtitle={`${totalFiltered.toLocaleString()} Kč zobrazeno · ${monthTotal.toLocaleString()} Kč tento měsíc`}>
         <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
           <Plus className="w-4 h-4 mr-2" /> Zaznamenat výdaj
         </Button>
@@ -122,10 +122,10 @@ export default function Expenses({ currentUser }) {
                          {e.expense_date ? format(new Date(e.expense_date), "d. M. yyyy") : "—"}
                        </td>
                        <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">
-                         {linked ? <span className="text-gray-700 text-xs font-medium">{linked.customer_name} — ${linked.amount}</span> : "—"}
+                         {linked ? <span className="text-gray-700 text-xs font-medium">{linked.customer_name} — {(linked.amount || 0).toLocaleString()} Kč</span> : "—"}
                        </td>
                       <td className="px-5 py-3.5 text-right">
-                        <span className="text-sm font-semibold text-red-600">-${(e.amount || 0).toLocaleString()}</span>
+                        <span className="text-sm font-semibold text-red-600">-{(e.amount || 0).toLocaleString()} Kč</span>
                       </td>
                       <td className="px-5 py-3.5 text-right" onClick={ev => ev.stopPropagation()}>
                         <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-300 hover:text-red-500" onClick={() => deleteMutation.mutate(e.id)}>
@@ -139,7 +139,7 @@ export default function Expenses({ currentUser }) {
               <tfoot>
                 <tr className="bg-gray-50 border-t border-gray-100">
                      <td colSpan={4} className="px-5 py-3 text-sm font-semibold text-gray-700">Celkem</td>
-                  <td className="px-5 py-3 text-right text-sm font-bold text-red-600">-${totalFiltered.toLocaleString()}</td>
+                  <td className="px-5 py-3 text-right text-sm font-bold text-red-600">-{totalFiltered.toLocaleString()} Kč</td>
                   <td />
                 </tr>
               </tfoot>
