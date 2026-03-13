@@ -88,7 +88,7 @@ function SummaryRow({ label, totals, chatters, bg = "bg-gray-50", textClass = "t
       {/* Per-chatter totals */}
       {chatters.map((c, ci) => (
         <React.Fragment key={c.email}>
-          <td className={cn("px-3 py-2.5 text-right tabular-nums text-indigo-600", textClass)}>
+          <td className={cn("px-3 py-2.5 text-right tabular-nums text-amber-600", textClass)}>
             {fmt(totals.chatterRevenues[ci]?.revenue || 0)}
           </td>
           <td className={cn("px-3 py-2.5 text-right tabular-nums text-rose-500", textClass)}>
@@ -324,7 +324,7 @@ export default function FinanceSheetTable() {
               </th>
               <th className="bg-gray-200 w-px px-0" rowSpan={2}></th>
               {chatters.map(c => (
-                <th key={c.email} colSpan={3} className="text-center px-3 py-2 font-semibold text-indigo-600 border-b border-indigo-100 bg-indigo-50/40">
+                <th key={c.email} colSpan={3} className="text-center px-3 py-2 font-semibold text-[#C9A227] border-b border-amber-100 bg-amber-50/40">
                   {c.name.split(" ")[0]}
                 </th>
               ))}
@@ -335,7 +335,7 @@ export default function FinanceSheetTable() {
               <th className="text-right px-3 py-2 font-medium text-emerald-600 bg-emerald-50/30 min-w-[90px]">Profit</th>
               {chatters.map(c => (
                 <React.Fragment key={c.email}>
-                  <th className="text-right px-3 py-2 font-medium text-indigo-500 bg-indigo-50/20 min-w-[90px]">Příjmy</th>
+                  <th className="text-right px-3 py-2 font-medium text-amber-600 bg-amber-50/20 min-w-[90px]">Příjmy</th>
                   <th className="text-right px-3 py-2 font-medium text-rose-400 bg-rose-50/10 min-w-[90px]">Ad Spend</th>
                   <th className="text-right px-3 py-2 font-medium text-emerald-500 bg-emerald-50/10 min-w-[90px]">Profit</th>
                 </React.Fragment>
@@ -398,7 +398,7 @@ export default function FinanceSheetTable() {
                     return (
                       <React.Fragment key={cr.email}>
                         {/* Příjmy */}
-                        <td className="px-3 py-2 bg-indigo-50/10">
+                        <td className="px-3 py-2 bg-amber-50/10">
                           {cr.cPayments.length === 1 ? (
                             <EditableCell
                               value={cr.revenue}
