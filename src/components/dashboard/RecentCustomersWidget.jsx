@@ -23,10 +23,10 @@ export default function RecentCustomersWidget({ customers }) {
     .slice(0, 6);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5">
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
-          <Users className="w-3.5 h-3.5 text-violet-500" />
+        <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+          <Users className="w-3.5 h-3.5 text-[#C9A227]" />
         </div>
         <h3 className="text-sm font-semibold text-gray-800">Noví zákazníci</h3>
       </div>
@@ -41,7 +41,7 @@ export default function RecentCustomersWidget({ customers }) {
               className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-violet-50 flex items-center justify-center text-xs font-bold text-violet-600">
+                <div className="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-xs font-bold text-[#C9A227]">
                   {c.full_name?.[0]?.toUpperCase() || "?"}
                 </div>
                 <div>

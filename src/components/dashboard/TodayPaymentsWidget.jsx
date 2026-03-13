@@ -11,7 +11,7 @@ export default function TodayPaymentsWidget({ payments }) {
   const total = todayPayments.reduce((s, p) => s + (p.amount || 0), 0);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5">
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">

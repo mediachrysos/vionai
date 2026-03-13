@@ -53,7 +53,7 @@ export default function TodayNotesWidget({ currentUser }) {
   });
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 h-full">
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
@@ -159,7 +159,7 @@ export default function TodayNotesWidget({ currentUser }) {
                     </span>
                   )}
                   {n.author_name && currentUser?.role === "admin" && (
-                    <span className="text-xs text-indigo-400 ml-auto">{n.author_name}</span>
+                    <span className="text-xs text-[#C9A227] ml-auto">{n.author_name}</span>
                   )}
                 </div>
                 <p

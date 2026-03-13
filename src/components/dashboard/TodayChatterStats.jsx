@@ -32,11 +32,11 @@ export default function TodayChatterStats({ payments }) {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 h-full">
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
-            <MessageSquare className="w-3.5 h-3.5 text-indigo-500" />
+          <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+            <MessageSquare className="w-3.5 h-3.5 text-[#C9A227]" />
           </div>
           <h3 className="text-sm font-semibold text-gray-800">Výkony chatterů</h3>
         </div>
@@ -72,7 +72,7 @@ export default function TodayChatterStats({ payments }) {
             {chatters.map((c) => (
               <div key={c.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-indigo-600">
+                  <div className="w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center text-[10px] font-bold text-[#C9A227]">
                     {c.name[0]?.toUpperCase()}
                   </div>
                   <span className="text-xs font-medium text-gray-700 truncate max-w-[120px]">
@@ -92,7 +92,7 @@ export default function TodayChatterStats({ payments }) {
           </div>
           <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
             <span className="text-xs text-gray-500">Celkem {isToday ? "dnes" : format(new Date(selectedDate), "d. M. yyyy")}</span>
-            <span className="text-sm font-bold text-indigo-600">
+            <span className="text-sm font-bold text-[#C9A227]">
               {totalDay.toLocaleString()} Kč
             </span>
           </div>
