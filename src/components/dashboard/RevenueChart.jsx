@@ -54,35 +54,8 @@ export default function RevenueChart({ payments }) {
       <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
         <h3 className="text-sm font-semibold text-gray-800">Tržby</h3>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Presets */}
-          {PRESETS.map(p => (
-            <button
-              key={p.label}
-              type="button"
-              onClick={() => handlePreset(p)}
-              className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
-                activePreset === p.label
-                  ? "bg-[#C9A227] text-white border-[#C9A227] shadow-sm shadow-amber-200"
-                  : "bg-white text-gray-500 border-gray-200 hover:border-[#C9A227] hover:text-[#C9A227]"
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
-
-          <span className="text-xs text-gray-300">|</span>
-
-          {/* Custom range */}
-          <div className="flex items-center gap-1.5">
-            <div className="w-36">
-              <DatePicker value={range.from} onChange={v => handleDateChange("from", v)} placeholder="Od" />
-            </div>
-            <span className="text-xs text-gray-400">–</span>
-            <div className="w-36">
-              <DatePicker value={range.to} onChange={v => handleDateChange("to", v)} placeholder="Do" />
-            </div>
-          </div>
+        <div className="flex items-center gap-2">
+          <RangePicker range={range} activePreset={activePreset} onPreset={handlePreset} onDateChange={handleDateChange} />
         </div>
       </div>
 
