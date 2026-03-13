@@ -64,7 +64,7 @@ export default function Expenses({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-6xl mx-auto">
       <PageHeader title="Výdaje" subtitle={`$${totalFiltered.toLocaleString()} zobrazeno · $${monthTotal.toLocaleString()} tento měsíc`}>
-        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm shadow-indigo-200">
+        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
           <Plus className="w-4 h-4 mr-2" /> Zaznamenat výdaj
         </Button>
       </PageHeader>
@@ -91,7 +91,7 @@ export default function Expenses({ currentUser }) {
       {filtered.length === 0 ? (
         <EmptyState icon={Receipt} title="Žádné výdaje" actionLabel="Zaznamenat výdaj" onAction={() => setShowForm(true)} />
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

@@ -70,7 +70,7 @@ export default function Models({ currentUser }) {
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Modelky" subtitle={`${models.length} modelek celkem`}>
         {currentUser?.role === "admin" && (
-          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm shadow-indigo-200">
+          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
             <Plus className="w-4 h-4 mr-2" /> Přidat modelku
           </Button>
         )}
@@ -91,7 +91,7 @@ export default function Models({ currentUser }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white rounded-xl border border-gray-100 p-5 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer"
+              className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 hover:border-[#e8d99a] hover:shadow-[0_8px_24px_rgba(201,162,39,0.09)] transition-all cursor-pointer"
               onClick={() => { setEditing(m); setShowForm(true); }}
             >
               <div className="flex items-start justify-between">
