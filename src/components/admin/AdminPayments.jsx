@@ -177,7 +177,7 @@ export default function AdminPayments() {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditing(null)}>Zrušit</Button>
-              <Button onClick={handleSave} disabled={saving} className="bg-indigo-600 hover:bg-indigo-700">
+              <Button onClick={handleSave} disabled={saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white">
                 {saving ? "Ukládám..." : "Uložit"}
               </Button>
             </div>
