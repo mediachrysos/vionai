@@ -156,7 +156,7 @@ export default function Customers({ currentUser }) {
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/50">
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Jméno</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Email</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Den výplaty</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Celkem</th>
@@ -185,7 +185,11 @@ export default function Customers({ currentUser }) {
                         <span className="text-sm font-medium text-gray-800">{c.full_name}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">{c.email || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm hidden md:table-cell">
+                      {c.pay_day_of_month
+                        ? <span className="text-sm font-medium text-gray-700">{c.pay_day_of_month}. v měsíci</span>
+                        : <span className="text-gray-300">—</span>}
+                    </td>
                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">{modelMap[c.assigned_model] || "—"}</td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[c.status] || statusColors.active}>
