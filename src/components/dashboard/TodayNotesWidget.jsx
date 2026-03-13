@@ -53,23 +53,24 @@ export default function TodayNotesWidget({ currentUser }) {
   });
 
   return (
-    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 h-full">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] h-full overflow-hidden flex flex-col">
+      <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-            <StickyNote className="w-3.5 h-3.5 text-amber-500" />
+          <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
+            <StickyNote className="w-3.5 h-3.5 text-white" />
           </div>
-          <h3 className="text-sm font-semibold text-gray-800">Poznámky</h3>
+          <h3 className="text-sm font-semibold text-white">Poznámky</h3>
         </div>
         <Button
           size="sm"
           variant="ghost"
           onClick={() => setShowForm((v) => !v)}
-          className="h-7 w-7 p-0 rounded-lg"
+          className="h-7 w-7 p-0 rounded-lg text-white hover:bg-white/20"
         >
           {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
         </Button>
       </div>
+      <div className="p-5 flex-1 overflow-hidden flex flex-col">
 
       {showForm && (
         <div className="mb-4 p-4 bg-amber-50/60 rounded-xl border border-amber-100 space-y-3">
@@ -179,6 +180,7 @@ export default function TodayNotesWidget({ currentUser }) {
             </div>
           );
         })}
+      </div>
       </div>
     </div>
   );

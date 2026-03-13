@@ -23,14 +23,14 @@ export default function RecentCustomersWidget({ customers }) {
     .slice(0, 6);
 
   return (
-    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-          <Users className="w-3.5 h-3.5 text-[#C9A227]" />
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center gap-2">
+        <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
+          <Users className="w-3.5 h-3.5 text-white" />
         </div>
-        <h3 className="text-sm font-semibold text-gray-800">Noví zákazníci</h3>
+        <h3 className="text-sm font-semibold text-white">Noví zákazníci</h3>
       </div>
-
+      <div className="p-5">
       {recent.length === 0 ? (
         <p className="text-xs text-gray-400 text-center py-6">Žádní zákazníci</p>
       ) : (
@@ -63,6 +63,7 @@ export default function RecentCustomersWidget({ customers }) {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
