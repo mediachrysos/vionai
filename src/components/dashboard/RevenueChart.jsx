@@ -52,7 +52,20 @@ export default function RevenueChart({ payments }) {
   return (
     <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
       <div className="flex flex-col gap-3 mb-4">
-        <h3 className="text-sm font-semibold text-gray-800">Tržby</h3>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <h3 className="text-sm font-semibold text-gray-800">Tržby</h3>
+
+          {/* Custom range */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="w-40">
+              <DatePicker value={range.from} onChange={v => handleDateChange("from", v)} placeholder="Od" />
+            </div>
+            <span className="text-xs text-gray-400">–</span>
+            <div className="w-40">
+              <DatePicker value={range.to} onChange={v => handleDateChange("to", v)} placeholder="Do" />
+            </div>
+          </div>
+        </div>
 
         {/* Presets */}
         <div className="flex flex-wrap gap-1.5">
@@ -72,19 +85,9 @@ export default function RevenueChart({ payments }) {
           ))}
         </div>
 
-        {/* Custom range */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="w-40">
-            <DatePicker value={range.from} onChange={v => handleDateChange("from", v)} placeholder="Od" />
-          </div>
-          <span className="text-xs text-gray-400">–</span>
-          <div className="w-40">
-            <DatePicker value={range.to} onChange={v => handleDateChange("to", v)} placeholder="Do" />
-          </div>
-        </div>
       </div>
 
-      <div className="h-[200px]">
+      <div className="h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
             <defs>
