@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Check, X, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, X, Plus, Download } from "lucide-react";
 import { getDaysInMonth } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -275,7 +275,15 @@ export default function FinanceSheetTable() {
             <ChevronRight className="w-4 h-4 text-gray-600" />
           </button>
         </div>
-        <p className="text-xs text-gray-400">Kliknutím upravíte hodnotu</p>
+        <div className="flex items-center gap-3">
+          <p className="text-xs text-gray-400 hidden sm:block">Kliknutím upravíte hodnotu</p>
+          <button
+            onClick={() => exportCSV(rows, chatters, viewYear, viewMonth)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:border-[#C9A227] hover:text-[#C9A227] text-xs text-gray-500 transition-all"
+          >
+            <Download className="w-3.5 h-3.5" /> Export CSV
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
