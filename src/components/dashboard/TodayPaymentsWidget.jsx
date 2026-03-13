@@ -11,20 +11,21 @@ export default function TodayPaymentsWidget({ payments }) {
   const total = todayPayments.reduce((s, p) => s + (p.amount || 0), 0);
 
   return (
-    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-            <CreditCard className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
+            <CreditCard className="w-3.5 h-3.5 text-white" />
           </div>
-          <h3 className="text-sm font-semibold text-gray-800">Dnešní platby</h3>
+          <h3 className="text-sm font-semibold text-white">Dnešní platby</h3>
         </div>
         {todayPayments.length > 0 && (
-          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+          <span className="text-xs font-bold text-white bg-white/20 px-2 py-1 rounded-lg">
             {total.toLocaleString()} Kč
           </span>
         )}
       </div>
+      <div className="p-5">
 
       {todayPayments.length === 0 ? (
         <p className="text-xs text-gray-400 text-center py-6">Dnes žádné platby</p>
@@ -55,6 +56,7 @@ export default function TodayPaymentsWidget({ payments }) {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
