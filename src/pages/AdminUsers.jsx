@@ -97,7 +97,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
     <div className="p-6 max-w-6xl mx-auto space-y-4">
       {/* Header */}
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
           <Shield className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -208,7 +208,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
   return (
     <div className="flex flex-col gap-3 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0">
           <span className="text-sm font-bold text-white">{(user.full_name || user.email || "?")[0].toUpperCase()}</span>
         </div>
         <div className="flex-1 min-w-0">
@@ -253,7 +253,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
                 onClick={() => toggleModel(m.id)}
                 className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
                   assigned
-                    ? "bg-indigo-100 text-indigo-700 border-indigo-200"
+                    ? "bg-amber-50 text-[#C9A227] border-[#e8d99a]"
                     : "bg-white text-gray-400 border-gray-200 hover:bg-gray-50"
                 }`}
               >
@@ -301,7 +301,7 @@ function AddModelInline({ models, setModels }) {
           </Select>
         </div>
         <div className="flex items-end">
-          <Button onClick={handleSave} disabled={!form.name || saving} className="bg-violet-600 hover:bg-violet-700 h-9 w-full text-sm font-semibold whitespace-nowrap px-6">
+          <Button onClick={handleSave} disabled={!form.name || saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 w-full text-sm font-semibold whitespace-nowrap px-6 text-white">
             {done ? "✓ Přidáno!" : saving ? "..." : "Přidat modelku"}
           </Button>
         </div>
@@ -309,7 +309,7 @@ function AddModelInline({ models, setModels }) {
       {models.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-1">
           {models.map(m => (
-            <span key={m.id} className={`text-xs px-3 py-1.5 rounded-full border font-medium ${m.status === "active" ? "bg-violet-50 text-violet-700 border-violet-200" : "bg-gray-50 text-gray-400 border-gray-200"}`}>
+            <span key={m.id} className={`text-xs px-3 py-1.5 rounded-full border font-medium ${m.status === "active" ? "bg-amber-50 text-[#C9A227] border-[#e8d99a]" : "bg-gray-50 text-gray-400 border-gray-200"}`}>
               {m.name}
             </span>
           ))}
@@ -362,7 +362,7 @@ function AddCustomerInline({ users, onGenerateLink }) {
         </Select>
       </div>
       <div className="flex items-end">
-        <Button onClick={handleSave} disabled={!form.full_name || saving} className="bg-indigo-600 hover:bg-indigo-700 h-9 w-full text-sm font-semibold">
+        <Button onClick={handleSave} disabled={!form.full_name || saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 w-full text-sm font-semibold text-white">
           {done ? "✓ Přidáno!" : saving ? "..." : "Vytvořit zákazníka"}
         </Button>
       </div>
@@ -372,7 +372,7 @@ function AddCustomerInline({ users, onGenerateLink }) {
         <div className="flex-1 border-t border-gray-100" />
       </div>
       <div className="col-span-2">
-        <Button variant="outline" onClick={onGenerateLink} className="w-full h-9 text-sm border-indigo-200 text-indigo-600 hover:bg-indigo-50">
+        <Button variant="outline" onClick={onGenerateLink} className="w-full h-9 text-sm border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]">
           <Link2 className="w-4 h-4 mr-2" /> Vygenerovat onboarding odkaz
         </Button>
       </div>
@@ -438,7 +438,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.is_active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
                 {a.is_active ? "Aktivní" : "Neaktivní"}
               </span>
-              <button onClick={() => toggleActive(a)} className="text-xs text-indigo-500 hover:underline">{a.is_active ? "Deaktivovat" : "Aktivovat"}</button>
+              <button onClick={() => toggleActive(a)} className="text-xs text-[#C9A227] hover:underline">{a.is_active ? "Deaktivovat" : "Aktivovat"}</button>
               <button onClick={() => deleteAccount(a.id)} className="text-gray-300 hover:text-red-400">
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

@@ -61,7 +61,7 @@ export default function CustomerDetail({ currentUser }) {
 
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center text-xl font-bold text-indigo-600">
+          <div className="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center text-xl font-bold text-[#C9A227]">
             {customer.full_name?.[0]?.toUpperCase() || "?"}
           </div>
           <div>
@@ -78,70 +78,62 @@ export default function CustomerDetail({ currentUser }) {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardContent className="p-5">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Celkem utraceno</p>
-            <p className="text-2xl font-bold text-slate-900 mt-1">{totalSpent.toLocaleString()} Kč</p>
-            <p className="text-xs text-slate-400 mt-1">{payments.length} plateb</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Modelka</p>
-            <p className="text-lg font-semibold text-slate-900 mt-1">{modelMap[customer.assigned_model] || "Nepřiřazena"}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">Chatter</p>
-            <p className="text-lg font-semibold text-slate-900 mt-1">{customer.assigned_chatter || "Nepřiřazen"}</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <p className="text-xs text-gray-400 uppercase tracking-wider">Celkem utraceno</p>
+          <p className="text-2xl font-bold text-gray-900 mt-1">{totalSpent.toLocaleString()} Kč</p>
+          <p className="text-xs text-gray-400 mt-1">{payments.length} plateb</p>
+        </div>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <p className="text-xs text-gray-400 uppercase tracking-wider">Modelka</p>
+          <p className="text-lg font-semibold text-gray-900 mt-1">{modelMap[customer.assigned_model] || "Nepřiřazena"}</p>
+        </div>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <p className="text-xs text-gray-400 uppercase tracking-wider">Chatter</p>
+          <p className="text-lg font-semibold text-gray-900 mt-1">{customer.assigned_chatter || "Nepřiřazen"}</p>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Info */}
-        <Card>
-          <CardHeader><CardTitle className="text-base">Detaily</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            {customer.email && <div className="flex items-center gap-3 text-sm"><Mail className="w-4 h-4 text-slate-400" /> {customer.email}</div>}
-            {customer.bank_name && <div className="flex items-center gap-3 text-sm"><Building className="w-4 h-4 text-slate-400" /> {customer.bank_name} — {customer.bank_account_number}</div>}
-            {customer.date_of_birth && <div className="flex items-center gap-3 text-sm"><Calendar className="w-4 h-4 text-slate-400" /> {customer.date_of_birth}</div>}
-            {customer.notes && <div className="mt-3 p-3 bg-slate-50 rounded-lg text-sm text-slate-600">{customer.notes}</div>}
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4">Detaily</h3>
+          <div className="space-y-3">
+            {customer.email && <div className="flex items-center gap-3 text-sm text-gray-600"><Mail className="w-4 h-4 text-gray-400" /> {customer.email}</div>}
+            {customer.bank_name && <div className="flex items-center gap-3 text-sm text-gray-600"><Building className="w-4 h-4 text-gray-400" /> {customer.bank_name} — {customer.bank_account_number}</div>}
+            {customer.date_of_birth && <div className="flex items-center gap-3 text-sm text-gray-600"><Calendar className="w-4 h-4 text-gray-400" /> {customer.date_of_birth}</div>}
+            {customer.notes && <div className="mt-3 p-3 bg-[#faf6e6] rounded-xl text-sm text-gray-600">{customer.notes}</div>}
+          </div>
+        </div>
 
         {/* Payment History */}
-        <Card>
-          <CardHeader><CardTitle className="text-base">Historie plateb</CardTitle></CardHeader>
-          <CardContent>
-            {payments.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-6">Zatím žádné platby</p>
-            ) : (
-              <div className="space-y-2 max-h-80 overflow-y-auto">
-                {payments.map(p => (
-                  <div key={p.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                        <CreditCard className="w-3.5 h-3.5 text-emerald-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-slate-800">{(p.amount || 0).toLocaleString()} Kč</p>
-                        <p className="text-xs text-slate-400">
-                          {p.model_name || "—"}
-                          {p.service_type ? ` · ${p.service_type}` : ""}
-                          {" · "}
-                          {p.payment_date ? format(new Date(p.payment_date), "d. M. yyyy") : p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}
-                        </p>
-                      </div>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4">Historie plateb</h3>
+          {payments.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-6">Zatím žádné platby</p>
+          ) : (
+            <div className="space-y-2 max-h-80 overflow-y-auto">
+              {payments.map(p => (
+                <div key={p.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-[#faf6e6]/50 border border-transparent hover:border-[#e8d99a]/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                      <CreditCard className="w-3.5 h-3.5 text-emerald-500" />
                     </div>
-                    <Badge variant="outline" className="text-xs">{p.status || "completed"}</Badge>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{(p.amount || 0).toLocaleString()} Kč</p>
+                      <p className="text-xs text-gray-400">
+                        {p.model_name || "—"}
+                        {p.service_type ? ` · ${p.service_type}` : ""}
+                        {" · "}
+                        {p.payment_date ? format(new Date(p.payment_date), "d. M. yyyy") : p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}
+                      </p>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <Badge variant="outline" className="text-xs">{p.status || "completed"}</Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <CustomerFormModal

@@ -51,8 +51,8 @@ export default function ModelDetail({ currentUser }) {
 
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center">
-            <Bot className="w-7 h-7 text-purple-500" />
+          <div className="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center">
+            <Bot className="w-7 h-7 text-[#C9A227]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">{model.name}</h1>
@@ -67,58 +67,54 @@ export default function ModelDetail({ currentUser }) {
       </div>
 
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
-        <Card><CardContent className="p-5">
-          <p className="text-xs text-slate-500 uppercase tracking-wider">Total Revenue</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">${totalRevenue.toLocaleString()}</p>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <p className="text-xs text-slate-500 uppercase tracking-wider">Payments</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{payments.length}</p>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <p className="text-xs text-slate-500 uppercase tracking-wider">Customers</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{customers.length}</p>
-        </CardContent></Card>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <p className="text-xs text-gray-400 uppercase tracking-wider">Celkové tržby</p>
+          <p className="text-2xl font-bold text-gray-900 mt-1">{totalRevenue.toLocaleString()} Kč</p>
+        </div>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <p className="text-xs text-gray-400 uppercase tracking-wider">Platby</p>
+          <p className="text-2xl font-bold text-gray-900 mt-1">{payments.length}</p>
+        </div>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <p className="text-xs text-gray-400 uppercase tracking-wider">Zákazníci</p>
+          <p className="text-2xl font-bold text-gray-900 mt-1">{customers.length}</p>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><Users className="w-4 h-4" /> Linked Customers</CardTitle></CardHeader>
-          <CardContent>
-            {customers.length === 0 ? <p className="text-sm text-slate-400 text-center py-4">No customers linked</p> : (
-              <div className="space-y-2">
-                {customers.map(c => (
-                  <Link key={c.id} to={createPageUrl("CustomerDetail") + `?id=${c.id}`} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50">
-                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-xs font-semibold text-indigo-600">{c.full_name?.[0]?.toUpperCase()}</div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-700">{c.full_name}</p>
-                      <p className="text-xs text-slate-400">{c.email || "—"}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><CreditCard className="w-4 h-4" /> Recent Payments</CardTitle></CardHeader>
-          <CardContent>
-            {payments.length === 0 ? <p className="text-sm text-slate-400 text-center py-4">No payments yet</p> : (
-              <div className="space-y-2 max-h-80 overflow-y-auto">
-                {payments.slice(0, 10).map(p => (
-                  <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50">
-                    <div>
-                      <p className="text-sm font-medium text-slate-700">{p.customer_name || "Customer"}</p>
-                      <p className="text-xs text-slate-400">{p.created_date ? format(new Date(p.created_date), "MMM d, yyyy") : "—"}</p>
-                    </div>
-                    <span className="text-sm font-semibold text-slate-900">${(p.amount || 0).toLocaleString()}</span>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"><Users className="w-4 h-4 text-[#C9A227]" /> Zákazníci</h3>
+          {customers.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Žádní zákazníci</p> : (
+            <div className="space-y-2">
+              {customers.map(c => (
+                <Link key={c.id} to={createPageUrl("CustomerDetail") + `?id=${c.id}`} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#faf6e6]/50 hover:border-[#e8d99a]/50 border border-transparent transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-xs font-semibold text-[#C9A227]">{c.full_name?.[0]?.toUpperCase()}</div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">{c.full_name}</p>
+                    <p className="text-xs text-gray-400">{c.email || "—"}</p>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"><CreditCard className="w-4 h-4 text-[#C9A227]" /> Poslední platby</h3>
+          {payments.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Zatím žádné platby</p> : (
+            <div className="space-y-2 max-h-80 overflow-y-auto">
+              {payments.slice(0, 10).map(p => (
+                <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">{p.customer_name || "Zákazník"}</p>
+                    <p className="text-xs text-gray-400">{p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}</p>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <ModelFormModal open={showEdit} onClose={() => setShowEdit(false)} onSave={updateMutation.mutateAsync} model={model} users={users} />
