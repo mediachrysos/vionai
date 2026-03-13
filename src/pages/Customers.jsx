@@ -117,10 +117,10 @@ export default function Customers({ currentUser }) {
           <Button variant="outline" onClick={downloadXlsx} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
             <Download className="w-4 h-4 mr-2" /> Export .xlsx
           </Button>
-          <Button variant="outline" onClick={() => setShowOnboarding(true)} className="border-indigo-200 text-indigo-600 hover:bg-indigo-50">
+          <Button variant="outline" onClick={() => setShowOnboarding(true)} className="border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]">
             <Link2 className="w-4 h-4 mr-2" /> Onboarding odkaz
           </Button>
-          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm shadow-indigo-200">
+          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
             <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
           </Button>
         </div>
@@ -148,7 +148,7 @@ export default function Customers({ currentUser }) {
       {filtered.length === 0 && !isLoading ? (
         <EmptyState icon={UserCircle} title="Žádní zákazníci" description="Přidej prvního zákazníka a začni" actionLabel="Přidat zákazníka" onAction={() => setShowForm(true)} />
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

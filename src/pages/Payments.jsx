@@ -108,7 +108,7 @@ export default function Payments({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <PageHeader title="Platby" subtitle={`${payments.length} celkem · ${totalAmount.toLocaleString()} Kč`}>
-        <Button onClick={() => setShowForm(true)} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm shadow-indigo-200">
+        <Button onClick={() => setShowForm(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
           <Plus className="w-4 h-4 mr-2" /> Přidat platbu
         </Button>
       </PageHeader>
@@ -138,7 +138,7 @@ export default function Payments({ currentUser }) {
       {filtered.length === 0 && !isLoading ? (
         <EmptyState icon={CreditCard} title="Žádné platby" description="Přidej první platbu" actionLabel="Přidat platbu" onAction={() => setShowForm(true)} />
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
