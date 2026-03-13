@@ -385,6 +385,61 @@ function AddCustomerInline({ users, onGenerateLink }) {
   );
 }
 
+/* ── Goal settings inline ── */
+function GoalSettingsInline() {
+  const [goal, setGoal] = useState("");
+  const [goalId, setGoalId] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    base44.entities.GoalSettings.list().then(list => {
+      if (list.length > 0) {
+        setGoal(list[0].monthly_goal?.toString() || "100000");
+        setGoalId(list[0].id);
+      } else {
+        setGoal("100000");
+      }
+    });
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const val = parseFloat(goal) || 100000;
+    if (goalId) {
+      await base44.entities.GoalSettings.update(goalId, { monthly_goal: val });
+    } else {
+      const created = await base44.entities.GoalSettings.create({ monthly_goal: val, label: "default" });
+      setGoalId(created.id);
+    }
+    setSaving(false);
+    setDone(true);
+    setTimeout(() => setDone(false), 2000);
+  };
+
+  return (
+    <div className="flex items-end gap-3 max-w-sm">
+      <div className="flex-1">
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Cíl (Kč / měsíc)</label>
+        <Input
+          type="number"
+          value={goal}
+          onChange={e => setGoal(e.target.value)}
+          placeholder="100000"
+          className="h-9"
+        />
+      </div>
+      <Button
+        onClick={handleSave}
+        disabled={!goal || saving}
+        className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 text-sm font-semibold text-white px-5"
+      >
+        {done ? "✓ Uloženo!" : saving ? "..." : "Uložit cíl"}
+      </Button>
+    </div>
+  );
+}
+
 /* ── Bank accounts inline ── */
 function BankAccountsInline({ accounts, setAccounts }) {
   const [form, setForm] = useState({ name: "", account_number: "", bank_name: "", is_active: true });
