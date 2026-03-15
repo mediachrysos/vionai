@@ -57,7 +57,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl w-full p-0 overflow-hidden">
+      <DialogContent className="max-w-2xl w-full p-0 overflow-hidden max-h-[90vh] flex flex-col">
         {/* Zlatá hlavička */}
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-6 py-4">
           <DialogTitle className="text-white text-lg font-semibold">
