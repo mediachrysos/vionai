@@ -51,8 +51,10 @@ export default function ModelDetail({ currentUser }) {
 
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center">
-            <Bot className="w-7 h-7 text-[#C9A227]" />
+          <div className="w-14 h-14 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
+            {model.profile_photo
+              ? <img src={model.profile_photo} alt={model.name} className="w-full h-full object-cover" />
+              : <Bot className="w-7 h-7 text-[#C9A227]" />}
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">{model.name}</h1>
