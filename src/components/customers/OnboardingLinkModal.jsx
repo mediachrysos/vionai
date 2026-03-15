@@ -60,88 +60,91 @@ export default function OnboardingLinkModal({ open, onClose, models, users }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Link2 className="w-5 h-5 text-indigo-500" />
-            Vygenerovat onboarding odkaz
+      <DialogContent className="max-w-md w-full p-0 overflow-hidden">
+        {/* Zlatá hlavička */}
+        <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-6 py-4 flex items-center gap-3">
+          <Link2 className="w-5 h-5 text-white/80" />
+          <DialogTitle className="text-white text-lg font-semibold">
+            Onboarding odkaz
           </DialogTitle>
-        </DialogHeader>
+        </div>
 
-        {!generatedLink ? (
-          <div className="space-y-4 mt-2">
-            <div>
-              <Label>Celé jméno zákazníka *</Label>
-              <Input
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Jan Novák"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Přiřazená modelka</Label>
-              <Select value={assignedModel} onValueChange={setAssignedModel}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Vybrat (volitelné)" /></SelectTrigger>
-                <SelectContent>
-                  {models?.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Přiřazený chatter</Label>
-              <Select value={assignedChatter} onValueChange={setAssignedChatter}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Vybrat (volitelné)" /></SelectTrigger>
-                <SelectContent>
-                  {users?.map(u => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={handleClose}>Zrušit</Button>
-              <Button
-                onClick={handleGenerate}
-                disabled={!name.trim() || loading}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
-              >
-                {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generuji...</> : "Vygenerovat odkaz"}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-5 mt-2">
-            <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
-              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                <Check className="w-5 h-5 text-emerald-600" />
+        <div className="px-6 py-5">
+          {!generatedLink ? (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Celé jméno zákazníka *</Label>
+                <Input
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="Jan Novák"
+                  className="mt-1 focus-visible:ring-[#C9A227]"
+                />
               </div>
               <div>
-                <p className="text-sm font-semibold text-emerald-800">Odkaz úspěšně vygenerován</p>
-                <p className="text-xs text-emerald-600 mt-0.5">Pošlete odkaz zákazníkovi <strong>{name}</strong> do chatu.</p>
+                <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Přiřazená modelka</Label>
+                <Select value={assignedModel} onValueChange={setAssignedModel}>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder="Vybrat (volitelné)" /></SelectTrigger>
+                  <SelectContent>
+                    {models?.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Přiřazený chatter</Label>
+                <Select value={assignedChatter} onValueChange={setAssignedChatter}>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder="Vybrat (volitelné)" /></SelectTrigger>
+                  <SelectContent>
+                    {users?.map(u => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                <Button variant="outline" onClick={handleClose}>Zrušit</Button>
+                <Button
+                  onClick={handleGenerate}
+                  disabled={!name.trim() || loading}
+                  className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm"
+                >
+                  {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generuji...</> : "Vygenerovat odkaz"}
+                </Button>
               </div>
             </div>
-
-            <div>
-              <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Onboarding odkaz</p>
-              <div className="flex gap-2 items-center bg-gray-50 rounded-xl border border-gray-200 px-4 py-3">
-                <span className="text-xs text-gray-700 flex-1 break-all font-mono leading-relaxed">{generatedLink}</span>
+          ) : (
+            <div className="space-y-5">
+              <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800">Odkaz úspěšně vygenerován</p>
+                  <p className="text-xs text-emerald-600 mt-0.5">Pošlete odkaz zákazníkovi <strong>{name}</strong> do chatu.</p>
+                </div>
               </div>
-              <Button
-                onClick={handleCopy}
-                variant={copied ? "outline" : "default"}
-                className={`w-full mt-2 ${copied ? "border-emerald-300 text-emerald-600" : "bg-indigo-600 hover:bg-indigo-700 text-white"}`}
-              >
-                {copied ? <><Check className="w-4 h-4 mr-2" /> Zkopírováno!</> : <><Copy className="w-4 h-4 mr-2" /> Kopírovat odkaz</>}
-              </Button>
-            </div>
 
-            <p className="text-xs text-gray-400 text-center">Po vyplnění formuláře zákazníkem se záznam automaticky uloží do databáze.</p>
+              <div>
+                <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Onboarding odkaz</p>
+                <div className="bg-gray-50 rounded-xl border border-gray-200 px-4 py-3">
+                  <span className="text-xs text-gray-700 break-all font-mono leading-relaxed">{generatedLink}</span>
+                </div>
+                <Button
+                  onClick={handleCopy}
+                  variant={copied ? "outline" : "default"}
+                  className={`w-full mt-2 ${copied ? "border-emerald-300 text-emerald-600" : "bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"}`}
+                >
+                  {copied ? <><Check className="w-4 h-4 mr-2" /> Zkopírováno!</> : <><Copy className="w-4 h-4 mr-2" /> Kopírovat odkaz</>}
+                </Button>
+              </div>
 
-            <div className="flex justify-between gap-2 pt-1">
-              <Button variant="outline" onClick={reset} className="flex-1">Nový odkaz</Button>
-              <Button onClick={handleClose} className="flex-1 bg-gray-900 hover:bg-gray-800 text-white">Zavřít</Button>
+              <p className="text-xs text-gray-400 text-center">Po vyplnění formuláře zákazníkem se záznam automaticky uloží do databáze.</p>
+
+              <div className="flex gap-2 pt-1 border-t border-gray-100">
+                <Button variant="outline" onClick={reset} className="flex-1">Nový odkaz</Button>
+                <Button onClick={handleClose} className="flex-1 bg-gray-900 hover:bg-gray-800 text-white">Zavřít</Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
