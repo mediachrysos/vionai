@@ -65,7 +65,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
           </DialogTitle>
         </div>
 
-        <div className="px-6 py-5">
+        <div className="px-6 py-5 overflow-y-auto flex-1">
           {duplicate && (
             <Alert className="border-amber-200 bg-amber-50 mb-4">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
