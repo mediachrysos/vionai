@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
+import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 
 const statusColors = {
   active: "bg-emerald-50 text-emerald-700 border-emerald-100",
