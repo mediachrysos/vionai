@@ -111,6 +111,11 @@ export default function Customers({ currentUser }) {
     return matchSearch && matchStatus;
   });
 
+  const myModelIds = useMemo(() => {
+    if (!currentUser?.email) return [];
+    return models.filter(m => m.assigned_chatters?.includes(currentUser.email)).map(m => m.id);
+  }, [models, currentUser]);
+
   const modelMap = {};
   models.forEach(m => { modelMap[m.id] = m.name; });
 
