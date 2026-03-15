@@ -65,10 +65,10 @@ function EditableCell({ value, onSave, canCreate = false, highlight = "" }) {
   );
 }
 
-function SummaryRow({ label, totals, chatters, bg = "bg-gray-50", textClass = "text-xs font-bold" }) {
+function SummaryRow({ label, totals, chatters, bg = "bg-gray-50", textClass = "text-xs font-bold", stickyTop = "" }) {
   return (
-    <tr className={cn(bg, "border-b-2 border-gray-200")}>
-      <td className={cn("px-3 py-2.5 sticky left-0 z-10", bg, textClass, "text-gray-700")}>{label}</td>
+    <tr className={cn(bg, "border-b-2 border-gray-200", stickyTop && `sticky ${stickyTop} z-20`)}>
+      <td className={cn("px-3 py-2.5 sticky left-0 z-30", bg, textClass, "text-gray-700")}>{label}</td>
       {/* Global: Příjmy */}
       <td className={cn("px-3 py-2.5 text-right tabular-nums text-gray-800 bg-indigo-50/50", textClass)}>
         {fmt(totals.totalRevenue)}
