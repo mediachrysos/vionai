@@ -110,10 +110,11 @@ export default function Customers({ currentUser }) {
       c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
       c.email?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || c.status === statusFilter;
+    const custModels = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
     const matchChatter = showAll || isAdmin ||
       c.assigned_chatter === currentUser?.email ||
-      myModelIds.includes(c.assigned_model);
-    const matchModel = modelFilter === "all" || c.assigned_model === modelFilter;
+      custModels.some(mid => myModelIds.includes(mid));
+    const matchModel = modelFilter === "all" || custModels.includes(modelFilter);
     return matchSearch && matchStatus && matchChatter && matchModel;
   });
 
