@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { DollarSign, CreditCard, TrendingDown, TrendingUp } from "lucide-react";
@@ -7,8 +7,12 @@ import RevenueChart from "../components/dashboard/RevenueChart";
 import PageHeader from "../components/ui-custom/PageHeader";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import FinanceSheetTable from "../components/finance/FinanceSheetTable";
+import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 
 export default function Finance({ currentUser }) {
+  const { showAll, toggle } = useChatterFilter();
+  const isAdmin = currentUser?.role === "admin";
+
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
     queryFn: () => base44.entities.Payment.list("-created_date", 500),
@@ -17,6 +21,22 @@ export default function Finance({ currentUser }) {
     queryKey: ["expenses"],
     queryFn: () => base44.entities.Expense.list("-expense_date", 500),
   });
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+  });
+
+  const myModelIds = useMemo(() => {
+    if (!currentUser?.email) return [];
+    return models.filter(m => m.assigned_chatters?.includes(currentUser.email)).map(m => m.id);
+  }, [models, currentUser]);
+
+  const filteredPayments = useMemo(() => {
+    if (showAll || isAdmin) return payments;
+    return payments.filter(p =>
+      p.chatter_email === currentUser?.email || myModelIds.includes(p.model_id)
+    );
+  }, [payments, showAll, isAdmin, currentUser, myModelIds]);
 
   const today = new Date().toISOString().split("T")[0];
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
