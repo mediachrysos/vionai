@@ -64,7 +64,7 @@ export default function Finance({ currentUser }) {
   const monthExpTotal = monthExpenses.reduce((s, e) => s + (e.amount || 0), 0);
   const monthNetProfit = monthRev - monthExpTotal;
 
-  const totalRev = payments.reduce((s, p) => s + (p.amount || 0), 0);
+  const totalRev = filteredPayments.reduce((s, p) => s + (p.amount || 0), 0);
   const totalExp = expenses.reduce((s, e) => s + (e.amount || 0), 0);
   const totalNetProfit = totalRev - totalExp;
 
