@@ -342,12 +342,13 @@ export default function FinanceSheetTable() {
               ))}
             </tr>
           </thead>
-          <tbody>
+          <thead>
             {/* TOTALS ROW */}
-            <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-amber-50/30" textClass="text-xs font-bold" />
+            <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-amber-50/30" textClass="text-xs font-bold" stickyTop="top-[72px]" />
             {/* AVERAGE ROW */}
-            <SummaryRow label="PRŮMĚR / den" totals={averages} chatters={chatters} bg="bg-gray-50/80" textClass="text-xs font-medium" />
-
+            <SummaryRow label="PRŮMĚR / den" totals={averages} chatters={chatters} bg="bg-gray-50/80" textClass="text-xs font-medium" stickyTop="top-[105px]" />
+          </thead>
+          <tbody>
             {rows.map(row => {
               const isToday = row.dateStr === today;
               const hasData = row.totalRevenue > 0 || row.globalAdSpend > 0;
