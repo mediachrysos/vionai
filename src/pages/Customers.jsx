@@ -108,7 +108,10 @@ export default function Customers({ currentUser }) {
       c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
       c.email?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || c.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchChatter = showAll || isAdmin ||
+      c.assigned_chatter === currentUser?.email ||
+      myModelIds.includes(c.assigned_model);
+    return matchSearch && matchStatus && matchChatter;
   });
 
   const myModelIds = useMemo(() => {
