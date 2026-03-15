@@ -26,7 +26,7 @@ const statusColors = {
 
 export default function Customers({ currentUser }) {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("last_payment");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
