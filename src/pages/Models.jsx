@@ -98,8 +98,10 @@ export default function Models({ currentUser }) {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-gray-400" />
+                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
+                    {m.profile_photo
+                      ? <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" />
+                      : <Bot className="w-5 h-5 text-[#C9A227]" />}
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-gray-800">{m.name}</h3>
