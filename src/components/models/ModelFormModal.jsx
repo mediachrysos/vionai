@@ -94,6 +94,26 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
           {activeTab === "info" && (
             <>
               <div>
+                <Label>Profilová fotografie</Label>
+                <div className="mt-1 flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a] flex-shrink-0">
+                    {form.profile_photo
+                      ? <img src={form.profile_photo} alt="foto" className="w-full h-full object-cover" />
+                      : <Bot className="w-8 h-8 text-[#C9A227]" />}
+                  </div>
+                  <label className="cursor-pointer">
+                    <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploading} />
+                    <div className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#e8d99a] rounded-lg text-sm text-[#A8841C] hover:bg-[#faf6e6] transition-colors">
+                      <Upload className="w-4 h-4" />
+                      {uploading ? "Nahrávám..." : "Nahrát fotku"}
+                    </div>
+                  </label>
+                  {form.profile_photo && (
+                    <button onClick={() => setForm(prev => ({ ...prev, profile_photo: "" }))} className="text-xs text-red-400 hover:text-red-600">Odebrat</button>
+                  )}
+                </div>
+              </div>
+              <div>
                 <Label>Jméno modelky *</Label>
                 <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Jméno modelky" />
               </div>
