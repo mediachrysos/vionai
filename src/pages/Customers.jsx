@@ -106,6 +106,21 @@ export default function Customers({ currentUser }) {
     },
   });
 
+  const myModelIds = useMemo(() => {
+    if (!currentUser?.email) return [];
+    const fromModels = models.filter(m => m.assigned_chatters?.includes(currentUser.email)).map(m => m.id);
+    const fromUser = currentUser?.assigned_model_ids || [];
+    return [...new Set([...fromModels, ...fromUser])];
+  }, [models, currentUser]);
+
+  // Set default model filter to user's first assigned model (non-admin only)
+  useEffect(() => {
+    if (!defaultModelSet && !isAdmin && myModelIds.length > 0) {
+      setModelFilter(myModelIds[0]);
+      setDefaultModelSet(true);
+    }
+  }, [myModelIds, isAdmin, defaultModelSet]);
+
   const today = new Date();
 
   const filtered = customers.filter(c => {
