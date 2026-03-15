@@ -135,12 +135,21 @@ export default function Customers({ currentUser }) {
           <Button variant="outline" onClick={downloadXlsx} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
             <Download className="w-4 h-4 mr-2" /> Export .xlsx
           </Button>
-          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
-            <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
-          </Button>
-          <Button variant="outline" onClick={() => setShowOnboarding(true)} className="border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]">
-            <Link2 className="w-4 h-4 mr-2" /> Onboarding odkaz
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
+                <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka <ChevronDown className="w-3.5 h-3.5 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => { setEditing(null); setShowForm(true); }}>
+                <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowOnboarding(true)}>
+                <Link2 className="w-4 h-4 mr-2" /> Onboarding odkaz
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </PageHeader>
 
