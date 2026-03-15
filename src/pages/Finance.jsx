@@ -44,7 +44,7 @@ export default function Finance({ currentUser }) {
     .toISOString()
     .split("T")[0];
 
-  const todayPayments = payments.filter(
+  const todayPayments = filteredPayments.filter(
     (p) => (p.payment_date || p.created_date?.split("T")[0]) === today
   );
   const weekPayments = payments.filter(
