@@ -115,7 +115,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
             <select
               value={year}
               onChange={e => setViewDate(new Date(parseInt(e.target.value), month, 1))}
-              className="w-20 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-300 cursor-pointer"
+              className="w-20 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-300 cursor-pointer"
             >
               {years.map(y => (
                 <option key={y} value={y}>{y}</option>
