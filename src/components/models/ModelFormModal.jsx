@@ -23,8 +23,8 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (model) setForm({ ...model, assigned_chatters: model.assigned_chatters || [], story: model.story || "" });
-    else setForm({ name: "", status: "active", notes: "", story: "", assigned_chatters: [] });
+    if (model) setForm({ ...model, assigned_chatters: model.assigned_chatters || [], story: model.story || "", profile_photo: model.profile_photo || "" });
+    else setForm({ name: "", status: "active", notes: "", story: "", assigned_chatters: [], profile_photo: "" });
     setActiveTab("info");
   }, [model, open]);
 
