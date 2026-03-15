@@ -112,7 +112,8 @@ export default function Customers({ currentUser }) {
     const matchChatter = showAll || isAdmin ||
       c.assigned_chatter === currentUser?.email ||
       myModelIds.includes(c.assigned_model);
-    return matchSearch && matchStatus && matchChatter;
+    const matchModel = modelFilter === "all" || c.assigned_model === modelFilter;
+    return matchSearch && matchStatus && matchChatter && matchModel;
   });
 
   const myModelIds = useMemo(() => {
