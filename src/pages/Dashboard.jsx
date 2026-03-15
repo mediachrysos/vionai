@@ -29,12 +29,14 @@ export default function Dashboard({ currentUser }) {
     queryFn: () => base44.entities.User.list(),
   });
 
-  // Models assigned to current chatter
+  // Models assigned to current user — from Model.assigned_chatters OR User.assigned_model_ids
   const myModelIds = useMemo(() => {
     if (!currentUser?.email) return [];
-    return models
+    const fromModels = models
       .filter(m => m.assigned_chatters?.includes(currentUser.email))
       .map(m => m.id);
+    const fromUser = currentUser?.assigned_model_ids || [];
+    return [...new Set([...fromModels, ...fromUser])];
   }, [models, currentUser]);
 
   const isAdmin = currentUser?.role === "admin";
