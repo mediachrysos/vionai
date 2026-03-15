@@ -189,14 +189,12 @@ export default function Customers({ currentUser }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat zákazníky..." className="pl-10" />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Všechny stavy</SelectItem>
-            <SelectItem value="active">Aktivní</SelectItem>
-            <SelectItem value="inactive">Neaktivní</SelectItem>
-            <SelectItem value="vip">VIP</SelectItem>
-            <SelectItem value="blocked">Blokovaný</SelectItem>
+            <SelectItem value="last_payment">Poslední platba</SelectItem>
+            <SelectItem value="most_paid">Nejvyšší celková platba</SelectItem>
+            <SelectItem value="pay_day">Nejbližší výplata</SelectItem>
           </SelectContent>
         </Select>
         <Select value={modelFilter} onValueChange={setModelFilter}>
