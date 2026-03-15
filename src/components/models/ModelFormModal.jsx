@@ -17,9 +17,10 @@ const TABS = [
 ];
 
 export default function ModelFormModal({ open, onClose, onSave, model, users }) {
-  const [form, setForm] = useState({ name: "", status: "active", notes: "", story: "", assigned_chatters: [] });
+  const [form, setForm] = useState({ name: "", status: "active", notes: "", story: "", assigned_chatters: [], profile_photo: "" });
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (model) setForm({ ...model, assigned_chatters: model.assigned_chatters || [], story: model.story || "" });
