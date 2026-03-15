@@ -252,8 +252,9 @@ export default function Customers({ currentUser }) {
                       </Badge>
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
-                    </td>
+                       <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
+                       <p className="text-xs text-gray-400">{customerPaymentCount[c.id] || 0}× plateb</p>
+                     </td>
                     <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                       {daysSinceLast !== null ? (
                         <div>
