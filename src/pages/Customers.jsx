@@ -159,6 +159,15 @@ export default function Customers({ currentUser }) {
             <SelectItem value="blocked">Blokovaný</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={modelFilter} onValueChange={setModelFilter}>
+          <SelectTrigger className="w-44"><SelectValue placeholder="Všechny modelky" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Všechny modelky</SelectItem>
+            {models.map(m => (
+              <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {!isAdmin && (
           <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
         )}
