@@ -22,7 +22,9 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
     chatterMap[key].count += 1;
   });
 
-  const chatters = Object.values(chatterMap).sort((a, b) => b.total - a.total);
+  const allChatters = Object.values(chatterMap).sort((a, b) => b.total - a.total);
+  // If not showing all, highlight current user's row but still show others dimmed
+  const chatters = allChatters;
   const totalDay = dayPayments.reduce((s, p) => s + (p.amount || 0), 0);
 
   const prevDay = () => setSelectedDate(subDays(new Date(selectedDate), 1).toISOString().split("T")[0]);
