@@ -156,13 +156,6 @@ export default function Customers({ currentUser }) {
     return sb.lastDate > sa.lastDate ? 1 : -1;
   });
 
-  const myModelIds = useMemo(() => {
-    if (!currentUser?.email) return [];
-    const fromModels = models.filter(m => m.assigned_chatters?.includes(currentUser.email)).map(m => m.id);
-    const fromUser = currentUser?.assigned_model_ids || [];
-    return [...new Set([...fromModels, ...fromUser])];
-  }, [models, currentUser]);
-
   // Per-customer payment count from allPayments
   const customerPaymentCount = {};
   allPayments.forEach(p => {
