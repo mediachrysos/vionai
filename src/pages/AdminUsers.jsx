@@ -246,8 +246,8 @@ function UserRow({ user, onUpdate, onDelete, models }) {
         </div>
       </div>
 
-      {/* Model assignment for chatters */}
-      {isChatter && models.length > 0 && (
+      {/* Model assignment for all users */}
+      {models.length > 0 && (
         <div className="flex items-center gap-2 flex-wrap pl-12">
           <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Modelky:</span>
           {models.filter(m => m.status === "active").map(m => {
