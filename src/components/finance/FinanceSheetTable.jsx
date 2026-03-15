@@ -167,8 +167,12 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
   const monthPayments = useMemo(() =>
     payments.filter(p => {
       const d = p.payment_date || p.created_date?.split("T")[0];
-      return d >= monthStart && d <= monthEnd;
-    }), [payments, monthStart, monthEnd]);
+      if (d < monthStart || d > monthEnd) return false;
+      if (!showAll && currentUser?.email) {
+        return p.chatter_email === currentUser.email || myModelIds.includes(p.model_id);
+      }
+      return true;
+    }), [payments, monthStart, monthEnd, showAll, currentUser, myModelIds]);
 
   const monthExpenses = useMemo(() =>
     expenses.filter(e => {
