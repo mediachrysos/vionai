@@ -105,17 +105,39 @@ export default function Customers({ currentUser }) {
     },
   });
 
+  const today = new Date();
+
   const filtered = customers.filter(c => {
     const matchSearch = !search || 
       c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
       c.email?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === "all" || c.status === statusFilter;
     const custModels = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
     const matchChatter = showAll || isAdmin ||
       c.assigned_chatter === currentUser?.email ||
       custModels.some(mid => myModelIds.includes(mid));
     const matchModel = modelFilter === "all" || custModels.includes(modelFilter);
-    return matchSearch && matchStatus && matchChatter && matchModel;
+    return matchSearch && matchChatter && matchModel;
+  }).sort((a, b) => {
+    const sa = customerStats[a.id] || {};
+    const sb = customerStats[b.id] || {};
+    if (sortBy === "most_paid") {
+      return (sb.total || 0) - (sa.total || 0);
+    }
+    if (sortBy === "pay_day") {
+      // Sort by who has payday soonest (relative to today's day of month)
+      const todayDay = today.getDate();
+      const daysUntil = (d) => {
+        if (!d) return 999;
+        const diff = d - todayDay;
+        return diff >= 0 ? diff : diff + 31;
+      };
+      return daysUntil(a.pay_day_of_month) - daysUntil(b.pay_day_of_month);
+    }
+    // default: last_payment
+    if (!sa.lastDate && !sb.lastDate) return 0;
+    if (!sa.lastDate) return 1;
+    if (!sb.lastDate) return -1;
+    return sb.lastDate > sa.lastDate ? 1 : -1;
   });
 
   const myModelIds = useMemo(() => {
