@@ -149,9 +149,9 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
                     disabled={isDisabled(day)}
                     className={cn(
                       "w-8 h-8 rounded-full text-sm font-medium transition-all",
-                      isSelected(day) && "bg-indigo-600 text-white shadow-sm",
-                      !isSelected(day) && isTodayDay(day) && "border-2 border-indigo-400 text-indigo-600",
-                      !isSelected(day) && !isTodayDay(day) && !isDisabled(day) && "text-gray-700 hover:bg-indigo-50",
+                      isSelected(day) && "bg-[#C9A227] text-white shadow-sm",
+                      !isSelected(day) && isTodayDay(day) && "border-2 border-[#C9A227] text-[#C9A227]",
+                      !isSelected(day) && !isTodayDay(day) && !isDisabled(day) && "text-gray-700 hover:bg-amber-50",
                       isDisabled(day) && "text-gray-300 cursor-not-allowed"
                     )}
                   >
