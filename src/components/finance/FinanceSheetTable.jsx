@@ -329,7 +329,7 @@ export default function FinanceSheetTable() {
                 </th>
               ))}
             </tr>
-            <tr className="bg-gray-50 border-b border-gray-200">
+            <tr className="bg-gray-50 border-b border-gray-200 sticky top-[36px] z-20">
               <th className="text-right px-3 py-2 font-medium text-gray-600 bg-slate-50/80 min-w-[90px]">Příjmy</th>
               <th className="text-right px-3 py-2 font-medium text-rose-500 bg-rose-50/20 min-w-[90px]">Ad Spend</th>
               <th className="text-right px-3 py-2 font-medium text-emerald-600 bg-emerald-50/30 min-w-[90px]">Profit</th>
