@@ -132,7 +132,7 @@ function exportCSV(rows, chatters, year, month) {
   a.click(); URL.revokeObjectURL(url);
 }
 
-export default function FinanceSheetTable() {
+export default function FinanceSheetTable({ currentUser = null, showAll = true, myModelIds = [] }) {
   const qc = useQueryClient();
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
