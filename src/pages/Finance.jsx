@@ -47,10 +47,10 @@ export default function Finance({ currentUser }) {
   const todayPayments = filteredPayments.filter(
     (p) => (p.payment_date || p.created_date?.split("T")[0]) === today
   );
-  const weekPayments = payments.filter(
+  const weekPayments = filteredPayments.filter(
     (p) => (p.payment_date || p.created_date?.split("T")[0]) >= weekAgo
   );
-  const monthPayments = payments.filter(
+  const monthPayments = filteredPayments.filter(
     (p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart
   );
 
