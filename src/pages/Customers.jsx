@@ -235,7 +235,17 @@ export default function Customers({ currentUser }) {
                         ? <span className="text-sm font-medium text-gray-700">{c.pay_day_of_month}. v měsíci</span>
                         : <span className="text-gray-300">—</span>}
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">{modelMap[c.assigned_model] || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm hidden lg:table-cell">
+                       {(() => {
+                         const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
+                         const names = mids.map(mid => modelMap[mid]).filter(Boolean);
+                         return names.length > 0 ? (
+                           <div className="flex flex-wrap gap-1">
+                             {names.map(n => <span key={n} className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded-md px-1.5 py-0.5">{n}</span>)}
+                           </div>
+                         ) : <span className="text-gray-300">—</span>;
+                       })()}
+                     </td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[c.status] || statusColors.active}>
                         {c.status || "active"}
