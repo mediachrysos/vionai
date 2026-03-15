@@ -30,6 +30,8 @@ export default function Customers({ currentUser }) {
   const [editing, setEditing] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const qc = useQueryClient();
+  const { showAll, toggle } = useChatterFilter();
+  const isAdmin = currentUser?.role === "admin";
 
   const urlParams = new URLSearchParams(window.location.search);
   useEffect(() => {
