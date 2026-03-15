@@ -72,10 +72,12 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
 
         <>
           <div className="space-y-2 mb-4">
-            {chatters.map((c) =>
-            <div key={c.name} className="flex items-center justify-between">
+            {chatters.map((c) => {
+              const isMe = currentUser?.email && c.key === currentUser.email;
+              return (
+              <div key={c.name} className={`flex items-center justify-between ${!showAll && !isMe ? "opacity-40" : ""}`}>
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center text-[10px] font-bold text-[#C9A227]">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isMe && !showAll ? "bg-[#C9A227] text-white" : "bg-amber-50 text-[#C9A227]"}`}>
                     {c.name[0]?.toUpperCase()}
                   </div>
                   <span className="text-xs font-medium text-gray-700 truncate max-w-[120px]">
@@ -86,12 +88,10 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
                   <span className="text-xs font-bold text-gray-900">
                     {c.total.toLocaleString()} Kč
                   </span>
-                  
-
-
                 </div>
               </div>
-            )}
+              );
+            })}
           </div>
           <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
             <span className="text-xs text-gray-500">Celkem {isToday ? "dnes" : format(new Date(selectedDate), "d. M. yyyy")}</span>
