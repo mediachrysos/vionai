@@ -3,7 +3,7 @@ import { MessageSquare, TrendingUp, ChevronLeft, ChevronRight } from "lucide-rea
 import { subDays, addDays, format } from "date-fns";
 import DatePicker from "@/components/ui-custom/DatePicker";
 
-export default function TodayChatterStats({ payments }) {
+export default function TodayChatterStats({ payments, showAll = true, currentUser = null }) {
   const todayStr = new Date().toISOString().split("T")[0];
   const [selectedDate, setSelectedDate] = useState(todayStr);
 
