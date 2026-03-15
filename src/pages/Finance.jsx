@@ -119,10 +119,10 @@ export default function Finance({ currentUser }) {
       </div>
 
       <div className="mt-6">
-        <RevenueChart payments={payments} />
+        <RevenueChart payments={filteredPayments} />
       </div>
 
-      <FinanceSheetTable />
+      <FinanceSheetTable currentUser={currentUser} showAll={showAll || isAdmin} myModelIds={myModelIds} />
 
     </div>
   );
