@@ -317,7 +317,7 @@ export default function FinanceSheetTable() {
         <table className="w-full text-xs">
           <thead>
             {/* Group headers */}
-            <tr className="bg-gray-50 border-b border-gray-100">
+            <tr className="bg-gray-50 border-b border-gray-100 sticky top-0 z-20">
               <th className="sticky left-0 bg-gray-50 z-10 px-3 py-2" rowSpan={2}></th>
               <th colSpan={3} className="text-center px-3 py-2 font-semibold text-gray-700 border-b border-gray-200 bg-slate-50">
                 Celkové
