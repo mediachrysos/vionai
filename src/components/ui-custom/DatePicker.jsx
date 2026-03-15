@@ -182,7 +182,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
                 }
                 setOpen(false);
               }}
-              className="text-xs text-indigo-600 font-semibold hover:text-indigo-700 transition-colors"
+              className="text-xs text-[#C9A227] font-semibold hover:text-[#A8841C] transition-colors"
             >
               Dnes
             </button>
