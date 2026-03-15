@@ -71,7 +71,14 @@ export default function Finance({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
-      <PageHeader title="Finance" subtitle="Přehled tržeb, výdajů a ziskovosti" goalCurrent={monthRev} goalTarget={100000} />
+      <div className="flex items-start justify-between flex-wrap gap-2">
+        <PageHeader title="Finance" subtitle="Přehled tržeb, výdajů a ziskovosti" goalCurrent={monthRev} goalTarget={100000} />
+        {!isAdmin && (
+          <div className="mt-1">
+            <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
+          </div>
+        )}
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         <StatCard
