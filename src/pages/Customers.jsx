@@ -155,6 +155,9 @@ export default function Customers({ currentUser }) {
             <SelectItem value="blocked">Blokovaný</SelectItem>
           </SelectContent>
         </Select>
+        {!isAdmin && (
+          <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
+        )}
       </div>
 
       {/* Table */}
