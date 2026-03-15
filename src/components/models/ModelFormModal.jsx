@@ -34,6 +34,15 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
     setSaving(false);
   };
 
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setForm(prev => ({ ...prev, profile_photo: file_url }));
+    setUploading(false);
+  };
+
   const toggleChatter = (email) => {
     setForm(prev => ({
       ...prev,
