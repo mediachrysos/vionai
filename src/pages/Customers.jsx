@@ -266,11 +266,7 @@ export default function Customers({ currentUser }) {
                          ) : <span className="text-gray-300">—</span>;
                        })()}
                      </td>
-                    <td className="px-5 py-3.5">
-                      <Badge variant="outline" className={statusColors[c.status] || statusColors.active}>
-                        {c.status || "active"}
-                      </Badge>
-                    </td>
+
                     <td className="px-5 py-3.5 text-right">
                        <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
                        <p className="text-xs text-gray-400">{customerPaymentCount[c.id] || 0}× plateb</p>
