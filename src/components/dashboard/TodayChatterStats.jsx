@@ -17,7 +17,7 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
   dayPayments.forEach((p) => {
     const key = p.chatter_email || "unknown";
     const name = p.chatter_name || p.chatter_email || "Neznámý";
-    if (!chatterMap[key]) chatterMap[key] = { name, total: 0, count: 0 };
+    if (!chatterMap[key]) chatterMap[key] = { key, name, total: 0, count: 0 };
     chatterMap[key].total += p.amount || 0;
     chatterMap[key].count += 1;
   });
