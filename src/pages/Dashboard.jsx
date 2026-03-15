@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import TodayChatterStats from "../components/dashboard/TodayChatterStats";
@@ -7,8 +7,11 @@ import TodayPaymentsWidget from "../components/dashboard/TodayPaymentsWidget";
 import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget";
 import PaydayWidget from "../components/dashboard/PaydayWidget";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
+import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 
 export default function Dashboard({ currentUser }) {
+  const { showAll, toggle } = useChatterFilter();
+
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
     queryFn: () => base44.entities.Payment.list("-created_date", 500),
@@ -26,22 +29,57 @@ export default function Dashboard({ currentUser }) {
     queryFn: () => base44.entities.User.list(),
   });
 
+  // Models assigned to current chatter
+  const myModelIds = useMemo(() => {
+    if (!currentUser?.email) return [];
+    return models
+      .filter(m => m.assigned_chatters?.includes(currentUser.email))
+      .map(m => m.id);
+  }, [models, currentUser]);
+
+  const isAdmin = currentUser?.role === "admin";
+
+  // Filter payments & customers if not showing all (admins see all by default)
+  const filteredPayments = useMemo(() => {
+    if (showAll || isAdmin) return payments;
+    return payments.filter(p =>
+      p.chatter_email === currentUser?.email ||
+      myModelIds.includes(p.model_id)
+    );
+  }, [payments, showAll, isAdmin, currentUser, myModelIds]);
+
+  const filteredCustomers = useMemo(() => {
+    if (showAll || isAdmin) return customers;
+    return customers.filter(c =>
+      c.assigned_chatter === currentUser?.email ||
+      myModelIds.includes(c.assigned_model)
+    );
+  }, [customers, showAll, isAdmin, currentUser, myModelIds]);
+
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
+
+      {/* Filter toggle — visible only for non-admins */}
+      {!isAdmin && (
+        <div className="flex justify-end mb-2">
+          <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
+        </div>
+      )}
+
       {/* Payday alert */}
       <PaydayWidget customers={customers} models={models} currentUser={currentUser} />
 
       {/* Top section: Notes (left) + Today chatter stats (right) */}
       <div className="grid lg:grid-cols-2 gap-4 mt-4">
         <TodayNotesWidget currentUser={currentUser} />
-        <TodayChatterStats payments={payments} />
+        <TodayChatterStats payments={filteredPayments} showAll={showAll || isAdmin} currentUser={currentUser} />
       </div>
 
       {/* Bottom section: Today payments + Recent customers */}
       <div className="grid lg:grid-cols-2 gap-4 mt-4">
-        <TodayPaymentsWidget payments={payments} />
-        <RecentCustomersWidget customers={customers} />
+        <TodayPaymentsWidget payments={filteredPayments} />
+        <RecentCustomersWidget customers={filteredCustomers} />
       </div>
     </div>
   );
