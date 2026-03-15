@@ -124,6 +124,13 @@ export default function Customers({ currentUser }) {
     return [...new Set([...fromModels, ...fromUser])];
   }, [models, currentUser]);
 
+  // Per-customer payment count from allPayments
+  const customerPaymentCount = {};
+  allPayments.forEach(p => {
+    if (!p.customer_id) return;
+    customerPaymentCount[p.customer_id] = (customerPaymentCount[p.customer_id] || 0) + 1;
+  });
+
   const modelMap = {};
   models.forEach(m => { modelMap[m.id] = m.name; });
 
