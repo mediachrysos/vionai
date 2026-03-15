@@ -116,7 +116,9 @@ export default function Customers({ currentUser }) {
 
   const myModelIds = useMemo(() => {
     if (!currentUser?.email) return [];
-    return models.filter(m => m.assigned_chatters?.includes(currentUser.email)).map(m => m.id);
+    const fromModels = models.filter(m => m.assigned_chatters?.includes(currentUser.email)).map(m => m.id);
+    const fromUser = currentUser?.assigned_model_ids || [];
+    return [...new Set([...fromModels, ...fromUser])];
   }, [models, currentUser]);
 
   const modelMap = {};
