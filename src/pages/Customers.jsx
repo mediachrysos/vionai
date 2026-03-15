@@ -31,6 +31,7 @@ export default function Customers({ currentUser }) {
   const [editing, setEditing] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [modelFilter, setModelFilter] = useState("all");
+  const [defaultModelSet, setDefaultModelSet] = useState(false);
   const qc = useQueryClient();
   const { showAll, toggle } = useChatterFilter();
   const isAdmin = currentUser?.role === "admin";
