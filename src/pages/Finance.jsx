@@ -13,6 +13,7 @@ import LawyerPayoutCard from "../components/finance/LawyerPayoutCard";
 export default function Finance({ currentUser }) {
   const { showAll, toggle } = useChatterFilter();
   const isAdmin = currentUser?.role === "admin";
+  const isLawyer = currentUser?.role === "lawyer";
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
