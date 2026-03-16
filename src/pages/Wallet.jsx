@@ -228,6 +228,16 @@ export default function Wallet() {
         onSave={saveTxMutation.mutateAsync}
         accounts={accounts}
       />
+      <WalletTransactionDetailModal
+        open={!!selectedTx}
+        onClose={() => setSelectedTx(null)}
+        transaction={selectedTx}
+        accounts={accounts}
+        onUpdate={() => {
+          qc.invalidateQueries({ queryKey: ["walletTransactions"] });
+          setSelectedTx(null);
+        }}
+      />
     </div>
   );
 }
