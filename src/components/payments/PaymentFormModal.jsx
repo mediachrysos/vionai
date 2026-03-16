@@ -35,7 +35,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
         ...prev, customer_id: "", customer_name: "", amount: "",
         service_type: "", model_id: "", model_name: "",
         chatter_email: currentUser?.email || "", chatter_name: currentUser?.full_name || "",
-        destination_account: "", payment_date: new Date().toISOString().split("T")[0],
+        destination_account: "", bank_account_id: "", payment_date: new Date().toISOString().split("T")[0],
         note: "", status: "completed"
       }));
       setCustomerSearch("");
