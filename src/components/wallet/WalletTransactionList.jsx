@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowUpCircle, ArrowDownCircle, FileText, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, FileText, ChevronLeft, ChevronRight, Filter, CalendarDays, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -9,28 +9,79 @@ const MONTH_NAMES = [
   "Červenec","Srpen","Září","Říjen","Listopad","Prosinec"
 ];
 
+function getDaysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
+  const days = getDaysInMonth(year, month);
+  const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
+  const offset = firstDow === 0 ? 6 : firstDow - 1; // Mon-first
+  return (
+    <div className="absolute z-50 top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-200 p-3 w-56">
+      <div className="text-xs font-semibold text-gray-600 mb-2 text-center">{MONTH_NAMES[month]} {year}</div>
+      <div className="grid grid-cols-7 gap-0.5 text-center">
+        {["Po","Út","St","Čt","Pá","So","Ne"].map(d => (
+          <div key={d} className="text-[10px] text-gray-400 font-medium pb-1">{d}</div>
+        ))}
+        {Array.from({ length: offset }).map((_, i) => <div key={`e${i}`} />)}
+        {Array.from({ length: days }, (_, i) => i + 1).map(d => (
+          <button
+            key={d}
+            onClick={() => { onSelectDay(selectedDay === d ? null : d); onClose(); }}
+            className={`text-xs w-7 h-7 rounded-lg font-medium transition-colors ${
+              selectedDay === d
+                ? "bg-[#C9A227] text-white"
+                : "hover:bg-amber-50 text-gray-700"
+            }`}
+          >
+            {d}
+          </button>
+        ))}
+      </div>
+      {selectedDay && (
+        <button onClick={() => { onSelectDay(null); onClose(); }} className="mt-2 w-full text-xs text-gray-400 hover:text-red-500 text-center">
+          Zrušit filtr dne
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function WalletTransactionList({ transactions, typeFilter, onTypeFilterChange }) {
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [showDayPicker, setShowDayPicker] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const pickerRef = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowDayPicker(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const prevMonth = () => {
+    setSelectedDay(null);
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
     else setViewMonth(m => m - 1);
   };
   const nextMonth = () => {
+    setSelectedDay(null);
     if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
     else setViewMonth(m => m + 1);
   };
 
   const monthStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
+  const dayStr = selectedDay ? `${monthStr}-${String(selectedDay).padStart(2, "0")}` : null;
 
   const monthFiltered = useMemo(() =>
     transactions.filter(tx => {
       const d = tx.transaction_date || tx.created_date?.split("T")[0] || "";
-      return d.startsWith(monthStr);
-    }), [transactions, monthStr]);
+      return dayStr ? d === dayStr : d.startsWith(monthStr);
+    }), [transactions, monthStr, dayStr]);
 
   const categories = useMemo(() => {
     const cats = new Set();
@@ -50,16 +101,33 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
     <div>
       {/* Month switcher + filters */}
       <div className="flex flex-wrap items-center gap-2 mb-3">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 relative" ref={pickerRef}>
           <button onClick={prevMonth} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center">
             <ChevronLeft className="w-3.5 h-3.5 text-gray-500" />
           </button>
-          <span className="text-xs font-semibold text-gray-700 min-w-[100px] text-center">
-            {MONTH_NAMES[viewMonth]} {viewYear}
-          </span>
+          <button
+            onClick={() => setShowDayPicker(v => !v)}
+            className={`text-xs font-semibold px-2 py-1 rounded-lg transition-colors min-w-[120px] text-center ${selectedDay ? "bg-amber-50 text-[#C9A227] border border-[#e8d99a]" : "text-gray-700 hover:bg-gray-100"}`}
+          >
+            {selectedDay ? `${selectedDay}. ${MONTH_NAMES[viewMonth]} ${viewYear}` : `${MONTH_NAMES[viewMonth]} ${viewYear}`}
+          </button>
           <button onClick={nextMonth} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center">
             <ChevronRight className="w-3.5 h-3.5 text-gray-500" />
           </button>
+          {selectedDay && (
+            <button onClick={() => setSelectedDay(null)} className="w-5 h-5 rounded hover:bg-red-50 flex items-center justify-center">
+              <X className="w-3 h-3 text-red-400" />
+            </button>
+          )}
+          {showDayPicker && (
+            <MonthDayPicker
+              year={viewYear}
+              month={viewMonth}
+              selectedDay={selectedDay}
+              onSelectDay={setSelectedDay}
+              onClose={() => setShowDayPicker(false)}
+            />
+          )}
         </div>
 
         {/* Type filter */}
