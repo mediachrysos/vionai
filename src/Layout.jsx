@@ -39,6 +39,8 @@ export default function Layout({ children, currentPageName }) {
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list(), enabled: !!user });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list(), enabled: !!user });
 
+  const { data: bankAccounts = [] } = useQuery({ queryKey: ["bankAccounts"], queryFn: () => base44.entities.BankAccount.filter({ is_active: true }), enabled: !!user });
+
   const saveMutation = useMutation({
     mutationFn: async (data) => {
       const payment = await base44.entities.Payment.create(data);
@@ -48,6 +50,15 @@ export default function Layout({ children, currentPageName }) {
           await base44.entities.Customer.update(data.customer_id, {
             total_spent: (cust.total_spent || 0) + (data.amount || 0),
             payment_count: (cust.payment_count || 0) + 1,
+          });
+        }
+      }
+      // Update BankAccount balance
+      if (data.bank_account_id) {
+        const acc = bankAccounts.find(a => a.id === data.bank_account_id);
+        if (acc) {
+          await base44.entities.BankAccount.update(data.bank_account_id, {
+            balance: (acc.balance || 0) + (data.amount || 0),
           });
         }
       }
