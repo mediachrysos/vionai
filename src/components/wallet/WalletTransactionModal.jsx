@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery } from "@tanstack/react-query";
 import { Upload, FileText, X } from "lucide-react";
 
-const PRESET_CATEGORIES = ["Marketing", "Nájem", "Mzdy", "Daně", "Software", "Infrastruktura", "Jiné"];
+const PRESET_CATEGORIES = ["Výplata Advokát", "Facebook Ads", "Software", "Poplatek za převod", "Bankovní poplatek"];
 
 export default function WalletTransactionModal({ open, onClose, onSave, accounts }) {
   const [form, setForm] = useState({
@@ -139,12 +139,12 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
           <div>
             <Label className="text-xs text-gray-500">Faktura (PDF nebo obrázek)</Label>
             {form.invoice_url ? (
-              <div className="mt-1 flex items-center gap-2 p-2 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="mt-1 flex items-center gap-2 p-2 bg-blue-50 rounded-lg border border-blue-200 overflow-hidden">
                 <FileText className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                <a href={form.invoice_url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline flex-1 truncate">
+                <a href={form.invoice_url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline flex-1 min-w-0 truncate block">
                   {form.invoice_name || "Faktura"}
                 </a>
-                <button onClick={() => setForm(p => ({ ...p, invoice_url: "", invoice_name: "" }))} className="text-gray-400 hover:text-red-500">
+                <button onClick={() => setForm(p => ({ ...p, invoice_url: "", invoice_name: "" }))} className="text-gray-400 hover:text-red-500 flex-shrink-0">
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
