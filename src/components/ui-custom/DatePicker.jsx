@@ -86,8 +86,8 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
           variant !== "ghost" && open && "border-[#C9A227] ring-2 ring-amber-100"
         )}
       >
-        <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" />
-        <span className={displayValue ? "text-gray-800" : "text-gray-400"}>
+        <CalendarDays className={cn("w-4 h-4 flex-shrink-0", variant === "ghost" ? "text-white/70" : "text-gray-400")} />
+        <span className={variant === "ghost" ? "text-white" : (displayValue ? "text-gray-800" : "text-gray-400")}>
           {displayValue || placeholder}
         </span>
       </button>
