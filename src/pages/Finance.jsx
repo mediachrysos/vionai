@@ -8,6 +8,7 @@ import PageHeader from "../components/ui-custom/PageHeader";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import FinanceSheetTable from "../components/finance/FinanceSheetTable";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
+import LawyerPayoutCard from "../components/finance/LawyerPayoutCard";
 
 export default function Finance({ currentUser }) {
   const { showAll, toggle } = useChatterFilter();
