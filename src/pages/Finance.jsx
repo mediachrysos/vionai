@@ -77,6 +77,18 @@ export default function Finance({ currentUser }) {
   const totalExp = expenses.reduce((s, e) => s + (e.amount || 0), 0);
   const totalNetProfit = totalRev - totalExp;
 
+  // Lawyer sees only their payout card
+  if (isLawyer) {
+    return (
+      <div className="p-4 lg:p-8 max-w-2xl mx-auto">
+        <PageHeader title="Finance" subtitle="Váš přehled výplat" />
+        <div className="mt-6">
+          <LawyerPayoutCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
@@ -125,6 +137,11 @@ export default function Finance({ currentUser }) {
           subtitle={`Celkem: ${totalNetProfit.toLocaleString()} Kč`}
           colorIndex={4}
         />
+      </div>
+
+      {/* Lawyer payout card — visible to admins */}
+      <div className="mt-6 max-w-sm">
+        <LawyerPayoutCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
       </div>
 
       <div className="mt-6">
