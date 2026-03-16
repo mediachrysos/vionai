@@ -66,7 +66,7 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-3">
           <DialogTitle className="text-white text-base font-semibold">Přidat transakci</DialogTitle>
         </div>
-        <div className="p-5 space-y-3">
+        <div className="p-5 space-y-3 overflow-y-auto flex-1">
           <div>
             <Label className="text-xs text-gray-500">Popis *</Label>
             <Input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="např. Výplata nájmu" className="mt-1 h-8 text-sm" />
