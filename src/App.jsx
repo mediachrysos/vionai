@@ -75,6 +75,9 @@ function App() {
           <Routes>
             {/* Veřejná stránka — bez přihlášení */}
             <Route path="/CustomerOnboarding" element={<CustomerOnboarding />} />
+            {/* Nové stránky */}
+            <Route path="/CustomerScraper" element={<LayoutWrapper currentPageName="CustomerScraper"><CustomerScraper /></LayoutWrapper>} />
+            <Route path="/ChattingAssistant" element={<LayoutWrapper currentPageName="ChattingAssistant"><ChattingAssistant /></LayoutWrapper>} />
             {/* Všechny ostatní stránky vyžadují auth */}
             <Route path="*" element={<AuthenticatedApp />} />
           </Routes>
