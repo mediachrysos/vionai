@@ -79,9 +79,11 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
         type="button"
         onClick={() => setOpen(v => !v)}
         className={cn(
-          "w-full flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all",
-          "bg-white border-gray-200 hover:border-[#C9A227] focus:outline-none focus:ring-2 focus:ring-amber-100",
-          open && "border-[#C9A227] ring-2 ring-amber-100"
+          "w-full flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all focus:outline-none",
+          variant === "ghost"
+            ? "bg-white/20 border-white/30 text-white hover:bg-white/30 placeholder:text-white/60"
+            : "bg-white border-gray-200 hover:border-[#C9A227] focus:ring-2 focus:ring-amber-100",
+          variant !== "ghost" && open && "border-[#C9A227] ring-2 ring-amber-100"
         )}
       >
         <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" />
