@@ -62,7 +62,7 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md p-0 max-h-[90vh] flex flex-col">
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-3">
           <DialogTitle className="text-white text-base font-semibold">Přidat transakci</DialogTitle>
         </div>

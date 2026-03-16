@@ -7,8 +7,11 @@ export default function WalletAccountCard({ account, onEdit, onDelete }) {
     <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 flex flex-col gap-3">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
-            <Wallet className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
+            {account.profile_photo
+              ? <img src={account.profile_photo} alt={account.name} className="w-full h-full object-cover" />
+              : <Wallet className="w-5 h-5 text-white" />
+            }
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">{account.name}</p>
