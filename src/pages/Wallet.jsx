@@ -15,7 +15,7 @@ export default function Wallet() {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
   const [showTxModal, setShowTxModal] = useState(false);
-  const [txFilter, setTxFilter] = useState("all"); // "all" | "income" | "expense"
+  const [txFilter, setTxFilter] = useState("all");
 
   const { data: accounts = [] } = useQuery({
     queryKey: ["bankAccounts"],
