@@ -445,6 +445,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
   const [form, setForm] = useState({ name: "", account_number: "", bank_name: "", is_active: true });
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
+  const [uploadingId, setUploadingId] = useState(null);
 
   const handleSave = async () => {
     setSaving(true);
@@ -465,6 +466,17 @@ function BankAccountsInline({ accounts, setAccounts }) {
     if (!window.confirm("Smazat účet?")) return;
     await base44.entities.BankAccount.delete(id);
     setAccounts(prev => prev.filter(a => a.id !== id));
+  };
+
+  const handlePhotoUpload = async (e, accId) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingId(accId);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.entities.BankAccount.update(accId, { profile_photo: file_url });
+    setAccounts(prev => prev.map(a => a.id === accId ? { ...a, profile_photo: file_url } : a));
+    setUploadingId(null);
+    e.target.value = "";
   };
 
   return (
@@ -490,7 +502,23 @@ function BankAccountsInline({ accounts, setAccounts }) {
         <div className="space-y-2">
           {accounts.map(a => (
             <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50">
-              <Building2 className="w-4 h-4 text-teal-500 flex-shrink-0" />
+              {/* Profile photo */}
+              <label className="relative cursor-pointer flex-shrink-0 group" title="Nahrát foto">
+                <div className="w-9 h-9 rounded-xl overflow-hidden border border-gray-200 bg-white flex items-center justify-center">
+                  {a.profile_photo
+                    ? <img src={a.profile_photo} alt={a.name} className="w-full h-full object-cover" />
+                    : <Building2 className="w-4 h-4 text-teal-500" />
+                  }
+                </div>
+                <div className="absolute inset-0 rounded-xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  {uploadingId === a.id
+                    ? <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
+                    : <Camera className="w-3 h-3 text-white" />
+                  }
+                </div>
+                <input type="file" accept="image/*" className="hidden" onChange={e => handlePhotoUpload(e, a.id)} disabled={uploadingId === a.id} />
+              </label>
+
               <div className="flex-1 min-w-0">
                 <span className="text-sm font-semibold text-gray-800">{a.name}</span>
                 <span className="text-xs text-gray-400 ml-2">{a.account_number}{a.bank_name ? ` · ${a.bank_name}` : ""}</span>
