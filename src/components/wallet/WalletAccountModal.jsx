@@ -5,12 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function WalletAccountModal({ open, onClose, onSave, account }) {
-  const [form, setForm] = useState({ name: "", description: "", balance: 0, currency: "CZK" });
+  const [form, setForm] = useState({ name: "", account_number: "", bank_name: "", balance: 0 });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (account) setForm({ name: account.name, description: account.description || "", balance: account.balance || 0, currency: account.currency || "CZK" });
-    else setForm({ name: "", description: "", balance: 0, currency: "CZK" });
+    if (account) {
+      setForm({ name: account.name, account_number: account.account_number || "", bank_name: account.bank_name || "", balance: account.balance || 0 });
+    } else {
+      setForm({ name: "", account_number: "", bank_name: "", balance: 0 });
+    }
   }, [account, open]);
 
   const handleSubmit = async () => {
@@ -33,17 +36,21 @@ export default function WalletAccountModal({ open, onClose, onSave, account }) {
             <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="např. Firemní účet" className="mt-1 h-8 text-sm" />
           </div>
           <div>
-            <Label className="text-xs text-gray-500">Popis</Label>
-            <Input value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Volitelný popis" className="mt-1 h-8 text-sm" />
+            <Label className="text-xs text-gray-500">Číslo účtu *</Label>
+            <Input value={form.account_number} onChange={e => setForm(p => ({ ...p, account_number: e.target.value }))} placeholder="123456789/0100" className="mt-1 h-8 text-sm" />
           </div>
           <div>
-            <Label className="text-xs text-gray-500">Počáteční zůstatek (Kč)</Label>
+            <Label className="text-xs text-gray-500">Název banky</Label>
+            <Input value={form.bank_name} onChange={e => setForm(p => ({ ...p, bank_name: e.target.value }))} placeholder="např. Komerční banka" className="mt-1 h-8 text-sm" />
+          </div>
+          <div>
+            <Label className="text-xs text-gray-500">Aktuální zůstatek (Kč)</Label>
             <Input type="number" value={form.balance} onChange={e => setForm(p => ({ ...p, balance: parseFloat(e.target.value) || 0 }))} className="mt-1 h-8 text-sm" />
           </div>
         </div>
         <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100">
           <Button variant="outline" size="sm" onClick={onClose}>Zrušit</Button>
-          <Button size="sm" onClick={handleSubmit} disabled={!form.name || saving}
+          <Button size="sm" onClick={handleSubmit} disabled={!form.name || !form.account_number || saving}
             className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
             {saving ? "Ukládám..." : account ? "Uložit" : "Vytvořit"}
           </Button>
