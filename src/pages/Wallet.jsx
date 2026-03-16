@@ -199,7 +199,7 @@ export default function Wallet() {
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Waterfall */}
-        <WaterfallCard totalIncome={totalIncome} totalExpenses={totalExpenses} />
+        <WaterfallCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
 
         {/* Transactions */}
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
