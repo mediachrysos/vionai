@@ -40,16 +40,20 @@ export default function Wallet() {
   const allTransactions = useMemo(() => {
     const paymentTxs = payments
       .filter(p => p.status !== "failed" && p.status !== "refunded")
-      .map(p => ({
-        id: "pay_" + p.id,
-        title: p.customer_name ? `Platba – ${p.customer_name}` : "Platba zákazníka",
-        amount: p.amount || 0,
-        type: "income",
-        transaction_date: p.payment_date,
-        created_date: p.created_date,
-        category: p.service_type || "Platba",
-        source: "Finance",
-      }));
+      .map(p => {
+        const acc = p.bank_account_id ? accounts.find(a => a.id === p.bank_account_id) : null;
+        return {
+          id: "pay_" + p.id,
+          title: p.customer_name ? `Platba – ${p.customer_name}` : "Platba zákazníka",
+          amount: p.amount || 0,
+          type: "income",
+          transaction_date: p.payment_date,
+          created_date: p.created_date,
+          category: p.service_type || "Platba",
+          account_name: acc?.name || (p.destination_account ? p.destination_account : null),
+          source: "Finance",
+        };
+      });
 
     const expenseTxs = expenses.map(e => ({
       id: "exp_" + e.id,
