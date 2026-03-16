@@ -17,8 +17,8 @@ export default function Wallet() {
   const [txFilter, setTxFilter] = useState("all"); // "all" | "income" | "expense"
 
   const { data: accounts = [] } = useQuery({
-    queryKey: ["walletAccounts"],
-    queryFn: () => base44.entities.WalletAccount.list(),
+    queryKey: ["bankAccounts"],
+    queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
   });
 
   const { data: walletTxs = [] } = useQuery({
