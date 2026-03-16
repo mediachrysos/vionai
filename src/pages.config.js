@@ -59,6 +59,7 @@ import ModelDetail from './pages/ModelDetail';
 import Models from './pages/Models';
 import Payments from './pages/Payments';
 import Tasks from './pages/Tasks';
+import Wallet from './pages/Wallet';
 import __Layout from './Layout.jsx';
 
 
