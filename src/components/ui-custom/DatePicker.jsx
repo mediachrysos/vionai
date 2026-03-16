@@ -19,7 +19,7 @@ function getYearRange(centerYear) {
   return years;
 }
 
-export default function DatePicker({ value, onChange, placeholder = "Vybrat datum", max }) {
+export default function DatePicker({ value, onChange, placeholder = "Vybrat datum", max, variant = "default" }) {
   const [open, setOpen] = useState(false);
   const [viewDate, setViewDate] = useState(() => value ? new Date(value) : new Date());
   const ref = useRef(null);
