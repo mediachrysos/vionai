@@ -84,41 +84,41 @@ export default function Wallet() {
     return allTransactions.filter(t => t.type === txFilter);
   }, [allTransactions, txFilter]);
 
-  // Account mutations
+  // Account mutations (editing existing BankAccounts - balance update)
   const saveAccountMutation = useMutation({
     mutationFn: async (data) => {
-      if (editingAccount) return base44.entities.WalletAccount.update(editingAccount.id, data);
-      return base44.entities.WalletAccount.create(data);
+      if (editingAccount) return base44.entities.BankAccount.update(editingAccount.id, data);
+      return base44.entities.BankAccount.create(data);
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["walletAccounts"] });
+      qc.invalidateQueries({ queryKey: ["bankAccounts"] });
       setShowAccountModal(false);
       setEditingAccount(null);
     },
   });
 
   const deleteAccountMutation = useMutation({
-    mutationFn: (acc) => base44.entities.WalletAccount.delete(acc.id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["walletAccounts"] }),
+    mutationFn: (acc) => base44.entities.BankAccount.delete(acc.id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["bankAccounts"] }),
   });
 
   // Transaction mutation
   const saveTxMutation = useMutation({
     mutationFn: async (data) => {
       const tx = await base44.entities.WalletTransaction.create(data);
-      // Update account balance
+      // Update BankAccount balance
       if (data.account_id) {
         const acc = accounts.find(a => a.id === data.account_id);
         if (acc) {
           const delta = data.type === "income" ? data.amount : -data.amount;
-          await base44.entities.WalletAccount.update(data.account_id, { balance: (acc.balance || 0) + delta });
+          await base44.entities.BankAccount.update(data.account_id, { balance: (acc.balance || 0) + delta });
         }
       }
       return tx;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["walletTransactions"] });
-      qc.invalidateQueries({ queryKey: ["walletAccounts"] });
+      qc.invalidateQueries({ queryKey: ["bankAccounts"] });
       setShowTxModal(false);
     },
   });
