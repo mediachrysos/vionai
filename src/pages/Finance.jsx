@@ -140,7 +140,7 @@ export default function Finance({ currentUser }) {
       </div>
 
       {/* Lawyer payout card — visible to admins */}
-      <div className="mt-6 max-w-sm">
+      <div className="mt-6">
         <LawyerPayoutCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
       </div>
 
