@@ -95,7 +95,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-gray-800 truncate">{user?.full_name || "Uživatel"}</p>
-              <p className="text-[11px] text-gray-400 truncate">{isAdmin ? "Admin" : "Chatter"}</p>
+              <p className="text-[11px] text-gray-400 truncate">{isAdmin ? "Admin" : isLawyer ? "Advokát" : "Chatter"}</p>
             </div>
           )}
           {!collapsed && (
