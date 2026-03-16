@@ -93,7 +93,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 bg-white border border-gray-200 rounded-2xl shadow-xl p-4 w-72 left-1/2 -translate-x-1/2">
+        <div className="absolute z-[100] mt-1 bg-white border border-gray-200 rounded-2xl shadow-xl p-4 w-72 left-1/2 -translate-x-1/2">
           {/* Month + Year selectors */}
           <div className="flex items-center gap-2 mb-3">
             <button
