@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, Bot, CreditCard,
   ChevronLeft, ChevronRight, LogOut,
-  Menu, X, UserCircle, ShieldCheck, BarChart2, Wallet
+  Menu, X, UserCircle, ShieldCheck, BarChart2, Wallet, Search, MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
