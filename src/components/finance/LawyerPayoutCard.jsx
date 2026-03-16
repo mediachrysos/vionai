@@ -136,58 +136,57 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
     <>
       <div
         onClick={() => setShowDetail(true)}
-        className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 cursor-pointer hover:border-slate-300 hover:shadow-md transition-all group"
+        className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-2xl shadow-lg shadow-amber-200/50 p-5 cursor-pointer hover:shadow-xl hover:shadow-amber-300/50 transition-all group"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-              <Scale className="w-4 h-4 text-slate-600" />
+            <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+              <Scale className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-800">Výplata pan D.</h3>
-              <p className="text-xs text-gray-400">Advokát · 10 % z zisku</p>
+              <h3 className="text-sm font-semibold text-white">Výplata pan D.</h3>
+              <p className="text-xs text-white/60">Advokát · 10 % z zisku</p>
             </div>
           </div>
           <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-            <button onClick={prevMonth} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center">
-              <ChevronLeft className="w-3.5 h-3.5 text-gray-500" />
+            <button onClick={prevMonth} className="w-6 h-6 rounded hover:bg-white/20 flex items-center justify-center">
+              <ChevronLeft className="w-3.5 h-3.5 text-white/80" />
             </button>
-            <span className="text-xs font-medium text-gray-600 min-w-[100px] text-center">{monthName}</span>
-            <button onClick={nextMonth} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center">
-              <ChevronRight className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-xs font-medium text-white min-w-[100px] text-center">{monthName}</span>
+            <button onClick={nextMonth} className="w-6 h-6 rounded hover:bg-white/20 flex items-center justify-center">
+              <ChevronRight className="w-3.5 h-3.5 text-white/80" />
             </button>
           </div>
         </div>
 
         {/* Mini summary */}
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <div className="bg-emerald-50 rounded-xl px-3 py-2">
+        <div className="grid grid-cols-3 gap-3 mb-3">
+          <div className="bg-white/15 rounded-xl px-3 py-2">
             <div className="flex items-center gap-1 mb-0.5">
-              <TrendingUp className="w-3 h-3 text-emerald-500" />
-              <p className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Příjmy</p>
+              <TrendingUp className="w-3 h-3 text-white/70" />
+              <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Příjmy</p>
             </div>
-            <p className="text-sm font-bold text-emerald-700">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
+            <p className="text-sm font-bold text-white">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
           </div>
-          <div className="bg-red-50 rounded-xl px-3 py-2">
+          <div className="bg-white/15 rounded-xl px-3 py-2">
             <div className="flex items-center gap-1 mb-0.5">
-              <TrendingDown className="w-3 h-3 text-red-500" />
-              <p className="text-[10px] text-red-500 font-medium uppercase tracking-wider">Výdaje</p>
+              <TrendingDown className="w-3 h-3 text-white/70" />
+              <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Výdaje</p>
             </div>
-            <p className="text-sm font-bold text-red-600">{totalExpenses.toLocaleString("cs-CZ")} Kč</p>
+            <p className="text-sm font-bold text-white">{totalExpenses.toLocaleString("cs-CZ")} Kč</p>
+          </div>
+          {/* Payout highlight */}
+          <div className="bg-white/25 rounded-xl px-3 py-2 flex flex-col justify-center">
+            <div className="flex items-center gap-1 mb-0.5">
+              <Calculator className="w-3 h-3 text-white/70" />
+              <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Výplata</p>
+            </div>
+            <p className="text-sm font-bold text-white">{lawyerFee.toLocaleString("cs-CZ")} Kč</p>
           </div>
         </div>
 
-        {/* Payout highlight */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center justify-between group-hover:bg-slate-100 transition-colors">
-          <div className="flex items-center gap-2">
-            <Calculator className="w-4 h-4 text-slate-500" />
-            <p className="text-sm font-semibold text-slate-700">Výplata</p>
-          </div>
-          <p className="text-lg font-bold text-slate-900">{lawyerFee.toLocaleString("cs-CZ")} Kč</p>
-        </div>
-
-        <p className="text-xs text-gray-400 mt-2 text-center group-hover:text-[#C9A227] transition-colors">
+        <p className="text-xs text-white/50 mt-1 text-center group-hover:text-white/80 transition-colors">
           Klikněte pro detail výpočtu →
         </p>
       </div>
