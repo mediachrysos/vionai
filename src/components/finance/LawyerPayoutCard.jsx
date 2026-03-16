@@ -5,9 +5,9 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Scale, Calculator, X } from "lucide-react";
 
 const MONTH_NAMES = [
-  "Leden","Únor","Březen","Duben","Květen","Červen",
-  "Červenec","Srpen","Září","Říjen","Listopad","Prosinec"
-];
+"Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+"Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
+
 
 function DetailRow({ label, sublabel, value, color = "text-gray-800", prefix = "", highlight = false }) {
   return (
@@ -17,8 +17,8 @@ function DetailRow({ label, sublabel, value, color = "text-gray-800", prefix = "
         {sublabel && <p className="text-xs text-gray-400 mt-0.5">{sublabel}</p>}
       </div>
       <p className={`text-base font-bold ${color}`}>{prefix}{Math.abs(value).toLocaleString("cs-CZ")} Kč</p>
-    </div>
-  );
+    </div>);
+
 }
 
 function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
@@ -26,20 +26,20 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
   const { data: expenses = [] } = useQuery({ queryKey: ["expenses"], queryFn: () => base44.entities.Expense.list("-expense_date", 500) });
   const { data: walletTxs = [] } = useQuery({ queryKey: ["walletTransactions"], queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 200) });
 
-  const monthPayments = payments.filter(p => {
+  const monthPayments = payments.filter((p) => {
     const d = p.payment_date || p.created_date?.split("T")[0] || "";
     return d.startsWith(monthStr) && p.status !== "failed" && p.status !== "refunded";
   });
-  const monthExpenses = expenses.filter(e => (e.expense_date || e.created_date?.split("T")[0] || "").startsWith(monthStr));
-  const monthWallet = walletTxs.filter(t => (t.transaction_date || t.created_date?.split("T")[0] || "").startsWith(monthStr));
+  const monthExpenses = expenses.filter((e) => (e.expense_date || e.created_date?.split("T")[0] || "").startsWith(monthStr));
+  const monthWallet = walletTxs.filter((t) => (t.transaction_date || t.created_date?.split("T")[0] || "").startsWith(monthStr));
 
   const totalIncome =
-    monthPayments.reduce((s, p) => s + (p.amount || 0), 0) +
-    monthWallet.filter(t => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
+  monthPayments.reduce((s, p) => s + (p.amount || 0), 0) +
+  monthWallet.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
 
   const totalExpenses =
-    monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-    monthWallet.filter(t => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+  monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
+  monthWallet.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;
@@ -81,19 +81,19 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
               sublabel="10 % z hrubého zisku"
               value={lawyerFee}
               color="text-slate-800"
-              highlight
-            />
+              highlight />
+
           </div>
 
-          {grossProfit <= 0 && (
-            <div className="bg-red-50 rounded-xl px-4 py-3 border border-red-100 text-xs text-red-600">
+          {grossProfit <= 0 &&
+          <div className="bg-red-50 rounded-xl px-4 py-3 border border-red-100 text-xs text-red-600">
               Hrubý zisk je záporný nebo nulový — výplata se nevypočítává.
             </div>
-          )}
+          }
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>);
+
 }
 
 export default function LawyerPayoutCard({ payments = [], expenses = [], walletTxs = [] }) {
@@ -106,28 +106,28 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
   const monthName = `${MONTH_NAMES[viewMonth]} ${viewYear}`;
 
   const prevMonth = () => {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
-    else setViewMonth(m => m - 1);
+    if (viewMonth === 0) {setViewMonth(11);setViewYear((y) => y - 1);} else
+    setViewMonth((m) => m - 1);
   };
   const nextMonth = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
-    else setViewMonth(m => m + 1);
+    if (viewMonth === 11) {setViewMonth(0);setViewYear((y) => y + 1);} else
+    setViewMonth((m) => m + 1);
   };
 
-  const monthPayments = payments.filter(p => {
+  const monthPayments = payments.filter((p) => {
     const d = p.payment_date || p.created_date?.split("T")[0] || "";
     return d.startsWith(monthStr) && p.status !== "failed" && p.status !== "refunded";
   });
-  const monthExpenses = expenses.filter(e => (e.expense_date || e.created_date?.split("T")[0] || "").startsWith(monthStr));
-  const monthWallet = walletTxs.filter(t => (t.transaction_date || t.created_date?.split("T")[0] || "").startsWith(monthStr));
+  const monthExpenses = expenses.filter((e) => (e.expense_date || e.created_date?.split("T")[0] || "").startsWith(monthStr));
+  const monthWallet = walletTxs.filter((t) => (t.transaction_date || t.created_date?.split("T")[0] || "").startsWith(monthStr));
 
   const totalIncome =
-    monthPayments.reduce((s, p) => s + (p.amount || 0), 0) +
-    monthWallet.filter(t => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
+  monthPayments.reduce((s, p) => s + (p.amount || 0), 0) +
+  monthWallet.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
 
   const totalExpenses =
-    monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-    monthWallet.filter(t => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+  monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
+  monthWallet.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;
@@ -136,8 +136,8 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
     <>
       <div
         onClick={() => setShowDetail(true)}
-        className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-2xl shadow-lg shadow-amber-200/50 p-5 cursor-pointer hover:shadow-xl hover:shadow-amber-300/50 transition-all group"
-      >
+        className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-2xl shadow-lg shadow-amber-200/50 p-5 cursor-pointer hover:shadow-xl hover:shadow-amber-300/50 transition-all group">
+
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -146,10 +146,10 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
             </div>
             <div>
               <h3 className="text-sm font-semibold text-white">Výplata pan D.</h3>
-              <p className="text-xs text-white/60">Advokát · 10 % z zisku</p>
+              
             </div>
           </div>
-          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
             <button onClick={prevMonth} className="w-6 h-6 rounded hover:bg-white/20 flex items-center justify-center">
               <ChevronLeft className="w-3.5 h-3.5 text-white/80" />
             </button>
@@ -195,8 +195,8 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
         open={showDetail}
         onClose={() => setShowDetail(false)}
         monthStr={monthStr}
-        monthName={monthName}
-      />
-    </>
-  );
+        monthName={monthName} />
+
+    </>);
+
 }
