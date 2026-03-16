@@ -23,6 +23,11 @@ export default function Finance({ currentUser }) {
     queryKey: ["expenses"],
     queryFn: () => base44.entities.Expense.list("-expense_date", 500),
   });
+  const { data: walletTxs = [] } = useQuery({
+    queryKey: ["walletTransactions"],
+    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 200),
+    enabled: isAdmin || isLawyer,
+  });
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list(),
