@@ -76,6 +76,7 @@ export const PAGES = {
     "Models": Models,
     "Payments": Payments,
     "Tasks": Tasks,
+    "Wallet": Wallet,
 }
 
 export const pagesConfig = {
