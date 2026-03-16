@@ -25,12 +25,17 @@ const chatterNav = [
   { name: "Platby", icon: CreditCard, page: "Payments" },
 ];
 
+const lawyerNav = [
+  { name: "Finance", icon: BarChart2, page: "Finance" },
+];
+
 export default function Sidebar({ currentPage, user, onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isAdmin = user?.role === "admin";
-  const items = isAdmin ? navItems : chatterNav;
+  const isLawyer = user?.role === "lawyer";
+  const items = isAdmin ? navItems : isLawyer ? lawyerNav : chatterNav;
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
