@@ -12,9 +12,9 @@ export default function WalletAccountCard({ account, onEdit, onDelete }) {
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">{account.name}</p>
-            {account.description && (
-              <p className="text-xs text-gray-400">{account.description}</p>
-            )}
+            <p className="text-xs text-gray-400">
+              {account.account_number}{account.bank_name ? ` · ${account.bank_name}` : ""}
+            </p>
           </div>
         </div>
         <div className="flex gap-1">
