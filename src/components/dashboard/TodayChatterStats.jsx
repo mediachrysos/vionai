@@ -42,18 +42,18 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
           </div>
           <h3 className="text-sm font-semibold text-white">Výkony chatterů</h3>
         </div>
-        <div className="flex items-center gap-1.5">
-          <button onClick={prevDay} className="w-7 h-7 rounded-lg border border-white/30 flex items-center justify-center hover:bg-white/20 transition-colors">
+        <div className="flex items-center gap-1">
+          <button onClick={prevDay} className="w-7 h-7 rounded-lg hover:bg-white/20 transition-colors flex items-center justify-center">
             <ChevronLeft className="w-4 h-4 text-white" />
           </button>
-          <div className="w-40">
+          <div className="w-36">
             <DatePicker
               value={selectedDate}
               onChange={(v) => v && setSelectedDate(v)}
-              max={todayStr} />
-
+              max={todayStr}
+              variant="ghost" />
           </div>
-          <button onClick={nextDay} disabled={isToday} className="w-7 h-7 rounded-lg border border-white/30 flex items-center justify-center hover:bg-white/20 transition-colors disabled:opacity-30">
+          <button onClick={nextDay} disabled={isToday} className="w-7 h-7 rounded-lg hover:bg-white/20 transition-colors flex items-center justify-center disabled:opacity-30">
             <ChevronRight className="w-4 h-4 text-white" />
           </button>
         </div>
