@@ -9,6 +9,7 @@ import WalletAccountModal from "@/components/wallet/WalletAccountModal";
 import WalletTransactionModal from "@/components/wallet/WalletTransactionModal";
 import WaterfallCard from "@/components/wallet/WaterfallCard";
 import WalletTransactionList from "@/components/wallet/WalletTransactionList";
+import WalletTransactionDetailModal from "@/components/wallet/WalletTransactionDetailModal";
 
 export default function Wallet() {
   const qc = useQueryClient();
