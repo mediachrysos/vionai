@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Plus, Wallet as WalletIcon, TrendingUp, TrendingDown } from "lucide-react";
+
 import WalletAccountCard from "@/components/wallet/WalletAccountCard";
 import WalletAccountModal from "@/components/wallet/WalletAccountModal";
 import WalletTransactionModal from "@/components/wallet/WalletTransactionModal";
