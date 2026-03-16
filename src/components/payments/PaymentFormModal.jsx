@@ -205,11 +205,14 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           <div>
             <Label>Cílový účet</Label>
             {bankAccounts.length > 0 ? (
-              <Select value={form.destination_account} onValueChange={v => setForm(prev => ({ ...prev, destination_account: v }))}>
+              <Select value={form.bank_account_id} onValueChange={v => {
+                const acc = bankAccounts.find(a => a.id === v);
+                setForm(prev => ({ ...prev, bank_account_id: v, destination_account: acc?.account_number || "" }));
+              }}>
                 <SelectTrigger><SelectValue placeholder="Vybrat účet" /></SelectTrigger>
                 <SelectContent>
                   {bankAccounts.map(a => (
-                    <SelectItem key={a.id} value={a.account_number}>
+                    <SelectItem key={a.id} value={a.id}>
                       {a.name} — {a.account_number}{a.bank_name ? ` (${a.bank_name})` : ""}
                     </SelectItem>
                   ))}
