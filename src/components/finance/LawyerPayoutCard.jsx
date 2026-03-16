@@ -47,7 +47,7 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md p-0">
-        <div className="bg-gradient-to-r from-slate-700 to-slate-900 px-5 py-4">
+        <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
               <Scale className="w-5 h-5 text-white" />
