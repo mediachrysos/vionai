@@ -203,20 +203,12 @@ export default function Wallet() {
 
         {/* Transactions */}
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-gray-800">Historie transakcí</h3>
-            <div className="flex gap-1 bg-gray-50 rounded-lg p-0.5 border border-gray-200">
-              {[["all", "Vše"], ["income", "Příjmy"], ["expense", "Výdaje"]].map(([val, label]) => (
-                <button key={val} onClick={() => setTxFilter(val)}
-                  className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all ${txFilter === val ? "bg-white shadow-sm text-gray-800 border border-gray-200" : "text-gray-400 hover:text-gray-600"}`}>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="max-h-[500px] overflow-y-auto">
-            <WalletTransactionList transactions={filteredTransactions} />
-          </div>
+          <h3 className="text-sm font-semibold text-gray-800 mb-3">Historie transakcí</h3>
+          <WalletTransactionList
+            transactions={allTransactions}
+            typeFilter={txFilter}
+            onTypeFilterChange={setTxFilter}
+          />
         </div>
       </div>
 
