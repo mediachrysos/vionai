@@ -180,6 +180,7 @@ export default function Layout({ children, currentPageName }) {
         customers={customers}
         models={models}
         users={users}
+        bankAccounts={bankAccounts}
         currentUser={user}
       />
 
