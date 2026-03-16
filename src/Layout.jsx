@@ -53,9 +53,10 @@ export default function Layout({ children, currentPageName }) {
           });
         }
       }
-      // Update BankAccount balance
+      // Update BankAccount balance — fetch fresh record to avoid stale cache
       if (data.bank_account_id) {
-        const acc = bankAccounts.find(a => a.id === data.bank_account_id);
+        const freshAccounts = await base44.entities.BankAccount.filter({ id: data.bank_account_id });
+        const acc = freshAccounts[0];
         if (acc) {
           await base44.entities.BankAccount.update(data.bank_account_id, {
             balance: (acc.balance || 0) + (data.amount || 0),
