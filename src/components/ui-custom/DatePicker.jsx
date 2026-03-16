@@ -79,7 +79,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
         type="button"
         onClick={() => setOpen(v => !v)}
         className={cn(
-          "w-full flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all focus:outline-none",
+          "w-full flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all focus:outline-none whitespace-nowrap",
           variant === "ghost"
             ? "bg-white/20 border-white/30 text-white hover:bg-white/30 placeholder:text-white/60"
             : "bg-white border-gray-200 hover:border-[#C9A227] focus:ring-2 focus:ring-amber-100",
