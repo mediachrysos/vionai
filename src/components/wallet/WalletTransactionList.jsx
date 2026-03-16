@@ -48,7 +48,7 @@ function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
   );
 }
 
-export default function WalletTransactionList({ transactions, typeFilter, onTypeFilterChange }) {
+export default function WalletTransactionList({ transactions, typeFilter, onTypeFilterChange, onSelect }) {
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
