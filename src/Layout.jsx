@@ -67,6 +67,7 @@ export default function Layout({ children, currentPageName }) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["payments"] });
       qc.invalidateQueries({ queryKey: ["customers"] });
+      qc.invalidateQueries({ queryKey: ["bankAccounts"] });
       setShowPaymentForm(false);
     },
   });
