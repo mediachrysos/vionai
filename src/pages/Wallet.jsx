@@ -210,6 +210,7 @@ export default function Wallet() {
             transactions={allTransactions}
             typeFilter={txFilter}
             onTypeFilterChange={setTxFilter}
+            onSelect={setSelectedTx}
           />
         </div>
       </div>
