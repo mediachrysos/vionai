@@ -17,6 +17,8 @@ const navItems = [
   { name: "Finance", icon: BarChart2, page: "Finance" },
   { name: "Wallet", icon: Wallet, page: "Wallet" },
   { name: "Admin Portál", icon: ShieldCheck, page: "AdminUsers" },
+  { name: "Customer Scraper", icon: Search, page: "CustomerScraper" },
+  { name: "Chatting Assistant", icon: MessageSquare, page: "ChattingAssistant" },
 ];
 
 const chatterNav = [
