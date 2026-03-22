@@ -133,9 +133,7 @@ export default function CustomerDetail({ currentUser }) {
             </div>
           </div>
         </div>
-        <Button variant="outline" onClick={() => setShowEdit(true)}>
-          <Pencil className="w-4 h-4 mr-1" /> Upravit
-        </Button>
+
       </div>
 
       {/* Stats */}
