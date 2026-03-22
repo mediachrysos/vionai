@@ -31,6 +31,7 @@ export default function Customers({ currentUser }) {
   const { showAll, toggle } = useChatterFilter();
   const qc = useQueryClient();
   const isAdmin = currentUser?.role === "admin";
+  const navigate = useNavigate();
 
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ["customers"],
