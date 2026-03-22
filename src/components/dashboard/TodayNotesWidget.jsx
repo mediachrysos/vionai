@@ -234,53 +234,58 @@ export default function TodayNotesWidget({ currentUser }) {
             const accountLabel = n.account_name || (bankAccounts.find(a => a.id === n.account)?.name) || n.account;
             return (
               <div key={n.id}
-                className={`group relative rounded-xl border p-3.5 transition-all ${
-                  isToday ? "bg-amber-50 border-amber-200" : "bg-gray-50 border-gray-100 hover:border-amber-200"
+                className={`group relative rounded-2xl border p-4 transition-all shadow-sm ${
+                  isToday
+                    ? "bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200"
+                    : "bg-white border-gray-100 hover:border-amber-200 hover:shadow-md"
                 }`}
               >
-                {/* Top row: customer + date badge */}
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex items-center gap-1.5 min-w-0">
+                {/* Top row: customer + date/delete */}
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
+                      isToday ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-500"
+                    }`}>
+                      {n.customer_name ? n.customer_name.charAt(0).toUpperCase() : "?"}
+                    </div>
                     {n.customer_name ? (
-                      <span className={`text-sm font-semibold truncate ${isToday ? "text-amber-900" : "text-gray-800"}`}>
+                      <span className={`text-sm font-bold truncate ${isToday ? "text-amber-900" : "text-gray-800"}`}>
                         {n.customer_name}
                       </span>
                     ) : (
                       <span className="text-xs text-gray-400 italic">Bez klienta</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {isToday ? (
-                      <span className="text-[10px] font-bold text-white bg-amber-500 rounded-full px-2 py-0.5">DNES</span>
+                      <span className="text-[10px] font-bold tracking-wide text-white bg-amber-500 rounded-full px-2.5 py-0.5">DNES</span>
                     ) : n.note_date ? (
-                      <span className="text-[11px] text-gray-400">{format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}</span>
+                      <span className="text-[11px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">{format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}</span>
                     ) : null}
                     <button onClick={() => deleteMutation.mutate(n.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400 ml-1">
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
-                {/* Meta: amount, account, model */}
+                {/* Meta badges */}
                 {(n.amount || accountLabel || n.model_name) && (
-                  <div className="flex flex-wrap gap-2 mb-2">
+                  <div className="flex flex-wrap gap-1.5 mb-2.5">
                     {n.amount && (
-                      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
-                        isToday ? "bg-amber-200 text-amber-800" : "bg-green-100 text-green-700"
-                      }`}>
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
                         <CreditCard className="w-3 h-3" />
                         {Number(n.amount).toLocaleString("cs-CZ")} Kč
                       </span>
                     )}
                     {accountLabel && (
-                      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">
                         <Building2 className="w-3 h-3" />
                         {accountLabel}
                       </span>
                     )}
                     {n.model_name && (
-                      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-[#faf6e6] text-[#A8841C]">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-violet-100 text-violet-700">
                         <Bot className="w-3 h-3" />
                         {n.model_name}
                       </span>
@@ -290,7 +295,7 @@ export default function TodayNotesWidget({ currentUser }) {
 
                 {/* Content */}
                 {n.content && (
-                  <p className={`text-xs leading-relaxed ${isToday ? "text-amber-900" : "text-gray-600"}`}>
+                  <p className={`text-xs leading-relaxed pl-9 ${isToday ? "text-amber-800" : "text-gray-500"}`}>
                     {n.content}
                   </p>
                 )}
