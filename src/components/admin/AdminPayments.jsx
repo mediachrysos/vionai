@@ -154,7 +154,10 @@ export default function AdminPayments() {
             </div>
             <div>
               <Label>Datum</Label>
-              <Input type="date" value={editForm.payment_date || ""} onChange={e => setEditForm(p => ({ ...p, payment_date: e.target.value }))} />
+              <DatePicker
+                value={editForm.payment_date || ""}
+                onChange={v => setEditForm(p => ({ ...p, payment_date: v }))}
+              />
             </div>
             <div>
               <Label>Stav</Label>
