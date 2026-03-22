@@ -23,7 +23,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
 
   // Collapsible sections
-  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false });
+  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false });
 
   const toggle = (key) => setOpenSections(p => ({ ...p, [key]: !p[key] }));
 
