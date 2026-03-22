@@ -7,7 +7,7 @@ import { ArrowLeft, Mail, Phone, CreditCard, Building, Pencil, Download, FileTex
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
-import CustomerFormModal from "../components/customers/CustomerFormModal";
+import CustomerInlineEdit from "../components/customers/CustomerInlineEdit";
 
 const statusColors = {
   active: "bg-emerald-50 text-emerald-700",
