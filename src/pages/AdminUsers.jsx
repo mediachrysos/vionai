@@ -168,6 +168,11 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       <Section label="Měsíční cíl" icon={<Target className="w-4 h-4" />} open={openSections.goal} onToggle={() => toggle("goal")}>
         <GoalSettingsInline />
       </Section>
+
+      {/* ── SECTION: Právní dokumenty ── */}
+      <Section label="Právní dokumenty (GDPR & Podmínky)" icon={<FileText className="w-4 h-4" />} open={openSections.legal} onToggle={() => toggle("legal")}>
+        <LegalDocumentsEditor />
+      </Section>
     </div>
   );
 }
