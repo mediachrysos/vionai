@@ -74,15 +74,11 @@ export default function AdminPayments() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat platby..." className="pl-10" />
         </div>
-        <Input
-          type="date"
+        <DatePicker
           value={dateFilter}
-          onChange={e => setDateFilter(e.target.value)}
-          className="w-40 h-9 text-sm"
+          onChange={setDateFilter}
+          placeholder="Filtr dle data"
         />
-        {dateFilter && (
-          <button onClick={() => setDateFilter("")} className="text-xs text-gray-400 hover:text-gray-600 underline">Zrušit filtr</button>
-        )}
         <span className="text-sm text-gray-500">{filtered.length} plateb · <strong>{total.toLocaleString()} Kč</strong></span>
       </div>
 
