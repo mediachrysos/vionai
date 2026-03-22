@@ -164,37 +164,54 @@ export default function CustomerDetail({ currentUser }) {
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Info */}
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4">Detaily</h3>
-          <div className="space-y-3">
-            {customer.email && (
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.email}
-              </div>
-            )}
-            {customer.phone && (
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.phone}
-              </div>
-            )}
-            {customer.bank_name && (
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <Building className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.bank_name} — {customer.bank_account_number}
-              </div>
-            )}
-            {assignedModelNames.length > 0 && (
-              <div className="flex items-start gap-3 text-sm text-gray-600">
-                <span className="text-gray-400 text-xs mt-0.5 flex-shrink-0">Modelky</span>
-                <div className="flex flex-wrap gap-1">
-                  {assignedModelNames.map(name => (
-                    <Badge key={name} variant="outline" className="bg-amber-50 border-amber-200 text-amber-800 text-xs">{name}</Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-            {customer.notes && (
-              <div className="mt-3 p-3 bg-[#faf6e6] rounded-xl text-sm text-gray-600">{customer.notes}</div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-gray-800">Detaily</h3>
+            {!showEdit && (
+              <button onClick={() => setShowEdit(true)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
             )}
           </div>
+
+          {showEdit ? (
+            <CustomerInlineEdit
+              customer={customer}
+              models={models}
+              onSave={handleInlineSave}
+              onCancel={() => setShowEdit(false)}
+            />
+          ) : (
+            <div className="space-y-3">
+              {customer.email && (
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.email}
+                </div>
+              )}
+              {customer.phone && (
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.phone}
+                </div>
+              )}
+              {customer.bank_name && (
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <Building className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.bank_name} — {customer.bank_account_number}
+                </div>
+              )}
+              {assignedModelNames.length > 0 && (
+                <div className="flex items-start gap-3 text-sm text-gray-600">
+                  <span className="text-gray-400 text-xs mt-0.5 flex-shrink-0">Modelky</span>
+                  <div className="flex flex-wrap gap-1">
+                    {assignedModelNames.map(name => (
+                      <Badge key={name} variant="outline" className="bg-amber-50 border-amber-200 text-amber-800 text-xs">{name}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {customer.notes && (
+                <div className="mt-3 p-3 bg-[#faf6e6] rounded-xl text-sm text-gray-600">{customer.notes}</div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Payments + Invoices */}
