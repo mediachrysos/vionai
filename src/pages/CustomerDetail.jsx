@@ -304,15 +304,7 @@ export default function CustomerDetail({ currentUser }) {
         />
       ))}
 
-      <CustomerFormModal
-        open={showEdit}
-        onClose={() => setShowEdit(false)}
-        onSave={updateMutation.mutateAsync}
-        customer={customer}
-        models={models}
-        users={users}
-        allCustomers={allCustomers}
-      />
+
     </div>
   );
 }
