@@ -237,7 +237,7 @@ export default function Customers({ currentUser }) {
                       animate={{ opacity: 1 }}
                       transition={{ delay: i * 0.02 }}
                       className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
-                      onClick={() => { setEditing(c); setShowForm(true); }}
+                      onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
                     >
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
