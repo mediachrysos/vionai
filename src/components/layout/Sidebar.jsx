@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+const allPages = [
   { name: "Přehled", icon: LayoutDashboard, page: "Dashboard" },
   { name: "Zákazníci", icon: Users, page: "Customers" },
   { name: "Modelky", icon: Bot, page: "Models" },
@@ -21,15 +21,8 @@ const navItems = [
   { name: "Chatting Assistant", icon: MessageSquare, page: "ChattingAssistant" },
 ];
 
-const chatterNav = [
-  { name: "Můj přehled", icon: LayoutDashboard, page: "ChatterPortal" },
-  { name: "Zákazníci", icon: Users, page: "Customers" },
-  { name: "Platby", icon: CreditCard, page: "Payments" },
-];
-
-const lawyerNav = [
-  { name: "Finance", icon: BarChart2, page: "Finance" },
-];
+const defaultChatterPages = ["ChatterPortal", "Customers", "Payments"];
+const defaultLawyerPages = ["Finance"];
 
 export default function Sidebar({ currentPage, user, onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -37,7 +30,23 @@ export default function Sidebar({ currentPage, user, onLogout }) {
 
   const isAdmin = user?.role === "admin";
   const isLawyer = user?.role === "lawyer";
-  const items = isAdmin ? navItems : isLawyer ? lawyerNav : chatterNav;
+
+  let items;
+  if (isAdmin) {
+    items = allPages;
+  } else if (user?.allowed_pages?.length > 0) {
+    // Custom permissions set by admin
+    items = allPages.filter(p => user.allowed_pages.includes(p.page));
+  } else if (isLawyer) {
+    items = allPages.filter(p => defaultLawyerPages.includes(p.page));
+  } else {
+    // Default chatter nav
+    const chatterPages = ["ChatterPortal", "Customers", "Payments"];
+    items = [
+      { name: "Můj přehled", icon: LayoutDashboard, page: "ChatterPortal" },
+      ...allPages.filter(p => chatterPages.includes(p.page) && p.page !== "ChatterPortal"),
+    ];
+  }
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
