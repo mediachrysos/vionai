@@ -193,15 +193,29 @@ function Section({ label, icon, badge, open, onToggle, children }) {
   );
 }
 
-/* ── User row with model assignment ── */
+const PAGE_OPTIONS = [
+  { page: "Dashboard", label: "Přehled" },
+  { page: "ChatterPortal", label: "Můj přehled" },
+  { page: "Customers", label: "Zákazníci" },
+  { page: "Models", label: "Modelky" },
+  { page: "Payments", label: "Platby" },
+  { page: "Finance", label: "Finance" },
+  { page: "Wallet", label: "Wallet" },
+  { page: "CustomerScraper", label: "Customer Scraper" },
+  { page: "ChattingAssistant", label: "Chatting Assistant" },
+  { page: "Tasks", label: "Úkoly" },
+];
+
+/* ── User row with model assignment + permissions ── */
 function UserRow({ user, onUpdate, onDelete, models }) {
+  const [showPerms, setShowPerms] = useState(false);
   const status = user.account_status || "pending";
   const role = user.role || "user";
   const statusCfg = statusConfig[status] || statusConfig.pending;
   const StatusIcon = statusCfg.icon;
-
-  const isChatter = role === "chatter";
   const assignedIds = user.assigned_model_ids || [];
+  const allowedPages = user.allowed_pages || [];
+  const isAdmin = role === "admin";
 
   const toggleModel = (modelId) => {
     const next = assignedIds.includes(modelId)
@@ -210,9 +224,17 @@ function UserRow({ user, onUpdate, onDelete, models }) {
     onUpdate(user.id, { assigned_model_ids: next });
   };
 
+  const togglePage = (page) => {
+    const next = allowedPages.includes(page)
+      ? allowedPages.filter(p => p !== page)
+      : [...allowedPages, page];
+    onUpdate(user.id, { allowed_pages: next });
+  };
+
   return (
-    <div className="flex flex-col gap-3 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-      <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex flex-col gap-0 bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+      {/* Main row */}
+      <div className="flex items-center gap-3 flex-wrap px-4 py-3">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0">
           <span className="text-sm font-bold text-white">{(user.full_name || user.email || "?")[0].toUpperCase()}</span>
         </div>
@@ -230,38 +252,74 @@ function UserRow({ user, onUpdate, onDelete, models }) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="admin">👑 Admin</SelectItem>
-            <SelectItem value="user">👤 Uživatel</SelectItem>
             <SelectItem value="chatter">💬 Chatter</SelectItem>
+            <SelectItem value="lawyer">⚖️ Advokát</SelectItem>
+            <SelectItem value="user">👤 Uživatel</SelectItem>
           </SelectContent>
         </Select>
         <div className="flex gap-2">
           {status !== "approved" && (
-            <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 rounded-lg" onClick={() => onUpdate(user.id, { account_status: "approved" })}>
-              Schválit
+            <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 rounded-lg"
+              onClick={() => onUpdate(user.id, { account_status: "approved" })}>Schválit</Button>
+          )}
+          {!isAdmin && (
+            <Button size="sm" variant="outline"
+              onClick={() => setShowPerms(v => !v)}
+              className={`h-8 text-xs px-3 rounded-lg ${showPerms ? "bg-violet-50 border-violet-200 text-violet-700" : "border-gray-200 text-gray-500"}`}>
+              {showPerms ? <Unlock className="w-3 h-3 mr-1" /> : <Lock className="w-3 h-3 mr-1" />}
+              Oprávnění
             </Button>
           )}
-          <Button size="sm" variant="outline" className="h-8 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3 rounded-lg" onClick={() => onDelete(user.id, user.full_name || user.email)}>
+          <Button size="sm" variant="outline" className="h-8 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3 rounded-lg"
+            onClick={() => onDelete(user.id, user.full_name || user.email)}>
             <Trash2 className="w-3 h-3 mr-1" /> Odstranit
           </Button>
         </div>
       </div>
 
-      {/* Model assignment for all users */}
-      {models.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap pl-12">
+      {/* Permissions panel */}
+      {showPerms && !isAdmin && (
+        <div className="px-4 py-3 border-t border-gray-100 bg-white">
+          <div className="flex items-center gap-2 mb-3">
+            <Lock className="w-3.5 h-3.5 text-violet-500" />
+            <span className="text-xs font-semibold text-gray-600">Přístup k sekcím</span>
+            <span className="text-[10px] text-gray-400 ml-1">(prázdné = výchozí podle role)</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {PAGE_OPTIONS.map(({ page, label }) => {
+              const enabled = allowedPages.includes(page);
+              return (
+                <button key={page} onClick={() => togglePage(page)}
+                  className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all ${
+                    enabled
+                      ? "bg-violet-100 text-violet-700 border-violet-300"
+                      : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600"
+                  }`}>
+                  {enabled ? "✓ " : ""}{label}
+                </button>
+              );
+            })}
+          </div>
+          {allowedPages.length > 0 && (
+            <button onClick={() => onUpdate(user.id, { allowed_pages: [] })}
+              className="mt-2 text-[11px] text-gray-400 hover:text-red-400 transition-colors underline">
+              Resetovat na výchozí
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Model assignment */}
+      {models.filter(m => m.status === "active").length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-gray-100 bg-white/60">
           <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Modelky:</span>
           {models.filter(m => m.status === "active").map(m => {
             const assigned = assignedIds.includes(m.id);
             return (
-              <button
-                key={m.id}
-                onClick={() => toggleModel(m.id)}
+              <button key={m.id} onClick={() => toggleModel(m.id)}
                 className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
-                  assigned
-                    ? "bg-amber-50 text-[#C9A227] border-[#e8d99a]"
-                    : "bg-white text-gray-400 border-gray-200 hover:bg-gray-50"
-                }`}
-              >
+                  assigned ? "bg-amber-50 text-[#C9A227] border-[#e8d99a]" : "bg-white text-gray-400 border-gray-200 hover:bg-gray-50"
+                }`}>
                 {assigned ? "✓ " : ""}{m.name}
               </button>
             );
