@@ -109,6 +109,24 @@ export default function Wallet() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["bankAccounts"] }),
   });
 
+  const deleteTxMutation = useMutation({
+    mutationFn: async (tx) => {
+      await base44.entities.WalletTransaction.delete(tx.id);
+      // Reverse balance update
+      if (tx.account_id) {
+        const acc = accounts.find(a => a.id === tx.account_id);
+        if (acc) {
+          const delta = tx.type === "income" ? -tx.amount : tx.amount;
+          await base44.entities.BankAccount.update(tx.account_id, { balance: (acc.balance || 0) + delta });
+        }
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["walletTransactions"] });
+      qc.invalidateQueries({ queryKey: ["bankAccounts"] });
+    },
+  });
+
   // Transaction mutation
   const saveTxMutation = useMutation({
     mutationFn: async (data) => {
@@ -199,11 +217,11 @@ export default function Wallet() {
       )}
 
       {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="space-y-6">
         {/* Waterfall */}
         <WaterfallCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
 
-        {/* Transactions */}
+        {/* Transactions - full width */}
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
           <h3 className="text-sm font-semibold text-gray-800 mb-3">Historie transakcí</h3>
           <WalletTransactionList
@@ -211,6 +229,7 @@ export default function Wallet() {
             typeFilter={txFilter}
             onTypeFilterChange={setTxFilter}
             onSelect={setSelectedTx}
+            onDelete={(tx) => deleteTxMutation.mutate(tx)}
           />
         </div>
       </div>
