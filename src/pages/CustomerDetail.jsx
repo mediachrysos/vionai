@@ -48,6 +48,10 @@ export default function CustomerDetail({ currentUser }) {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["customer", id] }); setShowEdit(false); },
   });
 
+  const handleInlineSave = async (data) => {
+    await updateMutation.mutateAsync(data);
+  };
+
   const modelMap = {};
   models.forEach(m => { modelMap[m.id] = m.name; });
 
