@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowUpCircle, ArrowDownCircle, FileText, ChevronLeft, ChevronRight, Filter, CalendarDays, X } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, FileText, ChevronLeft, ChevronRight, Filter, X, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -48,7 +48,7 @@ function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
   );
 }
 
-export default function WalletTransactionList({ transactions, typeFilter, onTypeFilterChange, onSelect }) {
+export default function WalletTransactionList({ transactions, typeFilter, onTypeFilterChange, onSelect, onDelete }) {
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
@@ -158,14 +158,18 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
       </div>
 
       {/* List */}
-      <div className="space-y-2 max-h-[440px] overflow-y-auto">
+      <div className="space-y-2 max-h-[520px] overflow-y-auto">
         {filtered.length === 0 ? (
           <div className="text-center py-10 text-sm text-gray-400">Žádné transakce v tomto měsíci</div>
         ) : filtered.map((tx, i) => {
           const isIncome = tx.type === "income";
+          const isDeletable = onDelete && tx.source === "Wallet";
           return (
-            <div key={tx.id || i} onClick={() => onSelect?.(tx)} className={`flex items-center justify-between px-4 py-3 rounded-xl bg-white border border-[#ececec] hover:border-[#e8d99a] transition-colors ${onSelect ? "cursor-pointer" : ""}`}>
-              <div className="flex items-center gap-3 min-w-0">
+            <div key={tx.id || i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white border border-[#ececec] hover:border-[#e8d99a] transition-colors group">
+              <div
+                className={`flex items-center gap-3 min-w-0 flex-1 ${onSelect ? "cursor-pointer" : ""}`}
+                onClick={() => onSelect?.(tx)}
+              >
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${isIncome ? "bg-emerald-50" : "bg-red-50"}`}>
                   {isIncome
                     ? <ArrowUpCircle className="w-4 h-4 text-emerald-600" />
@@ -176,7 +180,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
                   <div className="flex items-center gap-1.5">
                     <p className="text-sm font-medium text-gray-800 truncate">{tx.title}</p>
                     {tx.invoice_url && (
-                      <a href={tx.invoice_url} target="_blank" rel="noreferrer" title="Zobrazit fakturu">
+                      <a href={tx.invoice_url} target="_blank" rel="noreferrer" title="Zobrazit fakturu" onClick={e => e.stopPropagation()}>
                         <FileText className="w-3.5 h-3.5 text-blue-400 hover:text-blue-600 flex-shrink-0" />
                       </a>
                     )}
@@ -195,9 +199,20 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
                   </div>
                 </div>
               </div>
-              <p className={`text-base font-bold flex-shrink-0 ml-3 ${isIncome ? "text-emerald-700" : "text-red-600"}`}>
-                {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString("cs-CZ")} Kč
-              </p>
+              <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                <p className={`text-base font-bold ${isIncome ? "text-emerald-700" : "text-red-600"}`}>
+                  {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString("cs-CZ")} Kč
+                </p>
+                {isDeletable && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDelete(tx); }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500"
+                    title="Smazat transakci"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
