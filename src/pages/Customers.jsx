@@ -275,10 +275,13 @@ export default function Customers({ currentUser }) {
                           </div>
                         ) : <span className="text-xs text-gray-300">—</span>}
                       </td>
-                      <td className="px-5 py-3.5 text-right">
-                        <Link to={createPageUrl("CustomerDetail") + `?id=${c.id}`} onClick={e => e.stopPropagation()}>
-                          <ExternalLink className="w-4 h-4 text-gray-300 hover:text-gray-600" />
-                        </Link>
+                      <td className="px-5 py-3.5 text-right hidden xl:table-cell">
+                        <button
+                          onClick={e => { e.stopPropagation(); setEditing(c); setShowForm(true); }}
+                          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition-colors"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
                       </td>
                     </motion.tr>
                   );
