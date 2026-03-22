@@ -111,19 +111,27 @@ export default function Wallet() {
 
   const deleteTxMutation = useMutation({
     mutationFn: async (tx) => {
-      await base44.entities.WalletTransaction.delete(tx.id);
-      // Reverse balance update
-      if (tx.account_id) {
-        const acc = accounts.find(a => a.id === tx.account_id);
-        if (acc) {
-          const delta = tx.type === "income" ? -tx.amount : tx.amount;
-          await base44.entities.BankAccount.update(tx.account_id, { balance: (acc.balance || 0) + delta });
+      if (tx.source === "Wallet") {
+        await base44.entities.WalletTransaction.delete(tx.id);
+        // Reverse balance update
+        if (tx.account_id) {
+          const acc = accounts.find(a => a.id === tx.account_id);
+          if (acc) {
+            const delta = tx.type === "income" ? -tx.amount : tx.amount;
+            await base44.entities.BankAccount.update(tx.account_id, { balance: (acc.balance || 0) + delta });
+          }
         }
+      } else if (tx.id?.startsWith("pay_")) {
+        await base44.entities.Payment.delete(tx.id.replace("pay_", ""));
+      } else if (tx.id?.startsWith("exp_")) {
+        await base44.entities.Expense.delete(tx.id.replace("exp_", ""));
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["walletTransactions"] });
       qc.invalidateQueries({ queryKey: ["bankAccounts"] });
+      qc.invalidateQueries({ queryKey: ["payments"] });
+      qc.invalidateQueries({ queryKey: ["expenses"] });
     },
   });
 
