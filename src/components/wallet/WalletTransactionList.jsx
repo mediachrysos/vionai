@@ -163,7 +163,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
           <div className="text-center py-10 text-sm text-gray-400">Žádné transakce v tomto měsíci</div>
         ) : filtered.map((tx, i) => {
           const isIncome = tx.type === "income";
-          const isDeletable = onDelete && tx.source === "Wallet";
+          const isDeletable = !!onDelete;
           return (
             <div key={tx.id || i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white border border-[#ececec] hover:border-[#e8d99a] transition-colors group">
               <div
