@@ -100,8 +100,8 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
     <div className="p-6 max-w-6xl mx-auto space-y-4">
       {/* Header */}
       <div className="flex items-center gap-3 mb-2">
-        <div className="bg-slate-50 rounded-xl w-9 h-9 from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
-          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png" alt="" className="w-5 h-5 object-contain" />
+        <div className="bg-slate-50 rounded-xl w-9 h-9 flex items-center justify-center shadow-sm shadow-amber-200">
+          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-gray-900">Admin Portál</h1>
