@@ -71,6 +71,14 @@ export default function OnboardingLinkModal({ open, onClose, models, users }) {
     const link = `${base}${pageUrl}?token=${token}&name=${encodeURIComponent(name.trim())}`;
     setGeneratedLink(link);
     setLoading(false);
+    startCountdown();
+    // Auto-expire after 60s
+    setTimeout(async () => {
+      await base44.entities.CustomerOnboardingRequest.update(
+        (await base44.entities.CustomerOnboardingRequest.filter({ token })).find(r => r.token === token)?.id,
+        { status: "expired" }
+      );
+    }, 60000);
   };
 
   const handleCopy = () => {
