@@ -79,24 +79,114 @@ export default function ModelDetail({ currentUser }) {
         <ArrowLeft className="w-4 h-4" /> Zpět na modelky
       </Link>
 
-      <div className="flex items-start justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
-            {model.profile_photo
-              ? <img src={model.profile_photo} alt={model.name} className="w-full h-full object-cover" />
-              : <Bot className="w-7 h-7 text-[#C9A227]" />}
+      {editMode ? (
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-6 mb-6">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-bold text-gray-900">Upravit modelku</h2>
+            <button onClick={() => setEditMode(false)} className="text-gray-400 hover:text-gray-600">
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">{model.name}</h1>
-            <Badge variant="outline" className={model.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-600"}>
-              {model.status}
-            </Badge>
+
+          <div className="space-y-4">
+            <div>
+              <Label>Profilová fotografie</Label>
+              <div className="mt-2 flex items-center gap-4">
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
+                  {editForm.profile_photo
+                    ? <img src={editForm.profile_photo} alt="foto" className="w-full h-full object-cover" />
+                    : <Bot className="w-8 h-8 text-[#C9A227]" />}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="cursor-pointer">
+                    <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploading} />
+                    <div className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-medium border border-[#e8d99a] hover:bg-amber-100 transition-colors">
+                      {uploading ? "Nahrávám..." : "Nahrát fotku"}
+                    </div>
+                  </label>
+                  {editForm.profile_photo && (
+                    <button onClick={() => setEditForm(prev => ({ ...prev, profile_photo: "" }))} className="text-xs text-red-400 hover:text-red-600">Odebrat</button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Label>Jméno modelky *</Label>
+              <Input value={editForm.name} onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Jméno modelky" />
+            </div>
+
+            <div>
+              <Label>Status</Label>
+              <Select value={editForm.status} onValueChange={v => setEditForm(prev => ({ ...prev, status: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Aktivní</SelectItem>
+                  <SelectItem value="inactive">Neaktivní</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Interní poznámky</Label>
+              <Textarea value={editForm.notes} onChange={e => setEditForm(prev => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Interní poznámky..." />
+            </div>
+
+            <div>
+              <Label>Story modelky</Label>
+              <Textarea value={editForm.story} onChange={e => setEditForm(prev => ({ ...prev, story: e.target.value }))} rows={6} placeholder="Příběh, background, osobnostní rysy..." className="font-mono text-sm" />
+            </div>
+
+            <div>
+              <Label>Přiřazení chatteři</Label>
+              <p className="text-xs text-gray-400 mb-3">Klikni na chattera pro přiřazení / odebrání</p>
+              <div className="flex flex-wrap gap-2">
+                {users?.map(u => (
+                  <button
+                    key={u.email}
+                    onClick={() => toggleChatter(u.email)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      editForm.assigned_chatters.includes(u.email)
+                        ? "bg-[#C9A227] text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {u.full_name} {editForm.assigned_chatters.includes(u.email) && <X className="w-3 h-3 inline ml-1" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
+              <Button variant="outline" onClick={() => setEditMode(false)}>Zrušit</Button>
+              <Button onClick={handleSave} disabled={!editForm.name || updateMutation.isPending} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
+                {updateMutation.isPending ? "Ukládám..." : "Uložit"}
+              </Button>
+            </div>
           </div>
         </div>
-        <Button variant="outline" onClick={() => setShowEdit(true)}>
-          <Pencil className="w-4 h-4 mr-1" /> Edit
-        </Button>
-      </div>
+      ) : (
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
+              {model.profile_photo
+                ? <img src={model.profile_photo} alt={model.name} className="w-full h-full object-cover" />
+                : <Bot className="w-7 h-7 text-[#C9A227]" />}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">{model.name}</h1>
+              <Badge variant="outline" className={model.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-600"}>
+                {model.status}
+              </Badge>
+            </div>
+          </div>
+          {currentUser?.role === "admin" && (
+            <Button onClick={() => setEditMode(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
+              Upravit
+            </Button>
+          )}
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
