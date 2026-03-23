@@ -22,6 +22,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  const [onboardingRefresh, setOnboardingRefresh] = useState(0);
 
   // Collapsible sections
   const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false });
