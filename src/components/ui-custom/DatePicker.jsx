@@ -206,7 +206,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
           variant !== "ghost" && open && "border-[#C9A227] ring-2 ring-amber-100"
         )}
       >
-        <CalendarDays className={cn("w-3.5 h-3.5 flex-shrink-0", variant === "ghost" ? "text-white/70" : "text-gray-400")} />
+        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_3_qncd5u.png" alt="" className="w-3.5 h-3.5 flex-shrink-0 object-contain" />
         <span className={cn("text-xs truncate", variant === "ghost" ? "text-white" : (displayValue ? "text-gray-800" : "text-gray-400"))}>
           {displayValue || placeholder}
         </span>

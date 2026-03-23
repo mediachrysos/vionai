@@ -223,7 +223,7 @@ export default function CustomerDetail({ currentUser }) {
                 </Button>
               )}
               <Button size="sm" variant="outline" onClick={exportPayments} className="h-7 text-xs px-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-                <Download className="w-3 h-3 mr-1" /> Export CSV
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-3 h-3 mr-1 object-contain" /> Export CSV
               </Button>
             </div>
           </div>

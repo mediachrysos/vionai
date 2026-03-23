@@ -312,7 +312,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
             onClick={() => exportCSV(rows, chatters, viewYear, viewMonth)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:border-[#C9A227] hover:text-[#C9A227] text-xs text-gray-500 transition-all"
           >
-            <Download className="w-3.5 h-3.5" /> Export CSV
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-3.5 h-3.5 object-contain" /> Export CSV
           </button>
         </div>
       </div>

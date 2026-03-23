@@ -142,7 +142,7 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-              <Scale className="w-4 h-4 text-white" />
+              <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_22_vybcot.png" alt="" className="w-5 h-5 object-contain" />
             </div>
             <div>
               <h3 className="text-sm font-semibold text-white">Podíl PD</h3>

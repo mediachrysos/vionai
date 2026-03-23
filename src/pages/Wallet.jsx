@@ -171,11 +171,11 @@ export default function Wallet() {
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" onClick={() => { setEditingAccount(null); setShowAccountModal(true); }}>
-            <Plus className="w-4 h-4 mr-1" /> Nový účet
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-1 object-contain" /> Nový účet
           </Button>
           <Button size="sm" onClick={() => setShowTxModal(true)}
             className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
-            <Plus className="w-4 h-4 mr-1" /> Přidat transakci
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-1 object-contain" /> Přidat transakci
           </Button>
         </div>
       </div>

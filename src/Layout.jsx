@@ -169,7 +169,7 @@ export default function Layout({ children, currentPageName }) {
           whileTap={{ scale: 0.95 }}
           className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] shadow-lg shadow-amber-200 flex items-center justify-center text-white hover:shadow-xl hover:shadow-amber-300 transition-shadow"
         >
-          <Plus className="w-6 h-6" />
+          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-6 h-6 object-contain" />
         </motion.button>
       )}
 

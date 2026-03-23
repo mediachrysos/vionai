@@ -161,17 +161,17 @@ export default function Customers({ currentUser }) {
       <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" onClick={downloadXlsx} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-            <Download className="w-4 h-4 mr-2" /> Export .xlsx
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
-                <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka <ChevronDown className="w-3.5 h-3.5 ml-1" />
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Přidat zákazníka <ChevronDown className="w-3.5 h-3.5 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => { setEditing(null); setShowForm(true); }}>
-                <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Přidat zákazníka
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowOnboarding(true)}>
                 <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Onboarding odkaz
