@@ -40,8 +40,34 @@ export default function ModelDetail({ currentUser }) {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Model.update(id, data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["model", id] }); setShowEdit(false); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["model", id] }); setEditMode(false); },
   });
+
+  useEffect(() => {
+    if (model) setEditForm({ name: model.name, status: model.status, notes: model.notes || "", story: model.story || "", assigned_chatters: model.assigned_chatters || [], profile_photo: model.profile_photo || "" });
+  }, [model]);
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setEditForm(prev => ({ ...prev, profile_photo: file_url }));
+    setUploading(false);
+  };
+
+  const toggleChatter = (email) => {
+    setEditForm(prev => ({
+      ...prev,
+      assigned_chatters: prev.assigned_chatters.includes(email)
+        ? prev.assigned_chatters.filter(e => e !== email)
+        : [...prev.assigned_chatters, email]
+    }));
+  };
+
+  const handleSave = async () => {
+    await updateMutation.mutateAsync(editForm);
+  };
 
   if (!model) return <div className="p-8 text-center text-slate-400">Loading...</div>;
 
