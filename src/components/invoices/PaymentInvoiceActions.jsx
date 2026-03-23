@@ -11,14 +11,24 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     const checkInvoice = async () => {
-      const invoices = await base44.entities.Invoice.filter({ related_payment_id: payment.id });
-      if (invoices && invoices.length > 0) {
-        setInvoice(invoices[0]);
+      try {
+        const invoices = await base44.entities.Invoice.filter({ related_payment_id: payment.id });
+        if (isMounted && invoices && invoices.length > 0) {
+          setInvoice(invoices[0]);
+        }
+        if (isMounted) setLoading(false);
+      } catch (error) {
+        if (isMounted) setLoading(false);
       }
-      setLoading(false);
     };
-    checkInvoice();
+    
+    const timer = setTimeout(checkInvoice, 100);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [payment.id]);
 
   const handleCreateInvoice = async () => {
