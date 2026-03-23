@@ -120,10 +120,10 @@ export default function OnboardingLinksList({ refreshTrigger }) {
 
               <button
                 onClick={() => handleDelete(link.id, link.full_name)}
-                className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
+                className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0"
                 title="Smazat odkaz"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
               </button>
             </div>
           );
