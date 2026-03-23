@@ -145,7 +145,7 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
               <Scale className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Výplata pan D.</h3>
+              <h3 className="text-sm font-semibold text-white">Podíl PD</h3>
               
             </div>
           </div>
