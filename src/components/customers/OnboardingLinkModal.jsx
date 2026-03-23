@@ -75,12 +75,14 @@ export default function OnboardingLinkModal({ open, onClose, models, users, onLi
     if (!name.trim()) return;
     setLoading(true);
     const token = generateToken();
+    const expiresAt = new Date(Date.now() + expirySecs * 1000).toISOString();
     const record = await base44.entities.CustomerOnboardingRequest.create({
       full_name: name.trim(),
       token,
       status: "pending",
       assigned_model: assignedModel || null,
       assigned_chatter: assignedChatter || null,
+      expires_at: expiresAt,
     });
 
     const pageUrl = createPageUrl("CustomerOnboarding");
