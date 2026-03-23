@@ -2,25 +2,25 @@ import React, { useState } from "react";
 import { TrendingDown, TrendingUp, Building2, User, ChevronLeft, ChevronRight } from "lucide-react";
 
 const MONTH_NAMES = [
-  "Leden","Únor","Březen","Duben","Květen","Červen",
-  "Červenec","Srpen","Září","Říjen","Listopad","Prosinec"
-];
+"Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+"Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
+
 
 function Row({ label, value, sublabel, icon: Icon, color = "text-gray-900", bgColor = "bg-gray-50", prefix = "" }) {
   return (
     <div className={`flex items-center justify-between px-4 py-3 rounded-xl ${bgColor}`}>
       <div className="flex items-center gap-3">
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${bgColor === "bg-gray-50" ? "bg-white" : "bg-white/60"}`}>
-          <Icon className={`w-4 h-4 ${color}`} />
-        </div>
+        
+
+        
         <div>
           <p className="text-sm font-medium text-gray-800">{label}</p>
           {sublabel && <p className="text-xs text-gray-400">{sublabel}</p>}
         </div>
       </div>
       <p className={`text-base font-bold ${color}`}>{prefix}{value.toLocaleString("cs-CZ")} Kč</p>
-    </div>
-  );
+    </div>);
+
 }
 
 export default function WaterfallCard({ payments = [], expenses = [], walletTxs = [] }) {
@@ -31,37 +31,37 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
   const monthStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
 
   const prevMonth = () => {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
-    else setViewMonth(m => m - 1);
+    if (viewMonth === 0) {setViewMonth(11);setViewYear((y) => y - 1);} else
+    setViewMonth((m) => m - 1);
   };
   const nextMonth = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
-    else setViewMonth(m => m + 1);
+    if (viewMonth === 11) {setViewMonth(0);setViewYear((y) => y + 1);} else
+    setViewMonth((m) => m + 1);
   };
 
   // Filter data for selected month
-  const monthPayments = payments.filter(p => {
+  const monthPayments = payments.filter((p) => {
     const d = p.payment_date || p.created_date?.split("T")[0] || "";
     return d.startsWith(monthStr) && p.status !== "failed" && p.status !== "refunded";
   });
 
-  const monthExpenses = expenses.filter(e => {
+  const monthExpenses = expenses.filter((e) => {
     const d = e.expense_date || e.created_date?.split("T")[0] || "";
     return d.startsWith(monthStr);
   });
 
-  const monthWalletTxs = walletTxs.filter(t => {
+  const monthWalletTxs = walletTxs.filter((t) => {
     const d = t.transaction_date || t.created_date?.split("T")[0] || "";
     return d.startsWith(monthStr);
   });
 
   const totalIncome =
-    monthPayments.reduce((s, p) => s + (p.amount || 0), 0) +
-    monthWalletTxs.filter(t => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
+  monthPayments.reduce((s, p) => s + (p.amount || 0), 0) +
+  monthWalletTxs.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
 
   const totalExpenses =
-    monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-    monthWalletTxs.filter(t => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+  monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
+  monthWalletTxs.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;
@@ -91,9 +91,9 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
       <div className="space-y-2">
         <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-emerald-50">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/60 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
-            </div>
+            
+
+            
             <div>
               <p className="text-sm font-medium text-gray-800">Celkové příjmy</p>
               <p className="text-xs text-gray-400">Platby + manuální příjmy</p>
@@ -104,9 +104,9 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-50">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/60 flex items-center justify-center">
-              <TrendingDown className="w-4 h-4 text-red-500" />
-            </div>
+            
+
+            
             <div>
               <p className="text-sm font-medium text-gray-800">Celkové výdaje</p>
               <p className="text-xs text-gray-400">Výdaje + manuální výdaje</p>
@@ -119,9 +119,9 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-50">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/60 flex items-center justify-center">
-              <span className="text-sm font-bold text-[#C9A227]">=</span>
-            </div>
+            
+
+            
             <p className="text-sm font-semibold text-gray-800">Hrubý zisk</p>
           </div>
           <p className={`text-base font-bold ${grossProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>
@@ -139,6 +139,6 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
         <Row label="Výplata – Já" sublabel="50 % z čistého zisku" icon={User} color="text-emerald-600" bgColor="bg-emerald-50" value={ownerPayout} />
         <Row label="Výplata – Maty" sublabel="50 % z čistého zisku" icon={User} color="text-emerald-600" bgColor="bg-emerald-50" value={ownerPayout} />
       </div>
-    </div>
-  );
+    </div>);
+
 }
