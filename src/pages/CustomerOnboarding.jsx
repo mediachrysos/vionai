@@ -14,7 +14,7 @@ export default function CustomerOnboarding() {
   const [gdprAccepted, setGdprAccepted] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showGdpr, setShowGdpr] = useState(false);
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState("loading");
   const [errorMsg, setErrorMsg] = useState("");
   const [legalDocs, setLegalDocs] = useState({ gdpr: null, terms: null });
 
