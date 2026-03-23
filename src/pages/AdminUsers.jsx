@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Trash2, Building2, Plus, ChevronDown, ChevronUp, Link2, Target, Upload, Camera, Lock, Unlock, FileText } from "lucide-react";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
+import OnboardingLinksList from "../components/customers/OnboardingLinksList";
 import AdminPayments from "../components/admin/AdminPayments";
 
 const statusConfig = {
