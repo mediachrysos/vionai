@@ -162,7 +162,7 @@ export default function Wallet() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
-            <WalletIcon className="w-5 h-5 text-white" />
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_16_gtkobz.png" alt="" className="w-5 h-5 object-contain" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Wallet</h1>
