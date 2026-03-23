@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Bot, ExternalLink, Trash2 } from "lucide-react";
+import { Plus, Search, Bot, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import PageHeader from "../components/ui-custom/PageHeader";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";

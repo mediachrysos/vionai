@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, CreditCard, Building, Pencil, Download, FileText, Upload, Trash2, X } from "lucide-react";
+import { ArrowLeft, Mail, Phone, CreditCard, Building, Download, FileText, Upload, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";

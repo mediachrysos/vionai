@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pencil, Trash2, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { format } from "date-fns";
 import DatePicker from "@/components/ui-custom/DatePicker";
 

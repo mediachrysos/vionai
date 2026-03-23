@@ -1,5 +1,5 @@
 import React from "react";
-import { Pencil, Trash2, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function WalletAccountCard({ account, onEdit, onDelete }) {

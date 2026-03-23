@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowUpCircle, ArrowDownCircle, FileText, ChevronLeft, ChevronRight, Filter, X, Trash2 } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, FileText, ChevronLeft, ChevronRight, Filter, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
