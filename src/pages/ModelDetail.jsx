@@ -23,24 +23,24 @@ export default function ModelDetail({ currentUser }) {
 
   const { data: model } = useQuery({
     queryKey: ["model", id],
-    queryFn: async () => { const list = await base44.entities.Model.filter({ id }); return list[0]; },
-    enabled: !!id,
+    queryFn: async () => {const list = await base44.entities.Model.filter({ id });return list[0];},
+    enabled: !!id
   });
   const { data: payments = [] } = useQuery({
     queryKey: ["model-payments", id],
     queryFn: () => base44.entities.Payment.filter({ model_id: id }, "-created_date"),
-    enabled: !!id,
+    enabled: !!id
   });
   const { data: customers = [] } = useQuery({
     queryKey: ["model-customers", id],
     queryFn: () => base44.entities.Customer.filter({ assigned_model: id }),
-    enabled: !!id,
+    enabled: !!id
   });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Model.update(id, data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["model", id] }); setEditMode(false); },
+    onSuccess: () => {qc.invalidateQueries({ queryKey: ["model", id] });setEditMode(false);}
   });
 
   useEffect(() => {
@@ -52,16 +52,16 @@ export default function ModelDetail({ currentUser }) {
     if (!file) return;
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setEditForm(prev => ({ ...prev, profile_photo: file_url }));
+    setEditForm((prev) => ({ ...prev, profile_photo: file_url }));
     setUploading(false);
   };
 
   const toggleChatter = (email) => {
-    setEditForm(prev => ({
+    setEditForm((prev) => ({
       ...prev,
-      assigned_chatters: prev.assigned_chatters.includes(email)
-        ? prev.assigned_chatters.filter(e => e !== email)
-        : [...prev.assigned_chatters, email]
+      assigned_chatters: prev.assigned_chatters.includes(email) ?
+      prev.assigned_chatters.filter((e) => e !== email) :
+      [...prev.assigned_chatters, email]
     }));
   };
 
@@ -79,8 +79,8 @@ export default function ModelDetail({ currentUser }) {
         <ArrowLeft className="w-4 h-4" /> Zpět na modelky
       </Link>
 
-      {editMode ? (
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-6 mb-6">
+      {editMode ?
+      <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-6 mb-6">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-bold text-gray-900">Upravit modelku</h2>
             <button onClick={() => setEditMode(false)} className="text-gray-400 hover:text-gray-600">
@@ -93,9 +93,9 @@ export default function ModelDetail({ currentUser }) {
               <Label>Profilová fotografie</Label>
               <div className="mt-2 flex items-center gap-4">
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
-                  {editForm.profile_photo
-                    ? <img src={editForm.profile_photo} alt="foto" className="w-full h-full object-cover" />
-                    : <Bot className="w-8 h-8 text-[#C9A227]" />}
+                  {editForm.profile_photo ?
+                <img src={editForm.profile_photo} alt="foto" className="w-full h-full object-cover" /> :
+                <Bot className="w-8 h-8 text-[#C9A227]" />}
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="cursor-pointer">
@@ -104,21 +104,21 @@ export default function ModelDetail({ currentUser }) {
                       {uploading ? "Nahrávám..." : "Nahrát fotku"}
                     </div>
                   </label>
-                  {editForm.profile_photo && (
-                    <button onClick={() => setEditForm(prev => ({ ...prev, profile_photo: "" }))} className="text-xs text-red-400 hover:text-red-600">Odebrat</button>
-                  )}
+                  {editForm.profile_photo &&
+                <button onClick={() => setEditForm((prev) => ({ ...prev, profile_photo: "" }))} className="text-xs text-red-400 hover:text-red-600">Odebrat</button>
+                }
                 </div>
               </div>
             </div>
 
             <div>
               <Label>Jméno modelky *</Label>
-              <Input value={editForm.name} onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Jméno modelky" />
+              <Input value={editForm.name} onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))} placeholder="Jméno modelky" />
             </div>
 
             <div>
               <Label>Status</Label>
-              <Select value={editForm.status} onValueChange={v => setEditForm(prev => ({ ...prev, status: v }))}>
+              <Select value={editForm.status} onValueChange={(v) => setEditForm((prev) => ({ ...prev, status: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="active">Aktivní</SelectItem>
@@ -129,31 +129,31 @@ export default function ModelDetail({ currentUser }) {
 
             <div>
               <Label>Interní poznámky</Label>
-              <Textarea value={editForm.notes} onChange={e => setEditForm(prev => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Interní poznámky..." />
+              <Textarea value={editForm.notes} onChange={(e) => setEditForm((prev) => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Interní poznámky..." />
             </div>
 
             <div>
               <Label>Story modelky</Label>
-              <Textarea value={editForm.story} onChange={e => setEditForm(prev => ({ ...prev, story: e.target.value }))} rows={6} placeholder="Příběh, background, osobnostní rysy..." className="font-mono text-sm" />
+              <Textarea value={editForm.story} onChange={(e) => setEditForm((prev) => ({ ...prev, story: e.target.value }))} rows={6} placeholder="Příběh, background, osobnostní rysy..." className="font-mono text-sm" />
             </div>
 
             <div>
               <Label>Přiřazení chatteři</Label>
               <p className="text-xs text-gray-400 mb-3">Klikni na chattera pro přiřazení / odebrání</p>
               <div className="flex flex-wrap gap-2">
-                {users?.map(u => (
-                  <button
-                    key={u.email}
-                    onClick={() => toggleChatter(u.email)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      editForm.assigned_chatters.includes(u.email)
-                        ? "bg-[#C9A227] text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
+                {users?.map((u) =>
+              <button
+                key={u.email}
+                onClick={() => toggleChatter(u.email)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                editForm.assigned_chatters.includes(u.email) ?
+                "bg-[#C9A227] text-white" :
+                "bg-gray-100 text-gray-700 hover:bg-gray-200"}`
+                }>
+                
                     {u.full_name} {editForm.assigned_chatters.includes(u.email) && <X className="w-3 h-3 inline ml-1" />}
                   </button>
-                ))}
+              )}
               </div>
             </div>
 
@@ -164,29 +164,29 @@ export default function ModelDetail({ currentUser }) {
               </Button>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="flex items-start justify-between mb-6">
+        </div> :
+
+      <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
-              {model.profile_photo
-                ? <img src={model.profile_photo} alt={model.name} className="w-full h-full object-cover" />
-                : <Bot className="w-7 h-7 text-[#C9A227]" />}
+              {model.profile_photo ?
+            <img src={model.profile_photo} alt={model.name} className="w-full h-full object-cover" /> :
+            <Bot className="w-7 h-7 text-[#C9A227]" />}
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">{model.name}</h1>
-              <Badge variant="outline" className={model.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-600"}>
-                {model.status}
-              </Badge>
+              
+
+            
             </div>
           </div>
-          {currentUser?.role === "admin" && (
-            <Button onClick={() => setEditMode(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
+          {currentUser?.role === "admin" &&
+        <Button onClick={() => setEditMode(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
               Upravit
             </Button>
-          )}
+        }
         </div>
-      )}
+      }
 
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
@@ -205,41 +205,41 @@ export default function ModelDetail({ currentUser }) {
 
       <div className="grid lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"><Users className="w-4 h-4 text-[#C9A227]" /> Zákazníci</h3>
-          {customers.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Žádní zákazníci</p> : (
-            <div className="space-y-2">
-              {customers.map(c => (
-                <Link key={c.id} to={createPageUrl("CustomerDetail") + `?id=${c.id}`} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#faf6e6]/50 hover:border-[#e8d99a]/50 border border-transparent transition-colors">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"> Zákazníci</h3>
+          {customers.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Žádní zákazníci</p> :
+          <div className="space-y-2">
+              {customers.map((c) =>
+            <Link key={c.id} to={createPageUrl("CustomerDetail") + `?id=${c.id}`} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#faf6e6]/50 hover:border-[#e8d99a]/50 border border-transparent transition-colors">
                   <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-xs font-semibold text-[#C9A227]">{c.full_name?.[0]?.toUpperCase()}</div>
                   <div>
                     <p className="text-sm font-medium text-gray-700">{c.full_name}</p>
                     <p className="text-xs text-gray-400">{c.email || "—"}</p>
                   </div>
                 </Link>
-              ))}
+            )}
             </div>
-          )}
+          }
         </div>
 
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"><CreditCard className="w-4 h-4 text-[#C9A227]" /> Poslední platby</h3>
-          {payments.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Zatím žádné platby</p> : (
-            <div className="space-y-2 max-h-80 overflow-y-auto">
-              {payments.slice(0, 10).map(p => (
-                <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"> Poslední platby</h3>
+          {payments.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Zatím žádné platby</p> :
+          <div className="space-y-2 max-h-80 overflow-y-auto">
+              {payments.slice(0, 10).map((p) =>
+            <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
                   <div>
                     <p className="text-sm font-medium text-gray-700">{p.customer_name || "Zákazník"}</p>
                     <p className="text-xs text-gray-400">{p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}</p>
                   </div>
                   <span className="text-sm font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
                 </div>
-              ))}
+            )}
             </div>
-          )}
+          }
         </div>
       </div>
 
 
-    </div>
-  );
+    </div>);
+
 }
