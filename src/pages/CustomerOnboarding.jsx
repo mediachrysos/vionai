@@ -21,38 +21,21 @@ export default function CustomerOnboarding() {
   useEffect(() => {
     if (!token) { setStatus("invalid"); return; }
 
-    base44.entities.CustomerOnboardingRequest.filter({ token }).then(list => {
-      if (list.length === 0) {
-        setStatus("invalid");
-        return;
-      }
-      const request = list[0];
-
-      // Kontrola expirace podle expires_at
-      if (request.expires_at && new Date(request.expires_at) < new Date()) {
-        if (request.status === "pending") {
-          base44.entities.CustomerOnboardingRequest.update(request.id, { status: "expired" });
-        }
-        setStatus("expired");
-        return;
-      }
-
-      // Kontrola statusu
-      if (request.status !== "pending") {
-        setStatus("invalid");
-        return;
-      }
-
-      // Token je platný
-      setStatus("idle");
-    });
+    base44.functions.invoke("completeOnboarding", { token, check_only: true })
+      .then(res => {
+        const d = res.data;
+        if (d?.expired) { setStatus("expired"); return; }
+        if (d?.invalid) { setStatus("invalid"); return; }
+        setStatus("idle");
+      })
+      .catch(() => setStatus("invalid"));
 
     base44.entities.LegalDocument.list().then(list => {
       setLegalDocs({
         gdpr: list.find(d => d.key === "gdpr") || null,
         terms: list.find(d => d.key === "terms") || null,
       });
-    });
+    }).catch(() => {});
   }, [token]);
 
   const handleSubmit = async (e) => {
