@@ -103,7 +103,7 @@ export default function CustomerOnboarding() {
           </div>
 
           {/* GDPR */}
-          <div className="rounded-xl border border-blue-100 bg-blue-50 overflow-hidden">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
             <div className="flex items-start gap-3 p-3.5">
               <input
                 type="checkbox"
@@ -119,7 +119,7 @@ export default function CustomerOnboarding() {
             <button
               type="button"
               onClick={() => setShowGdpr(true)}
-              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-blue-100 text-xs font-semibold text-blue-600 hover:bg-blue-100 transition-colors"
+              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
             >
               <FileText className="w-3.5 h-3.5" />
               Přečíst zásady ochrany osobních údajů
@@ -127,7 +127,7 @@ export default function CustomerOnboarding() {
           </div>
 
           {/* Terms */}
-          <div className="rounded-xl border border-amber-100 bg-amber-50 overflow-hidden">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
             <div className="flex items-start gap-3 p-3.5">
               <input
                 type="checkbox"
@@ -143,7 +143,7 @@ export default function CustomerOnboarding() {
             <button
               type="button"
               onClick={() => setShowTerms(true)}
-              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-amber-100 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
+              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
             >
               <ScrollText className="w-3.5 h-3.5" />
               Přečíst obchodní podmínky
