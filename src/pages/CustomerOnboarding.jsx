@@ -95,8 +95,7 @@ export default function CustomerOnboarding() {
               className="w-32 h-32 object-contain mx-auto hover:opacity-90 transition-opacity"
             />
           </a>
-          <h1 className="text-xl font-semibold text-gray-900">Vítejte!</h1>
-          <p className="text-sm text-gray-500 mt-1">Vyplňte údaje pro dokončení registrace.</p>
+
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
