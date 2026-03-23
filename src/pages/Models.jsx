@@ -64,7 +64,7 @@ export default function Models({ currentUser }) {
       <MonthlyGoalBar />
       <PageHeader title="Modelky" subtitle={`${models.length} modelek celkem`}>
         {currentUser?.role === "admin" && (
-          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
+          <Button onClick={handleCreateNew} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
             <Plus className="w-4 h-4 mr-2" /> Přidat modelku
           </Button>
         )}
