@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, CreditCard, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
 import PageHeader from "../components/ui-custom/PageHeader";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
