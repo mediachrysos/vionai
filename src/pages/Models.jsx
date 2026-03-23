@@ -129,17 +129,10 @@ export default function Models({ currentUser }) {
                 </div>
               )}
             </motion.div>
+            </Link>
           ))}
         </div>
       )}
-
-      <ModelFormModal
-        open={showForm}
-        onClose={() => { setShowForm(false); setEditing(null); }}
-        onSave={saveMutation.mutateAsync}
-        model={editing}
-        users={users}
-      />
     </div>
   );
 }
