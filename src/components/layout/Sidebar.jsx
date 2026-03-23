@@ -17,6 +17,7 @@ const customIcons = {
   AdminUsers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png",
   CustomerScraper: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png",
   ChattingAssistant: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_12_pi2sjg.png",
+  Customers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774300826/Chrysos_icon_19_jgrgx6.png",
 };
 
 const allPages = [
