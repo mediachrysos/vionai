@@ -8,11 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, CreditCard, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
+import { useState, useEffect } from "react";
 import PageHeader from "../components/ui-custom/PageHeader";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
 import PaymentFormModal from "../components/payments/PaymentFormModal";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
+import PaymentInvoiceActions from "../components/invoices/PaymentInvoiceActions";
 
 const statusColors = {
   completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
@@ -150,9 +152,10 @@ export default function Payments({ currentUser }) {
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
-                  <th className="px-5 py-3"></th>
-                  </tr>
+                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
+                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Faktura</th>
+                   <th className="px-5 py-3"></th>
+                   </tr>
               </thead>
               <tbody>
                 {filtered.map((p, i) => (
@@ -183,6 +186,9 @@ export default function Payments({ currentUser }) {
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-900">
                       {(p.amount || 0).toLocaleString()} Kč
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <PaymentInvoiceActions payment={p} onInvoiceCreated={() => qc.invalidateQueries({ queryKey: ["invoices"] })} />
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <button
