@@ -174,7 +174,7 @@ export default function Customers({ currentUser }) {
                 <Plus className="w-4 h-4 mr-2" /> Přidat zákazníka
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowOnboarding(true)}>
-                <Link2 className="w-4 h-4 mr-2" /> Onboarding odkaz
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Onboarding odkaz
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
