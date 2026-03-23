@@ -239,7 +239,7 @@ export default function ModelDetail({ currentUser }) {
         </div>
       </div>
 
-      <ModelFormModal open={showEdit} onClose={() => setShowEdit(false)} onSave={updateMutation.mutateAsync} model={model} users={users} />
+
     </div>
   );
 }
