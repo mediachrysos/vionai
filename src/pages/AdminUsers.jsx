@@ -1,9 +1,3 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Building2, Plus, ChevronDown, ChevronUp, Link2, Target, Upload, Camera, Lock, Unlock, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -30,7 +24,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [onboardingRefresh, setOnboardingRefresh] = useState(0);
 
-  // Collapsible sections
   const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false, invoices: false });
 
   const toggle = (key) => setOpenSections((p) => ({ ...p, [key]: !p[key] }));
@@ -40,7 +33,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
     setUsers(u);
   };
 
-  // Load current user if not provided via prop
   useEffect(() => {
     if (currentUserProp) {
       setCurrentUser(currentUserProp);
@@ -63,7 +55,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       setLoading(false);
     });
 
-    // Real-time subscription for new users
     const unsub = base44.entities.User.subscribe(() => loadUsers());
     return () => unsub();
   }, [currentUser]);
@@ -84,7 +75,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       <div className="flex items-center justify-center h-screen">
         <div className="w-6 h-6 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
       </div>);
-
   }
 
   if (currentUser?.role !== "admin") {
@@ -96,7 +86,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
           <p className="text-sm text-gray-500 mt-1">Tato stránka je pouze pro administrátory.</p>
         </div>
       </div>);
-
   }
 
   const pending = users.filter((u) => u.account_status === "pending");
@@ -104,7 +93,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-4">
-      {/* Header */}
       <div className="flex items-center gap-3 mb-2">
         <div className="bg-slate-50 rounded-xl w-9 h-9 flex items-center justify-center shadow-sm shadow-amber-200">
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" />
@@ -115,7 +103,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         </div>
       </div>
 
-      {/* ── SECTION: Uživatelé ── */}
       <Section
         label="Uživatelé"
         icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" /></div>}
@@ -145,17 +132,14 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         }
       </Section>
 
-      {/* ── SECTION: Platby ── */}
       <Section label="Platby" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.payments} onToggle={() => toggle("payments")}>
         <AdminPayments currentUser={currentUser} />
       </Section>
 
-      {/* ── SECTION: Modelky ── */}
       <Section label="Modelky" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.models} onToggle={() => toggle("models")}>
         <AddModelInline models={models} setModels={setModels} />
       </Section>
 
-      {/* ── SECTION: Zákazníci ── */}
       <Section label="Přidat zákazníka" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_26_ybydei.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.customers} onToggle={() => toggle("customers")}>
         <AddCustomerInline users={users} onGenerateLink={() => setShowOnboardingModal(true)} />
         <OnboardingLinksList refreshTrigger={onboardingRefresh} />
@@ -167,32 +151,25 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         models={models}
         users={users}
         onLinkCreated={() => setOnboardingRefresh((p) => p + 1)} />
-      
 
-      {/* ── SECTION: Bankovní účty ── */}
       <Section label="Bankovní účty" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_9_z1rvej.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.accounts} onToggle={() => toggle("accounts")}>
         <BankAccountsInline accounts={accounts} setAccounts={setAccounts} />
       </Section>
 
-      {/* ── SECTION: Měsíční cíl ── */}
       <Section label="Měsíční cíl" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.goal} onToggle={() => toggle("goal")}>
         <GoalSettingsInline />
       </Section>
 
-      {/* ── SECTION: Právní dokumenty ── */}
       <Section label="Právní dokumenty (GDPR & Podmínky)" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_27_fagh7p.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.legal} onToggle={() => toggle("legal")}>
         <LegalDocumentsEditor />
       </Section>
 
-      {/* ── SECTION: Nastavení faktury ── */}
       <Section label="Nastavení faktury" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.invoices} onToggle={() => toggle("invoices")}>
         <InvoiceSettingsInline />
       </Section>
     </div>);
-
 }
 
-/* ── Generic collapsible section ── */
 function Section({ label, icon, badge, open, onToggle, children }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -211,7 +188,6 @@ function Section({ label, icon, badge, open, onToggle, children }) {
       </button>
       {open && <div className="px-5 pb-5 pt-1 border-t border-gray-50">{children}</div>}
     </div>);
-
 }
 
 const PAGE_OPTIONS = [
@@ -226,8 +202,6 @@ const PAGE_OPTIONS = [
 { page: "ChattingAssistant", label: "Chatting Assistant" },
 { page: "Tasks", label: "Úkoly" }];
 
-
-/* ── User row with model assignment + permissions ── */
 function UserRow({ user, onUpdate, onDelete, models }) {
   const [showPerms, setShowPerms] = useState(false);
   const status = user.account_status || "pending";
@@ -254,7 +228,6 @@ function UserRow({ user, onUpdate, onDelete, models }) {
 
   return (
     <div className="flex flex-col gap-0 bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
-      {/* Main row */}
       <div className="flex items-center gap-3 flex-wrap px-4 py-3">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0">
           <span className="text-sm font-bold text-white">{(user.full_name || user.email || "?")[0].toUpperCase()}</span>
@@ -298,7 +271,6 @@ function UserRow({ user, onUpdate, onDelete, models }) {
         </div>
       </div>
 
-      {/* Permissions panel */}
       {showPerms && !isAdmin &&
       <div className="px-4 py-3 border-t border-gray-100 bg-white">
           <div className="flex items-center gap-2 mb-3">
@@ -318,8 +290,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
               }>
                   {enabled ? "✓ " : ""}{label}
                 </button>);
-
-          })}
+            })}
           </div>
           {allowedPages.length > 0 &&
         <button onClick={() => onUpdate(user.id, { allowed_pages: [] })}
@@ -330,7 +301,6 @@ function UserRow({ user, onUpdate, onDelete, models }) {
         </div>
       }
 
-      {/* Model assignment */}
       {models.filter((m) => m.status === "active").length > 0 &&
       <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-gray-100 bg-white/60">
           <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Modelky:</span>
@@ -343,15 +313,12 @@ function UserRow({ user, onUpdate, onDelete, models }) {
             }>
                 {assigned ? "✓ " : ""}{m.name}
               </button>);
-
-        })}
+          })}
         </div>
       }
     </div>);
-
 }
 
-/* ── Add model inline ── */
 function AddModelInline({ models, setModels }) {
   const [form, setForm] = useState({ name: "", status: "active", notes: "" });
   const [saving, setSaving] = useState(false);
@@ -400,10 +367,8 @@ function AddModelInline({ models, setModels }) {
         </div>
       }
     </div>);
-
 }
 
-/* ── Add customer inline ── */
 function AddCustomerInline({ users, onGenerateLink }) {
   const [form, setForm] = useState({ full_name: "", email: "", bank_name: "", bank_account_number: "", notes: "", status: "active", assigned_chatter: "" });
   const [saving, setSaving] = useState(false);
@@ -461,10 +426,8 @@ function AddCustomerInline({ users, onGenerateLink }) {
         </Button>
       </div>
     </div>);
-
 }
 
-/* ── Goal settings inline ── */
 function GoalSettingsInline() {
   const [goal, setGoal] = useState("");
   const [goalId, setGoalId] = useState(null);
@@ -506,21 +469,16 @@ function GoalSettingsInline() {
           onChange={(e) => setGoal(e.target.value)}
           placeholder="100000"
           className="h-9" />
-        
       </div>
       <Button
         onClick={handleSave}
         disabled={!goal || saving}
         className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 text-sm font-semibold text-white px-5">
-        
         {done ? "✓ Uloženo!" : saving ? "..." : "Uložit cíl"}
       </Button>
     </div>);
-
 }
 
-/* ── Bank accounts inline ── */
-/* ── Invoice settings inline ── */
 function InvoiceSettingsInline() {
   const [settings, setSettings] = useState({
     company_name: "",
@@ -635,7 +593,6 @@ function InvoiceSettingsInline() {
   );
 }
 
-/* ── Bank accounts inline ── */
 function BankAccountsInline({ accounts, setAccounts }) {
   const [form, setForm] = useState({ name: "", account_number: "", bank_name: "", is_active: true });
   const [saving, setSaving] = useState(false);
@@ -697,7 +654,6 @@ function BankAccountsInline({ accounts, setAccounts }) {
       <div className="space-y-2">
           {accounts.map((a) =>
         <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50">
-              {/* Profile photo */}
               <label className="relative cursor-pointer flex-shrink-0 group" title="Nahrát foto">
                 <div className="w-9 h-9 rounded-xl overflow-hidden border border-gray-200 bg-white flex items-center justify-center">
                   {a.profile_photo ?
@@ -730,5 +686,4 @@ function BankAccountsInline({ accounts, setAccounts }) {
         </div>
       }
     </div>);
-
 }
