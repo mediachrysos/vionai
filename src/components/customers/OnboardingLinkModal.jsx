@@ -165,6 +165,11 @@ export default function OnboardingLinkModal({ open, onClose, models, users }) {
                 </Button>
               </div>
 
+              {countdown !== null && (
+                <div className={`flex items-center justify-center gap-1.5 text-xs font-medium rounded-lg py-2 px-3 ${countdown === 0 ? "bg-red-50 text-red-600 border border-red-200" : countdown <= 15 ? "bg-orange-50 text-orange-600 border border-orange-200" : "bg-gray-50 text-gray-500 border border-gray-200"}`}>
+                  {countdown === 0 ? "⚠️ Odkaz expiroval" : `⏱ Odkaz expiruje za ${countdown}s`}
+                </div>
+              )}
               <p className="text-xs text-gray-400 text-center">Po vyplnění formuláře zákazníkem se záznam automaticky uloží do databáze.</p>
 
               <div className="flex gap-2 pt-1 border-t border-gray-100">
