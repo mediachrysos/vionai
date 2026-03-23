@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Users, Bot, CreditCard,
+  LayoutDashboard, Users, Bot,
   ChevronLeft, ChevronRight, LogOut,
-  Menu, X, UserCircle, ShieldCheck, BarChart2, Wallet, Search, MessageSquare
+  Menu, X, UserCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
