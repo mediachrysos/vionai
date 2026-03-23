@@ -30,7 +30,8 @@ export default function CustomerOnboarding() {
       })
       .catch(() => setStatus("invalid"));
 
-    base44.entities.LegalDocument.list().then(list => {
+    base44.functions.invoke("completeOnboarding", { get_docs: true }).then(res => {
+      const list = res.data?.docs || [];
       setLegalDocs({
         gdpr: list.find(d => d.key === "gdpr") || null,
         terms: list.find(d => d.key === "terms") || null,
