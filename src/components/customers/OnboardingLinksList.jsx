@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Trash2, Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 
 const statusConfig = {
   pending: { label: "Aktivní", color: "bg-amber-100 text-amber-700", icon: Clock },
