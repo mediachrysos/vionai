@@ -76,17 +76,20 @@ export default function Models({ currentUser }) {
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon={Bot} title="Žádné modelky" actionLabel="Přidat modelku" onAction={() => setShowForm(true)} />
+        <EmptyState icon={Bot} title="Žádné modelky" actionLabel="Přidat modelku" onAction={handleCreateNew} />
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((m, i) => (
-            <motion.div
+            <Link
               key={m.id}
+              to={`${createPageUrl("ModelDetail")}?id=${m.id}`}
+              className="group"
+            >
+            <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 hover:border-[#e8d99a] hover:shadow-[0_8px_24px_rgba(201,162,39,0.09)] transition-all cursor-pointer"
-              onClick={() => { setEditing(m); setShowForm(true); }}
+              className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 hover:border-[#e8d99a] hover:shadow-[0_8px_24px_rgba(201,162,39,0.09)] transition-all"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
