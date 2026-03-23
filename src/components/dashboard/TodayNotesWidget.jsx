@@ -122,7 +122,7 @@ export default function TodayNotesWidget({ currentUser }) {
       <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
-            <StickyNote className="w-3.5 h-3.5 text-white" />
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_5_sljjsp.png" alt="" className="w-5 h-5 object-contain" />
           </div>
           <h3 className="text-sm font-semibold text-white">Poznámky</h3>
         </div>
