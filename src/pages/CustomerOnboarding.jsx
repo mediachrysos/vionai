@@ -68,6 +68,14 @@ export default function CustomerOnboarding() {
     }
   };
 
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+      </div>
+    );
+  }
+
   if (status === "expired") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
