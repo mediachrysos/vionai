@@ -99,7 +99,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-2">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
-          <Shield className="w-4 h-4 text-white" />
+          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png" alt="" className="w-5 h-5 object-contain" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-gray-900">Admin Portál</h1>
@@ -110,7 +110,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       {/* ── SECTION: Uživatelé ── */}
       <Section
         label="Uživatelé"
-        icon={<Users className="w-4 h-4" />}
+        icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" /></div>}
         badge={pending.length > 0 ? pending.length : null}
         open={openSections.users}
         onToggle={() => toggle("users")}
@@ -143,7 +143,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       </Section>
 
       {/* ── SECTION: Modelky ── */}
-      <Section label="Modelky" icon={<span className="text-sm">👩</span>} open={openSections.models} onToggle={() => toggle("models")}>
+      <Section label="Modelky" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.models} onToggle={() => toggle("models")}>
         <AddModelInline models={models} setModels={setModels} />
       </Section>
 
@@ -442,7 +442,7 @@ function AddCustomerInline({ users, onGenerateLink }) {
       </div>
       <div className="col-span-2">
         <Button variant="outline" onClick={onGenerateLink} className="w-full h-9 text-sm border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]">
-          <Link2 className="w-4 h-4 mr-2" /> Vygenerovat onboarding odkaz
+          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Vygenerovat onboarding odkaz
         </Button>
       </div>
     </div>
