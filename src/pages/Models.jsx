@@ -75,64 +75,64 @@ export default function Models({ currentUser }) {
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Hledat modelky..." className="pl-10" />
       </div>
 
-      {filtered.length === 0 ?
-      <EmptyState icon={Bot} title="Žádné modelky" actionLabel="Přidat modelku" onAction={handleCreateNew} /> :
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((m, i) =>
-        <Link
-          key={m.id}
-          to={`${createPageUrl("ModelDetail")}?id=${m.id}`}
-          className="group">
-          
-            <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.03 }}
-            className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 hover:border-[#e8d99a] hover:shadow-[0_8px_24px_rgba(201,162,39,0.09)] transition-all">
-            
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
-                    {m.profile_photo ?
-                  <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" /> :
-                  <Bot className="w-5 h-5 text-[#C9A227]" />}
+      {filtered.length === 0 ? (
+        <EmptyState icon={Bot} title="Žádné modelky" actionLabel="Přidat modelku" onAction={handleCreateNew} />
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((m, i) => (
+            <Link key={m.id} to={`${createPageUrl("ModelDetail")}?id=${m.id}`} className="group">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 hover:border-[#e8d99a] hover:shadow-[0_8px_24px_rgba(201,162,39,0.09)] transition-all"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a] flex-shrink-0">
+                      {m.profile_photo ? (
+                        <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <Bot className="w-5 h-5 text-[#C9A227]" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-800">{m.name}</h3>
+                      <Badge variant="outline" className={m.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-100 text-xs" : "bg-gray-50 text-gray-400 border-gray-200 text-xs"}>
+                        {m.status === "active" ? "Aktivní" : "Neaktivní"}
+                      </Badge>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-800">{m.name}</h3>
-                    <Badge variant="outline" className={m.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-100 text-xs" : "bg-gray-50 text-gray-400 border-gray-200 text-xs"}>
-                      {m.status === "active" ? "Aktivní" : "Neaktivní"}
-                    </Badge>
+                  <div className="flex items-center gap-4 ml-4">
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400">Tržby</p>
+                      <p className="text-sm font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} Kč</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400">Platby</p>
+                      <p className="text-sm font-semibold text-gray-900">{modelPaymentCount[m.id] || 0}</p>
+                    </div>
+                    {currentUser?.role === "admin" && (
+                      <button onClick={(e) => { e.preventDefault(); handleDelete(e, m); }} className="opacity-60 hover:opacity-100 transition-opacity flex-shrink-0">
+                        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
+                      </button>
+                    )}
                   </div>
                 </div>
-                {currentUser?.role === "admin" &&
-              <button onClick={(e) => {e.preventDefault();handleDelete(e, m);}} className="opacity-60 hover:opacity-100 transition-opacity">
-                       <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
-                     </button>
-              }
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <div>
-                  <p className="text-xs text-gray-400">Tržby</p>
-                  <p className="text-lg font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} Kč</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400">Platby</p>
-                  <p className="text-lg font-semibold text-gray-900">{modelPaymentCount[m.id] || 0}</p>
-                </div>
-              </div>
-              {m.assigned_chatters?.length > 0 &&
-            <div className="mt-3 flex flex-wrap gap-1">
-                  {m.assigned_chatters.map((c) => null
-
-              )}
-                </div>
-            }
-            </motion.div>
+                {m.assigned_chatters?.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1">
+                    {m.assigned_chatters.map((c) => (
+                      <Badge key={c} variant="outline" className="text-xs">{c}</Badge>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
             </Link>
-        )}
+          ))}
         </div>
+      )}
+      </div>
+      );
       }
-    </div>);
 
 }
