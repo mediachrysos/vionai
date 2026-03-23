@@ -8,6 +8,7 @@ import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import OnboardingLinksList from "../components/customers/OnboardingLinksList";
 import AdminPayments from "../components/admin/AdminPayments";
+import { useState, useEffect } from "react";
 
 const statusConfig = {
   pending: { label: "Čeká na schválení", color: "bg-amber-100 text-amber-700", icon: Clock },
