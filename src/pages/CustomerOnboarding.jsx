@@ -19,7 +19,13 @@ export default function CustomerOnboarding() {
   const [legalDocs, setLegalDocs] = useState({ gdpr: null, terms: null });
 
   useEffect(() => {
-    if (!token) setStatus("invalid");
+    if (!token) { setStatus("invalid"); return; }
+    // Check if token is still pending (not expired/used)
+    base44.entities.CustomerOnboardingRequest.filter({ token }).then(list => {
+      if (list.length === 0 || list[0].status !== "pending") {
+        setStatus("invalid");
+      }
+    });
     base44.entities.LegalDocument.list().then(list => {
       setLegalDocs({
         gdpr: list.find(d => d.key === "gdpr") || null,
