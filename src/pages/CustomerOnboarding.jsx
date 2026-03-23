@@ -42,6 +42,9 @@ export default function CustomerOnboarding() {
         setStatus("invalid");
         return;
       }
+
+      // Token je platný
+      setStatus("idle");
     });
 
     base44.entities.LegalDocument.list().then(list => {
