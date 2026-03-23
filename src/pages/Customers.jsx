@@ -280,7 +280,7 @@ export default function Customers({ currentUser }) {
                         onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
                         className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition-colors">
                         
-                          <Pencil className="w-3.5 h-3.5" />
+                          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
                         </button>
                       </td>
                     </motion.tr>);
