@@ -19,8 +19,29 @@ export default function OnboardingLinkModal({ open, onClose, models, users }) {
   const [generatedLink, setGeneratedLink] = useState(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(null);
+  const countdownRef = useRef(null);
+
+  const startCountdown = () => {
+    setCountdown(60);
+    countdownRef.current = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    return () => clearInterval(countdownRef.current);
+  }, []);
 
   const reset = () => {
+    clearInterval(countdownRef.current);
+    setCountdown(null);
     setName("");
     setAssignedModel("");
     setAssignedChatter("");
