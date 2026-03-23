@@ -23,23 +23,15 @@ Deno.serve(async (req) => {
 
     const invoice = invoices[0];
 
-    // Generate PDF with Unicode support
+    // Generate PDF
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4'
     });
-
-    // Add DejaVu Sans font for Czech character support
-    const fontUrl = 'https://cdn.jsdelivr.net/npm/dejavu-fonts@2.37.3/ttf/DejaVuSans.ttf';
-    try {
-      const fontData = await fetch(fontUrl).then(r => r.arrayBuffer());
-      doc.addFont(fontData, 'DejaVuSans', 'normal');
-      doc.setFont('DejaVuSans');
-    } catch (e) {
-      console.log('Could not load DejaVu font, using default');
-      doc.setFont('Courier'); // Fallback to Courier
-    }
+    
+    // Set font to Courier which supports Czech characters with Unicode
+    doc.setFont('courier');
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
