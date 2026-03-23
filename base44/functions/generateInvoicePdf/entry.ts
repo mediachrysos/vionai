@@ -30,11 +30,15 @@ Deno.serve(async (req) => {
       format: 'a4'
     });
     
-    // Add DejaVuSans font embedded as base64 for Czech character support
-    const dejavu = await fetch('https://cdn.jsdelivr.net/npm/dejavu-fonts@2.37.3/ttf/DejaVuSans.ttf').then(r => r.arrayBuffer());
-    const dejavu64 = Buffer.from(dejavu).toString('base64');
-    doc.addFont(dejavu64, 'DejaVu', 'normal');
-    doc.setFont('DejaVu');
+    // Add DejaVuSans font for Czech character support
+    try {
+      const fontData = await fetch('https://cdn.jsdelivr.net/npm/dejavu-fonts@2.37.3/ttf/DejaVuSans.ttf').then(r => r.arrayBuffer());
+      doc.addFont(fontData, 'DejaVu', 'normal');
+      doc.setFont('DejaVu');
+    } catch (e) {
+      // Fallback if font loading fails
+      doc.setFont('courier');
+    }
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
