@@ -30,15 +30,8 @@ Deno.serve(async (req) => {
       format: 'a4'
     });
     
-    // Add DejaVuSans font for Czech character support
-    try {
-      const fontData = await fetch('https://cdn.jsdelivr.net/npm/dejavu-fonts@2.37.3/ttf/DejaVuSans.ttf').then(r => r.arrayBuffer());
-      doc.addFont(fontData, 'DejaVu', 'normal');
-      doc.setFont('DejaVu');
-    } catch (e) {
-      // Fallback if font loading fails
-      doc.setFont('courier');
-    }
+    // Use helvetica which has better unicode support than courier
+    doc.setFont('helvetica');
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
