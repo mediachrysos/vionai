@@ -23,6 +23,7 @@ const customIcons = {
 const allPages = [
   { name: "Přehled", icon: null, page: "Dashboard" },
   { name: "Zákazníci", icon: Users, page: "Customers" },
+  { name: "Platby", icon: null, page: "Payments" },
   { name: "Modelky", icon: null, page: "Models" },
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
