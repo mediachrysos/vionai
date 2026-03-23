@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Trash2, Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const statusConfig = {
   pending: { label: "Aktivní", color: "bg-amber-100 text-amber-700", icon: Clock },
@@ -15,6 +14,40 @@ function timeAgo(dateStr) {
   if (diff < 3600) return `před ${Math.floor(diff / 60)}m`;
   if (diff < 86400) return `před ${Math.floor(diff / 3600)}h`;
   return `před ${Math.floor(diff / 86400)}d`;
+}
+
+function formatCountdown(seconds) {
+  if (seconds <= 0) return "Expirováno";
+  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+function Countdown({ expiresAt, onExpired }) {
+  const [secs, setSecs] = useState(() => Math.max(0, Math.floor((new Date(expiresAt) - Date.now()) / 1000)));
+
+  useEffect(() => {
+    if (secs <= 0) { onExpired?.(); return; }
+    const t = setInterval(() => {
+      setSecs(prev => {
+        if (prev <= 1) { clearInterval(t); onExpired?.(); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [expiresAt]);
+
+  const isLow = secs < 300;
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold tabular-nums ${
+      secs <= 0 ? "bg-gray-100 text-gray-400" : isLow ? "bg-orange-100 text-orange-600" : "bg-amber-100 text-amber-700"
+    }`}>
+      <Clock className="w-3 h-3 flex-shrink-0" />
+      {secs <= 0 ? "Expirováno" : formatCountdown(secs)}
+    </span>
+  );
 }
 
 export default function OnboardingLinksList({ refreshTrigger }) {
@@ -37,6 +70,11 @@ export default function OnboardingLinksList({ refreshTrigger }) {
     setLinks(prev => prev.filter(l => l.id !== id));
   };
 
+  const markExpired = async (id) => {
+    await base44.entities.CustomerOnboardingRequest.update(id, { status: "expired" });
+    setLinks(prev => prev.map(l => l.id === id ? { ...l, status: "expired" } : l));
+  };
+
   if (loading) return <p className="text-xs text-gray-400 py-2">Načítám...</p>;
   if (links.length === 0) return <p className="text-xs text-gray-400 py-2">Žádné onboarding odkazy.</p>;
 
@@ -52,16 +90,25 @@ export default function OnboardingLinksList({ refreshTrigger }) {
         {links.map(link => {
           const cfg = statusConfig[link.status] || statusConfig.expired;
           const Icon = cfg.icon;
+          const isPending = link.status === "pending";
+          const hasExpiry = isPending && link.expires_at;
+
           return (
             <div key={link.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-800 truncate">{link.full_name}</p>
                 <p className="text-xs text-gray-400">{timeAgo(link.created_date)}</p>
               </div>
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.color}`}>
-                <Icon className="w-3 h-3" />
-                {cfg.label}
-              </span>
+
+              {hasExpiry ? (
+                <Countdown expiresAt={link.expires_at} onExpired={() => markExpired(link.id)} />
+              ) : (
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.color}`}>
+                  <Icon className="w-3 h-3" />
+                  {cfg.label}
+                </span>
+              )}
+
               <button
                 onClick={() => handleDelete(link.id, link.full_name)}
                 className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
