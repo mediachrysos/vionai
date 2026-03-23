@@ -9,15 +9,23 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const customIcons = {
+  Finance: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png",
+  Wallet: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_16_gtkobz.png",
+  AdminUsers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_15_tmcn0g.png",
+  CustomerScraper: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png",
+  ChattingAssistant: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_12_pi2sjg.png",
+};
+
 const allPages = [
   { name: "Přehled", icon: LayoutDashboard, page: "Dashboard" },
   { name: "Zákazníci", icon: Users, page: "Customers" },
   { name: "Modelky", icon: Bot, page: "Models" },
-  { name: "Finance", icon: BarChart2, page: "Finance" },
-  { name: "Wallet", icon: Wallet, page: "Wallet" },
-  { name: "Admin Portál", icon: ShieldCheck, page: "AdminUsers" },
-  { name: "Customer Scraper", icon: Search, page: "CustomerScraper" },
-  { name: "Chatting Assistant", icon: MessageSquare, page: "ChattingAssistant" },
+  { name: "Finance", icon: null, page: "Finance" },
+  { name: "Wallet", icon: null, page: "Wallet" },
+  { name: "Admin Portál", icon: null, page: "AdminUsers" },
+  { name: "Customer Scraper", icon: null, page: "CustomerScraper" },
+  { name: "Chatting Assistant", icon: null, page: "ChattingAssistant" },
 ];
 
 const defaultChatterPages = ["ChatterPortal", "Customers", "Payments"];
