@@ -160,7 +160,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       />
 
       {/* ── SECTION: Bankovní účty ── */}
-      <Section label="Bankovní účty" icon={<Building2 className="w-4 h-4" />} open={openSections.accounts} onToggle={() => toggle("accounts")}>
+      <Section label="Bankovní účty" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_9_z1rvej.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.accounts} onToggle={() => toggle("accounts")}>
         <BankAccountsInline accounts={accounts} setAccounts={setAccounts} />
       </Section>
 
