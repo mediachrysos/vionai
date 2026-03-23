@@ -5,6 +5,12 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const { token, terms_accepted, check_only, get_docs } = await req.json();
 
+    // Get legal documents (public, no token needed)
+    if (get_docs) {
+      const docs = await base44.asServiceRole.entities.LegalDocument.list();
+      return Response.json({ docs });
+    }
+
     if (!token) {
       return Response.json({ error: "Chybí token." }, { status: 400 });
     }
