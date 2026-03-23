@@ -33,7 +33,7 @@ export default function RangePicker({ range, activePreset, onPreset, onDateChang
         onClick={() => setOpen(v => !v)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-white hover:border-[#C9A227] text-sm transition-all"
       >
-        <CalendarDays className="w-4 h-4 text-gray-400" />
+        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_3_qncd5u.png" alt="" className="w-4 h-4 object-contain" />
         <span className="text-gray-700 text-xs">
           {activePreset ? activePreset : `${formatDate(range.from)} – ${formatDate(range.to)}`}
         </span>
