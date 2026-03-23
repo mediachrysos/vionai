@@ -105,16 +105,11 @@ export default function Models({ currentUser }) {
                     </Badge>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {currentUser?.role === "admin" && (
-                    <button onClick={(e) => handleDelete(e, m)} className="opacity-60 hover:opacity-100 transition-opacity">
-                      <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
-                    </button>
-                  )}
-                  <Link to={createPageUrl("ModelDetail") + `?id=${m.id}`} onClick={e => e.stopPropagation()}>
-                    <ExternalLink className="w-4 h-4 text-gray-300 hover:text-gray-600" />
-                  </Link>
-                </div>
+                {currentUser?.role === "admin" && (
+                     <button onClick={(e) => { e.preventDefault(); handleDelete(e, m); }} className="opacity-60 hover:opacity-100 transition-opacity">
+                       <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
+                     </button>
+                   )}
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
