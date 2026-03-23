@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 import { base44 } from "@/api/base44Client";
 
 const TABS = [
-  { id: "info", label: "Základní info", icon: Bot },
-  { id: "story", label: "Story", icon: FileText },
-  { id: "chatters", label: "Chatteři", icon: Users },
-];
+{ id: "info", label: "Základní info", icon: Bot },
+{ id: "story", label: "Story", icon: FileText },
+{ id: "chatters", label: "Chatteři", icon: Users }];
+
 
 export default function ModelFormModal({ open, onClose, onSave, model, users }) {
   const [form, setForm] = useState({ name: "", status: "active", notes: "", story: "", assigned_chatters: [], profile_photo: "" });
@@ -23,8 +23,8 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (model) setForm({ ...model, assigned_chatters: model.assigned_chatters || [], story: model.story || "", profile_photo: model.profile_photo || "" });
-    else setForm({ name: "", status: "active", notes: "", story: "", assigned_chatters: [], profile_photo: "" });
+    if (model) setForm({ ...model, assigned_chatters: model.assigned_chatters || [], story: model.story || "", profile_photo: model.profile_photo || "" });else
+    setForm({ name: "", status: "active", notes: "", story: "", assigned_chatters: [], profile_photo: "" });
     setActiveTab("info");
   }, [model, open]);
 
@@ -39,16 +39,16 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
     if (!file) return;
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setForm(prev => ({ ...prev, profile_photo: file_url }));
+    setForm((prev) => ({ ...prev, profile_photo: file_url }));
     setUploading(false);
   };
 
   const toggleChatter = (email) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      assigned_chatters: prev.assigned_chatters.includes(email)
-        ? prev.assigned_chatters.filter(e => e !== email)
-        : [...prev.assigned_chatters, email]
+      assigned_chatters: prev.assigned_chatters.includes(email) ?
+      prev.assigned_chatters.filter((e) => e !== email) :
+      [...prev.assigned_chatters, email]
     }));
   };
 
@@ -58,9 +58,9 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
         {/* Header */}
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-6 py-5 rounded-t-lg">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-              <Bot className="w-5 h-5 text-white" />
-            </div>
+            
+
+            
             <div>
               <h2 className="text-lg font-bold text-white">{model ? "Upravit modelku" : "Přidat modelku"}</h2>
               <p className="text-amber-100 text-xs">{model?.name || "Nová modelka"}</p>
@@ -70,7 +70,7 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
 
         {/* Tabs */}
         <div className="flex border-b border-gray-100 bg-gray-50/50">
-          {TABS.map(tab => {
+          {TABS.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
@@ -78,28 +78,28 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-all",
-                  activeTab === tab.id
-                    ? "border-b-2 border-[#C9A227] text-[#C9A227] bg-white"
-                    : "text-gray-400 hover:text-gray-600"
-                )}
-              >
-                <Icon className="w-3.5 h-3.5" />
+                  activeTab === tab.id ?
+                  "border-b-2 border-[#C9A227] text-[#C9A227] bg-white" :
+                  "text-gray-400 hover:text-gray-600"
+                )}>
+                
+                
                 {tab.label}
-              </button>
-            );
+              </button>);
+
           })}
         </div>
 
         <div className="space-y-4 p-6">
-          {activeTab === "info" && (
-            <>
+          {activeTab === "info" &&
+          <>
               <div>
                 <Label>Profilová fotografie</Label>
                 <div className="mt-1 flex items-center gap-4">
                   <div className="w-20 h-20 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a] flex-shrink-0">
-                    {form.profile_photo
-                      ? <img src={form.profile_photo} alt="foto" className="w-full h-full object-cover" />
-                      : <Bot className="w-8 h-8 text-[#C9A227]" />}
+                    {form.profile_photo ?
+                  <img src={form.profile_photo} alt="foto" className="w-full h-full object-cover" /> :
+                  <Bot className="w-8 h-8 text-[#C9A227]" />}
                   </div>
                   <label className="cursor-pointer">
                     <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploading} />
@@ -108,18 +108,18 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
                       {uploading ? "Nahrávám..." : "Nahrát fotku"}
                     </div>
                   </label>
-                  {form.profile_photo && (
-                    <button onClick={() => setForm(prev => ({ ...prev, profile_photo: "" }))} className="text-xs text-red-400 hover:text-red-600">Odebrat</button>
-                  )}
+                  {form.profile_photo &&
+                <button onClick={() => setForm((prev) => ({ ...prev, profile_photo: "" }))} className="text-xs text-red-400 hover:text-red-600">Odebrat</button>
+                }
                 </div>
               </div>
               <div>
                 <Label>Jméno modelky *</Label>
-                <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Jméno modelky" />
+                <Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} placeholder="Jméno modelky" />
               </div>
               <div>
                 <Label>Status</Label>
-                <Select value={form.status} onValueChange={v => setForm(prev => ({ ...prev, status: v }))}>
+                <Select value={form.status} onValueChange={(v) => setForm((prev) => ({ ...prev, status: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="active">Aktivní</SelectItem>
@@ -129,62 +129,62 @@ export default function ModelFormModal({ open, onClose, onSave, model, users }) 
               </div>
               <div>
                 <Label>Interní poznámky</Label>
-                <Textarea value={form.notes} onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Interní poznámky..." />
+                <Textarea value={form.notes} onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Interní poznámky..." />
               </div>
             </>
-          )}
+          }
 
-          {activeTab === "story" && (
-            <div>
+          {activeTab === "story" &&
+          <div>
               <Label>Story modelky</Label>
               <p className="text-xs text-gray-400 mb-2">Pozadí příběhu modelky — používá se chattery při komunikaci se zákazníky.</p>
               <Textarea
-                value={form.story}
-                onChange={e => setForm(prev => ({ ...prev, story: e.target.value }))}
-                rows={12}
-                placeholder="Napiš příběh, background, osobnostní rysy, zájmy, způsob komunikace..."
-                className="font-mono text-sm"
-              />
+              value={form.story}
+              onChange={(e) => setForm((prev) => ({ ...prev, story: e.target.value }))}
+              rows={12}
+              placeholder="Napiš příběh, background, osobnostní rysy, zájmy, způsob komunikace..."
+              className="font-mono text-sm" />
+            
             </div>
-          )}
+          }
 
-          {activeTab === "chatters" && (
-            <div>
+          {activeTab === "chatters" &&
+          <div>
               <Label>Přiřazení chatteři</Label>
               <p className="text-xs text-gray-400 mb-3">Klikni na chattera pro přiřazení / odebrání</p>
               <div className="flex flex-wrap gap-2">
-                {users?.map(u => (
-                  <Badge
-                    key={u.email}
-                    variant={form.assigned_chatters.includes(u.email) ? "default" : "outline"}
-                    className={cn(
-                      "cursor-pointer transition-all",
-                      form.assigned_chatters.includes(u.email)
-                        ? "bg-[#C9A227] text-white border-[#C9A227] hover:bg-[#A8841C]"
-                        : "hover:border-[#C9A227] hover:text-[#C9A227]"
-                    )}
-                    onClick={() => toggleChatter(u.email)}
-                  >
+                {users?.map((u) =>
+              <Badge
+                key={u.email}
+                variant={form.assigned_chatters.includes(u.email) ? "default" : "outline"}
+                className={cn(
+                  "cursor-pointer transition-all",
+                  form.assigned_chatters.includes(u.email) ?
+                  "bg-[#C9A227] text-white border-[#C9A227] hover:bg-[#A8841C]" :
+                  "hover:border-[#C9A227] hover:text-[#C9A227]"
+                )}
+                onClick={() => toggleChatter(u.email)}>
+                
                     {u.full_name}
                     {form.assigned_chatters.includes(u.email) && <X className="w-3 h-3 ml-1" />}
                   </Badge>
-                ))}
+              )}
               </div>
             </div>
-          )}
+          }
 
           <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
             <Button variant="outline" onClick={onClose}>Zrušit</Button>
             <Button
               onClick={handleSubmit}
               disabled={!form.name || saving}
-              className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"
-            >
+              className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
+              
               {saving ? "Ukládám..." : model ? "Uložit" : "Vytvořit"}
             </Button>
           </div>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>);
+
 }
