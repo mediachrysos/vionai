@@ -94,7 +94,11 @@ export default function Sidebar({ currentPage, user, onLogout }) {
                 collapsed && "justify-center px-2"
               )}
             >
-              <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-[#C9A227]" : "text-gray-400")} />
+              {customIcons[item.page] ? (
+                <img src={customIcons[item.page]} alt="" className="w-4 h-4 flex-shrink-0 object-contain" style={{ filter: isActive ? "none" : "grayscale(40%) opacity(0.6)" }} />
+              ) : (
+                <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-[#C9A227]" : "text-gray-400")} />
+              )}
               {!collapsed && <span>{item.name}</span>}
             </Link>
           );
