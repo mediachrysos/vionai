@@ -30,8 +30,11 @@ Deno.serve(async (req) => {
       format: 'a4'
     });
     
-    // Set font to Courier which supports Czech characters with Unicode
-    doc.setFont('courier');
+    // Add DejaVuSans font embedded as base64 for Czech character support
+    const dejavu = await fetch('https://cdn.jsdelivr.net/npm/dejavu-fonts@2.37.3/ttf/DejaVuSans.ttf').then(r => r.arrayBuffer());
+    const dejavu64 = Buffer.from(dejavu).toString('base64');
+    doc.addFont(dejavu64, 'DejaVu', 'normal');
+    doc.setFont('DejaVu');
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
