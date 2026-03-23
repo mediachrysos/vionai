@@ -3,14 +3,14 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { token, terms_accepted } = await req.json();
+    const { token, terms_accepted, check_only } = await req.json();
 
-    if (!token || !terms_accepted) {
-      return Response.json({ error: "Chybí povinné údaje." }, { status: 400 });
+    if (!token) {
+      return Response.json({ error: "Chybí token." }, { status: 400 });
     }
 
-    // Find the onboarding request by token
-    const requests = await base44.asServiceRole.entities.CustomerOnboardingRequest.filter({ token, status: "pending" });
+    // Find the onboarding request by token (any status for check_only)
+    const requests = await base44.asServiceRole.entities.CustomerOnboardingRequest.filter({ token });
 
     if (!requests || requests.length === 0) {
       return Response.json({ error: "Odkaz je neplatný nebo již byl použit." }, { status: 404 });
