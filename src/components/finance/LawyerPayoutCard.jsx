@@ -162,14 +162,14 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
 
         {/* Mini summary */}
         <div className="grid grid-cols-3 gap-3 mb-3">
-          <div className="bg-white/15 rounded-xl px-3 py-2">
+          <div className="bg-green-500 px-3 py-2 rounded-xl">
             <div className="flex items-center gap-1 mb-0.5">
               <TrendingUp className="w-3 h-3 text-white/70" />
               <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Příjmy</p>
             </div>
             <p className="text-sm font-bold text-white">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
           </div>
-          <div className="bg-white/15 rounded-xl px-3 py-2">
+          <div className="bg-red-500 px-3 py-2 rounded-xl">
             <div className="flex items-center gap-1 mb-0.5">
               <TrendingDown className="w-3 h-3 text-white/70" />
               <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Výdaje</p>
@@ -177,7 +177,7 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
             <p className="text-sm font-bold text-white">{totalExpenses.toLocaleString("cs-CZ")} Kč</p>
           </div>
           {/* Payout highlight */}
-          <div className="bg-white/25 rounded-xl px-3 py-2 flex flex-col justify-center">
+          <div className="bg-yellow-500 px-3 py-2 rounded-xl flex flex-col justify-center">
             <div className="flex items-center gap-1 mb-0.5">
               <Calculator className="w-3 h-3 text-white/70" />
               <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Výplata</p>
