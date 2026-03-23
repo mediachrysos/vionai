@@ -13,6 +13,7 @@ Deno.serve(async (req) => {
     const requests = await base44.asServiceRole.entities.CustomerOnboardingRequest.filter({ token });
 
     if (!requests || requests.length === 0) {
+      if (check_only) return Response.json({ invalid: true });
       return Response.json({ error: "Odkaz je neplatný nebo již byl použit." }, { status: 404 });
     }
 
@@ -20,8 +21,24 @@ Deno.serve(async (req) => {
 
     // Check expiration
     if (onboardingRequest.expires_at && new Date(onboardingRequest.expires_at) < new Date()) {
-      await base44.asServiceRole.entities.CustomerOnboardingRequest.update(onboardingRequest.id, { status: "expired" });
+      if (onboardingRequest.status === "pending") {
+        await base44.asServiceRole.entities.CustomerOnboardingRequest.update(onboardingRequest.id, { status: "expired" });
+      }
+      if (check_only) return Response.json({ expired: true });
       return Response.json({ error: "Platnost odkazu vypršela." }, { status: 403 });
+    }
+
+    // Check status
+    if (onboardingRequest.status !== "pending") {
+      if (check_only) return Response.json({ invalid: true });
+      return Response.json({ error: "Odkaz je neplatný nebo již byl použit." }, { status: 404 });
+    }
+
+    // check_only mode — just validate, don't create customer
+    if (check_only) return Response.json({ valid: true });
+
+    if (!terms_accepted) {
+      return Response.json({ error: "Chybí souhlas s podmínkami." }, { status: 400 });
     }
 
     // Create the customer
