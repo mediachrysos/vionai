@@ -18,9 +18,9 @@ const customIcons = {
 };
 
 const allPages = [
-  { name: "Přehled", icon: LayoutDashboard, page: "Dashboard" },
+  { name: "Přehled", icon: null, page: "Dashboard" },
   { name: "Zákazníci", icon: Users, page: "Customers" },
-  { name: "Modelky", icon: Bot, page: "Models" },
+  { name: "Modelky", icon: null, page: "Models" },
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
   { name: "Admin Portál", icon: null, page: "AdminUsers" },
