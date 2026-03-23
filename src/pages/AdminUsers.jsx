@@ -282,7 +282,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
           }
           <Button size="sm" variant="outline" className="h-8 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3 rounded-lg"
           onClick={() => onDelete(user.id, user.full_name || user.email)}>
-            <Trash2 className="w-3 h-3 mr-1" /> Odstranit
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3 h-3 mr-1 object-contain" /> Odstranit
           </Button>
         </div>
       </div>
@@ -595,8 +595,8 @@ function BankAccountsInline({ accounts, setAccounts }) {
                 {a.is_active ? "Aktivní" : "Neaktivní"}
               </span>
               <button onClick={() => toggleActive(a)} className="text-xs text-[#C9A227] hover:underline">{a.is_active ? "Deaktivovat" : "Aktivovat"}</button>
-              <button onClick={() => deleteAccount(a.id)} className="text-gray-300 hover:text-red-400">
-                <Trash2 className="w-3.5 h-3.5" />
+              <button onClick={() => deleteAccount(a.id)} className="opacity-50 hover:opacity-100 transition-opacity">
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
               </button>
             </div>
         )}
