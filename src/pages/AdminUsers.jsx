@@ -140,7 +140,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       </Section>
 
       {/* ── SECTION: Platby ── */}
-      <Section label="Platby" icon={<CreditCard className="w-4 h-4" />} open={openSections.payments} onToggle={() => toggle("payments")}>
+      <Section label="Platby" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.payments} onToggle={() => toggle("payments")}>
         <AdminPayments currentUser={currentUser} />
       </Section>
 
