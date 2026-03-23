@@ -18,6 +18,12 @@ Deno.serve(async (req) => {
 
     const onboardingRequest = requests[0];
 
+    // Check expiration
+    if (onboardingRequest.expires_at && new Date(onboardingRequest.expires_at) < new Date()) {
+      await base44.asServiceRole.entities.CustomerOnboardingRequest.update(onboardingRequest.id, { status: "expired" });
+      return Response.json({ error: "Platnost odkazu vypršela." }, { status: 403 });
+    }
+
     // Create the customer
     const customer = await base44.asServiceRole.entities.Customer.create({
       full_name: onboardingRequest.full_name,
