@@ -174,7 +174,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       </Section>
 
       {/* ── SECTION: Právní dokumenty ── */}
-      <Section label="Právní dokumenty (GDPR & Podmínky)" icon={<FileText className="w-4 h-4" />} open={openSections.legal} onToggle={() => toggle("legal")}>
+      <Section label="Právní dokumenty (GDPR & Podmínky)" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_27_fagh7p.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.legal} onToggle={() => toggle("legal")}>
         <LegalDocumentsEditor />
       </Section>
     </div>);
