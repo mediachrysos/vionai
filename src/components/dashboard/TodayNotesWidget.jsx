@@ -274,19 +274,19 @@ export default function TodayNotesWidget({ currentUser }) {
                 <div className="flex flex-wrap gap-1.5 mb-2.5">
                     {n.amount &&
                   <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                        <CreditCard className="w-3 h-3" />
+                        
                         {Number(n.amount).toLocaleString("cs-CZ")} Kč
                       </span>
                   }
                     {accountLabel &&
                   <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">
-                        <Building2 className="w-3 h-3" />
+                        
                         {accountLabel}
                       </span>
                   }
                     {n.model_name &&
                   <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-violet-100 text-violet-700">
-                        <Bot className="w-3 h-3" />
+                        
                         {n.model_name}
                       </span>
                   }
