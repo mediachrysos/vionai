@@ -21,44 +21,44 @@ export default function Wallet() {
 
   const { data: accounts = [] } = useQuery({
     queryKey: ["bankAccounts"],
-    queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
+    queryFn: () => base44.entities.BankAccount.filter({ is_active: true })
   });
 
   const { data: walletTxs = [] } = useQuery({
     queryKey: ["walletTransactions"],
-    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 200),
+    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 200)
   });
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-payment_date", 500),
+    queryFn: () => base44.entities.Payment.list("-payment_date", 500)
   });
 
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses"],
-    queryFn: () => base44.entities.Expense.list("-expense_date", 500),
+    queryFn: () => base44.entities.Expense.list("-expense_date", 500)
   });
 
   // Build unified transaction list
   const allTransactions = useMemo(() => {
-    const paymentTxs = payments
-      .filter(p => p.status !== "failed" && p.status !== "refunded")
-      .map(p => {
-        const acc = p.bank_account_id ? accounts.find(a => a.id === p.bank_account_id) : null;
-        return {
-          id: "pay_" + p.id,
-          title: p.customer_name ? `Platba – ${p.customer_name}` : "Platba zákazníka",
-          amount: p.amount || 0,
-          type: "income",
-          transaction_date: p.payment_date,
-          created_date: p.created_date,
-          category: p.service_type || "Platba",
-          account_name: acc?.name || (p.destination_account ? p.destination_account : null),
-          source: "Finance",
-        };
-      });
+    const paymentTxs = payments.
+    filter((p) => p.status !== "failed" && p.status !== "refunded").
+    map((p) => {
+      const acc = p.bank_account_id ? accounts.find((a) => a.id === p.bank_account_id) : null;
+      return {
+        id: "pay_" + p.id,
+        title: p.customer_name ? `Platba – ${p.customer_name}` : "Platba zákazníka",
+        amount: p.amount || 0,
+        type: "income",
+        transaction_date: p.payment_date,
+        created_date: p.created_date,
+        category: p.service_type || "Platba",
+        account_name: acc?.name || (p.destination_account ? p.destination_account : null),
+        source: "Finance"
+      };
+    });
 
-    const expenseTxs = expenses.map(e => ({
+    const expenseTxs = expenses.map((e) => ({
       id: "exp_" + e.id,
       title: e.title,
       amount: e.amount || 0,
@@ -66,10 +66,10 @@ export default function Wallet() {
       transaction_date: e.expense_date,
       created_date: e.created_date,
       category: e.category || "Výdaj",
-      source: "Finance",
+      source: "Finance"
     }));
 
-    const manualTxs = walletTxs.map(t => ({ ...t, source: "Wallet" }));
+    const manualTxs = walletTxs.map((t) => ({ ...t, source: "Wallet" }));
 
     return [...paymentTxs, ...expenseTxs, ...manualTxs].sort((a, b) => {
       const da = a.transaction_date || a.created_date?.split("T")[0] || "";
@@ -79,16 +79,16 @@ export default function Wallet() {
   }, [payments, expenses, walletTxs]);
 
   const totalIncome = useMemo(() =>
-    allTransactions.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0),
-    [allTransactions]);
+  allTransactions.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0),
+  [allTransactions]);
 
   const totalExpenses = useMemo(() =>
-    allTransactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0),
-    [allTransactions]);
+  allTransactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0),
+  [allTransactions]);
 
   const filteredTransactions = useMemo(() => {
     if (txFilter === "all") return allTransactions;
-    return allTransactions.filter(t => t.type === txFilter);
+    return allTransactions.filter((t) => t.type === txFilter);
   }, [allTransactions, txFilter]);
 
   // Account mutations (editing existing BankAccounts - balance update)
@@ -101,12 +101,12 @@ export default function Wallet() {
       qc.invalidateQueries({ queryKey: ["bankAccounts"] });
       setShowAccountModal(false);
       setEditingAccount(null);
-    },
+    }
   });
 
   const deleteAccountMutation = useMutation({
     mutationFn: (acc) => base44.entities.BankAccount.delete(acc.id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["bankAccounts"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["bankAccounts"] })
   });
 
   const deleteTxMutation = useMutation({
@@ -115,7 +115,7 @@ export default function Wallet() {
         await base44.entities.WalletTransaction.delete(tx.id);
         // Reverse balance update
         if (tx.account_id) {
-          const acc = accounts.find(a => a.id === tx.account_id);
+          const acc = accounts.find((a) => a.id === tx.account_id);
           if (acc) {
             const delta = tx.type === "income" ? -tx.amount : tx.amount;
             await base44.entities.BankAccount.update(tx.account_id, { balance: (acc.balance || 0) + delta });
@@ -132,7 +132,7 @@ export default function Wallet() {
       qc.invalidateQueries({ queryKey: ["bankAccounts"] });
       qc.invalidateQueries({ queryKey: ["payments"] });
       qc.invalidateQueries({ queryKey: ["expenses"] });
-    },
+    }
   });
 
   // Transaction mutation
@@ -141,7 +141,7 @@ export default function Wallet() {
       const tx = await base44.entities.WalletTransaction.create(data);
       // Update BankAccount balance
       if (data.account_id) {
-        const acc = accounts.find(a => a.id === data.account_id);
+        const acc = accounts.find((a) => a.id === data.account_id);
         if (acc) {
           const delta = data.type === "income" ? data.amount : -data.amount;
           await base44.entities.BankAccount.update(data.account_id, { balance: (acc.balance || 0) + delta });
@@ -153,7 +153,7 @@ export default function Wallet() {
       qc.invalidateQueries({ queryKey: ["walletTransactions"] });
       qc.invalidateQueries({ queryKey: ["bankAccounts"] });
       setShowTxModal(false);
-    },
+    }
   });
 
   return (
@@ -170,11 +170,11 @@ export default function Wallet() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={() => { setEditingAccount(null); setShowAccountModal(true); }}>
+          <Button size="sm" variant="outline" onClick={() => {setEditingAccount(null);setShowAccountModal(true);}}>
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-1 object-contain" /> Nový účet
           </Button>
           <Button size="sm" onClick={() => setShowTxModal(true)}
-            className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
+          className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-1 object-contain" /> Přidat transakci
           </Button>
         </div>
@@ -184,21 +184,21 @@ export default function Wallet() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
           <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className="w-4 h-4 text-emerald-500" />
+            
             <p className="text-xs text-gray-400 uppercase tracking-wider">Celkové příjmy</p>
           </div>
           <p className="text-2xl font-bold text-emerald-700">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
         </div>
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
           <div className="flex items-center gap-2 mb-1">
-            <TrendingDown className="w-4 h-4 text-red-500" />
+            
             <p className="text-xs text-gray-400 uppercase tracking-wider">Celkové výdaje</p>
           </div>
           <p className="text-2xl font-bold text-red-600">{totalExpenses.toLocaleString("cs-CZ")} Kč</p>
         </div>
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
           <div className="flex items-center gap-2 mb-1">
-            <WalletIcon className="w-4 h-4 text-[#C9A227]" />
+            
             <p className="text-xs text-gray-400 uppercase tracking-wider">Čistý zisk</p>
           </div>
           <p className={`text-2xl font-bold ${totalIncome - totalExpenses >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>
@@ -208,21 +208,21 @@ export default function Wallet() {
       </div>
 
       {/* Accounts */}
-      {accounts.length > 0 && (
-        <div className="mb-6">
+      {accounts.length > 0 &&
+      <div className="mb-6">
           <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Firemní účty</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {accounts.map(acc => (
-              <WalletAccountCard
-                key={acc.id}
-                account={acc}
-                onEdit={(a) => { setEditingAccount(a); setShowAccountModal(true); }}
-                onDelete={deleteAccountMutation.mutate}
-              />
-            ))}
+            {accounts.map((acc) =>
+          <WalletAccountCard
+            key={acc.id}
+            account={acc}
+            onEdit={(a) => {setEditingAccount(a);setShowAccountModal(true);}}
+            onDelete={deleteAccountMutation.mutate} />
+
+          )}
           </div>
         </div>
-      )}
+      }
 
       {/* Main content */}
       <div className="space-y-6">
@@ -237,24 +237,24 @@ export default function Wallet() {
             typeFilter={txFilter}
             onTypeFilterChange={setTxFilter}
             onSelect={setSelectedTx}
-            onDelete={(tx) => deleteTxMutation.mutate(tx)}
-          />
+            onDelete={(tx) => deleteTxMutation.mutate(tx)} />
+          
         </div>
       </div>
 
       {/* Modals */}
       <WalletAccountModal
         open={showAccountModal}
-        onClose={() => { setShowAccountModal(false); setEditingAccount(null); }}
+        onClose={() => {setShowAccountModal(false);setEditingAccount(null);}}
         onSave={saveAccountMutation.mutateAsync}
-        account={editingAccount}
-      />
+        account={editingAccount} />
+      
       <WalletTransactionModal
         open={showTxModal}
         onClose={() => setShowTxModal(false)}
         onSave={saveTxMutation.mutateAsync}
-        accounts={accounts}
-      />
+        accounts={accounts} />
+      
       <WalletTransactionDetailModal
         open={!!selectedTx}
         onClose={() => setSelectedTx(null)}
@@ -263,8 +263,8 @@ export default function Wallet() {
         onUpdate={() => {
           qc.invalidateQueries({ queryKey: ["walletTransactions"] });
           setSelectedTx(null);
-        }}
-      />
-    </div>
-  );
+        }} />
+      
+    </div>);
+
 }
