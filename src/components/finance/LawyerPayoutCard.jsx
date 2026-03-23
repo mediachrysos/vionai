@@ -49,11 +49,11 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
       <DialogContent className="max-w-md p-0">
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="bg-slate-50 rounded-lg w-9 h-9 flex items-center justify-center">
-              <Scale className="w-5 h-5 text-white" />
+            <div className="bg-white rounded-lg w-9 h-9 flex items-center justify-center">
+              <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_22_vybcot.png" alt="" className="w-5 h-5 object-contain" />
             </div>
             <div>
-              <DialogTitle className="text-white text-base font-semibold">Výplata pan D.</DialogTitle>
+              <DialogTitle className="text-white text-base font-semibold">Podíl PD</DialogTitle>
               <p className="text-white/60 text-xs">{monthName}</p>
             </div>
           </div>
