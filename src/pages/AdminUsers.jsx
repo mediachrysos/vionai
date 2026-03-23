@@ -152,6 +152,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       {/* ── SECTION: Zákazníci ── */}
       <Section label="Přidat zákazníka" icon={<span className="text-sm">👤</span>} open={openSections.customers} onToggle={() => toggle("customers")}>
         <AddCustomerInline users={users} onGenerateLink={() => setShowOnboardingModal(true)} />
+        <OnboardingLinksList refreshTrigger={onboardingRefresh} />
       </Section>
 
       <OnboardingLinkModal
@@ -159,6 +160,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         onClose={() => setShowOnboardingModal(false)}
         models={models}
         users={users}
+        onLinkCreated={() => setOnboardingRefresh(p => p + 1)}
       />
 
       {/* ── SECTION: Bankovní účty ── */}
