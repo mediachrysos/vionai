@@ -13,6 +13,7 @@ function generateToken() {
 }
 
 const EXPIRY_OPTIONS = [
+  { label: "1 minuta", seconds: 60 },
   { label: "5 minut", seconds: 5 * 60 },
   { label: "15 minut", seconds: 15 * 60 },
   { label: "30 minut", seconds: 30 * 60 },
