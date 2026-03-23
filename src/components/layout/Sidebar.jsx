@@ -10,9 +10,11 @@ import {
 import { cn } from "@/lib/utils";
 
 const customIcons = {
+  Dashboard: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_15_tmcn0g.png",
+  Models: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png",
   Finance: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png",
   Wallet: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_16_gtkobz.png",
-  AdminUsers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_15_tmcn0g.png",
+  AdminUsers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png",
   CustomerScraper: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png",
   ChattingAssistant: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_12_pi2sjg.png",
 };
