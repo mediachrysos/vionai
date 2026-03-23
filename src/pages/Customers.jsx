@@ -35,25 +35,25 @@ export default function Customers({ currentUser }) {
 
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ["customers"],
-    queryFn: () => base44.entities.Customer.list("-created_date", 500),
+    queryFn: () => base44.entities.Customer.list("-created_date", 500)
   });
   const { data: allPayments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 1000),
+    queryFn: () => base44.entities.Payment.list("-created_date", 1000)
   });
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
-    queryFn: () => base44.entities.Model.list(),
+    queryFn: () => base44.entities.Model.list()
   });
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: () => base44.entities.User.list()
   });
 
   // Aggregate stats per customer from payments
   const customerStats = useMemo(() => {
     const stats = {};
-    allPayments.forEach(p => {
+    allPayments.forEach((p) => {
       if (!p.customer_id) return;
       if (!stats[p.customer_id]) stats[p.customer_id] = { total: 0, lastDate: null, lastAmount: null };
       stats[p.customer_id].total += p.amount || 0;
@@ -76,12 +76,12 @@ export default function Customers({ currentUser }) {
       qc.invalidateQueries({ queryKey: ["customers"] });
       setShowForm(false);
       setEditing(null);
-    },
+    }
   });
 
   const myModelIds = useMemo(() => {
     if (!currentUser?.email) return [];
-    const fromModels = models.filter(m => m.assigned_chatters?.includes(currentUser.email)).map(m => m.id);
+    const fromModels = models.filter((m) => m.assigned_chatters?.includes(currentUser.email)).map((m) => m.id);
     const fromUser = currentUser?.assigned_model_ids || [];
     return [...new Set([...fromModels, ...fromUser])];
   }, [models, currentUser]);
@@ -96,13 +96,13 @@ export default function Customers({ currentUser }) {
 
   const downloadXlsx = () => {
     const rows = [
-      ["Jméno", "Email", "Telefon", "Banka", "Číslo účtu", "Den výplaty", "Celkem", "Počet plateb"],
-      ...customers.map(c => {
-        const st = customerStats[c.id] || {};
-        return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter(p => p.customer_id === c.id).length];
-      })
-    ];
-    const csv = rows.map(r => r.map(v => `"${v ?? ""}"`).join(",")).join("\n");
+    ["Jméno", "Email", "Telefon", "Banka", "Číslo účtu", "Den výplaty", "Celkem", "Počet plateb"],
+    ...customers.map((c) => {
+      const st = customerStats[c.id] || {};
+      return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter((p) => p.customer_id === c.id).length];
+    })];
+
+    const csv = rows.map((r) => r.map((v) => `"${v ?? ""}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -115,22 +115,22 @@ export default function Customers({ currentUser }) {
   const today = new Date();
 
   const customerPaymentCount = {};
-  allPayments.forEach(p => {
+  allPayments.forEach((p) => {
     if (!p.customer_id) return;
     customerPaymentCount[p.customer_id] = (customerPaymentCount[p.customer_id] || 0) + 1;
   });
 
   const modelMap = {};
-  models.forEach(m => { modelMap[m.id] = m.name; });
+  models.forEach((m) => {modelMap[m.id] = m.name;});
 
-  const filtered = customers.filter(c => {
+  const filtered = customers.filter((c) => {
     const matchSearch = !search ||
-      c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      c.email?.toLowerCase().includes(search.toLowerCase());
+    c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+    c.email?.toLowerCase().includes(search.toLowerCase());
     const custModels = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
     const matchChatter = showAll || isAdmin ||
-      c.assigned_chatter === currentUser?.email ||
-      custModels.some(mid => myModelIds.includes(mid));
+    c.assigned_chatter === currentUser?.email ||
+    custModels.some((mid) => myModelIds.includes(mid));
     const matchModel = modelFilter === "all" || custModels.includes(modelFilter);
     return matchSearch && matchChatter && matchModel;
   }).sort((a, b) => {
@@ -160,7 +160,7 @@ export default function Customers({ currentUser }) {
       <MonthlyGoalBar />
       <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
         <div className="flex gap-2 flex-wrap">
-          <Button variant="outline" onClick={downloadXlsx} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+          <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
           </Button>
           <DropdownMenu>
@@ -170,7 +170,7 @@ export default function Customers({ currentUser }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => { setEditing(null); setShowForm(true); }}>
+              <DropdownMenuItem onClick={() => {setEditing(null);setShowForm(true);}}>
                 <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Přidat zákazníka
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowOnboarding(true)}>
@@ -185,7 +185,7 @@ export default function Customers({ currentUser }) {
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png" alt="" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 object-contain" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat zákazníky..." className="pl-10" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Hledat zákazníky..." className="pl-10" />
         </div>
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
@@ -199,21 +199,21 @@ export default function Customers({ currentUser }) {
           <SelectTrigger className="w-44"><SelectValue placeholder="Všechny modelky" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Všechny modelky</SelectItem>
-            {models.map(m => (
-              <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-            ))}
+            {models.map((m) =>
+            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+            )}
           </SelectContent>
         </Select>
-        {!isAdmin && (
-          <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
-        )}
+        {!isAdmin &&
+        <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
+        }
       </div>
 
       {/* Table */}
-      {filtered.length === 0 && !isLoading ? (
-        <EmptyState icon={UserCircle} title="Žádní zákazníci" description="Přidej prvního zákazníka a začni" actionLabel="Přidat zákazníka" onAction={() => setShowForm(true)} />
-      ) : (
-        <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+      {filtered.length === 0 && !isLoading ?
+      <EmptyState icon={UserCircle} title="Žádní zákazníci" description="Přidej prvního zákazníka a začni" actionLabel="Přidat zákazníka" onAction={() => setShowForm(true)} /> :
+
+      <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -228,17 +228,17 @@ export default function Customers({ currentUser }) {
               </thead>
               <tbody>
                 {filtered.map((c, i) => {
-                  const st = customerStats[c.id] || {};
-                  const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
-                  return (
-                    <motion.tr
-                      key={c.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: i * 0.02 }}
-                      className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
-                      onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
-                    >
+                const st = customerStats[c.id] || {};
+                const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
+                return (
+                  <motion.tr
+                    key={c.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.02 }}
+                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
+                    
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
@@ -248,66 +248,66 @@ export default function Customers({ currentUser }) {
                         </div>
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden md:table-cell">
-                        {c.pay_day_of_month
-                          ? <span className="text-sm font-medium text-gray-700">{c.pay_day_of_month}. v měsíci</span>
-                          : <span className="text-gray-300">—</span>}
+                        {c.pay_day_of_month ?
+                      <span className="text-sm font-medium text-gray-700">{c.pay_day_of_month}. v měsíci</span> :
+                      <span className="text-gray-300">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden lg:table-cell">
                         {(() => {
-                          const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
-                          const names = mids.map(mid => modelMap[mid]).filter(Boolean);
-                          return names.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
-                              {names.map(n => <span key={n} className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded-md px-1.5 py-0.5">{n}</span>)}
-                            </div>
-                          ) : <span className="text-gray-300">—</span>;
-                        })()}
+                        const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
+                        const names = mids.map((mid) => modelMap[mid]).filter(Boolean);
+                        return names.length > 0 ?
+                        <div className="flex flex-wrap gap-1">
+                              {names.map((n) => <span key={n} className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded-md px-1.5 py-0.5">{n}</span>)}
+                            </div> :
+                        <span className="text-gray-300">—</span>;
+                      })()}
                       </td>
                       <td className="px-5 py-3.5 text-right">
                         <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
                         <p className="text-xs text-gray-400">{customerPaymentCount[c.id] || 0}× plateb</p>
                       </td>
                       <td className="px-5 py-3.5 text-right hidden xl:table-cell">
-                        {daysSinceLast !== null ? (
-                          <div>
+                        {daysSinceLast !== null ?
+                      <div>
                             <p className="text-xs font-medium text-gray-600">{st.lastAmount?.toLocaleString()} Kč</p>
                             <p className="text-xs text-gray-400">před {daysSinceLast} dny</p>
-                          </div>
-                        ) : <span className="text-xs text-gray-300">—</span>}
+                          </div> :
+                      <span className="text-xs text-gray-300">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                         <button
-                          onClick={e => { e.stopPropagation(); setEditing(c); setShowForm(true); }}
-                          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition-colors"
-                        >
+                        onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
+                        className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition-colors">
+                        
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                       </td>
-                    </motion.tr>
-                  );
-                })}
+                    </motion.tr>);
+
+              })}
               </tbody>
             </table>
           </div>
         </div>
-      )}
+      }
 
       <CustomerFormModal
         open={showForm}
-        onClose={() => { setShowForm(false); setEditing(null); }}
+        onClose={() => {setShowForm(false);setEditing(null);}}
         onSave={saveMutation.mutateAsync}
         customer={editing}
         models={models}
         users={users}
-        allCustomers={customers}
-      />
+        allCustomers={customers} />
+      
 
       <OnboardingLinkModal
         open={showOnboarding}
         onClose={() => setShowOnboarding(false)}
         models={models}
-        users={users}
-      />
-    </div>
-  );
+        users={users} />
+      
+    </div>);
+
 }
