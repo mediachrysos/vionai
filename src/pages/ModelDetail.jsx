@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Bot, Pencil, Users, CreditCard, UserCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, Bot, X, Users, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
 import PageHeader from "../components/ui-custom/PageHeader";
-import ModelFormModal from "../components/models/ModelFormModal";
 
 export default function ModelDetail({ currentUser }) {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get("id");
-  const [showEdit, setShowEdit] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState({});
+  const [uploading, setUploading] = useState(false);
   const qc = useQueryClient();
 
   const { data: model } = useQuery({
