@@ -31,7 +31,9 @@ export default function MonthlyGoalBar() {
     <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-xl px-5 py-3 mb-6 shadow-sm shadow-amber-200">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" alt="" className="w-5 h-5 object-contain" />
+          <div className="w-9 h-9 rounded-xl bg-white/25 flex items-center justify-center">
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" alt="" className="w-6 h-6 object-contain" />
+          </div>
           <span className="text-xs font-semibold text-white/90 uppercase tracking-wider">Měsíční cíl</span>
         </div>
         <div className="flex items-center gap-2">
