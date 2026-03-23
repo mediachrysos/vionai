@@ -131,7 +131,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
-        <Row label="Poplatek advokátovi" sublabel="10 % z hrubého zisku" icon={Building2} color="text-gray-700" bgColor="bg-gray-50" prefix="- " value={lawyerFee} />
+        <Row label="Výplata PD" sublabel="10 % z hrubého zisku" icon={Building2} color="text-gray-700" bgColor="bg-gray-50" prefix="- " value={lawyerFee} />
         <Row label="Firemní rezerva" sublabel="20 % ze zbytku po advokátovi" icon={Building2} color="text-blue-600" bgColor="bg-gray-50" prefix="- " value={companyReserve} />
 
         <div className="border-t border-dashed border-gray-200 my-1" />
