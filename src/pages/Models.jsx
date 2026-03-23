@@ -11,38 +11,25 @@ import { motion } from "framer-motion";
 import PageHeader from "../components/ui-custom/PageHeader";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import EmptyState from "../components/ui-custom/EmptyState";
-import ModelFormModal from "../components/models/ModelFormModal";
-
 export default function Models({ currentUser }) {
   const [search, setSearch] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing] = useState(null);
   const qc = useQueryClient();
-
-  const urlParams = new URLSearchParams(window.location.search);
-  useEffect(() => {
-    if (urlParams.get("action") === "new") setShowForm(true);
-  }, []);
 
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list("-created_date"),
-  });
-  const { data: users = [] } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
   });
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
     queryFn: () => base44.entities.Payment.list("-created_date", 500),
   });
 
-  const saveMutation = useMutation({
-    mutationFn: async (data) => {
-      if (editing) return base44.entities.Model.update(editing.id, data);
-      return base44.entities.Model.create(data);
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.Model.create(data),
+    onSuccess: (newModel) => {
+      qc.invalidateQueries({ queryKey: ["models"] });
+      window.location.href = `${createPageUrl("ModelDetail")}?id=${newModel.id}`;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["models"] }); setShowForm(false); setEditing(null); },
   });
 
   const deleteMutation = useMutation({
@@ -53,6 +40,11 @@ export default function Models({ currentUser }) {
   const handleDelete = (e, m) => {
     e.stopPropagation();
     if (window.confirm(`Opravdu smazat modelku "${m.name}"?`)) deleteMutation.mutate(m.id);
+  };
+
+  const handleCreateNew = async () => {
+    const name = prompt("Jméno modelky:");
+    if (name) createMutation.mutate({ name, status: "active" });
   };
 
   const filtered = models.filter(m => !search || m.name?.toLowerCase().includes(search.toLowerCase()));
