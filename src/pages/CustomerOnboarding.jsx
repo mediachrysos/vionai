@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, XCircle, Loader2, FileText, ScrollText, ExternalLink } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, FileText, ScrollText } from "lucide-react";
 
 export default function CustomerOnboarding() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -20,12 +20,30 @@ export default function CustomerOnboarding() {
 
   useEffect(() => {
     if (!token) { setStatus("invalid"); return; }
-    // Check if token is still pending (not expired/used)
+
     base44.entities.CustomerOnboardingRequest.filter({ token }).then(list => {
-      if (list.length === 0 || list[0].status !== "pending") {
+      if (list.length === 0) {
         setStatus("invalid");
+        return;
+      }
+      const request = list[0];
+
+      // Kontrola expirace podle expires_at
+      if (request.expires_at && new Date(request.expires_at) < new Date()) {
+        if (request.status === "pending") {
+          base44.entities.CustomerOnboardingRequest.update(request.id, { status: "expired" });
+        }
+        setStatus("expired");
+        return;
+      }
+
+      // Kontrola statusu
+      if (request.status !== "pending") {
+        setStatus("invalid");
+        return;
       }
     });
+
     base44.entities.LegalDocument.list().then(list => {
       setLegalDocs({
         gdpr: list.find(d => d.key === "gdpr") || null,
@@ -46,6 +64,18 @@ export default function CustomerOnboarding() {
       setStatus("error");
     }
   };
+
+  if (status === "expired") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="text-center max-w-sm">
+          <XCircle className="w-14 h-14 text-orange-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Odkaz expiroval</h2>
+          <p className="text-sm text-gray-500">Platnost tohoto odkazu vypršela. Požádejte o nový odkaz.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (status === "invalid") {
     return (
@@ -95,7 +125,6 @@ export default function CustomerOnboarding() {
               className="w-32 h-32 object-contain mx-auto hover:opacity-90 transition-opacity"
             />
           </a>
-
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -167,7 +196,7 @@ export default function CustomerOnboarding() {
         </form>
       </div>
 
-      {/* Modals — outside form to prevent accidental submit */}
+      {/* Modals */}
       <DocumentModal
         open={showGdpr}
         onClose={() => setShowGdpr(false)}
