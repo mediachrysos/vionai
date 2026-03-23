@@ -1,5 +1,5 @@
 import React from "react";
-import { CreditCard } from "lucide-react";
+
 import { format } from "date-fns";
 
 export default function TodayPaymentsWidget({ payments }) {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, StickyNote, Trash2, X, User, Calendar, CreditCard, Building2, Bot } from "lucide-react";
+import { Plus, Trash2, X, CreditCard, Building2, Bot } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
