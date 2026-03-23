@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, XCircle, Loader2, ScrollText, FileText } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, FileText, ScrollText, ExternalLink } from "lucide-react";
 
 export default function CustomerOnboarding() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -20,7 +20,6 @@ export default function CustomerOnboarding() {
 
   useEffect(() => {
     if (!token) setStatus("invalid");
-    // Load legal documents
     base44.entities.LegalDocument.list().then(list => {
       setLegalDocs({
         gdpr: list.find(d => d.key === "gdpr") || null,
@@ -81,11 +80,15 @@ export default function CustomerOnboarding() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
-        {/* Logo / Brand */}
+        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] mx-auto mb-3 flex items-center justify-center shadow-md shadow-amber-200">
-            <span className="text-white font-bold text-lg">C</span>
-          </div>
+          <a href="https://chrysos-media-website.base44.app" target="_blank" rel="noopener noreferrer" className="inline-block mb-3">
+            <img
+              src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274896/hf_20260323_140153_38afd9a9-0561-418e-aa6f-da2f6f022bae_copy_cakidp.png"
+              alt="Chrysos Media"
+              className="w-16 h-16 object-contain mx-auto hover:opacity-90 transition-opacity"
+            />
+          </a>
           <h1 className="text-xl font-semibold text-gray-900">Vítejte!</h1>
           <p className="text-sm text-gray-500 mt-1">Vyplňte údaje pro dokončení registrace.</p>
         </div>
@@ -100,56 +103,52 @@ export default function CustomerOnboarding() {
           </div>
 
           {/* GDPR */}
-          <div className="flex items-start gap-3 bg-blue-50 rounded-xl p-3.5 border border-blue-100">
-            <input
-              type="checkbox"
-              id="gdpr"
-              checked={gdprAccepted}
-              onChange={e => setGdprAccepted(e.target.checked)}
-              className="mt-0.5 w-4 h-4 rounded accent-amber-500 cursor-pointer flex-shrink-0"
-            />
-            <label htmlFor="gdpr" className="text-xs text-gray-600 leading-relaxed cursor-pointer flex-1">
-              Souhlasím se zpracováním osobních údajů dle GDPR za účelem poskytování dohodnutých služeb.{" "}
-              <button type="button" onClick={() => setShowGdpr(true)}
-                className="inline-flex items-center gap-0.5 text-blue-600 hover:text-blue-800 underline underline-offset-2 font-medium">
-                <FileText className="w-3 h-3" /> Přečíst zásady
-              </button>
-            </label>
+          <div className="rounded-xl border border-blue-100 bg-blue-50 overflow-hidden">
+            <div className="flex items-start gap-3 p-3.5">
+              <input
+                type="checkbox"
+                id="gdpr"
+                checked={gdprAccepted}
+                onChange={e => setGdprAccepted(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded accent-amber-500 cursor-pointer flex-shrink-0"
+              />
+              <label htmlFor="gdpr" className="text-xs text-gray-600 leading-relaxed cursor-pointer flex-1">
+                Souhlasím se zpracováním osobních údajů dle GDPR za účelem poskytování dohodnutých služeb.
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowGdpr(true)}
+              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-blue-100 text-xs font-semibold text-blue-600 hover:bg-blue-100 transition-colors"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              Přečíst zásady ochrany osobních údajů
+            </button>
           </div>
 
           {/* Terms */}
-          <div className="flex items-start gap-3 bg-amber-50 rounded-xl p-3.5 border border-amber-100">
-            <input
-              type="checkbox"
-              id="terms"
-              checked={termsAccepted}
-              onChange={e => setTermsAccepted(e.target.checked)}
-              className="mt-0.5 w-4 h-4 rounded accent-amber-500 cursor-pointer flex-shrink-0"
-            />
-            <label htmlFor="terms" className="text-xs text-gray-600 leading-relaxed cursor-pointer flex-1">
-              Souhlasím s obchodními podmínkami a podmínkami použití služby.{" "}
-              <button type="button" onClick={() => setShowTerms(true)}
-                className="inline-flex items-center gap-0.5 text-amber-700 hover:text-amber-900 underline underline-offset-2 font-medium">
-                <ScrollText className="w-3 h-3" /> Přečíst podmínky
-              </button>
-            </label>
+          <div className="rounded-xl border border-amber-100 bg-amber-50 overflow-hidden">
+            <div className="flex items-start gap-3 p-3.5">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={termsAccepted}
+                onChange={e => setTermsAccepted(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded accent-amber-500 cursor-pointer flex-shrink-0"
+              />
+              <label htmlFor="terms" className="text-xs text-gray-600 leading-relaxed cursor-pointer flex-1">
+                Souhlasím s obchodními podmínkami a podmínkami použití služby.
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowTerms(true)}
+              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-amber-100 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
+            >
+              <ScrollText className="w-3.5 h-3.5" />
+              Přečíst obchodní podmínky
+            </button>
           </div>
-
-          {/* GDPR modal */}
-          <DocumentModal
-            open={showGdpr}
-            onClose={() => setShowGdpr(false)}
-            title={legalDocs.gdpr?.title || "Zásady ochrany osobních údajů"}
-            content={legalDocs.gdpr?.content}
-          />
-
-          {/* Terms modal */}
-          <DocumentModal
-            open={showTerms}
-            onClose={() => setShowTerms(false)}
-            title={legalDocs.terms?.title || "Obchodní podmínky"}
-            content={legalDocs.terms?.content}
-          />
 
           <Button
             type="submit"
@@ -162,6 +161,20 @@ export default function CustomerOnboarding() {
           </Button>
         </form>
       </div>
+
+      {/* Modals — outside form to prevent accidental submit */}
+      <DocumentModal
+        open={showGdpr}
+        onClose={() => setShowGdpr(false)}
+        title={legalDocs.gdpr?.title || "Zásady ochrany osobních údajů"}
+        content={legalDocs.gdpr?.content}
+      />
+      <DocumentModal
+        open={showTerms}
+        onClose={() => setShowTerms(false)}
+        title={legalDocs.terms?.title || "Obchodní podmínky"}
+        content={legalDocs.terms?.content}
+      />
     </div>
   );
 }
@@ -182,8 +195,9 @@ function DocumentModal({ open, onClose, title, content }) {
               {content}
             </pre>
           ) : (
-            <div className="flex items-center justify-center py-12">
+            <div className="flex flex-col items-center justify-center py-12 gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-gray-300" />
+              <p className="text-xs text-gray-400">Načítám dokument...</p>
             </div>
           )}
         </div>
