@@ -131,8 +131,7 @@ export default function Models({ currentUser }) {
           ))}
         </div>
       )}
-      </div>
-      );
-      }
+    </div>
+  );
 
 }
