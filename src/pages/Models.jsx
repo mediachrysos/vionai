@@ -121,8 +121,8 @@ export default function Models({ currentUser }) {
                 </div>
                 {m.assigned_chatters?.length > 0 &&
             <div className="mt-3 flex flex-wrap gap-1">
-                    {m.assigned_chatters.map((c) =>
-              <Badge key={c} variant="outline" className="text-xs">{c}</Badge>
+                    {m.assigned_chatters.map((c) => null
+
               )}
                   </div>
             }
