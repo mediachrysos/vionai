@@ -65,16 +65,17 @@ export default function Sidebar({ currentPage, user, onLogout }) {
         collapsed && "justify-center px-3"
       )}>
         {!collapsed ? (
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
-              <span className="text-white text-xs font-bold tracking-tight">C</span>
-            </div>
-            <span className="font-semibold text-gray-900 text-base tracking-tight">Chrisos Media</span>
-          </div>
+          <img
+            src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274783/Chrysos_Media_Logo_gmfbds.png"
+            alt="Chrysos Media"
+            className="h-10 w-auto object-contain"
+          />
         ) : (
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
-            <span className="text-white text-xs font-bold">C</span>
-          </div>
+          <img
+            src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274783/Chrysos_Media_Logo_gmfbds.png"
+            alt="Chrysos Media"
+            className="h-7 w-7 object-contain"
+          />
         )}
       </div>
 
