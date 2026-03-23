@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
-import { Search, Plus, UserCircle, Download, ChevronDown, Link2, Pencil } from "lucide-react";
+import { Search, Plus, UserCircle, Download, ChevronDown, Link2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
