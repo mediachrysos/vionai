@@ -4,11 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Building2, Plus, ChevronDown, ChevronUp, Link2, Target, Upload, Camera, Lock, Unlock, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Building2, Plus, ChevronDown, ChevronUp, Link2, Target, Upload, Camera, Lock, Unlock, FileText } from "lucide-react";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import OnboardingLinksList from "../components/customers/OnboardingLinksList";
 import AdminPayments from "../components/admin/AdminPayments";
-import { useState, useEffect } from "react";
 
 const statusConfig = {
   pending: { label: "Čeká na schválení", color: "bg-amber-100 text-amber-700", icon: Clock },
