@@ -165,8 +165,8 @@ export default function CustomerDetail({ currentUser }) {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-800">Detaily</h3>
             {!showEdit && (
-              <button onClick={() => setShowEdit(true)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
-                <Pencil className="w-3.5 h-3.5" />
+              <button onClick={() => setShowEdit(true)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
               </button>
             )}
           </div>

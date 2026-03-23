@@ -128,9 +128,9 @@ export default function Expenses({ currentUser }) {
                         <span className="text-sm font-semibold text-red-600">-{(e.amount || 0).toLocaleString()} Kč</span>
                       </td>
                       <td className="px-5 py-3.5 text-right" onClick={ev => ev.stopPropagation()}>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-300 hover:text-red-500" onClick={() => deleteMutation.mutate(e.id)}>
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteMutation.mutate(e.id)}>
+                                         <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
+                                       </Button>
                       </td>
                     </tr>
                   );

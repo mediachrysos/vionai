@@ -189,7 +189,7 @@ export default function Payments({ currentUser }) {
                         onClick={() => handleDelete(p)}
                         className="text-gray-300 hover:text-red-500 transition-colors"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
                       </button>
                     </td>
                     </motion.tr>

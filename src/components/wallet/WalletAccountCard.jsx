@@ -22,10 +22,10 @@ export default function WalletAccountCard({ account, onEdit, onDelete }) {
         </div>
         <div className="flex gap-1">
           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onEdit(account)}>
-            <Pencil className="w-3.5 h-3.5 text-gray-400" />
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
           </Button>
           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onDelete(account)}>
-            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
           </Button>
         </div>
       </div>

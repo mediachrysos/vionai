@@ -112,8 +112,8 @@ export default function Models({ currentUser }) {
                 </div>
                 <div className="flex items-center gap-2">
                   {currentUser?.role === "admin" && (
-                    <button onClick={(e) => handleDelete(e, m)} className="text-gray-200 hover:text-red-500 transition-colors">
-                      <Trash2 className="w-4 h-4" />
+                    <button onClick={(e) => handleDelete(e, m)} className="opacity-60 hover:opacity-100 transition-opacity">
+                      <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
                     </button>
                   )}
                   <Link to={createPageUrl("ModelDetail") + `?id=${m.id}`} onClick={e => e.stopPropagation()}>

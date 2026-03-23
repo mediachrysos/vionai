@@ -209,7 +209,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
                     className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500"
                     title="Smazat transakci"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
                   </button>
                 )}
               </div>
