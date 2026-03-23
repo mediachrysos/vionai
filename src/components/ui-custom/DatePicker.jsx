@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getDaysInMonth, startOfMonth, getDay, format } from "date-fns";
 import { cs } from "date-fns/locale";
@@ -8,9 +8,9 @@ import { cs } from "date-fns/locale";
 const DAYS = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
 
 const MONTHS = [
-"Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
-"Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
-
+  "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+  "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"
+];
 
 function getYearRange(centerYear) {
   const start = centerYear - 80;
@@ -28,7 +28,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
   const btnRef = useRef(null);
 
   useEffect(() => {
-    const handler = (e) => {if (ref.current && !ref.current.contains(e.target)) setOpen(false);};
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
@@ -42,10 +42,10 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
       const rect = btnRef.current.getBoundingClientRect();
       setDropdownPos({
         top: rect.bottom + window.scrollY + 4,
-        left: rect.left + rect.width / 2 + window.scrollX
+        left: rect.left + rect.width / 2 + window.scrollX,
       });
     }
-    setOpen((v) => !v);
+    setOpen(v => !v);
   };
 
   const year = viewDate.getFullYear();
@@ -79,9 +79,9 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
     return new Date(year, month, day) > maxDate;
   };
 
-  const displayValue = value ?
-  format(new Date(value), "d. MMMM yyyy", { locale: cs }) :
-  null;
+  const displayValue = value
+    ? format(new Date(value), "d. MMMM yyyy", { locale: cs })
+    : null;
 
   const cells = [];
   for (let i = 0; i < firstDayOfWeek; i++) cells.push(null);
@@ -91,85 +91,85 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
     <div
       ref={ref}
       style={{ position: "absolute", top: dropdownPos.top, left: dropdownPos.left, transform: "translateX(-50%)" }}
-      className="z-[9999] bg-white border border-gray-200 rounded-2xl shadow-xl p-4 w-72">
-      
+      className="z-[9999] bg-white border border-gray-200 rounded-2xl shadow-xl p-4 w-72"
+    >
       {/* Month + Year selectors */}
       <div className="flex items-center gap-2 mb-3">
         <button
           type="button"
           onClick={() => setViewDate(new Date(year, month - 1, 1))}
-          className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-          
+          className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center"
+        >
           <ChevronLeft className="w-4 h-4 text-gray-600" />
         </button>
 
         <select
           value={month}
-          onChange={(e) => setViewDate(new Date(year, parseInt(e.target.value), 1))}
-          className="flex-1 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-300 cursor-pointer">
-          
-          {MONTHS.map((m, i) =>
-          <option key={i} value={i}>{m}</option>
-          )}
+          onChange={e => setViewDate(new Date(year, parseInt(e.target.value), 1))}
+          className="flex-1 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-300 cursor-pointer"
+        >
+          {MONTHS.map((m, i) => (
+            <option key={i} value={i}>{m}</option>
+          ))}
         </select>
 
         <select
           value={year}
-          onChange={(e) => setViewDate(new Date(parseInt(e.target.value), month, 1))}
-          className="w-20 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-300 cursor-pointer">
-          
-          {years.map((y) =>
-          <option key={y} value={y}>{y}</option>
-          )}
+          onChange={e => setViewDate(new Date(parseInt(e.target.value), month, 1))}
+          className="w-20 text-xs font-semibold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-300 cursor-pointer"
+        >
+          {years.map(y => (
+            <option key={y} value={y}>{y}</option>
+          ))}
         </select>
 
         <button
           type="button"
           onClick={() => setViewDate(new Date(year, month + 1, 1))}
-          className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-          
+          className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center"
+        >
           <ChevronRight className="w-4 h-4 text-gray-600" />
         </button>
       </div>
 
       {/* Day headers */}
       <div className="grid grid-cols-7 mb-1">
-        {DAYS.map((d) =>
-        <div key={d} className="text-center text-[11px] font-semibold text-gray-400 py-1">{d}</div>
-        )}
+        {DAYS.map(d => (
+          <div key={d} className="text-center text-[11px] font-semibold text-gray-400 py-1">{d}</div>
+        ))}
       </div>
 
       {/* Days grid */}
       <div className="grid grid-cols-7 gap-y-1">
-        {cells.map((day, i) =>
-        <div key={i} className="flex items-center justify-center">
-            {day ?
-          <button
-            type="button"
-            onClick={() => selectDay(day)}
-            disabled={isDisabled(day)}
-            className={cn(
-              "w-8 h-8 rounded-full text-sm font-medium transition-all",
-              isSelected(day) && "bg-[#C9A227] text-white shadow-sm",
-              !isSelected(day) && isTodayDay(day) && "border-2 border-[#C9A227] text-[#C9A227]",
-              !isSelected(day) && !isTodayDay(day) && !isDisabled(day) && "text-gray-700 hover:bg-amber-50",
-              isDisabled(day) && "text-gray-300 cursor-not-allowed"
-            )}>
-            
+        {cells.map((day, i) => (
+          <div key={i} className="flex items-center justify-center">
+            {day ? (
+              <button
+                type="button"
+                onClick={() => selectDay(day)}
+                disabled={isDisabled(day)}
+                className={cn(
+                  "w-8 h-8 rounded-full text-sm font-medium transition-all",
+                  isSelected(day) && "bg-[#C9A227] text-white shadow-sm",
+                  !isSelected(day) && isTodayDay(day) && "border-2 border-[#C9A227] text-[#C9A227]",
+                  !isSelected(day) && !isTodayDay(day) && !isDisabled(day) && "text-gray-700 hover:bg-amber-50",
+                  isDisabled(day) && "text-gray-300 cursor-not-allowed"
+                )}
+              >
                 {day}
-              </button> :
-          null}
+              </button>
+            ) : null}
           </div>
-        )}
+        ))}
       </div>
 
       {/* Footer */}
       <div className="flex justify-between mt-3 pt-3 border-t border-gray-100">
         <button
           type="button"
-          onClick={() => {onChange("");setOpen(false);}}
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
-          
+          onClick={() => { onChange(""); setOpen(false); }}
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+        >
           Vymazat
         </button>
         <button
@@ -183,8 +183,8 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
             }
             setOpen(false);
           }}
-          className="text-xs text-[#C9A227] font-semibold hover:text-[#A8841C] transition-colors">
-          
+          className="text-xs text-[#C9A227] font-semibold hover:text-[#A8841C] transition-colors"
+        >
           Dnes
         </button>
       </div>
@@ -200,19 +200,19 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
         onClick={handleOpen}
         className={cn(
           "w-full flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all focus:outline-none whitespace-nowrap",
-          variant === "ghost" ?
-          "bg-white/20 border-white/30 text-white hover:bg-white/30 placeholder:text-white/60" :
-          "bg-white border-gray-200 hover:border-[#C9A227] focus:ring-2 focus:ring-amber-100",
+          variant === "ghost"
+            ? "bg-white/20 border-white/30 text-white hover:bg-white/30 placeholder:text-white/60"
+            : "bg-white border-gray-200 hover:border-[#C9A227] focus:ring-2 focus:ring-amber-100",
           variant !== "ghost" && open && "border-[#C9A227] ring-2 ring-amber-100"
-        )}>
-        
-        
-        <span className="text-white px-3 text-xs truncate">
+        )}
+      >
+        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_3_qncd5u.png" alt="" className="w-3.5 h-3.5 flex-shrink-0 object-contain" />
+        <span className={cn("text-xs truncate", variant === "ghost" ? "text-white" : (displayValue ? "text-gray-800" : "text-gray-400"))}>
           {displayValue || placeholder}
         </span>
       </button>
 
       {dropdown}
-    </div>);
-
+    </div>
+  );
 }

@@ -184,7 +184,7 @@ export default function Customers({ currentUser }) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png" alt="" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 object-contain" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat zákazníky..." className="pl-10" />
         </div>
         <Select value={sortBy} onValueChange={setSortBy}>
