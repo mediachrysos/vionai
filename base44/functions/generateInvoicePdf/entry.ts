@@ -1,6 +1,25 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 import { jsPDF } from 'npm:jspdf@4.0.0';
 
+// Transliterate Czech diacritics to ASCII
+function cs(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/[áÁ]/g, 'a')
+    .replace(/[čČ]/g, 'c')
+    .replace(/[ďĎ]/g, 'd')
+    .replace(/[éěÉĚ]/g, 'e')
+    .replace(/[íÍ]/g, 'i')
+    .replace(/[ňŇ]/g, 'n')
+    .replace(/[óÓ]/g, 'o')
+    .replace(/[řŘ]/g, 'r')
+    .replace(/[šŠ]/g, 's')
+    .replace(/[ťŤ]/g, 't')
+    .replace(/[úůÚŮ]/g, 'u')
+    .replace(/[ýÝ]/g, 'y')
+    .replace(/[žŽ]/g, 'z');
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -24,12 +43,11 @@ Deno.serve(async (req) => {
     const invoice = invoices[0];
 
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    doc.setFont('helvetica');
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const ml = 20; // margin left
-    const mr = pageWidth - 20; // margin right
+    const ml = 20;
+    const mr = pageWidth - 20;
     const mid = pageWidth / 2;
 
     // ── TOP LINE ──────────────────────────────────────────────
@@ -40,13 +58,12 @@ Deno.serve(async (req) => {
     let ty = 27;
     doc.setFontSize(18);
     doc.setTextColor(30, 30, 30);
-    const fontName = 'helvetica';
-    doc.setFont(fontName, 'normal');
+    doc.setFont('helvetica', 'normal');
     doc.text('Faktura ', mid + 5, ty);
     const titleWidth = doc.getTextWidth('Faktura ');
-    doc.setFont(fontName, 'bold');
-    doc.text(invoice.invoice_number || '', mid + 5 + titleWidth, ty);
-    doc.setFont(fontName, 'normal');
+    doc.setFont('helvetica', 'bold');
+    doc.text(cs(invoice.invoice_number || ''), mid + 5 + titleWidth, ty);
+    doc.setFont('helvetica', 'normal');
 
     // ── DODAVATEL / ODBERATEL labels ──────────────────────────
     let ly = 38;
@@ -64,28 +81,25 @@ Deno.serve(async (req) => {
     ly += 6;
     doc.setFontSize(10);
     doc.setTextColor(20, 20, 20);
-    doc.setFont(fontName, 'bold');
-    doc.text(invoice.supplier_company_name || '', ml, ly);
-
-    doc.setFont(fontName, 'bold');
-    doc.text(invoice.customer_name || '', mid + 5, ly);
-    doc.setFont(fontName, 'normal');
+    doc.setFont('helvetica', 'bold');
+    doc.text(cs(invoice.supplier_company_name || ''), ml, ly);
+    doc.text(cs(invoice.customer_name || ''), mid + 5, ly);
+    doc.setFont('helvetica', 'normal');
 
     ly += 5;
     doc.setFontSize(9);
     doc.setTextColor(80, 80, 80);
-    doc.setFont(fontName, 'normal');
 
     if (invoice.supplier_address) {
       const lines = invoice.supplier_address.split('\n');
       for (const line of lines) {
-        doc.text(line, ml, ly);
+        doc.text(cs(line), ml, ly);
         ly += 5;
       }
     }
 
     if (invoice.customer_email) {
-      doc.text(invoice.customer_email, mid + 5, ly - 5 * (invoice.supplier_address ? invoice.supplier_address.split('\n').length : 1));
+      doc.text(cs(invoice.customer_email), mid + 5, ly - 5 * (invoice.supplier_address ? invoice.supplier_address.split('\n').length : 1));
     }
 
     ly += 4;
@@ -96,7 +110,7 @@ Deno.serve(async (req) => {
       doc.setTextColor(100, 100, 100);
       doc.text('ICO', ml, ly);
       doc.setTextColor(20, 20, 20);
-      doc.text(invoice.supplier_ico, ml + 30, ly);
+      doc.text(cs(invoice.supplier_ico), ml + 30, ly);
       ly += 5;
     }
     if (invoice.supplier_dic) {
@@ -104,7 +118,7 @@ Deno.serve(async (req) => {
       doc.setTextColor(100, 100, 100);
       doc.text('DIC', ml, ly);
       doc.setTextColor(20, 20, 20);
-      doc.text(invoice.supplier_dic, ml + 30, ly);
+      doc.text(cs(invoice.supplier_dic), ml + 30, ly);
       ly += 5;
     }
 
@@ -118,31 +132,28 @@ Deno.serve(async (req) => {
 
     doc.setFontSize(8.5);
 
-    // Row: Bankovni ucet / Datum vystaveni
     doc.setTextColor(100, 100, 100);
     doc.text('Bankovni ucet', labelX, ly);
     doc.setTextColor(20, 20, 20);
-    doc.text(invoice.payment_method || '', valX, ly);
+    doc.text(cs(invoice.payment_method || ''), valX, ly);
 
     doc.setTextColor(100, 100, 100);
     doc.text('Datum vystaveni', dateLabX, ly);
     doc.setTextColor(20, 20, 20);
-    doc.text(invoice.issue_date || '', dateValX, ly, { align: 'right' });
+    doc.text(cs(invoice.issue_date || ''), dateValX, ly, { align: 'right' });
     ly += 5.5;
 
-    // Row: Datum splatnosti
     doc.setTextColor(100, 100, 100);
     doc.text('Datum splatnosti', dateLabX, ly);
     doc.setTextColor(20, 20, 20);
-    doc.text(invoice.due_date || '', dateValX, ly, { align: 'right' });
+    doc.text(cs(invoice.due_date || ''), dateValX, ly, { align: 'right' });
     ly += 5.5;
 
-    // Row: Zpusob platby
     if (invoice.taxable_supply_date) {
       doc.setTextColor(100, 100, 100);
       doc.text('Datum danoveho plneni', labelX, ly);
       doc.setTextColor(20, 20, 20);
-      doc.text(invoice.taxable_supply_date, valX, ly);
+      doc.text(cs(invoice.taxable_supply_date), valX, ly);
       ly += 5.5;
     }
 
@@ -153,17 +164,15 @@ Deno.serve(async (req) => {
     doc.line(ml, ly, mr, ly);
     ly += 1;
 
-    // Header row
     doc.setFontSize(8);
     doc.setTextColor(130, 130, 130);
     doc.text('CENA', mr, ly + 5, { align: 'right' });
     ly += 8;
 
-    // Item row
     doc.setFontSize(9.5);
     doc.setTextColor(20, 20, 20);
-    doc.setFont(fontName, 'normal');
-    doc.text(invoice.item_name || 'Sluzba', ml, ly);
+    doc.setFont('helvetica', 'normal');
+    doc.text(cs(invoice.item_name || 'Sluzba'), ml, ly);
     const priceText = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')} Kc`;
     doc.text(priceText, mr, ly, { align: 'right' });
 
@@ -171,7 +180,7 @@ Deno.serve(async (req) => {
       ly += 5;
       doc.setFontSize(8);
       doc.setTextColor(130, 130, 130);
-      doc.text(invoice.item_description, ml, ly);
+      doc.text(cs(invoice.item_description), ml, ly);
     }
 
     ly += 10;
@@ -184,11 +193,11 @@ Deno.serve(async (req) => {
     ly += 8;
 
     doc.setFontSize(16);
-    doc.setFont(fontName, 'bold');
+    doc.setFont('helvetica', 'bold');
     doc.setTextColor(20, 20, 20);
     const totalText = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')},00 Kc`;
     doc.text(totalText, mr, ly, { align: 'right' });
-    doc.setFont(fontName, 'normal');
+    doc.setFont('helvetica', 'normal');
 
     ly += 15;
 
@@ -196,7 +205,7 @@ Deno.serve(async (req) => {
     if (invoice.note) {
       doc.setFontSize(8.5);
       doc.setTextColor(100, 100, 100);
-      doc.text(invoice.note, ml, ly);
+      doc.text(cs(invoice.note), ml, ly);
       ly += 6;
     }
 
@@ -204,7 +213,7 @@ Deno.serve(async (req) => {
     const footerY = pageHeight - 14;
     doc.setFontSize(7.5);
     doc.setTextColor(150, 150, 150);
-    doc.setFont(fontName, 'normal');
+    doc.setFont('helvetica', 'normal');
     if (invoice.supplier_ico) {
       doc.text('Fyzicka osoba zapsana v zivnostenskem rejstriku.', ml, footerY);
     }
