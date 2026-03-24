@@ -60,12 +60,13 @@ Deno.serve(async (req) => {
     let ty = 27;
     doc.setFontSize(18);
     doc.setTextColor(30, 30, 30);
-    doc.setFont(undefined, 'normal');
+    const fontName = robotoLoaded ? 'Roboto' : 'helvetica';
+    doc.setFont(fontName, 'normal');
     doc.text('Faktura ', mid + 5, ty);
     const titleWidth = doc.getTextWidth('Faktura ');
-    doc.setFont(undefined, 'bold');
+    doc.setFont(fontName, 'bold');
     doc.text(invoice.invoice_number || '', mid + 5 + titleWidth, ty);
-    doc.setFont(undefined, 'normal');
+    doc.setFont(fontName, 'normal');
 
     // ── DODAVATEL / ODBERATEL labels ──────────────────────────
     let ly = 38;
