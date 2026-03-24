@@ -75,7 +75,7 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
         disabled={creating}
         className="text-xs h-8 border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]"
       >
-        <FileText className="w-3 h-3 mr-1" />
+        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_27_fagh7p.png" alt="" className="w-3 h-3 mr-1 object-contain" />
         {creating ? "Vytvářím..." : "Vytvořit fakturu"}
       </Button>
     );
