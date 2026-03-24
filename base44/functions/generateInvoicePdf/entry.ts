@@ -182,7 +182,7 @@ Deno.serve(async (req) => {
     // Item row
     doc.setFontSize(9.5);
     doc.setTextColor(20, 20, 20);
-    doc.setFont(undefined, 'normal');
+    doc.setFont(fontName, 'normal');
     doc.text(invoice.item_name || 'Sluzba', ml, ly);
     const priceText = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')} Kc`;
     doc.text(priceText, mr, ly, { align: 'right' });
