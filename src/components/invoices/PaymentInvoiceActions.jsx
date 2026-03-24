@@ -89,9 +89,9 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
           size="sm" 
           variant="ghost"
           onClick={() => setShowModal(true)}
-          className="text-xs h-7 text-[#C9A227] hover:bg-amber-50"
+          className="h-7 w-7 p-0 text-[#C9A227] hover:bg-amber-50"
         >
-          Otevřít
+          <Eye className="w-3.5 h-3.5" />
         </Button>
         <Button 
           size="sm" 
