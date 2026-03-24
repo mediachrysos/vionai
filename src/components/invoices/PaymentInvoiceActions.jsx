@@ -97,9 +97,9 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
           size="sm" 
           variant="ghost"
           onClick={handleDownloadPdf}
-          className="text-xs h-7 text-gray-400 hover:text-gray-600"
+          className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600"
         >
-          <Download className="w-3 h-3" />
+          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774346884/hf_20260324_095708_c4eec87e-3ae9-4c0d-aa2b-e90b9b73f124_a9fzsz.jpg" alt="download" className="w-4 h-4 object-contain" />
         </Button>
       </div>
       <InvoiceModal 
