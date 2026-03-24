@@ -97,7 +97,7 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
           size="sm"
           variant="ghost"
           onClick={handleDownloadPdf}
-          className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600">
+          className="text-xs h-7 px-2 text-gray-400 hover:text-gray-600">
           
           Stáhnout
         </Button>
