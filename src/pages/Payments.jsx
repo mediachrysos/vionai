@@ -190,12 +190,14 @@ export default function Payments({ currentUser }) {
                       <PaymentInvoiceActions payment={p} onInvoiceCreated={() => qc.invalidateQueries({ queryKey: ["invoices"] })} />
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <button
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         onClick={() => handleDelete(p)}
-                        className="text-gray-300 hover:text-red-500 transition-colors"
+                        className="h-8 w-8 p-0 text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
                       >
-                        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
-                      </button>
+                        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" />
+                      </Button>
                     </td>
                     </motion.tr>
                 ))}
