@@ -43,7 +43,8 @@ Deno.serve(async (req) => {
     const invoice = invoices[0];
 
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    doc.setFont('helvetica');
+    const robotoLoaded = await loadRobotoFont(doc);
+    doc.setFont(robotoLoaded ? 'Roboto' : 'helvetica');
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
