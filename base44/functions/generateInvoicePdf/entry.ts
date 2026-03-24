@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     let ty = 27;
     doc.setFontSize(18);
     doc.setTextColor(30, 30, 30);
-    const fontName = robotoLoaded ? 'Roboto' : 'helvetica';
+    const fontName = 'helvetica';
     doc.setFont(fontName, 'normal');
     doc.text('Faktura ', mid + 5, ty);
     const titleWidth = doc.getTextWidth('Faktura ');
