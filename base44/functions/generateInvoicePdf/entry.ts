@@ -1,23 +1,43 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 import { jsPDF } from 'npm:jspdf@4.0.0';
 
-// Transliterate Czech diacritics to ASCII
-function cs(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/[áÁ]/g, 'a')
-    .replace(/[čČ]/g, 'c')
-    .replace(/[ďĎ]/g, 'd')
-    .replace(/[éěÉĚ]/g, 'e')
-    .replace(/[íÍ]/g, 'i')
-    .replace(/[ňŇ]/g, 'n')
-    .replace(/[óÓ]/g, 'o')
-    .replace(/[řŘ]/g, 'r')
-    .replace(/[šŠ]/g, 's')
-    .replace(/[ťŤ]/g, 't')
-    .replace(/[úůÚŮ]/g, 'u')
-    .replace(/[ýÝ]/g, 'y')
-    .replace(/[žŽ]/g, 'z');
+async function embedFont(doc) {
+  try {
+    // Use jsDelivr CDN to get actual TTF files (not WOFF2)
+    const [regRes, boldRes] = await Promise.all([
+      fetch('https://cdn.jsdelivr.net/npm/@fontsource/roboto@5.0.8/files/roboto-latin-ext-400-normal.woff2'),
+      fetch('https://cdn.jsdelivr.net/npm/@fontsource/roboto@5.0.8/files/roboto-latin-ext-700-normal.woff2'),
+    ]);
+
+    // Try raw TTF from different source
+    const [r2, b2] = await Promise.all([
+      fetch('https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'),
+      fetch('https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Bold.ttf'),
+    ]);
+
+    if (!r2.ok || !b2.ok) return false;
+
+    const [rBuf, bBuf] = await Promise.all([r2.arrayBuffer(), b2.arrayBuffer()]);
+
+    // Convert to base64 in chunks to avoid stack overflow
+    const toBase64 = (buf) => {
+      const bytes = new Uint8Array(buf);
+      let binary = '';
+      const chunkSize = 8192;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+      }
+      return btoa(binary);
+    };
+
+    doc.addFileToVFS('Roboto-Regular.ttf', toBase64(rBuf));
+    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+    doc.addFileToVFS('Roboto-Bold.ttf', toBase64(bBuf));
+    doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 Deno.serve(async (req) => {
@@ -30,7 +50,6 @@ Deno.serve(async (req) => {
     }
 
     const { invoice_id } = await req.json();
-
     if (!invoice_id) {
       return Response.json({ error: 'invoice_id required' }, { status: 400 });
     }
@@ -43,181 +62,193 @@ Deno.serve(async (req) => {
     const invoice = invoices[0];
 
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const roboto = await embedFont(doc);
+    const F = roboto ? 'Roboto' : 'helvetica';
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const ml = 20;
-    const mr = pageWidth - 20;
-    const mid = pageWidth / 2;
+    const W = doc.internal.pageSize.getWidth();   // 210
+    const H = doc.internal.pageSize.getHeight();  // 297
+    const L = 15;   // left margin
+    const R = W - 15; // right margin
+    const MID = W / 2;
 
-    // ── TOP LINE ──────────────────────────────────────────────
-    doc.setDrawColor(180, 180, 180);
-    doc.line(mid + 5, 18, mr, 18);
+    const setNormal = (size, color = [30, 30, 30]) => {
+      doc.setFont(F, 'normal');
+      doc.setFontSize(size);
+      doc.setTextColor(...color);
+    };
+    const setBold = (size, color = [30, 30, 30]) => {
+      doc.setFont(F, 'bold');
+      doc.setFontSize(size);
+      doc.setTextColor(...color);
+    };
 
-    // ── TITLE: "Faktura XXXX" ─────────────────────────────────
-    let ty = 27;
-    doc.setFontSize(18);
-    doc.setTextColor(30, 30, 30);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Faktura ', mid + 5, ty);
-    const titleWidth = doc.getTextWidth('Faktura ');
-    doc.setFont('helvetica', 'bold');
-    doc.text(cs(invoice.invoice_number || ''), mid + 5 + titleWidth, ty);
-    doc.setFont('helvetica', 'normal');
+    // ── HEADER BAR ────────────────────────────────────────────
+    doc.setFillColor(30, 30, 30);
+    doc.rect(0, 0, W, 22, 'F');
 
-    // ── DODAVATEL / ODBERATEL labels ──────────────────────────
-    let ly = 38;
-    doc.setDrawColor(180, 180, 180);
-    doc.line(ml, ly, ml + 10, ly);
-    doc.line(mid + 5, ly, mid + 15, ly);
+    // Invoice number in header
+    setNormal(9, [180, 180, 180]);
+    doc.text('FAKTURA', L, 10);
+    setBold(14, [255, 255, 255]);
+    doc.text(invoice.invoice_number || '', L, 18);
 
-    ly += 5;
-    doc.setFontSize(8);
-    doc.setTextColor(130, 130, 130);
-    doc.text('DODAVATEL', ml, ly);
-    doc.text('ODBERATEL', mid + 5, ly);
+    // Status badge on right
+    setNormal(8, [200, 200, 200]);
+    doc.text(new Date().toLocaleDateString('cs-CZ'), R, 14, { align: 'right' });
 
-    // ── DODAVATEL info ────────────────────────────────────────
-    ly += 6;
-    doc.setFontSize(10);
-    doc.setTextColor(20, 20, 20);
-    doc.setFont('helvetica', 'bold');
-    doc.text(cs(invoice.supplier_company_name || ''), ml, ly);
-    doc.text(cs(invoice.customer_name || ''), mid + 5, ly);
-    doc.setFont('helvetica', 'normal');
+    // ── TWO COLUMNS: DODAVATEL / ODBERATEL ────────────────────
+    let y = 36;
 
-    ly += 5;
-    doc.setFontSize(9);
-    doc.setTextColor(80, 80, 80);
+    // Column separators
+    setNormal(7, [150, 150, 150]);
+    doc.text('DODAVATEL', L, y);
+    doc.text('ODBERATEL', MID + 5, y);
 
+    y += 2;
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(L, y, MID - 5, y);
+    doc.line(MID + 5, y, R, y);
+
+    y += 7;
+    setBold(10.5);
+    doc.text(invoice.supplier_company_name || '', L, y);
+    doc.text(invoice.customer_name || '', MID + 5, y);
+
+    y += 6;
+    setNormal(9, [80, 80, 80]);
     if (invoice.supplier_address) {
-      const lines = invoice.supplier_address.split('\n');
-      for (const line of lines) {
-        doc.text(cs(line), ml, ly);
-        ly += 5;
-      }
+      const lines = doc.splitTextToSize(invoice.supplier_address, MID - L - 10);
+      doc.text(lines, L, y);
+      y += lines.length * 5 + 2;
+    } else {
+      y += 5;
     }
 
     if (invoice.customer_email) {
-      doc.text(cs(invoice.customer_email), mid + 5, ly - 5 * (invoice.supplier_address ? invoice.supplier_address.split('\n').length : 1));
+      setNormal(8.5, [100, 100, 100]);
+      doc.text(invoice.customer_email, MID + 5, y - (invoice.supplier_address ? (doc.splitTextToSize(invoice.supplier_address, MID - L - 10).length * 5 + 2) : 5));
     }
 
-    ly += 4;
+    // ICO / DIC
+    if (invoice.supplier_ico || invoice.supplier_dic) {
+      doc.setDrawColor(235, 235, 235);
+      doc.line(L, y, MID - 5, y);
+      y += 5;
 
-    // ── ICO / DIC row ─────────────────────────────────────────
-    if (invoice.supplier_ico) {
-      doc.setFontSize(8.5);
-      doc.setTextColor(100, 100, 100);
-      doc.text('ICO', ml, ly);
-      doc.setTextColor(20, 20, 20);
-      doc.text(cs(invoice.supplier_ico), ml + 30, ly);
-      ly += 5;
+      if (invoice.supplier_ico) {
+        setNormal(8, [130, 130, 130]);
+        doc.text('IČO', L, y);
+        setNormal(8, [30, 30, 30]);
+        doc.text(invoice.supplier_ico, L + 22, y);
+        y += 5;
+      }
+      if (invoice.supplier_dic) {
+        setNormal(8, [130, 130, 130]);
+        doc.text('DIČ', L, y);
+        setNormal(8, [30, 30, 30]);
+        doc.text(invoice.supplier_dic, L + 22, y);
+        y += 5;
+      }
     }
-    if (invoice.supplier_dic) {
-      doc.setFontSize(8.5);
-      doc.setTextColor(100, 100, 100);
-      doc.text('DIC', ml, ly);
-      doc.setTextColor(20, 20, 20);
-      doc.text(cs(invoice.supplier_dic), ml + 30, ly);
-      ly += 5;
-    }
 
-    ly += 4;
+    y += 8;
 
-    // ── PAYMENT DETAILS TABLE ─────────────────────────────────
-    const labelX = ml;
-    const valX = ml + 38;
-    const dateLabX = mid + 5;
-    const dateValX = mr;
+    // ── INFO GRID ─────────────────────────────────────────────
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(L, y, R - L, 28, 2, 2, 'F');
 
-    doc.setFontSize(8.5);
+    const col1x = L + 5;
+    const col1vx = L + 45;
+    const col2x = MID + 5;
+    const col2vx = R - 5;
+    let gy = y + 8;
 
-    doc.setTextColor(100, 100, 100);
-    doc.text('Bankovni ucet', labelX, ly);
-    doc.setTextColor(20, 20, 20);
-    doc.text(cs(invoice.payment_method || ''), valX, ly);
+    // Row 1
+    setNormal(8, [130, 130, 130]);
+    doc.text('Způsob platby', col1x, gy);
+    doc.text('Datum vystavení', col2x, gy);
+    gy += 5;
+    setBold(8.5, [30, 30, 30]);
+    doc.text(invoice.payment_method || '—', col1vx, gy - 5);
+    doc.text(invoice.issue_date || '—', col2vx, gy - 5, { align: 'right' });
 
-    doc.setTextColor(100, 100, 100);
-    doc.text('Datum vystaveni', dateLabX, ly);
-    doc.setTextColor(20, 20, 20);
-    doc.text(cs(invoice.issue_date || ''), dateValX, ly, { align: 'right' });
-    ly += 5.5;
-
-    doc.setTextColor(100, 100, 100);
-    doc.text('Datum splatnosti', dateLabX, ly);
-    doc.setTextColor(20, 20, 20);
-    doc.text(cs(invoice.due_date || ''), dateValX, ly, { align: 'right' });
-    ly += 5.5;
+    // Row 2
+    setNormal(8, [130, 130, 130]);
+    doc.text('Datum splatnosti', col2x, gy);
+    setBold(8.5, [30, 30, 30]);
+    doc.text(invoice.due_date || '—', col2vx, gy, { align: 'right' });
 
     if (invoice.taxable_supply_date) {
-      doc.setTextColor(100, 100, 100);
-      doc.text('Datum danoveho plneni', labelX, ly);
-      doc.setTextColor(20, 20, 20);
-      doc.text(cs(invoice.taxable_supply_date), valX, ly);
-      ly += 5.5;
+      gy += 5;
+      setNormal(8, [130, 130, 130]);
+      doc.text('Datum zdanitelného plnění', col1x, gy);
+      setBold(8.5, [30, 30, 30]);
+      doc.text(invoice.taxable_supply_date, col1vx, gy);
     }
 
-    ly += 8;
+    y += 36;
 
     // ── ITEMS TABLE ───────────────────────────────────────────
-    doc.setDrawColor(200, 200, 200);
-    doc.line(ml, ly, mr, ly);
-    ly += 1;
+    // Header
+    doc.setFillColor(30, 30, 30);
+    doc.rect(L, y, R - L, 8, 'F');
+    setNormal(7.5, [200, 200, 200]);
+    doc.text('POPIS SLUŽBY / ZBOŽÍ', L + 5, y + 5.5);
+    doc.text('CELKEM', R - 5, y + 5.5, { align: 'right' });
 
-    doc.setFontSize(8);
-    doc.setTextColor(130, 130, 130);
-    doc.text('CENA', mr, ly + 5, { align: 'right' });
-    ly += 8;
+    y += 8;
 
-    doc.setFontSize(9.5);
-    doc.setTextColor(20, 20, 20);
-    doc.setFont('helvetica', 'normal');
-    doc.text(cs(invoice.item_name || 'Sluzba'), ml, ly);
-    const priceText = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')} Kc`;
-    doc.text(priceText, mr, ly, { align: 'right' });
+    // Item row
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(235, 235, 235);
+    doc.rect(L, y, R - L, 14, 'S');
+
+    setBold(10, [30, 30, 30]);
+    doc.text(invoice.item_name || 'Služba', L + 5, y + 6);
 
     if (invoice.item_description) {
-      ly += 5;
-      doc.setFontSize(8);
-      doc.setTextColor(130, 130, 130);
-      doc.text(cs(invoice.item_description), ml, ly);
+      setNormal(8, [130, 130, 130]);
+      doc.text(invoice.item_description, L + 5, y + 11);
     }
 
-    ly += 10;
+    setBold(10, [30, 30, 30]);
+    const priceStr = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')} Kč`;
+    doc.text(priceStr, R - 5, y + 6, { align: 'right' });
 
-    // ── TOTAL LINE ────────────────────────────────────────────
-    doc.setDrawColor(40, 40, 40);
-    doc.setLineWidth(0.6);
-    doc.line(mid + 5, ly, mr, ly);
-    doc.setLineWidth(0.2);
-    ly += 8;
+    y += 22;
 
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(20, 20, 20);
-    const totalText = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')},00 Kc`;
-    doc.text(totalText, mr, ly, { align: 'right' });
-    doc.setFont('helvetica', 'normal');
+    // ── TOTAL SECTION ─────────────────────────────────────────
+    // Total box
+    doc.setFillColor(30, 30, 30);
+    doc.roundedRect(MID + 5, y, R - MID - 5, 18, 2, 2, 'F');
 
-    ly += 15;
+    setNormal(8, [160, 160, 160]);
+    doc.text('CELKEM K ÚHRADĚ', MID + 12, y + 7);
+    setBold(14, [255, 255, 255]);
+    const totalStr = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')},00 Kč`;
+    doc.text(totalStr, R - 8, y + 14, { align: 'right' });
+
+    y += 26;
 
     // ── NOTE ──────────────────────────────────────────────────
     if (invoice.note) {
-      doc.setFontSize(8.5);
-      doc.setTextColor(100, 100, 100);
-      doc.text(cs(invoice.note), ml, ly);
-      ly += 6;
+      setNormal(8, [130, 130, 130]);
+      doc.text('Poznámka:', L, y);
+      y += 5;
+      setNormal(8.5, [60, 60, 60]);
+      const noteLines = doc.splitTextToSize(invoice.note, R - L);
+      doc.text(noteLines, L, y);
     }
 
     // ── FOOTER ────────────────────────────────────────────────
-    const footerY = pageHeight - 14;
-    doc.setFontSize(7.5);
-    doc.setTextColor(150, 150, 150);
-    doc.setFont('helvetica', 'normal');
+    doc.setFillColor(248, 248, 248);
+    doc.rect(0, H - 16, W, 16, 'F');
+    setNormal(7, [150, 150, 150]);
+    doc.text(`Vygenerováno: ${new Date().toLocaleDateString('cs-CZ')}`, L, H - 7);
     if (invoice.supplier_ico) {
-      doc.text('Fyzicka osoba zapsana v zivnostenskem rejstriku.', ml, footerY);
+      doc.text('Fyzická osoba zapsaná v živnostenském rejstříku.', R, H - 7, { align: 'right' });
     }
-    doc.text(`Vygenerovano: ${new Date().toLocaleDateString('cs-CZ')}`, mr, footerY, { align: 'right' });
 
     const pdfBytes = doc.output('arraybuffer');
 
@@ -225,8 +256,8 @@ Deno.serve(async (req) => {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename=faktura-${invoice.invoice_number}.pdf`
-      }
+        'Content-Disposition': `attachment; filename=faktura-${invoice.invoice_number}.pdf`,
+      },
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
