@@ -84,17 +84,17 @@ Deno.serve(async (req) => {
     ly += 6;
     doc.setFontSize(10);
     doc.setTextColor(20, 20, 20);
-    doc.setFont(undefined, 'bold');
+    doc.setFont(fontName, 'bold');
     doc.text(invoice.supplier_company_name || '', ml, ly);
 
-    doc.setFont(undefined, 'bold');
+    doc.setFont(fontName, 'bold');
     doc.text(invoice.customer_name || '', mid + 5, ly);
-    doc.setFont(undefined, 'normal');
+    doc.setFont(fontName, 'normal');
 
     ly += 5;
     doc.setFontSize(9);
     doc.setTextColor(80, 80, 80);
-    doc.setFont(undefined, 'normal');
+    doc.setFont(fontName, 'normal');
 
     if (invoice.supplier_address) {
       const lines = invoice.supplier_address.split('\n');
