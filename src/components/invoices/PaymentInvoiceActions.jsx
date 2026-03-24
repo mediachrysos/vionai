@@ -23,7 +23,7 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
         if (isMounted) setLoading(false);
       }
     };
-    
+
     const timer = setTimeout(checkInvoice, 100);
     return () => {
       isMounted = false;
@@ -68,43 +68,43 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
 
   if (!invoice) {
     return (
-      <Button 
-        size="sm" 
+      <Button
+        size="sm"
         variant="outline"
         onClick={handleCreateInvoice}
         disabled={creating}
-        className="text-xs h-8 border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]"
-      >
-        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_27_fagh7p.png" alt="" className="w-3 h-3 mr-1 object-contain" />
+        className="text-xs h-8 border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]">
+        
+        <FileText className="mr-1 rounded-lg w-3 h-3 object-contain" />
         {creating ? "Vytvářím..." : "Vytvořit fakturu"}
-      </Button>
-    );
+      </Button>);
+
   }
 
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500">Faktura č. {invoice.invoice_number}</span>
-        <Button 
-          size="sm" 
+        <Button
+          size="sm"
           variant="ghost"
           onClick={() => setShowModal(true)}
-          className="text-xs h-7 text-[#C9A227] hover:bg-amber-50"
-        >
+          className="text-xs h-7 text-[#C9A227] hover:bg-amber-50">
+          
           Otevřít
         </Button>
-        <Button 
-          size="sm" 
+        <Button
+          size="sm"
           variant="ghost"
           onClick={handleDownloadPdf}
-          className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600"
-        >
+          className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600">
+          
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774346884/hf_20260324_095708_c4eec87e-3ae9-4c0d-aa2b-e90b9b73f124_a9fzsz.jpg" alt="download" className="w-4 h-4 object-contain" />
         </Button>
       </div>
-      <InvoiceModal 
-        open={showModal} 
-        onClose={() => setShowModal(false)} 
+      <InvoiceModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
         invoice={invoice}
         onSave={() => {
           const reloadInvoice = async () => {
@@ -114,8 +114,8 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
             }
           };
           reloadInvoice();
-        }}
-      />
-    </div>
-  );
+        }} />
+      
+    </div>);
+
 }
