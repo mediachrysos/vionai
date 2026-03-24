@@ -1,25 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 import { jsPDF } from 'npm:jspdf@4.0.0';
 
-async function loadRobotoFont(doc) {
-  try {
-    const [regularRes, boldRes] = await Promise.all([
-      fetch('https://fonts.gstatic.com/s/roboto/v32/KFOmCnqEu92Fr1Mu4mxK.woff2'),
-      fetch('https://fonts.gstatic.com/s/roboto/v32/KFOlCnqEu92Fr1MmEU9fBBc4.woff2'),
-    ]);
-    if (!regularRes.ok || !boldRes.ok) return false;
-    const [regularBuf, boldBuf] = await Promise.all([regularRes.arrayBuffer(), boldRes.arrayBuffer()]);
-    const toBase64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
-    doc.addFileToVFS('Roboto-Regular.ttf', toBase64(regularBuf));
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-    doc.addFileToVFS('Roboto-Bold.ttf', toBase64(boldBuf));
-    doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -43,8 +24,7 @@ Deno.serve(async (req) => {
     const invoice = invoices[0];
 
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const robotoLoaded = await loadRobotoFont(doc);
-    doc.setFont(robotoLoaded ? 'Roboto' : 'helvetica');
+    doc.setFont('helvetica');
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
