@@ -18,6 +18,7 @@ const customIcons = {
   CustomerScraper: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png",
   ChattingAssistant: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_12_pi2sjg.png",
   Customers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774300826/Chrysos_icon_19_jgrgx6.png",
+  Payments: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png",
 };
 
 const allPages = [
