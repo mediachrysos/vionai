@@ -204,11 +204,11 @@ Deno.serve(async (req) => {
     ly += 8;
 
     doc.setFontSize(16);
-    doc.setFont(undefined, 'bold');
+    doc.setFont(fontName, 'bold');
     doc.setTextColor(20, 20, 20);
     const totalText = `${(invoice.total_amount || 0).toLocaleString('cs-CZ')},00 Kc`;
     doc.text(totalText, mr, ly, { align: 'right' });
-    doc.setFont(undefined, 'normal');
+    doc.setFont(fontName, 'normal');
 
     ly += 15;
 
