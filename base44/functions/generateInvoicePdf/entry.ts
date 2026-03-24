@@ -224,7 +224,7 @@ Deno.serve(async (req) => {
     const footerY = pageHeight - 14;
     doc.setFontSize(7.5);
     doc.setTextColor(150, 150, 150);
-    doc.setFont(undefined, 'normal');
+    doc.setFont(fontName, 'normal');
     if (invoice.supplier_ico) {
       doc.text('Fyzicka osoba zapsana v zivnostenskem rejstriku.', ml, footerY);
     }
