@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, AlertCircle } from "lucide-react";
+import { FileText, Download, AlertCircle, Eye } from "lucide-react";
 import InvoiceModal from "./InvoiceModal";
 
 export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
