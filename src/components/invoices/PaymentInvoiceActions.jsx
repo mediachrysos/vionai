@@ -99,7 +99,7 @@ export default function PaymentInvoiceActions({ payment, onInvoiceCreated }) {
           onClick={handleDownloadPdf}
           className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600">
           
-          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774346884/hf_20260324_095708_c4eec87e-3ae9-4c0d-aa2b-e90b9b73f124_a9fzsz.jpg" alt="download" className="w-4 h-4 object-contain" />
+          Stáhnout
         </Button>
       </div>
       <InvoiceModal
