@@ -45,159 +45,168 @@ Deno.serve(async (req) => {
     const roboto = await embedFont(doc);
     const F = roboto ? 'Roboto' : 'helvetica';
 
-    const W = 210;
-    const H = 297;
-    const L = 20;        // left margin
-    const R = 190;       // right margin
-    const COL = 110;     // second column start
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+    const L = 15;
+    const R = W - 15;
+    const MID = W / 2;
 
-    // helpers
-    const normal = (size, r = 30, g = 30, b = 30) => { doc.setFont(F, 'normal'); doc.setFontSize(size); doc.setTextColor(r, g, b); };
-    const bold   = (size, r = 30, g = 30, b = 30) => { doc.setFont(F, 'bold');   doc.setFontSize(size); doc.setTextColor(r, g, b); };
-    const line   = (x1, y1, x2, y2, r = 220, g = 220, b = 220, w = 0.3) => {
-      doc.setDrawColor(r, g, b); doc.setLineWidth(w); doc.line(x1, y1, x2, y2);
+    const setNormal = (size, color = [30, 30, 30]) => {
+      doc.setFont(F, 'normal');
+      doc.setFontSize(size);
+      doc.setTextColor(...color);
+    };
+    const setBold = (size, color = [30, 30, 30]) => {
+      doc.setFont(F, 'bold');
+      doc.setFontSize(size);
+      doc.setTextColor(...color);
+    };
+    const hline = (y, r = 220, g = 220, b = 220, w = 0.3) => {
+      doc.setDrawColor(r, g, b);
+      doc.setLineWidth(w);
+      doc.line(L, y, R, y);
     };
 
-    // ── LOGO / COMPANY NAME (top-left) ────────────────────────
-    let y = 22;
-    bold(11);
-    doc.text(invoice.supplier_company_name || '', L, y);
+    // ── TOP: číslo faktury vpravo, datum vlevo ─────────────────
+    let y = 24;
+    setNormal(8, [150, 150, 150]);
+    doc.text('FAKTURA', L, y - 4);
+    setBold(20);
+    doc.text(invoice.invoice_number || '', R, y, { align: 'right' });
 
-    // ── "FAKTURA" label + number (top-right) ─────────────────
-    normal(8, 150, 150, 150);
-    doc.text('FAKTURA', R, y - 5, { align: 'right' });
-    bold(22, 30, 30, 30);
-    doc.text(invoice.invoice_number || '', R, y + 4, { align: 'right' });
-
-    y += 14;
-    line(L, y, R, y, 230, 230, 230, 0.4);
+    y += 6;
+    hline(y);
 
     // ── DODAVATEL / ODBERATEL ─────────────────────────────────
     y += 10;
-    normal(7.5, 160, 160, 160);
+    setNormal(7.5, [150, 150, 150]);
     doc.text('DODAVATEL', L, y);
-    doc.text('ODBERATEL', COL, y);
+    doc.text('ODBERATEL', MID + 5, y);
 
     y += 6;
-    bold(9.5);
+    setBold(10.5);
     doc.text(invoice.supplier_company_name || '', L, y);
-    doc.text(invoice.customer_name || '', COL, y);
+    doc.text(invoice.customer_name || '', MID + 5, y);
 
-    y += 5;
-    normal(8.5, 90, 90, 90);
+    y += 6;
+    setNormal(8.5, [80, 80, 80]);
     if (invoice.supplier_address) {
-      const lines = doc.splitTextToSize(invoice.supplier_address, COL - L - 8);
+      const lines = doc.splitTextToSize(invoice.supplier_address, MID - L - 10);
       doc.text(lines, L, y);
+      y += lines.length * 5;
+    } else {
+      y += 5;
     }
+
     if (invoice.customer_email) {
-      doc.text(invoice.customer_email, COL, y);
+      setNormal(8.5, [80, 80, 80]);
+      doc.text(invoice.customer_email, MID + 5, y - 5);
     }
 
-    y += 12;
-
-    if (invoice.supplier_ico) {
-      normal(8, 160, 160, 160);
-      doc.text('IČO', L, y);
-      normal(8.5, 50, 50, 50);
-      doc.text(invoice.supplier_ico, L + 18, y);
+    // ICO / DIC
+    if (invoice.supplier_ico || invoice.supplier_dic) {
+      y += 4;
+      if (invoice.supplier_ico) {
+        setNormal(8, [130, 130, 130]);
+        doc.text('IČO', L, y);
+        setNormal(8.5, [30, 30, 30]);
+        doc.text(invoice.supplier_ico, L + 22, y);
+        y += 5;
+      }
+      if (invoice.supplier_dic) {
+        setNormal(8, [130, 130, 130]);
+        doc.text('DIČ', L, y);
+        setNormal(8.5, [30, 30, 30]);
+        doc.text(invoice.supplier_dic, L + 22, y);
+        y += 5;
+      }
     }
-    if (invoice.supplier_dic) {
-      normal(8, 160, 160, 160);
-      doc.text('DIČ', L + 50, y);
-      normal(8.5, 50, 50, 50);
-      doc.text(invoice.supplier_dic, L + 68, y);
-    }
 
-    y += 16;
-    line(L, y, R, y, 230, 230, 230, 0.4);
+    y += 8;
+    hline(y);
 
-    // ── PLATEBNÍ ÚDAJE (4 řádky) ──────────────────────────────
+    // ── PLATEBNÍ ÚDAJE ────────────────────────────────────────
     y += 10;
 
-    const infoRow = (label, value, x, vx) => {
-      normal(7.5, 160, 160, 160);
-      doc.text(label, x, y);
-      normal(8.5, 40, 40, 40);
-      doc.text(value || '—', vx, y);
-    };
+    const col1x = L;
+    const col1vx = L + 42;
+    const col2x = MID + 5;
+    const col2vx = R;
 
-    infoRow('Způsob platby',       invoice.payment_method || '—',        L,   L + 36);
-    infoRow('Datum vystavení',     invoice.issue_date || '—',             COL, COL + 40);
-    y += 7;
+    setNormal(8, [130, 130, 130]);
+    doc.text('Způsob platby', col1x, y);
+    doc.text('Datum vystavení', col2x, y);
+    y += 5;
+    setNormal(8.5, [30, 30, 30]);
+    doc.text(invoice.payment_method || '—', col1vx, y - 5);
+    doc.text(invoice.issue_date || '—', col2vx, y - 5, { align: 'right' });
+
+    setNormal(8, [130, 130, 130]);
+    doc.text('Datum splatnosti', col2x, y);
+    setNormal(8.5, [30, 30, 30]);
+    doc.text(invoice.due_date || '—', col2vx, y, { align: 'right' });
+    y += 5;
+
     if (invoice.taxable_supply_date) {
-      infoRow('Datum zdan. plnění', invoice.taxable_supply_date,          L,   L + 36);
+      setNormal(8, [130, 130, 130]);
+      doc.text('Datum zdanitelného plnění', col1x, y);
+      setNormal(8.5, [30, 30, 30]);
+      doc.text(invoice.taxable_supply_date, col1vx, y);
+      y += 5;
     }
-    infoRow('Datum splatnosti',    invoice.due_date || '—',               COL, COL + 40);
 
-    y += 16;
-    line(L, y, R, y, 230, 230, 230, 0.4);
+    y += 10;
+    hline(y);
 
-    // ── POLOŽKY – hlavička ────────────────────────────────────
+    // ── POLOŽKY hlavička ──────────────────────────────────────
     y += 8;
-    normal(7, 160, 160, 160);
-    doc.text('POPIS', L, y);
+    setNormal(7.5, [150, 150, 150]);
+    doc.text('POPIS SLUŽBY / ZBOŽÍ', L, y);
     doc.text('CELKEM', R, y, { align: 'right' });
 
-    y += 3;
-    line(L, y, R, y, 230, 230, 230, 0.3);
+    y += 4;
+    hline(y, 200, 200, 200, 0.2);
 
     // ── POLOŽKA ───────────────────────────────────────────────
     y += 8;
-    bold(10);
+    setBold(10);
     doc.text(invoice.item_name || 'Služba', L, y);
-    bold(10);
     doc.text(`${(invoice.total_amount || 0).toLocaleString('cs-CZ')} Kč`, R, y, { align: 'right' });
 
     if (invoice.item_description) {
       y += 5;
-      normal(8, 130, 130, 130);
+      setNormal(8, [130, 130, 130]);
       const descLines = doc.splitTextToSize(invoice.item_description, R - L - 40);
       doc.text(descLines, L, y);
       y += descLines.length * 4;
     }
 
     y += 10;
-    line(L, y, R, y, 200, 200, 200, 0.3);
-
-    // ── MEZISOUČET ────────────────────────────────────────────
-    y += 8;
-    normal(8.5, 130, 130, 130);
-    doc.text('Základ daně', R - 60, y, { align: 'right' });
-    normal(8.5, 50, 50, 50);
-    doc.text(`${(invoice.total_amount || 0).toLocaleString('cs-CZ')} Kč`, R, y, { align: 'right' });
-
-    y += 6;
-    normal(8.5, 130, 130, 130);
-    doc.text('DPH (0 %)', R - 60, y, { align: 'right' });
-    normal(8.5, 50, 50, 50);
-    doc.text('0 Kč', R, y, { align: 'right' });
-
-    y += 8;
-    line(R - 70, y, R, y, 30, 30, 30, 0.5);
+    hline(y, 30, 30, 30, 0.5);
 
     // ── CELKEM ────────────────────────────────────────────────
     y += 9;
-    normal(8, 120, 120, 120);
-    doc.text('CELKEM K ÚHRADĚ', R - 60, y, { align: 'right' });
-    bold(16, 30, 30, 30);
+    setNormal(8, [130, 130, 130]);
+    doc.text('CELKEM K ÚHRADĚ', R - 55, y, { align: 'right' });
+    setBold(16);
     doc.text(`${(invoice.total_amount || 0).toLocaleString('cs-CZ')},00 Kč`, R, y + 1, { align: 'right' });
 
     // ── POZNÁMKA ──────────────────────────────────────────────
     if (invoice.note) {
-      y += 20;
-      line(L, y, R, y, 230, 230, 230, 0.3);
-      y += 8;
-      normal(7.5, 160, 160, 160);
+      y += 18;
+      hline(y, 230, 230, 230, 0.3);
+      y += 7;
+      setNormal(7.5, [150, 150, 150]);
       doc.text('POZNÁMKA', L, y);
       y += 5;
-      normal(8.5, 80, 80, 80);
+      setNormal(8.5, [80, 80, 80]);
       const noteLines = doc.splitTextToSize(invoice.note, R - L);
       doc.text(noteLines, L, y);
     }
 
     // ── FOOTER ────────────────────────────────────────────────
-    line(L, H - 18, R, H - 18, 230, 230, 230, 0.3);
-    normal(7, 180, 180, 180);
+    hline(H - 18, 220, 220, 220, 0.3);
+    setNormal(7, [170, 170, 170]);
     doc.text(`Vygenerováno: ${new Date().toLocaleDateString('cs-CZ')}`, L, H - 10);
     if (invoice.supplier_email) {
       doc.text(invoice.supplier_email, R, H - 10, { align: 'right' });
