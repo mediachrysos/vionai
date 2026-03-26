@@ -65,6 +65,18 @@ export default function Customers({ currentUser }) {
     return stats;
   }, [allPayments]);
 
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Customer.delete(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["customers"] })
+  });
+
+  const handleDelete = (e, c) => {
+    e.stopPropagation();
+    if (window.confirm(`Opravdu smazat zákazníka "${c.full_name}"? Tato akce je nevratná.`)) {
+      deleteMutation.mutate(c.id);
+    }
+  };
+
   const saveMutation = useMutation({
     mutationFn: async (data) => {
       if (data.id) {
@@ -276,12 +288,18 @@ export default function Customers({ currentUser }) {
                       <span className="text-xs text-gray-300">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-right hidden xl:table-cell">
-                        <button
-                        onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                        className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition-colors">
-                        
-                          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
+                            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
+                          </button>
+                          <button
+                            onClick={(e) => handleDelete(e, c)}
+                            className="p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
+                          </button>
+                        </div>
                       </td>
                     </motion.tr>);
 
