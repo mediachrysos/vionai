@@ -279,7 +279,7 @@ export default function Customers({ currentUser }) {
                         <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
                         <p className="text-xs text-gray-400">{customerPaymentCount[c.id] || 0}× plateb</p>
                       </td>
-                      <td className="px-5 py-3.5 text-right hidden xl:table-cell">
+                      <td className="px-5 py-3.5 text-right">
                         {daysSinceLast !== null ?
                       <div>
                             <p className="text-xs font-medium text-gray-600">{st.lastAmount?.toLocaleString()} Kč</p>
@@ -291,13 +291,13 @@ export default function Customers({ currentUser }) {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-4 h-4 object-contain" />
+                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-5 h-5 object-contain" />
                           </button>
                           <button
                             onClick={(e) => handleDelete(e, c)}
-                            className="p-1.5 rounded-lg hover:bg-red-50 transition-colors">
-                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
+                            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" />
                           </button>
                         </div>
                       </td>
