@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
-import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2, Link2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
@@ -291,13 +291,13 @@ export default function Customers({ currentUser }) {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
-                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-5 h-5 object-contain" />
+                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500 hover:text-gray-700">
+                            <Pencil className="w-4 h-4" />
                           </button>
                           <button
                             onClick={(e) => handleDelete(e, c)}
-                            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
-                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" />
+                            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition-colors text-red-400 hover:text-red-600">
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
