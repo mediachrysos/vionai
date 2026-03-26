@@ -113,7 +113,7 @@ export default function CustomerOnboarding() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <a href="https://chrysos-media-website.base44.app" target="_blank" rel="noopener noreferrer" className="inline-block mb-3">
             <img
               src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274896/hf_20260323_140153_38afd9a9-0561-418e-aa6f-da2f6f022bae_copy_cakidp.png"
