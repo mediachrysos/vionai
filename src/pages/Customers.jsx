@@ -291,13 +291,13 @@ export default function Customers({ currentUser }) {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
-                            <Pencil className="w-3.5 h-3.5" />
+                            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-4 h-4 object-contain" />
                           </button>
                           <button
                             onClick={(e) => handleDelete(e, c)}
-                            className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
-                            <Trash2 className="w-3.5 h-3.5" />
+                            className="p-1.5 rounded-lg hover:bg-red-50 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
                           </button>
                         </div>
                       </td>
