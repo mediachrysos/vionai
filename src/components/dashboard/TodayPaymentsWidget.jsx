@@ -30,7 +30,7 @@ export default function TodayPaymentsWidget({ payments }) {
       {todayPayments.length === 0 ?
         <p className="text-xs text-gray-400 text-center py-6">Dnes žádné platby</p> :
 
-        <div className="space-y-2 max-h-56 overflow-y-auto">
+        <div className="space-y-2 max-h-[13.5rem] overflow-y-auto pr-1">
           {todayPayments.map((p) =>
           <div
             key={p.id}

@@ -19,8 +19,7 @@ const statusLabels = {
 
 export default function RecentCustomersWidget({ customers }) {
   const recent = [...customers].
-  sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).
-  slice(0, 6);
+  sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
 
   return (
     <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
@@ -34,7 +33,7 @@ export default function RecentCustomersWidget({ customers }) {
       {recent.length === 0 ?
         <p className="text-xs text-gray-400 text-center py-6">Žádní zákazníci</p> :
 
-        <div className="space-y-2">
+        <div className="space-y-2 max-h-[13.5rem] overflow-y-auto pr-1">
           {recent.map((c) =>
           <div
             key={c.id}
