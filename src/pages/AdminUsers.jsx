@@ -3,11 +3,58 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Building2, Plus, ChevronDown, ChevronUp, Link2, Target, Upload, Camera, Lock, Unlock, FileText, Calendar } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarWidget } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X } from "lucide-react";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import OnboardingLinksList from "../components/customers/OnboardingLinksList";
 import AdminPayments from "../components/admin/AdminPayments";
+
+function GoalDatePicker({ value, onChange, placeholder }) {
+  const [open, setOpen] = useState(false);
+  const selected = value ? new Date(value + "T12:00:00") : undefined;
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="w-full flex items-center gap-2 h-9 px-3 rounded-md border border-gray-200 bg-white text-sm hover:bg-gray-50 transition-colors"
+        >
+          <img
+            src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png"
+            alt=""
+            className="w-4 h-4 object-contain flex-shrink-0"
+          />
+          <span className={`flex-1 text-left ${selected ? "text-gray-800 font-medium" : "text-gray-400"}`}>
+            {selected ? format(selected, "d. M. yyyy") : placeholder || "Vybrat datum"}
+          </span>
+          {value && (
+            <span
+              onClick={(e) => { e.stopPropagation(); onChange(""); }}
+              className="text-gray-300 hover:text-gray-500 transition-colors"
+            >
+              <X className="w-3 h-3" />
+            </span>
+          )}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0 z-50" align="start">
+        <CalendarWidget
+          mode="single"
+          selected={selected}
+          onSelect={(date) => {
+            if (date) onChange(format(date, "yyyy-MM-dd"));
+            setOpen(false);
+          }}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 const statusConfig = {
   pending: { label: "Čeká na schválení", color: "bg-amber-100 text-amber-700", icon: Clock },
@@ -477,24 +524,12 @@ function GoalSettingsInline() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">
-            <Calendar className="w-3 h-3 inline mr-1" />Začátek období
-          </label>
-          <Input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="h-9 text-sm" />
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Začátek období</label>
+          <GoalDatePicker value={startDate} onChange={setStartDate} placeholder="Vybrat datum" />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">
-            <Calendar className="w-3 h-3 inline mr-1" />Konec období
-          </label>
-          <Input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="h-9 text-sm" />
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Konec období</label>
+          <GoalDatePicker value={endDate} onChange={setEndDate} placeholder="Vybrat datum" />
         </div>
       </div>
       <Button
