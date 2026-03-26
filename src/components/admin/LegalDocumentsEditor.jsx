@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText, Save, CheckCircle } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 export default function LegalDocumentsEditor() {
   const [docs, setDocs] = useState({ gdpr: null, terms: null });
@@ -74,13 +75,16 @@ export default function LegalDocumentsEditor() {
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">Obsah dokumentu</label>
+            <label className="text-xs font-medium text-gray-500 block mb-1">
+              Obsah dokumentu{" "}
+              <span className="text-gray-400 font-normal">(podporuje Markdown: **tučně**, # Nadpis, - odrážka)</span>
+            </label>
             <Textarea
               value={forms[t.key].content}
               onChange={e => setForms(p => ({ ...p, [t.key]: { ...p[t.key], content: e.target.value } }))}
-              rows={16}
+              rows={20}
               className="text-xs font-mono resize-y leading-relaxed"
-              placeholder="Zde vložte text dokumentu..."
+              placeholder="Zde vložte text dokumentu ve formátu Markdown..."
             />
           </div>
           <div className="flex justify-end">

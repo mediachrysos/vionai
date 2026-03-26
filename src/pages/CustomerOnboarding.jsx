@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, XCircle, Loader2, FileText, ScrollText } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 export default function CustomerOnboarding() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -220,9 +221,17 @@ function DocumentModal({ open, onClose, title, content }) {
         </DialogHeader>
         <div className="overflow-y-auto px-6 py-5 flex-1">
           {content ? (
-            <pre className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap font-sans">
+            <ReactMarkdown
+              className="text-sm text-gray-700 leading-relaxed prose prose-sm max-w-none
+                prose-headings:font-bold prose-headings:text-gray-900
+                prose-h1:text-xl prose-h2:text-base prose-h3:text-sm
+                prose-strong:text-gray-900 prose-strong:font-semibold
+                prose-ul:pl-5 prose-ol:pl-5
+                prose-li:my-0.5
+                prose-p:my-2"
+            >
               {content}
-            </pre>
+            </ReactMarkdown>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-gray-300" />
