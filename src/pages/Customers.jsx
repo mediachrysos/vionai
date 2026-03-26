@@ -291,13 +291,13 @@ export default function Customers({ currentUser }) {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500 hover:text-gray-700">
-                            <Pencil className="w-4 h-4" />
+                            className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-5 h-5 object-contain" style={{filter: "brightness(0) saturate(100%) invert(58%) sepia(72%) saturate(400%) hue-rotate(5deg) brightness(90%)"}} />
                           </button>
                           <button
                             onClick={(e) => handleDelete(e, c)}
-                            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition-colors text-red-400 hover:text-red-600">
-                            <Trash2 className="w-4 h-4" />
+                            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" style={{filter: "brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(500%) hue-rotate(330deg) brightness(90%)"}} />
                           </button>
                         </div>
                       </td>
