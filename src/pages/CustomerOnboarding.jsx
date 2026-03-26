@@ -118,7 +118,7 @@ export default function CustomerOnboarding() {
             <img
               src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274896/hf_20260323_140153_38afd9a9-0561-418e-aa6f-da2f6f022bae_copy_cakidp.png"
               alt="Chrysos Media"
-              className="w-32 h-32 object-contain mx-auto hover:opacity-90 transition-opacity"
+              className="w-48 h-48 object-contain mx-auto hover:opacity-90 transition-opacity"
             />
           </a>
         </div>
