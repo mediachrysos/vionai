@@ -430,6 +430,8 @@ function AddCustomerInline({ users, onGenerateLink }) {
 
 function GoalSettingsInline() {
   const [goal, setGoal] = useState("");
+  const [startDay, setStartDay] = useState("1");
+  const [endDay, setEndDay] = useState("31");
   const [goalId, setGoalId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
@@ -438,6 +440,8 @@ function GoalSettingsInline() {
     base44.entities.GoalSettings.list().then((list) => {
       if (list.length > 0) {
         setGoal(list[0].monthly_goal?.toString() || "100000");
+        setStartDay(list[0].goal_start_day?.toString() || "1");
+        setEndDay(list[0].goal_end_day?.toString() || "31");
         setGoalId(list[0].id);
       } else {
         setGoal("100000");
@@ -448,10 +452,11 @@ function GoalSettingsInline() {
   const handleSave = async () => {
     setSaving(true);
     const val = parseFloat(goal) || 100000;
+    const data = { monthly_goal: val, goal_start_day: parseInt(startDay) || 1, goal_end_day: parseInt(endDay) || 31 };
     if (goalId) {
-      await base44.entities.GoalSettings.update(goalId, { monthly_goal: val });
+      await base44.entities.GoalSettings.update(goalId, data);
     } else {
-      const created = await base44.entities.GoalSettings.create({ monthly_goal: val, label: "default" });
+      const created = await base44.entities.GoalSettings.create({ ...data, label: "default" });
       setGoalId(created.id);
     }
     setSaving(false);
@@ -459,9 +464,11 @@ function GoalSettingsInline() {
     setTimeout(() => setDone(false), 2000);
   };
 
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+
   return (
-    <div className="flex items-end gap-3 max-w-sm">
-      <div className="flex-1">
+    <div className="space-y-3 max-w-md">
+      <div>
         <label className="text-xs font-semibold text-gray-600 block mb-1">Cíl (Kč / měsíc)</label>
         <Input
           type="number"
@@ -469,6 +476,26 @@ function GoalSettingsInline() {
           onChange={(e) => setGoal(e.target.value)}
           placeholder="100000"
           className="h-9" />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Začátek období (den v měsíci)</label>
+          <Select value={startDay} onValueChange={setStartDay}>
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {days.map(d => <SelectItem key={d} value={d}>{d}.</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Konec období (den v měsíci)</label>
+          <Select value={endDay} onValueChange={setEndDay}>
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {days.map(d => <SelectItem key={d} value={d}>{d}.</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <Button
         onClick={handleSave}

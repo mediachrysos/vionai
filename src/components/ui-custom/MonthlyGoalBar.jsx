@@ -4,9 +4,6 @@ import { base44 } from "@/api/base44Client";
 
 
 export default function MonthlyGoalBar() {
-  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).
-  toISOString().split("T")[0];
-
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
     queryFn: () => base44.entities.Payment.list("-created_date", 500),
@@ -18,10 +15,22 @@ export default function MonthlyGoalBar() {
     queryFn: () => base44.entities.GoalSettings.list()
   });
 
-  const goal = goals[0]?.monthly_goal || 100000;
+  const goalSettings = goals[0];
+  const goal = goalSettings?.monthly_goal || 100000;
+  const startDay = goalSettings?.goal_start_day || 1;
+  const endDay = goalSettings?.goal_end_day || 31;
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const periodStart = new Date(year, month, startDay).toISOString().split("T")[0];
+  const periodEnd = new Date(year, month, endDay).toISOString().split("T")[0];
 
   const monthRev = payments.
-  filter((p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart).
+  filter((p) => {
+    const d = p.payment_date || p.created_date?.split("T")[0];
+    return d >= periodStart && d <= periodEnd;
+  }).
   reduce((s, p) => s + (p.amount || 0), 0);
 
   const pct = Math.min(100, Math.round(monthRev / goal * 100));
