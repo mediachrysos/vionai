@@ -17,14 +17,8 @@ export default function MonthlyGoalBar() {
 
   const goalSettings = goals[0];
   const goal = goalSettings?.monthly_goal || 100000;
-  const startDay = goalSettings?.goal_start_day || 1;
-  const endDay = goalSettings?.goal_end_day || 31;
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const periodStart = new Date(year, month, startDay).toISOString().split("T")[0];
-  const periodEnd = new Date(year, month, endDay).toISOString().split("T")[0];
+  const periodStart = goalSettings?.goal_start_date || new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
+  const periodEnd = goalSettings?.goal_end_date || new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0];
 
   const monthRev = payments.
   filter((p) => {

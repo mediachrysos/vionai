@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Building2, Plus, ChevronDown, ChevronUp, Link2, Target, Upload, Camera, Lock, Unlock, FileText } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Users, CreditCard, Building2, Plus, ChevronDown, ChevronUp, Link2, Target, Upload, Camera, Lock, Unlock, FileText, Calendar } from "lucide-react";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import OnboardingLinksList from "../components/customers/OnboardingLinksList";
@@ -430,8 +430,8 @@ function AddCustomerInline({ users, onGenerateLink }) {
 
 function GoalSettingsInline() {
   const [goal, setGoal] = useState("");
-  const [startDay, setStartDay] = useState("1");
-  const [endDay, setEndDay] = useState("31");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [goalId, setGoalId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
@@ -440,8 +440,8 @@ function GoalSettingsInline() {
     base44.entities.GoalSettings.list().then((list) => {
       if (list.length > 0) {
         setGoal(list[0].monthly_goal?.toString() || "100000");
-        setStartDay(list[0].goal_start_day?.toString() || "1");
-        setEndDay(list[0].goal_end_day?.toString() || "31");
+        setStartDate(list[0].goal_start_date || "");
+        setEndDate(list[0].goal_end_date || "");
         setGoalId(list[0].id);
       } else {
         setGoal("100000");
@@ -452,7 +452,7 @@ function GoalSettingsInline() {
   const handleSave = async () => {
     setSaving(true);
     const val = parseFloat(goal) || 100000;
-    const data = { monthly_goal: val, goal_start_day: parseInt(startDay) || 1, goal_end_day: parseInt(endDay) || 31 };
+    const data = { monthly_goal: val, goal_start_date: startDate, goal_end_date: endDate };
     if (goalId) {
       await base44.entities.GoalSettings.update(goalId, data);
     } else {
@@ -464,12 +464,10 @@ function GoalSettingsInline() {
     setTimeout(() => setDone(false), 2000);
   };
 
-  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
-
   return (
     <div className="space-y-3 max-w-md">
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Cíl (Kč / měsíc)</label>
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Cíl (Kč)</label>
         <Input
           type="number"
           value={goal}
@@ -479,22 +477,24 @@ function GoalSettingsInline() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Začátek období (den v měsíci)</label>
-          <Select value={startDay} onValueChange={setStartDay}>
-            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {days.map(d => <SelectItem key={d} value={d}>{d}.</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">
+            <Calendar className="w-3 h-3 inline mr-1" />Začátek období
+          </label>
+          <Input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="h-9 text-sm" />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Konec období (den v měsíci)</label>
-          <Select value={endDay} onValueChange={setEndDay}>
-            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {days.map(d => <SelectItem key={d} value={d}>{d}.</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">
+            <Calendar className="w-3 h-3 inline mr-1" />Konec období
+          </label>
+          <Input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="h-9 text-sm" />
         </div>
       </div>
       <Button
