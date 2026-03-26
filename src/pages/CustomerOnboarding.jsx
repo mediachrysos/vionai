@@ -221,17 +221,22 @@ function DocumentModal({ open, onClose, title, content }) {
         </DialogHeader>
         <div className="overflow-y-auto px-6 py-5 flex-1">
           {content ? (
-            <ReactMarkdown
-              className="text-sm text-gray-700 leading-relaxed prose prose-sm max-w-none
-                prose-headings:font-bold prose-headings:text-gray-900
-                prose-h1:text-xl prose-h2:text-base prose-h3:text-sm
-                prose-strong:text-gray-900 prose-strong:font-semibold
-                prose-ul:pl-5 prose-ol:pl-5
-                prose-li:my-0.5
-                prose-p:my-2"
-            >
-              {content}
-            </ReactMarkdown>
+            <div className="text-sm text-gray-700 leading-relaxed space-y-3">
+              <ReactMarkdown
+                components={{
+                  h1: ({ children }) => <h1 className="text-lg font-bold text-gray-900 mt-6 mb-2 pb-1 border-b border-gray-200">{children}</h1>,
+                  h2: ({ children }) => <h2 className="text-base font-bold text-gray-900 mt-5 mb-2">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-800 mt-4 mb-1">{children}</h3>,
+                  p: ({ children }) => <p className="text-sm text-gray-700 leading-relaxed my-2">{children}</p>,
+                  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                  ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1">{children}</ol>,
+                  li: ({ children }) => <li className="text-sm text-gray-700 leading-relaxed">{children}</li>,
+                }}
+              >
+                {content}
+              </ReactMarkdown>
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-gray-300" />
