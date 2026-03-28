@@ -143,9 +143,9 @@ export default function OnboardingLinkModal({ open, onClose, models, users, onLi
                 />
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Přiřazená modelka</Label>
+                <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Přiřazená modelka *</Label>
                 <Select value={assignedModel} onValueChange={setAssignedModel}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Vybrat (volitelné)" /></SelectTrigger>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder="Vybrat modelku (povinné)" /></SelectTrigger>
                   <SelectContent>
                     {models?.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
                   </SelectContent>
@@ -177,7 +177,7 @@ export default function OnboardingLinkModal({ open, onClose, models, users, onLi
                 <Button variant="outline" onClick={handleClose}>Zrušit</Button>
                 <Button
                   onClick={handleGenerate}
-                  disabled={!name.trim() || loading}
+                  disabled={!name.trim() || !assignedModel || loading}
                   className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm"
                 >
                   {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generuji...</> : "Vygenerovat odkaz"}

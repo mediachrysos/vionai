@@ -90,8 +90,8 @@ export default function CustomerOnboarding() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
         <div className="text-center max-w-sm">
           <CheckCircle2 className="w-14 h-14 text-emerald-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Hotovo!</h2>
-          <p className="text-sm text-gray-500">Vaše údaje byly úspěšně uloženy. Děkujeme.</p>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Díky za potvrzení!</h2>
+          <p className="text-sm text-gray-500">Teď se můžeš vrátit zpět na Facebook a konverzace bude pokračovat tam.</p>
         </div>
       </div>
     );
