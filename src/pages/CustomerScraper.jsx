@@ -232,10 +232,9 @@ const interval = setInterval(() => {
           </Button>
           <Button
             onClick={handleCopyScraper}
-            variant="outline"
-            className="border-purple-200 text-purple-600 hover:bg-purple-50"
+            className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm"
           >
-            {copied ? <Check className="w-4 h-4 mr-2 text-emerald-500" /> : <Copy className="w-4 h-4 mr-2" />}
+            {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
             {copied ? "Zkopírováno!" : "Scraper kód"}
           </Button>
         </div>
