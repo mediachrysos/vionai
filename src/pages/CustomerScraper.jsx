@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Search, CheckCircle2, XCircle, UserCircle, Ghost } from "lucide-react";
+import { Search, CheckCircle2, XCircle, UserCircle, Ghost, Copy, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function normalize(name) {
@@ -22,7 +22,107 @@ function isMatch(a, b) {
 export default function CustomerScraper() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState(null);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
+
+  const SCRAPER_CODE = `// ⏱️ NASTAV ČAS SCRAPOVÁNÍ (v sekundách)
+const SCROLL_SECONDS = 15;
+
+// ====== NEMEŇ NIC POD TÍMTO ŘÁDKEM ======
+
+// UI blacklist – přesné fráze
+const UI_BLACKLIST = new Set([
+  "All messages", "All tools", "Assign this conversation", "Availability status",
+  "Connect to Instagram", "Create messaging ad", "Creator marketplace",
+  "Drop files here", "Drop link here", "Facebook comments", "Follow up",
+  "Instagram comments", "Message settings", "Meta Business Suite",
+  "Open Dropdown", "See contact", "Unread", "Ad replies", "Manage",
+  "Search", "Messenger", "Instagram", "Inbox", "Chats", "Today",
+  "ds Manager", "Mark as done", "Spam", "Block", "Delete"
+]);
+
+// Slova která se v UI textech vyskytují → celý řádek ignorujeme
+const UI_KEYWORDS = [
+  "sent a", "sent an", "photo", "video", "sticker", "file", "link",
+  "Ahoj", "ahoj", "ahoh", "pusinko", "prdelko", "Odkud", "sem ",
+  "replied to", "liked", "reacted", "You:", "typing"
+];
+
+const names = new Set();
+const startTime = Date.now();
+const totalMs = SCROLL_SECONDS * 1000;
+
+// Odpočet v konzoli
+const countdown = setInterval(() => {
+  const elapsed = Date.now() - startTime;
+  const remaining = Math.ceil((totalMs - elapsed) / 1000);
+  if (remaining > 0) {
+    console.clear();
+    console.log(\`⏳ Scrapuji... zbývá \${remaining} sekund\`);
+    console.log(\`📋 Nalezeno zatím: \${names.size} jmen\`);
+  }
+}, 1000);
+
+const interval = setInterval(() => {
+  // Scrollování seznamu
+  const sidebar = document.querySelector('[data-testid="mwthreadlist-items"]')
+    || [...document.querySelectorAll('div')].find(el =>
+        el.scrollHeight > el.clientHeight + 100 &&
+        el.clientHeight > 300 &&
+        el.querySelectorAll('a').length > 2
+      );
+  if (sidebar) sidebar.scrollTop += 600;
+
+  // Sběr a filtrování jmen
+  document.querySelectorAll('span, p, div').forEach(el => {
+    const text = el.innerText?.trim();
+    if (!text) return;
+
+    text.split('\\n').forEach(line => {
+      const clean = line.trim();
+
+      // Základní délka
+      const words = clean.split(/\\s+/);
+      if (words.length < 2 || words.length > 3) return;
+
+      // UI blacklist – přesná shoda
+      if (UI_BLACKLIST.has(clean)) return;
+
+      // UI keywords – pokud řádek obsahuje, přeskočíme
+      if (UI_KEYWORDS.some(kw => clean.includes(kw))) return;
+
+      // Každé slovo musí začínat velkým písmenem a obsahovat jen písmena/pomlčku
+      const namePattern = /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÄÖÜА-ЯЁІЇЄа-яёіїє][a-záčďéěíňóřšťúůýžäöüа-яёіїєA-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÄÖÜ'-]+$/;
+      if (!words.every(w => namePattern.test(w))) return;
+
+      // Nesmí obsahovat čísla
+      if (/\\d/.test(clean)) return;
+
+      names.add(clean);
+    });
+  });
+
+  // Konec
+  if (Date.now() - startTime >= totalMs) {
+    clearInterval(interval);
+    clearInterval(countdown);
+
+    const sorted = [...names].sort();
+    console.clear();
+    console.log("✅ Hotovo!");
+    console.log("========== SEZNAM JMEN ==========");
+    sorted.forEach(n => console.log(n));
+    console.log("=================================");
+    console.log(\`👥 Celkem unikátních jmen: \${sorted.length}\`);
+    console.log("\\n📋 Zkopíruj níže:\\n" + sorted.join("\\n"));
+  }
+}, 800);`;
+
+  const handleCopyScraper = () => {
+    navigator.clipboard.writeText(SCRAPER_CODE);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const { data: customers = [] } = useQuery({
     queryKey: ["customers"],
@@ -122,13 +222,23 @@ export default function CustomerScraper() {
           placeholder={"Jan Novák\nMarie Svobodová\nPetr Dvořák\n..."}
           className="min-h-[180px] font-mono text-sm"
         />
-        <Button
-          onClick={handleSearch}
-          disabled={!input.trim()}
-          className="mt-4 bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm"
-        >
-          <Search className="w-4 h-4 mr-2" /> Najít shody
-        </Button>
+        <div className="mt-4 flex gap-3 flex-wrap">
+          <Button
+            onClick={handleSearch}
+            disabled={!input.trim()}
+            className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm"
+          >
+            <Search className="w-4 h-4 mr-2" /> Najít shody
+          </Button>
+          <Button
+            onClick={handleCopyScraper}
+            variant="outline"
+            className="border-purple-200 text-purple-600 hover:bg-purple-50"
+          >
+            {copied ? <Check className="w-4 h-4 mr-2 text-emerald-500" /> : <Copy className="w-4 h-4 mr-2" />}
+            {copied ? "Zkopírováno!" : "Scraper kód"}
+          </Button>
+        </div>
       </div>
 
       {results && (
