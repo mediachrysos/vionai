@@ -75,7 +75,7 @@ export default function OnboardingLinksList({ refreshTrigger }) {
 
   const load = async () => {
     setLoading(true);
-    const list = await base44.entities.CustomerOnboardingRequest.list("-created_date", 50);
+    const list = await base44.entities.CustomerOnboardingRequest.list("-created_date", 500);
     // Auto-mark expired ones based on expires_at
     const now = new Date();
     const toDelete = list.filter(l => l.status === "expired" || (l.status === "pending" && l.expires_at && new Date(l.expires_at) < now));
