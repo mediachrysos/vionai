@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { Clock, CheckCircle, XCircle, RefreshCw, Download } from "lucide-react";
 
 const statusConfig = {
   pending: { label: "Aktivní", color: "bg-amber-100 text-amber-700", icon: Clock },
   completed: { label: "Dokončeno", color: "bg-emerald-100 text-emerald-700", icon: CheckCircle },
   expired: { label: "Expirováno", color: "bg-gray-100 text-gray-500", icon: XCircle },
 };
+
+function formatDate(dateStr) {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("cs-CZ", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
 
 function timeAgo(dateStr) {
   const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
@@ -54,6 +60,19 @@ export default function OnboardingLinksList({ refreshTrigger }) {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const exportCsv = () => {
+    const completed = links.filter(l => l.status === "completed");
+    const rows = [["Jméno", "Datum potvrzení"], ...completed.map(l => [l.full_name, formatDate(l.updated_date)])];
+    const csv = rows.map(r => r.map(v => `"${v}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "onboarding_potvrzeni.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const load = async () => {
     setLoading(true);
     const list = await base44.entities.CustomerOnboardingRequest.list("-created_date", 50);
@@ -91,9 +110,14 @@ export default function OnboardingLinksList({ refreshTrigger }) {
     <div className="space-y-2 mt-3">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Historie odkazů ({links.length})</p>
-        <button onClick={load} className="text-gray-400 hover:text-gray-600 transition-colors">
-          <RefreshCw className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={exportCsv} className="text-gray-400 hover:text-emerald-600 transition-colors" title="Export do CSV">
+            <Download className="w-3.5 h-3.5" />
+          </button>
+          <button onClick={load} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
       <div className="space-y-1.5">
         {links.map(link => {
@@ -111,6 +135,11 @@ export default function OnboardingLinksList({ refreshTrigger }) {
 
               {hasExpiry ? (
                 <Countdown expiresAt={link.expires_at} onExpired={() => markExpired(link.id)} />
+              ) : link.status === "completed" ? (
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.color}`}>
+                  <Icon className="w-3 h-3" />
+                  {cfg.label} · {formatDate(link.updated_date)}
+                </span>
               ) : (
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.color}`}>
                   <Icon className="w-3 h-3" />
