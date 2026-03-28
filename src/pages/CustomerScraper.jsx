@@ -1,10 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Search, CheckCircle2, XCircle, UserCircle } from "lucide-react";
-
 import { useNavigate } from "react-router-dom";
 
 function normalize(name) {
@@ -35,26 +34,59 @@ export default function CustomerScraper() {
     queryFn: () => base44.entities.Model.list(),
   });
 
+  const { data: payments = [] } = useQuery({
+    queryKey: ["payments"],
+    queryFn: () => base44.entities.Payment.list("-created_date", 1000),
+  });
+
   const handleSearch = () => {
     const lines = input
       .split("\n")
       .map(l => l.trim())
       .filter(l => l.length > 0);
 
-    const matched = [];
+    // Build map: customer.id -> { customer, inputNames[] }
+    const matchedMap = new Map();
     const unmatched = [];
 
     lines.forEach(name => {
       const found = customers.find(c => isMatch(name, c.full_name || ""));
       if (found) {
-        matched.push({ inputName: name, customer: found });
+        if (matchedMap.has(found.id)) {
+          matchedMap.get(found.id).inputNames.push(name);
+        } else {
+          matchedMap.set(found.id, { customer: found, inputNames: [name] });
+        }
       } else {
         unmatched.push(name);
       }
     });
 
+    const matched = Array.from(matchedMap.values());
     setResults({ matched, unmatched });
   };
+
+  const modelMap = {};
+  models.forEach(m => { modelMap[m.id] = m.name; });
+
+  // Last payment date per customer
+  const lastPaymentDate = {};
+  payments.forEach(p => {
+    if (!p.customer_id) return;
+    const d = p.payment_date || p.created_date?.split("T")[0];
+    if (!lastPaymentDate[p.customer_id] || d > lastPaymentDate[p.customer_id]) {
+      lastPaymentDate[p.customer_id] = d;
+    }
+  });
+
+  function formatDate(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+    if (days === 0) return "dnes";
+    if (days === 1) return "včera";
+    return `před ${days} dny`;
+  }
 
   return (
     <div className="p-6 lg:p-10 max-w-4xl mx-auto">
@@ -94,20 +126,30 @@ export default function CustomerScraper() {
             ) : (
               <div className="divide-y divide-gray-50">
                 {results.matched.map((r, i) => {
-                  const modelMap = {};
-                  models.forEach(m => { modelMap[m.id] = m.name; });
                   const assignedModelNames = (r.customer.assigned_models || []).map(id => modelMap[id]).filter(Boolean);
+                  const lastDate = lastPaymentDate[r.customer.id];
+                  const inputName = r.inputNames[0];
+                  const nameMatches = normalize(inputName) === normalize(r.customer.full_name);
+                  const showOriginal = !nameMatches || r.inputNames.length > 1;
+
                   return (
                     <div
-                      key={i}
-                      className="px-5 py-3.5 flex items-center gap-3 hover:bg-gray-50/60 cursor-pointer transition-colors"
+                      key={r.customer.id}
+                      className="px-5 py-3.5 flex items-start gap-3 hover:bg-gray-50/60 cursor-pointer transition-colors"
                       onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}
                     >
-                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-xs font-semibold text-amber-700 flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-xs font-semibold text-amber-700 flex-shrink-0 mt-0.5">
                         {r.customer.full_name?.[0]?.toUpperCase() || "?"}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-800">{r.customer.full_name}</p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-medium text-gray-800">{r.customer.full_name}</p>
+                          {showOriginal && (
+                            <span className="text-xs text-gray-400 italic">
+                              (scraped: {r.inputNames.join(", ")})
+                            </span>
+                          )}
+                        </div>
                         <div className="flex flex-wrap gap-2 mt-0.5">
                           <span className="text-xs text-gray-500">
                             💰 <span className="font-semibold text-gray-700">{(r.customer.total_spent || 0).toLocaleString()} Kč</span>
@@ -117,9 +159,14 @@ export default function CustomerScraper() {
                               🎭 {assignedModelNames.join(", ")}
                             </span>
                           )}
+                          {lastDate && (
+                            <span className="text-xs text-gray-400">
+                              🕐 poslední platba {formatDate(lastDate)}
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 flex-shrink-0">
                         Přesná shoda
                       </span>
                     </div>
