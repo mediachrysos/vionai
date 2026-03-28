@@ -1,0 +1,18 @@
+{
+  "name": "HistoricalCustomer",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "description": "Jm\u00e9no z\u00e1kazn\u00edka"
+    },
+    "total_spent": {
+      "type": "number",
+      "description": "Celkov\u00e1 \u00fatrata v K\u010d",
+      "default": 0
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}

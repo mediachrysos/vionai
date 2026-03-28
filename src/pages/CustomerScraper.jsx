@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Search, CheckCircle2, XCircle, UserCircle } from "lucide-react";
+import { Search, CheckCircle2, XCircle, UserCircle, Ghost } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function normalize(name) {
@@ -39,6 +39,11 @@ export default function CustomerScraper() {
     queryFn: () => base44.entities.Payment.list("-created_date", 1000),
   });
 
+  const { data: historicalCustomers = [] } = useQuery({
+    queryKey: ["historicalCustomers"],
+    queryFn: () => base44.entities.HistoricalCustomer.list("-created_date", 500),
+  });
+
   const handleSearch = () => {
     const lines = input
       .split("\n")
@@ -63,7 +68,21 @@ export default function CustomerScraper() {
     });
 
     const matched = Array.from(matchedMap.values());
-    setResults({ matched, unmatched });
+
+    // Check unmatched against historical customers
+    const stillUnmatched = [];
+    const matchedHistorical = [];
+
+    unmatched.forEach(name => {
+      const found = historicalCustomers.find(c => isMatch(name, c.full_name || ""));
+      if (found) {
+        matchedHistorical.push({ historical: found, inputName: name });
+      } else {
+        stillUnmatched.push(name);
+      }
+    });
+
+    setResults({ matched, unmatched: stillUnmatched, matchedHistorical });
   };
 
   const modelMap = {};
@@ -175,6 +194,43 @@ export default function CustomerScraper() {
               </div>
             )}
           </div>
+
+          {/* Historical / Ghost matches */}
+          {results.matchedHistorical.length > 0 && (
+            <div className="bg-white rounded-xl border border-purple-100 shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-purple-50 flex items-center gap-2 bg-purple-50/50">
+                <Ghost className="w-4 h-4 text-purple-400" />
+                <span className="font-semibold text-gray-800 text-sm">Duchové — historičtí zákazníci</span>
+                <span className="ml-auto text-xs text-gray-400">{results.matchedHistorical.length} shod</span>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {results.matchedHistorical.map((r, i) => {
+                  const showOriginal = normalize(r.inputName) !== normalize(r.historical.full_name);
+                  return (
+                    <div key={i} className="px-5 py-3.5 flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-xs font-semibold text-purple-600 flex-shrink-0 mt-0.5">
+                        <Ghost className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-medium text-gray-700">{r.historical.full_name}</p>
+                          {showOriginal && (
+                            <span className="text-xs text-gray-400 italic">(scraped: {r.inputName})</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          💰 historická útrata: <span className="font-semibold text-gray-700">{(r.historical.total_spent || 0).toLocaleString()} Kč</span>
+                        </p>
+                      </div>
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 flex-shrink-0">
+                        👻 Duch
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Unmatched */}
           <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
