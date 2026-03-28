@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Search, CheckCircle2, XCircle, UserCircle } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 
 function normalize(name) {
@@ -15,18 +16,8 @@ function normalize(name) {
     .trim();
 }
 
-function similarity(a, b) {
-  const na = normalize(a);
-  const nb = normalize(b);
-  if (na === nb) return 1;
-  if (na.includes(nb) || nb.includes(na)) return 0.85;
-
-  const partsA = na.split(" ");
-  const partsB = nb.split(" ");
-  const shared = partsA.filter(p => partsB.some(q => q === p || (p.length > 2 && q.startsWith(p)) || (q.length > 2 && p.startsWith(q))));
-  if (shared.length > 0) return 0.7;
-
-  return 0;
+function isMatch(a, b) {
+  return normalize(a) === normalize(b);
 }
 
 export default function CustomerScraper() {
@@ -39,6 +30,11 @@ export default function CustomerScraper() {
     queryFn: () => base44.entities.Customer.list("-created_date", 500),
   });
 
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+  });
+
   const handleSearch = () => {
     const lines = input
       .split("\n")
@@ -49,19 +45,9 @@ export default function CustomerScraper() {
     const unmatched = [];
 
     lines.forEach(name => {
-      let bestScore = 0;
-      let bestCustomer = null;
-
-      customers.forEach(c => {
-        const score = similarity(name, c.full_name || "");
-        if (score > bestScore) {
-          bestScore = score;
-          bestCustomer = c;
-        }
-      });
-
-      if (bestScore >= 0.7 && bestCustomer) {
-        matched.push({ inputName: name, customer: bestCustomer, score: bestScore });
+      const found = customers.find(c => isMatch(name, c.full_name || ""));
+      if (found) {
+        matched.push({ inputName: name, customer: found });
       } else {
         unmatched.push(name);
       }
@@ -107,24 +93,38 @@ export default function CustomerScraper() {
               <p className="text-sm text-gray-400 px-5 py-4">Žádné shody nenalezeny.</p>
             ) : (
               <div className="divide-y divide-gray-50">
-                {results.matched.map((r, i) => (
-                  <div
-                    key={i}
-                    className="px-5 py-3.5 flex items-center gap-3 hover:bg-gray-50/60 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}
-                  >
-                    <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-xs font-semibold text-amber-700 flex-shrink-0">
-                      {r.customer.full_name?.[0]?.toUpperCase() || "?"}
+                {results.matched.map((r, i) => {
+                  const modelMap = {};
+                  models.forEach(m => { modelMap[m.id] = m.name; });
+                  const assignedModelNames = (r.customer.assigned_models || []).map(id => modelMap[id]).filter(Boolean);
+                  return (
+                    <div
+                      key={i}
+                      className="px-5 py-3.5 flex items-center gap-3 hover:bg-gray-50/60 cursor-pointer transition-colors"
+                      onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-xs font-semibold text-amber-700 flex-shrink-0">
+                        {r.customer.full_name?.[0]?.toUpperCase() || "?"}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-800">{r.customer.full_name}</p>
+                        <div className="flex flex-wrap gap-2 mt-0.5">
+                          <span className="text-xs text-gray-500">
+                            💰 <span className="font-semibold text-gray-700">{(r.customer.total_spent || 0).toLocaleString()} Kč</span>
+                          </span>
+                          {assignedModelNames.length > 0 && (
+                            <span className="text-xs text-gray-500">
+                              🎭 {assignedModelNames.join(", ")}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                        Přesná shoda
+                      </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800">{r.customer.full_name}</p>
-                      <p className="text-xs text-gray-400">zadáno: <span className="italic">{r.inputName}</span></p>
-                    </div>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${r.score === 1 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-                      {r.score === 1 ? "Přesná shoda" : "Částečná shoda"}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
