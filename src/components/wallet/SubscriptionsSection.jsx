@@ -49,17 +49,17 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm p-0 overflow-hidden">
-        <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-6 py-4">
-          <DialogTitle className="text-white text-base font-semibold">
+      <DialogContent className="max-w-xs w-[calc(100vw-2rem)] p-0 overflow-hidden">
+        <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-4 py-3">
+          <DialogTitle className="text-white text-sm font-semibold">
             {subscription ? "Upravit předplatné" : "Nové předplatné"}
           </DialogTitle>
         </div>
-        <div className="px-6 py-5 space-y-4">
+        <div className="px-4 py-4 space-y-3">
           {/* Logo upload */}
           <div>
             <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Logo</Label>
-            <div className="mt-1 flex items-center gap-3">
+            <div className="mt-1 flex items-center gap-2">
               {form.logo_url ?
               <img src={form.logo_url} alt="logo" className="w-10 h-10 rounded-lg object-cover border border-gray-200" /> :
 
@@ -134,7 +134,7 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
               className="mt-1" />
             
           </div>
-          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+          <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
             <Button variant="outline" onClick={onClose}>Zrušit</Button>
             <Button
               disabled={!valid}
