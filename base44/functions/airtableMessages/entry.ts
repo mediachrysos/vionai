@@ -28,17 +28,23 @@ Deno.serve(async (req) => {
     return Response.json({ records: data.records || [], error: data.error });
   }
 
-  // Fetch pending messages — filter where status = "čeká"
+  // Fetch pending messages — load all and filter server-side to avoid URL encoding issues with diacritics
   if (action === "list") {
-    // Try filtering by field named "status" with lowercase "čeká"
-    const formula = `{status}="čeká"`;
-    const url = `${BASE_URL}?filterByFormula=${encodeURIComponent(formula)}&maxRecords=100`;
-    console.log("Fetching URL:", url);
-    const res = await fetch(url, { headers: headers() });
-    const data = await res.json();
-    console.log("list response status:", res.status);
-    console.log("list response:", JSON.stringify(data).slice(0, 2000));
-    return Response.json({ records: data.records || [], error: data.error });
+    let allRecords = [];
+    let offset = null;
+
+    do {
+      const url = `${BASE_URL}?maxRecords=100${offset ? `&offset=${offset}` : ""}`;
+      const res = await fetch(url, { headers: headers() });
+      const data = await res.json();
+      if (data.records) allRecords = allRecords.concat(data.records);
+      offset = data.offset || null;
+    } while (offset);
+
+    // Filter server-side: only records where status is exactly "čeká"
+    const pending = allRecords.filter(r => r.fields?.status === "čeká");
+    console.log(`Total records: ${allRecords.length}, pending: ${pending.length}`);
+    return Response.json({ records: pending });
   }
 
   // Helper: PATCH Airtable with retry (up to 3 attempts)
