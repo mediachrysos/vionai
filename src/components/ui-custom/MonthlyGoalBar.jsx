@@ -30,6 +30,15 @@ export default function MonthlyGoalBar() {
   const pct = Math.min(100, Math.round(monthRev / goal * 100));
   const reached = monthRev >= goal;
 
+  // Zbývající dny a denní požadavek
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(periodEnd);
+  end.setHours(0, 0, 0, 0);
+  const daysLeft = Math.max(0, Math.ceil((end - today) / (1000 * 60 * 60 * 24)) + 1);
+  const remaining = Math.max(0, goal - monthRev);
+  const dailyNeeded = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
+
   return (
     <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-xl px-5 py-3 mb-6 shadow-sm shadow-amber-200">
       <div className="flex items-center justify-between mb-2">
@@ -56,8 +65,18 @@ export default function MonthlyGoalBar() {
         <div
           className="h-full rounded-full bg-white transition-all duration-700"
           style={{ width: `${pct}%` }} />
-        
       </div>
+      {!reached && (
+        <div className="flex items-center gap-3 mt-2">
+          <span className="text-xs text-white/80">
+            ⏳ <span className="font-semibold text-white">{daysLeft} dní</span> do konce
+          </span>
+          <span className="text-white/40">·</span>
+          <span className="text-xs text-white/80">
+            Denně potřeba: <span className="font-semibold text-white">{dailyNeeded.toLocaleString()} Kč</span>
+          </span>
+        </div>
+      )}
     </div>);
 
 }
