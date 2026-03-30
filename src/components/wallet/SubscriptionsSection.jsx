@@ -253,7 +253,7 @@ export default function SubscriptionsSection({ accounts }) {
               </button>
 
               <button onClick={() => handleEdit(sub)} className="text-gray-400 hover:text-gray-700 transition-colors flex-shrink-0">
-                <Pencil className="w-3.5 h-3.5" />
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
               </button>
               <button
             onClick={() => window.confirm(`Smazat "${sub.name}"?`) && deleteMutation.mutate(sub.id)}
