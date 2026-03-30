@@ -259,7 +259,7 @@ export default function SubscriptionsSection({ accounts }) {
             onClick={() => window.confirm(`Smazat "${sub.name}"?`) && deleteMutation.mutate(sub.id)}
             className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0">
             
-                <Trash2 className="w-3.5 h-3.5" />
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
               </button>
             </div>
         )}
