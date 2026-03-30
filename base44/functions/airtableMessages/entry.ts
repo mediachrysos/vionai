@@ -1,8 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-const BASE_ID = "appBbEXOQ2Dx4Fj9w";
-const TABLE_NAME = "Zprávy";
-const BASE_URL = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE_NAME)}`;
+const BASE_URL = `https://api.airtable.com/v0/appBbEXOQ2Dx4Fj9w/tbltQY23DmWFkPyof`;
 
 function headers() {
   return {
