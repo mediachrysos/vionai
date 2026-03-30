@@ -49,13 +49,13 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-xs w-[calc(100vw-2rem)] p-0 overflow-hidden">
+      <DialogContent className="max-w-xs w-[calc(100vw-2rem)] p-0 overflow-hidden max-h-[90vh] flex flex-col">
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-4 py-3">
           <DialogTitle className="text-white text-sm font-semibold">
             {subscription ? "Upravit předplatné" : "Nové předplatné"}
           </DialogTitle>
         </div>
-        <div className="px-4 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3 overflow-y-auto flex-1">
           {/* Logo upload */}
           <div>
             <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Logo</Label>
