@@ -30,6 +30,10 @@
       "type": "boolean",
       "default": true,
       "description": "Zda je p\u0159edplatn\u00e9 aktivn\u00ed"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL loga p\u0159edplatn\u00e9ho"
     }
   },
   "required": [

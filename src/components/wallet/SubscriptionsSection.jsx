@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, RefreshCw, Calendar } from "lucide-react";
+import { Plus, Pencil, Trash2, RefreshCw, Calendar, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -9,19 +9,30 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
+  const fileRef = useRef();
   const [form, setForm] = useState(
     subscription
       ? { ...subscription }
-      : { name: "", amount: "", billing_day: "", account_id: "", note: "", is_active: true }
+      : { name: "", amount: "", billing_day: "", account_id: "", note: "", is_active: true, logo_url: "" }
   );
+  const [uploading, setUploading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setForm(
       subscription
         ? { ...subscription }
-        : { name: "", amount: "", billing_day: "", account_id: "", note: "", is_active: true }
+        : { name: "", amount: "", billing_day: "", account_id: "", note: "", is_active: true, logo_url: "" }
     );
   }, [subscription, open]);
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setForm(f => ({ ...f, logo_url: file_url }));
+    setUploading(false);
+  };
 
   const handleSave = async () => {
     const acc = accounts.find(a => a.id === form.account_id);
@@ -45,6 +56,35 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
           </DialogTitle>
         </div>
         <div className="px-6 py-5 space-y-4">
+          {/* Logo upload */}
+          <div>
+            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Logo</Label>
+            <div className="mt-1 flex items-center gap-3">
+              {form.logo_url ? (
+                <img src={form.logo_url} alt="logo" className="w-10 h-10 rounded-lg object-cover border border-gray-200" />
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                  <RefreshCw className="w-4 h-4 text-gray-300" />
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="text-xs text-amber-600 hover:text-amber-800 font-medium flex items-center gap-1"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                {uploading ? "Nahrávám..." : "Nahrát logo"}
+              </button>
+              {form.logo_url && (
+                <button type="button" onClick={() => setForm(f => ({ ...f, logo_url: "" }))} className="text-xs text-gray-400 hover:text-red-500">
+                  Odebrat
+                </button>
+              )}
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+            </div>
+          </div>
+
           <div>
             <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Název *</Label>
             <Input
@@ -173,8 +213,17 @@ export default function SubscriptionsSection({ accounts }) {
           {subscriptions.map(sub => (
             <div
               key={sub.id}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${sub.is_active ? "border-gray-100 bg-gray-50/50" : "border-gray-100 bg-gray-50/20 opacity-50"}`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-opacity ${sub.is_active ? "border-gray-100 bg-gray-50/50" : "border-gray-100 bg-gray-50/20 opacity-50"}`}
             >
+              {/* Logo or placeholder */}
+              {sub.logo_url ? (
+                <img src={sub.logo_url} alt={sub.name} className="w-8 h-8 rounded-lg object-cover border border-gray-100 flex-shrink-0" />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                  <RefreshCw className="w-3.5 h-3.5 text-gray-300" />
+                </div>
+              )}
+
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-800 truncate">{sub.name}</p>
                 <div className="flex items-center gap-3 mt-0.5">
@@ -189,16 +238,20 @@ export default function SubscriptionsSection({ accounts }) {
                   )}
                 </div>
               </div>
+
               <span className="text-sm font-semibold text-red-600 flex-shrink-0">
                 -{(sub.amount || 0).toLocaleString("cs-CZ")} Kč
               </span>
+
+              {/* Toggle — green = active, red = inactive */}
               <button
                 onClick={() => toggleMutation.mutate({ id: sub.id, is_active: !sub.is_active })}
-                className={`w-9 h-5 rounded-full transition-colors flex-shrink-0 relative ${sub.is_active ? "bg-amber-400" : "bg-gray-200"}`}
+                className={`w-10 h-6 rounded-full transition-colors duration-200 flex-shrink-0 relative ${sub.is_active ? "bg-emerald-500" : "bg-red-400"}`}
                 title={sub.is_active ? "Deaktivovat" : "Aktivovat"}
               >
-                <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${sub.is_active ? "translate-x-4" : "translate-x-0.5"}`} />
+                <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${sub.is_active ? "translate-x-5" : "translate-x-1"}`} />
               </button>
+
               <button onClick={() => handleEdit(sub)} className="text-gray-400 hover:text-gray-700 transition-colors flex-shrink-0">
                 <Pencil className="w-3.5 h-3.5" />
               </button>
