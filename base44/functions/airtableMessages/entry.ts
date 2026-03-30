@@ -43,7 +43,9 @@ Deno.serve(async (req) => {
 
   // Update status
   if (action === "update") {
-    const { recordId, status } = body;
+    const { recordId, status, sender_id, odpoved_ai } = body;
+
+    // Update Airtable
     const res = await fetch(`${BASE_URL}/${recordId}`, {
       method: "PATCH",
       headers: headers(),
@@ -51,6 +53,17 @@ Deno.serve(async (req) => {
     });
     const data = await res.json();
     console.log("update response:", JSON.stringify(data).slice(0, 500));
+
+    // If approving, fire webhook
+    if (status === "schváleno" && sender_id && odpoved_ai) {
+      const webhookRes = await fetch("https://chrysosmedia.app.n8n.cloud/webhook/40a8a7f4-3699-44a7-b63e-e9286b26cf98", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sender_id, text: odpoved_ai })
+      });
+      console.log("webhook status:", webhookRes.status);
+    }
+
     return Response.json({ record: data });
   }
 
