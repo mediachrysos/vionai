@@ -9,7 +9,7 @@ function EditModal({ record, onSave, onClose }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await onSave(record.id, reply);
+    await onSave(record.id, record.fields?.sender_id, reply);
     setSaving(false);
     onClose();
   };
@@ -65,9 +65,8 @@ export default function ChattingAssistant({ currentUser }) {
   const handleApprove = async (record) => {
     setRecordLoading(record.id, true);
     await base44.functions.invoke("airtableMessages", {
-      action: "update",
+      action: "approve",
       recordId: record.id,
-      status: "schváleno",
       sender_id: record.fields?.sender_id,
       odpoved_ai: record.fields?.odpoved_ai
     });
@@ -77,13 +76,18 @@ export default function ChattingAssistant({ currentUser }) {
 
   const handleReject = async (record) => {
     setRecordLoading(record.id, true);
-    await base44.functions.invoke("airtableMessages", { action: "update", recordId: record.id, status: "zamítnuto" });
+    await base44.functions.invoke("airtableMessages", { action: "reject", recordId: record.id });
     setRecords((prev) => prev.filter((r) => r.id !== record.id));
     setRecordLoading(record.id, false);
   };
 
-  const handleEditSave = async (recordId, reply) => {
-    await base44.functions.invoke("airtableMessages", { action: "updateReply", recordId, reply });
+  const handleEditSave = async (recordId, sender_id, reply) => {
+    await base44.functions.invoke("airtableMessages", {
+      action: "approveEdited",
+      recordId,
+      sender_id,
+      odpoved_ai: reply
+    });
     setRecords((prev) => prev.filter((r) => r.id !== recordId));
   };
 

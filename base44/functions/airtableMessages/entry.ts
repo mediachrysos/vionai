@@ -41,42 +41,60 @@ Deno.serve(async (req) => {
     return Response.json({ records: data.records || [], error: data.error });
   }
 
-  // Update status
-  if (action === "update") {
-    const { recordId, status, sender_id, odpoved_ai } = body;
+  // Approve — POST to n8n first, then update Airtable status
+  if (action === "approve") {
+    const { recordId, sender_id, odpoved_ai } = body;
 
-    // Update Airtable
+    // 1. Send to n8n webhook
+    const webhookRes = await fetch("https://chrysosmedia.app.n8n.cloud/webhook/40a8a7f4-3699-44a7-b63e-e9286b26cf98", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sender_id, text: odpoved_ai })
+    });
+    console.log("webhook status:", webhookRes.status);
+
+    // 2. Update Airtable status to schváleno
     const res = await fetch(`${BASE_URL}/${recordId}`, {
       method: "PATCH",
       headers: headers(),
-      body: JSON.stringify({ fields: { status: status } })
+      body: JSON.stringify({ fields: { status: "schváleno" } })
     });
     const data = await res.json();
-    console.log("update response:", JSON.stringify(data).slice(0, 500));
+    return Response.json({ record: data, webhookStatus: webhookRes.status });
+  }
 
-    // If approving, fire webhook
-    if (status === "schváleno" && sender_id && odpoved_ai) {
-      const webhookRes = await fetch("https://chrysosmedia.app.n8n.cloud/webhook/40a8a7f4-3699-44a7-b63e-e9286b26cf98", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sender_id, text: odpoved_ai })
-      });
-      console.log("webhook status:", webhookRes.status);
-    }
-
+  // Reject — only update status
+  if (action === "reject") {
+    const { recordId } = body;
+    const res = await fetch(`${BASE_URL}/${recordId}`, {
+      method: "PATCH",
+      headers: headers(),
+      body: JSON.stringify({ fields: { status: "zamítnuto" } })
+    });
+    const data = await res.json();
     return Response.json({ record: data });
   }
 
-  // Update with edited reply and approve
-  if (action === "updateReply") {
-    const { recordId, reply } = body;
+  // Approve with edited reply — POST to n8n with edited text, then update Airtable
+  if (action === "approveEdited") {
+    const { recordId, sender_id, odpoved_ai } = body;
+
+    // 1. Send edited reply to n8n
+    const webhookRes = await fetch("https://chrysosmedia.app.n8n.cloud/webhook/40a8a7f4-3699-44a7-b63e-e9286b26cf98", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sender_id, text: odpoved_ai })
+    });
+    console.log("webhook status (edited):", webhookRes.status);
+
+    // 2. Update Airtable with edited reply and status
     const res = await fetch(`${BASE_URL}/${recordId}`, {
       method: "PATCH",
       headers: headers(),
-      body: JSON.stringify({ fields: { "Navrhovaná odpověď": reply, status: "schváleno" } })
+      body: JSON.stringify({ fields: { odpoved_ai: odpoved_ai, status: "schváleno" } })
     });
     const data = await res.json();
-    return Response.json({ record: data });
+    return Response.json({ record: data, webhookStatus: webhookRes.status });
   }
 
   return Response.json({ error: "Unknown action" }, { status: 400 });
