@@ -1,0 +1,40 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "N\u00e1zev p\u0159edplatn\u00e9ho"
+    },
+    "amount": {
+      "type": "number",
+      "description": "M\u011bs\u00ed\u010dn\u00ed cena"
+    },
+    "billing_day": {
+      "type": "integer",
+      "description": "Den v m\u011bs\u00edci kdy se ode\u010d\u00edt\u00e1 (1-31)"
+    },
+    "account_id": {
+      "type": "string",
+      "description": "ID propojen\u00e9ho BankAccount"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "N\u00e1zev \u00fa\u010dtu pro zobrazen\u00ed"
+    },
+    "note": {
+      "type": "string",
+      "description": "Pozn\u00e1mka"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Zda je p\u0159edplatn\u00e9 aktivn\u00ed"
+    }
+  },
+  "required": [
+    "name",
+    "amount",
+    "billing_day"
+  ]
+}

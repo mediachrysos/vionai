@@ -10,6 +10,7 @@ import WalletTransactionModal from "@/components/wallet/WalletTransactionModal";
 import WaterfallCard from "@/components/wallet/WaterfallCard";
 import WalletTransactionList from "@/components/wallet/WalletTransactionList";
 import WalletTransactionDetailModal from "@/components/wallet/WalletTransactionDetailModal";
+import SubscriptionsSection from "@/components/wallet/SubscriptionsSection";
 
 export default function Wallet() {
   const qc = useQueryClient();
@@ -228,6 +229,9 @@ export default function Wallet() {
       <div className="space-y-6">
         {/* Waterfall */}
         <WaterfallCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
+
+        {/* Subscriptions */}
+        <SubscriptionsSection accounts={accounts} />
 
         {/* Transactions - full width */}
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
