@@ -246,10 +246,10 @@ export default function SubscriptionsSection({ accounts }) {
               {/* Toggle — green = active, red = inactive */}
               <button
                 onClick={() => toggleMutation.mutate({ id: sub.id, is_active: !sub.is_active })}
-                className={`w-10 h-6 rounded-full transition-colors duration-200 flex-shrink-0 relative ${sub.is_active ? "bg-emerald-500" : "bg-red-400"}`}
+                className={`w-10 h-6 rounded-full transition-colors duration-200 flex-shrink-0 relative flex items-center px-1 ${sub.is_active ? "bg-emerald-500" : "bg-red-400"}`}
                 title={sub.is_active ? "Deaktivovat" : "Aktivovat"}
               >
-                <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${sub.is_active ? "translate-x-5" : "translate-x-1"}`} />
+                <span className={`w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${sub.is_active ? "translate-x-4" : "translate-x-0"}`} />
               </button>
 
               <button onClick={() => handleEdit(sub)} className="text-gray-400 hover:text-gray-700 transition-colors flex-shrink-0">
