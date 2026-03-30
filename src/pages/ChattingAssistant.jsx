@@ -4,7 +4,7 @@ import { Check, X, Pencil, RefreshCw, Bot, BotOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 function EditModal({ record, onSave, onClose }) {
-  const [reply, setReply] = useState(record.fields?.["Navrhovaná odpověď"] || "");
+  const [reply, setReply] = useState(record.fields?.odpoved_ai || "");
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
@@ -18,9 +18,9 @@ function EditModal({ record, onSave, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
         <h3 className="text-sm font-semibold text-gray-800 mb-1">Upravit odpověď</h3>
-        <p className="text-xs text-gray-400 mb-3">Zákazník: <span className="font-medium text-gray-600">{record.fields?.["Zákazník"] || record.id}</span></p>
+        <p className="text-xs text-gray-400 mb-3">Sender ID: <span className="font-medium text-gray-600">{record.fields?.sender_id || record.id}</span></p>
         <div className="bg-gray-50 rounded-xl px-3 py-2 mb-3 text-xs text-gray-500 border border-gray-100">
-          <span className="font-medium text-gray-600">Zpráva:</span> {record.fields?.["Zpráva zákazníka"] || "—"}
+          <span className="font-medium text-gray-600">Zpráva:</span> {record.fields?.zprava_zakaznika || "—"}
         </div>
         <textarea
           className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 h-32"
@@ -158,23 +158,33 @@ export default function ChattingAssistant({ currentUser }) {
                   <div key={record.id} className="px-5 py-4 hover:bg-gray-50/50 transition-colors">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        {/* Customer */}
+                        {/* Sender */}
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                             <span className="text-xs font-bold text-amber-700">
-                              {(fields["Zákazník"] || "?")[0]?.toUpperCase()}
+                              {fields.platforma === "facebook" ? "F" : "?"}
                             </span>
                           </div>
                           <span className="text-sm font-semibold text-gray-800 truncate">
-                            {fields["Zákazník"] || <span className="text-gray-400 font-normal">{record.id}</span>}
+                            {fields.sender_id || record.id}
                           </span>
+                          {fields.platforma && (
+                            <span className="text-xs bg-blue-50 text-blue-600 border border-blue-100 rounded-full px-2 py-0.5 font-medium">
+                              {fields.platforma}
+                            </span>
+                          )}
+                          {fields.cas && (
+                            <span className="text-xs text-gray-400 ml-auto flex-shrink-0">
+                              {new Date(fields.cas).toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          )}
                         </div>
 
                         {/* Customer message */}
                         <div className="mb-2">
                           <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Zpráva zákazníka</p>
                           <p className="text-sm text-gray-700 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
-                            {fields["Zpráva zákazníka"] || <span className="text-gray-300 italic">Bez obsahu</span>}
+                            {fields.zprava_zakaznika || <span className="text-gray-300 italic">Bez obsahu</span>}
                           </p>
                         </div>
 
@@ -182,7 +192,7 @@ export default function ChattingAssistant({ currentUser }) {
                         <div>
                           <p className="text-xs font-medium text-amber-600 uppercase tracking-wide mb-1">Navrhovaná odpověď AI</p>
                           <p className="text-sm text-gray-700 bg-amber-50 rounded-xl px-3 py-2 border border-amber-100">
-                            {fields["Navrhovaná odpověď"] || <span className="text-gray-300 italic">Bez návrhu</span>}
+                            {fields.odpoved_ai || <span className="text-gray-300 italic">Bez návrhu</span>}
                           </p>
                         </div>
                       </div>
