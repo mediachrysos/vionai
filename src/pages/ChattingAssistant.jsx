@@ -64,12 +64,20 @@ export default function ChattingAssistant({ currentUser }) {
 
   const handleApprove = async (record) => {
     setRecordLoading(record.id, true);
-    await base44.functions.invoke("airtableMessages", {
+    const res = await base44.functions.invoke("airtableMessages", {
       action: "approve",
       recordId: record.id,
       sender_id: record.fields?.sender_id,
       odpoved_ai: record.fields?.odpoved_ai
     });
+    const d = res.data;
+    alert(
+      `=== SCHVÁLENÍ DEBUG ===\n` +
+      `Record ID: ${record.id}\n` +
+      `PATCH status: ${d?.patchStatus}\n` +
+      `n8n webhook status: ${d?.webhookStatus}\n\n` +
+      `Airtable odpověď:\n${JSON.stringify(d?.airtableResponse, null, 2)}`
+    );
     setRecords((prev) => prev.filter((r) => r.id !== record.id));
     setRecordLoading(record.id, false);
   };

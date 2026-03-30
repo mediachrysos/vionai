@@ -66,8 +66,24 @@ Deno.serve(async (req) => {
     const { recordId, sender_id, odpoved_ai } = body;
 
     // 1. Update Airtable status first
-    const record = await patchAirtable(recordId, { status: "schváleno" });
-    console.log("airtable patch result:", record ? "ok" : "failed");
+    const patchUrl = `${BASE_URL}/${recordId}`;
+    const patchBody = { fields: { status: "schváleno" } };
+    console.log("=== APPROVE START ===");
+    console.log("recordId:", recordId);
+    console.log("PATCH URL:", patchUrl);
+    console.log("PATCH body:", JSON.stringify(patchBody));
+
+    const patchRes = await fetch(patchUrl, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `Bearer ${Deno.env.get("AIRTABLE_API_TOKEN")}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(patchBody)
+    });
+    const patchData = await patchRes.json();
+    console.log("PATCH response status:", patchRes.status);
+    console.log("PATCH response body:", JSON.stringify(patchData));
 
     // 2. Send to n8n webhook
     const webhookRes = await fetch("https://chrysosmedia.app.n8n.cloud/webhook/40a8a7f4-3699-44a7-b63e-e9286b26cf98", {
@@ -75,9 +91,15 @@ Deno.serve(async (req) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sender_id, text: odpoved_ai })
     });
-    console.log("webhook status:", webhookRes.status);
+    console.log("n8n webhook status:", webhookRes.status);
+    console.log("=== APPROVE END ===");
 
-    return Response.json({ record, webhookStatus: webhookRes.status });
+    return Response.json({
+      record: patchData,
+      patchStatus: patchRes.status,
+      webhookStatus: webhookRes.status,
+      debug: { recordId, patchUrl, patchBody, airtableResponse: patchData }
+    });
   }
 
   // Reject — only update status
