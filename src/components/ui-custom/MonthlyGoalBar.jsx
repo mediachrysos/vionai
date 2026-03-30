@@ -67,14 +67,17 @@ export default function MonthlyGoalBar() {
           style={{ width: `${pct}%` }} />
       </div>
       {!reached && (
-        <div className="flex items-center gap-3 mt-2">
-          <span className="text-xs text-white/80">
-            ⏳ <span className="font-semibold text-white">{daysLeft} dní</span> do konce
-          </span>
-          <span className="text-white/40">·</span>
-          <span className="text-xs text-white/80">
-            Denně potřeba: <span className="font-semibold text-white">{dailyNeeded.toLocaleString()} Kč</span>
-          </span>
+        <div className="flex items-center gap-2 mt-2.5">
+          <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
+            <span className="text-sm">⏳</span>
+            <span className="text-xs text-white/70">Zbývá</span>
+            <span className="text-xs font-bold text-white">{daysLeft} dní</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
+            <span className="text-sm">⚡</span>
+            <span className="text-xs text-white/70">Denně</span>
+            <span className="text-xs font-bold text-white">{dailyNeeded.toLocaleString()} Kč</span>
+          </div>
         </div>
       )}
     </div>);
