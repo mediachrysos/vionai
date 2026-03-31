@@ -191,15 +191,9 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label>Typ služby</Label>
-              <Input value={form.service_type} onChange={(e) => setForm((prev) => ({ ...prev, service_type: e.target.value }))} placeholder="např. Chat session" />
-            </div>
-            <div>
-              <Label>Datum platby</Label>
-              <DatePicker value={form.payment_date} onChange={(v) => setForm((prev) => ({ ...prev, payment_date: v }))} />
-            </div>
+          <div>
+            <Label>Datum platby</Label>
+            <DatePicker value={form.payment_date} onChange={(v) => setForm((prev) => ({ ...prev, payment_date: v }))} />
           </div>
 
           <div>
@@ -223,21 +217,16 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             }
           </div>
 
-          <div>
-            <Label>Poznámka</Label>
-            <Textarea value={form.note} onChange={(e) => setForm((prev) => ({ ...prev, note: e.target.value }))} rows={2} />
+          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+            <Button variant="outline" onClick={onClose} disabled={saving}>Zrušit</Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={saving || !form.customer_id || !form.amount}
+              className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white hover:from-[#A8841C] hover:to-[#8a6c16]"
+            >
+              {saving ? "Ukládám..." : "Přidat platbu"}
+            </Button>
           </div>
-
-          
-
-
-
-
-
-
-
-
-          
         </div>
       </DialogContent>
     </Dialog>);
