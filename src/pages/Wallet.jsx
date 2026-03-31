@@ -266,6 +266,12 @@ export default function Wallet() {
         accounts={accounts}
         onUpdate={() => {
           qc.invalidateQueries({ queryKey: ["walletTransactions"] });
+          qc.invalidateQueries({ queryKey: ["expenses"] });
+          setSelectedTx(null);
+        }}
+        onDelete={() => {
+          qc.invalidateQueries({ queryKey: ["walletTransactions"] });
+          qc.invalidateQueries({ queryKey: ["expenses"] });
           setSelectedTx(null);
         }} />
       

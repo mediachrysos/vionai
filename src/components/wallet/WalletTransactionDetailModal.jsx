@@ -7,30 +7,39 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpCircle, ArrowDownCircle, FileText, Upload, X, Download, Pencil, Save } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, FileText, Upload, X, Download, Pencil, Save, Trash2 } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
+import { useQuery } from "@tanstack/react-query";
 
 const PRESET_CATEGORIES = ["Výplata Advokát", "Facebook Ads", "Software", "Poplatek za převod", "Bankovní poplatek"];
 
-export default function WalletTransactionDetailModal({ open, onClose, transaction, accounts, onUpdate }) {
+export default function WalletTransactionDetailModal({ open, onClose, transaction, accounts, onUpdate, onDelete }) {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.filter({ status: "active" }),
+  });
 
   useEffect(() => {
     if (transaction) {
       setForm({ ...transaction });
       setEditing(false);
+      setConfirmDelete(false);
     }
   }, [transaction]);
 
   if (!transaction) return null;
 
-  const isWallet = transaction.source === "Wallet" || !transaction.source?.startsWith?.("pay_") && !transaction.id?.startsWith?.("pay_") && !transaction.id?.startsWith?.("exp_");
-  const isEditable = transaction.id && !transaction.id.startsWith("pay_") && !transaction.id.startsWith("exp_");
+  const isExpense = transaction.id?.startsWith("exp_");
+  const isWallet = transaction.source === "Wallet";
+  const isEditable = isWallet || isExpense;
   const isIncome = (form.type || transaction.type) === "income";
 
   const handleInvoiceUpload = async (e) => {
@@ -51,21 +60,46 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
 
   const handleSave = async () => {
     setSaving(true);
-    await base44.entities.WalletTransaction.update(transaction.id, {
-      title: form.title,
-      amount: parseFloat(form.amount) || 0,
-      type: form.type,
-      category: form.category,
-      account_id: form.account_id,
-      account_name: form.account_name,
-      transaction_date: form.transaction_date,
-      note: form.note,
-      invoice_url: form.invoice_url,
-      invoice_name: form.invoice_name,
-    });
+    if (isExpense) {
+      const realId = transaction.id.replace("exp_", "");
+      await base44.entities.Expense.update(realId, {
+        title: form.title,
+        amount: parseFloat(form.amount) || 0,
+        expense_date: form.transaction_date,
+        note: form.note,
+        model_id: form.model_id || null,
+        model_name: form.model_name || null,
+      });
+    } else {
+      await base44.entities.WalletTransaction.update(transaction.id, {
+        title: form.title,
+        amount: parseFloat(form.amount) || 0,
+        type: form.type,
+        category: form.category,
+        account_id: form.account_id,
+        account_name: form.account_name,
+        transaction_date: form.transaction_date,
+        note: form.note,
+        invoice_url: form.invoice_url,
+        invoice_name: form.invoice_name,
+      });
+    }
     onUpdate?.();
     setSaving(false);
     setEditing(false);
+  };
+
+  const handleDelete = async () => {
+    if (!confirmDelete) { setConfirmDelete(true); return; }
+    setSaving(true);
+    if (isExpense) {
+      await base44.entities.Expense.delete(transaction.id.replace("exp_", ""));
+    } else if (isWallet) {
+      await base44.entities.WalletTransaction.delete(transaction.id);
+    }
+    onDelete?.();
+    onClose();
+    setSaving(false);
   };
 
   const handleAccountChange = (id) => {
@@ -254,6 +288,21 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
                 )}
               </div>
 
+              {isExpense && models.length > 0 && (
+                <div>
+                  <Label className="text-xs text-gray-500">Modelka</Label>
+                  <Select value={form.model_id || ""} onValueChange={v => {
+                    const m = models.find(x => x.id === v);
+                    setForm(p => ({ ...p, model_id: v, model_name: m?.name || "" }));
+                  }}>
+                    <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Vyberte modelku" /></SelectTrigger>
+                    <SelectContent>
+                      {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
               <div>
                 <Label className="text-xs text-gray-500">Poznámka</Label>
                 <Textarea value={form.note || ""} onChange={e => setForm(p => ({ ...p, note: e.target.value }))} rows={3} className="mt-1 text-sm resize-none" />
@@ -264,11 +313,25 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
 
         {/* Footer */}
         <div className="flex justify-between gap-2 px-5 py-3 border-t border-gray-100">
-          <Button variant="outline" size="sm" onClick={onClose}>Zavřít</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={onClose}>Zavřít</Button>
+            {isEditable && !editing && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleDelete}
+                disabled={saving}
+                className={confirmDelete ? "border-red-400 text-red-600 hover:bg-red-50" : "text-gray-500 hover:text-red-500 hover:border-red-300"}
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1" />
+                {confirmDelete ? "Opravdu smazat?" : "Smazat"}
+              </Button>
+            )}
+          </div>
           {isEditable && (
             editing ? (
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => { setEditing(false); setForm({ ...transaction }); }}>Zrušit</Button>
+                <Button variant="outline" size="sm" onClick={() => { setEditing(false); setForm({ ...transaction }); setConfirmDelete(false); }}>Zrušit</Button>
                 <Button size="sm" onClick={handleSave} disabled={saving}
                   className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white">
                   <Save className="w-3.5 h-3.5 mr-1" />
