@@ -10,16 +10,24 @@ import { useQuery } from "@tanstack/react-query";
 import { Upload, FileText, X } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 
+const AD_SPEND_CATEGORY = "Facebook Ads";
+
 const PRESET_CATEGORIES = ["Výplata Advokát", "Facebook Ads", "Software", "Poplatek za převod", "Bankovní poplatek"];
 
 export default function WalletTransactionModal({ open, onClose, onSave, accounts }) {
   const [form, setForm] = useState({
     title: "", amount: "", type: "income", category: "", account_id: "", account_name: "",
-    transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: ""
+    transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "",
+    model_id: "", model_name: ""
   });
   const [saving, setSaving] = useState(false);
   const [categoryMode, setCategoryMode] = useState("select"); // "select" | "new"
   const [uploading, setUploading] = useState(false);
+
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.filter({ status: "active" }),
+  });
 
   // Load existing unique categories from WalletTransactions
   const { data: existingTxs = [] } = useQuery({
@@ -35,7 +43,7 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
 
   useEffect(() => {
     if (open) {
-      setForm({ title: "", amount: "", type: "income", category: "", account_id: "", account_name: "", transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "" });
+      setForm({ title: "", amount: "", type: "income", category: "", account_id: "", account_name: "", transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "", model_id: "", model_name: "" });
       setCategoryMode("select");
     }
   }, [open]);
@@ -137,6 +145,22 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
               />
             )}
           </div>
+
+          {/* Model selection — only for Facebook Ads */}
+          {form.category === AD_SPEND_CATEGORY && (
+            <div>
+              <Label className="text-xs text-gray-500">Modelka (pro Ad Spend)</Label>
+              <Select value={form.model_id} onValueChange={v => {
+                const m = models.find(x => x.id === v);
+                setForm(p => ({ ...p, model_id: v, model_name: m?.name || "" }));
+              }}>
+                <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Vyberte modelku" /></SelectTrigger>
+                <SelectContent>
+                  {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Invoice upload */}
           <div>

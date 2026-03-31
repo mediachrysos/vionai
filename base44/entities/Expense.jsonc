@@ -1,0 +1,52 @@
+{
+  "name": "Expense",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Expense title / description"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Expense amount"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "marketing",
+        "software",
+        "salaries",
+        "infrastructure",
+        "taxes",
+        "other"
+      ],
+      "default": "other",
+      "description": "Expense category"
+    },
+    "expense_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the expense"
+    },
+    "linked_payment_id": {
+      "type": "string",
+      "description": "Linked payment ID (optional)"
+    },
+    "note": {
+      "type": "string",
+      "description": "Internal note"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "ID of the model this expense is linked to"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Name of the model for display"
+    }
+  },
+  "required": [
+    "title",
+    "amount"
+  ]
+}

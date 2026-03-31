@@ -207,7 +207,10 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
         // chatter-specific ad spend: marketing expenses tagged with chatter somehow — 
         // for now we share global ad spend proportionally, but allow editing per chatter via their own expense record
         // We'll use a marketing expense with note = chatter email
-        const cAdExpenses = dayExpenses.filter(e => e.category === "marketing" && e.note === c.email); // note stores model_id
+        // Match by model_id (new) or fallback to note (legacy)
+        const cAdExpenses = dayExpenses.filter(e =>
+          e.category === "marketing" && (e.model_id === c.email || (!e.model_id && e.note === c.email))
+        );
         const adSpend = cAdExpenses.reduce((s, e) => s + (e.amount || 0), 0);
         const profit = revenue - adSpend;
         const firstAdExp = cAdExpenses[0];
@@ -278,7 +281,8 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
         title: "Ad Spend",
         amount: newVal,
         category: "marketing",
-        note: cr.email,
+        model_id: cr.email,
+        model_name: cr.name,
         expense_date: cr.dateStr,
       });
     }
