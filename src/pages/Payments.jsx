@@ -44,6 +44,7 @@ export default function Payments({ currentUser }) {
   const { data: customers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list("-created_date", 500) });
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list() });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
+  const { data: bankAccounts = [] } = useQuery({ queryKey: ["bankAccounts"], queryFn: () => base44.entities.BankAccount.filter({ is_active: true }) });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Payment.delete(id),
@@ -188,7 +189,7 @@ export default function Payments({ currentUser }) {
                       {p.payment_date ? format(new Date(p.payment_date), "MMM d, yyyy") : p.created_date ? format(new Date(p.created_date), "MMM d") : "—"}
                     </td>
                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">
-                      {p.account_name || <span className="text-gray-200">—</span>}
+                      {p.account_name || bankAccounts.find(a => a.id === p.bank_account_id)?.name || <span className="text-gray-200">—</span>}
                     </td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[p.status] || statusColors.completed}>
