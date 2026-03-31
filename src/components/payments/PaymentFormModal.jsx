@@ -167,37 +167,19 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             
           </div>
 
+          <div>
+            <Label>Modelka</Label>
+            <Select value={form.model_id} onValueChange={handleModelChange}>
+              <SelectTrigger><SelectValue placeholder="Vybrat modelku" /></SelectTrigger>
+              <SelectContent>
+                {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Modelka</Label>
-              <Select value={form.model_id} onValueChange={handleModelChange}>
-                <SelectTrigger><SelectValue placeholder="Vybrat modelku" /></SelectTrigger>
-                <SelectContent>
-                  {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Chatter</Label>
-              <Select value={form.chatter_email} onValueChange={(v) => {
-                const u = users.find((x) => x.email === v);
-                setForm((prev) => ({ ...prev, chatter_email: v, chatter_name: u?.full_name || v }));
-              }}>
-                <SelectTrigger><SelectValue placeholder="Vybrat chattera" /></SelectTrigger>
-                <SelectContent>
-                  {users.map((u) => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div>
-            <Label>Datum platby</Label>
-            <DatePicker value={form.payment_date} onChange={(v) => setForm((prev) => ({ ...prev, payment_date: v }))} />
-          </div>
-
-          <div>
-            <Label>Cílový účet</Label>
+              <Label>Cílový účet</Label>
             {bankAccounts.length > 0 ?
             <Select value={form.bank_account_id} onValueChange={(v) => {
               const acc = bankAccounts.find((a) => a.id === v);
@@ -215,6 +197,11 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
             <Input value={form.destination_account} onChange={(e) => setForm((prev) => ({ ...prev, destination_account: e.target.value }))} placeholder="Bankovní účet / cíl platby" />
             }
+            </div>
+            <div>
+              <Label>Datum platby</Label>
+              <DatePicker value={form.payment_date} onChange={(v) => setForm((prev) => ({ ...prev, payment_date: v }))} />
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
