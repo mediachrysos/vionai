@@ -11,7 +11,7 @@ import { Search, UserPlus, CreditCard, Zap } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 import { useQuery } from "@tanstack/react-query";
 
-const quickAmounts = [100, 200, 300, 500, 700, 1000];
+const quickAmounts = [100, 200, 300, 500, 700];
 
 export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers, models, users, currentUser }) {
   const { data: bankAccounts = [] } = useQuery({
