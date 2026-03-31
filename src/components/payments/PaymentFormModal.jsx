@@ -94,10 +94,10 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           </div>
         </div>
 
-        <div className="space-y-4 p-6">
+        <div className="space-y-3 p-4">
           {/* Customer Search */}
           <div className="relative">
-            <Label>Zákazník *</Label>
+            <Label className="text-xs">Zákazník *</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
@@ -146,20 +146,20 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
           {/* Quick Amount */}
           <div>
-            <Label>Částka *</Label>
-            <div className="flex flex-wrap gap-2 mb-2">
+            <Label className="text-xs">Částka *</Label>
+            <div className="flex gap-1.5 mb-2">
               {quickAmounts.map(a => (
                 <button
                   key={a}
                   onClick={() => setForm(prev => ({ ...prev, amount: a.toString() }))}
                   className={cn(
-                    "px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                    "flex-1 px-1 py-1.5 rounded-lg border text-xs font-medium transition-all",
                     parseFloat(form.amount) === a
                       ? "bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white border-[#C9A227]"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-[#C9A227]"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-[#C9A227]"
                   )}
                 >
-                  {a.toLocaleString()} Kč
+                  {a.toLocaleString()}
                 </button>
               ))}
             </div>
@@ -168,12 +168,13 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               value={form.amount}
               onChange={e => setForm(prev => ({ ...prev, amount: e.target.value }))}
               placeholder="Vlastní částka"
+              className="h-8 text-sm"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Modelka</Label>
+              <Label className="text-xs">Modelka</Label>
               <Select value={form.model_id} onValueChange={handleModelChange}>
                 <SelectTrigger><SelectValue placeholder="Vybrat modelku" /></SelectTrigger>
                 <SelectContent>
@@ -182,7 +183,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               </Select>
             </div>
             <div>
-              <Label>Chatter</Label>
+              <Label className="text-xs">Chatter</Label>
               <Select value={form.chatter_email} onValueChange={v => {
                 const u = users.find(x => x.email === v);
                 setForm(prev => ({ ...prev, chatter_email: v, chatter_name: u?.full_name || v }));
@@ -197,17 +198,17 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Typ služby</Label>
+              <Label className="text-xs">Typ služby</Label>
               <Input value={form.service_type} onChange={e => setForm(prev => ({ ...prev, service_type: e.target.value }))} placeholder="např. Chat session" />
             </div>
             <div>
-              <Label>Datum platby</Label>
+              <Label className="text-xs">Datum platby</Label>
               <DatePicker value={form.payment_date} onChange={v => setForm(prev => ({ ...prev, payment_date: v }))} />
             </div>
           </div>
 
           <div>
-            <Label>Cílový účet</Label>
+            <Label className="text-xs">Cílový účet</Label>
             {bankAccounts.length > 0 ? (
               <Select value={form.bank_account_id} onValueChange={v => {
                 const acc = bankAccounts.find(a => a.id === v);
@@ -228,11 +229,11 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           </div>
 
           <div>
-            <Label>Poznámka</Label>
-            <Textarea value={form.note} onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))} rows={2} />
+            <Label className="text-xs">Poznámka</Label>
+            <Textarea value={form.note} onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))} rows={1} />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100 mt-1">
             <Button variant="outline" onClick={onClose} className="rounded-xl">Zrušit</Button>
             <Button
               onClick={handleSubmit}
