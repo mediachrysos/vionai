@@ -70,11 +70,19 @@ export default function Finance({ currentUser }) {
   const monthExpenses = expenses.filter(
     (e) => (e.expense_date || e.created_date?.split("T")[0]) >= monthStart
   );
-  const monthExpTotal = monthExpenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const monthWalletExpenses = walletTxs.filter(
+    (t) => t.type === "expense" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart
+  );
+  const monthExpTotal =
+    monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
+    monthWalletExpenses.reduce((s, t) => s + (t.amount || 0), 0);
+  const monthExpCount = monthExpenses.length + monthWalletExpenses.length;
   const monthNetProfit = monthRev - monthExpTotal;
 
   const totalRev = filteredPayments.reduce((s, p) => s + (p.amount || 0), 0);
-  const totalExp = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const totalExp =
+    expenses.reduce((s, e) => s + (e.amount || 0), 0) +
+    walletTxs.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
   const totalNetProfit = totalRev - totalExp;
 
   // Lawyer sees only their payout card
@@ -127,7 +135,7 @@ export default function Finance({ currentUser }) {
           title="Výdaje (měsíc)"
           value={`${monthExpTotal.toLocaleString()} Kč`}
           icon={TrendingDown}
-          subtitle={`${monthExpenses.length} záznamů`}
+          subtitle={`${monthExpCount} záznamů`}
           colorIndex={3}
         />
         <StatCard

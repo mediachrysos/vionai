@@ -23,11 +23,6 @@ function playAlertSound() {
 }
 
 export default function Layout({ children, currentPageName }) {
-  // CustomerOnboarding is a public page — skip auth entirely
-  if (currentPageName === "CustomerOnboarding") {
-    return <>{children}</>;
-  }
-
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentAlert, setPaymentAlert] = useState(null);
@@ -108,6 +103,11 @@ export default function Layout({ children, currentPageName }) {
     });
     return () => { unsubPayment(); unsubCustomer(); };
   }, []);
+
+  // CustomerOnboarding is a public page — skip auth entirely
+  if (currentPageName === "CustomerOnboarding") {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (
