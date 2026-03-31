@@ -146,22 +146,22 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
     queryKey: ["payments"],
     queryFn: () => base44.entities.Payment.list("-payment_date", 2000),
   });
-  const { data: expenses = [] } = useQuery({
-    queryKey: ["expenses"],
-    queryFn: () => base44.entities.Expense.list("-expense_date", 2000),
+  const { data: adSpends = [] } = useQuery({
+    queryKey: ["adSpends"],
+    queryFn: () => base44.entities.AdSpend.list("-date", 2000),
   });
 
   const updatePaymentMutation = useMutation({
     mutationFn: ({ id, amount }) => base44.entities.Payment.update(id, { amount }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["payments"] }),
   });
-  const updateExpenseMutation = useMutation({
-    mutationFn: ({ id, amount }) => base44.entities.Expense.update(id, { amount }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["expenses"] }),
+  const updateAdSpendMutation = useMutation({
+    mutationFn: ({ id, amount }) => base44.entities.AdSpend.update(id, { amount }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adSpends"] }),
   });
-  const createExpenseMutation = useMutation({
-    mutationFn: (data) => base44.entities.Expense.create(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["expenses"] }),
+  const createAdSpendMutation = useMutation({
+    mutationFn: (data) => base44.entities.AdSpend.create(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adSpends"] }),
   });
 
   const monthPayments = useMemo(() =>
@@ -174,11 +174,9 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
       return true;
     }), [payments, monthStart, monthEnd, showAll, currentUser, myModelIds]);
 
-  const monthExpenses = useMemo(() =>
-    expenses.filter(e => {
-      const d = e.expense_date || e.created_date?.split("T")[0];
-      return d >= monthStart && d <= monthEnd;
-    }), [expenses, monthStart, monthEnd]);
+  const monthAdSpends = useMemo(() =>
+    adSpends.filter(a => a.date >= monthStart && a.date <= monthEnd),
+    [adSpends, monthStart, monthEnd]);
 
   const chatters = useMemo(() => {
     const map = new Map();
@@ -193,33 +191,29 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
       const day = i + 1;
       const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       const dayPayments = monthPayments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) === dateStr);
-      const dayExpenses = monthExpenses.filter(e => (e.expense_date || e.created_date?.split("T")[0]) === dateStr);
+      const dayAdSpends = monthAdSpends.filter(a => a.date === dateStr);
 
       const totalRevenue = dayPayments.reduce((s, p) => s + (p.amount || 0), 0);
-      const globalAdSpend = dayExpenses.filter(e => e.category === "marketing").reduce((s, e) => s + (e.amount || 0), 0);
+      // Global ad spend = AdSpend records with no model_id
+      const globalAdSpendRecords = dayAdSpends.filter(a => !a.model_id);
+      const globalAdSpend = globalAdSpendRecords.reduce((s, a) => s + (a.amount || 0), 0);
       const globalProfit = totalRevenue - globalAdSpend;
-      const firstGlobalAdExpense = dayExpenses.find(e => e.category === "marketing");
+      const firstGlobalAdSpend = globalAdSpendRecords[0];
 
       // Per model: revenue, ad spend, profit
       const chatterRevenues = chatters.map(c => {
         const cPayments = dayPayments.filter(p => p.model_id === c.email);
         const revenue = cPayments.reduce((s, p) => s + (p.amount || 0), 0);
-        // chatter-specific ad spend: marketing expenses tagged with chatter somehow — 
-        // for now we share global ad spend proportionally, but allow editing per chatter via their own expense record
-        // We'll use a marketing expense with note = chatter email
-        // Match by model_id (new) or fallback to note (legacy)
-        const cAdExpenses = dayExpenses.filter(e =>
-          e.category === "marketing" && (e.model_id === c.email || (!e.model_id && e.note === c.email))
-        );
-        const adSpend = cAdExpenses.reduce((s, e) => s + (e.amount || 0), 0);
+        const cAdSpendRecords = dayAdSpends.filter(a => a.model_id === c.email);
+        const adSpend = cAdSpendRecords.reduce((s, a) => s + (a.amount || 0), 0);
         const profit = revenue - adSpend;
-        const firstAdExp = cAdExpenses[0];
-        return { email: c.email, revenue, adSpend, profit, cPayments, firstAdExp, dateStr };
+        const firstAdSpend = cAdSpendRecords[0];
+        return { email: c.email, name: c.name, revenue, adSpend, profit, cPayments, firstAdSpend, dateStr };
       });
 
       return {
         day, dateStr, totalRevenue, globalAdSpend, globalProfit,
-        firstGlobalAdExpense, chatterRevenues, dayPayments, dayExpenses,
+        firstGlobalAdSpend, chatterRevenues, dayPayments,
       };
     });
   }, [daysInMonth, viewYear, viewMonth, monthPayments, monthExpenses, chatters]);
@@ -261,29 +255,22 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
   const today = new Date().toISOString().split("T")[0];
 
   const handleGlobalAdSpend = (row, newVal) => {
-    if (row.firstGlobalAdExpense) {
-      updateExpenseMutation.mutate({ id: row.firstGlobalAdExpense.id, amount: newVal });
+    if (row.firstGlobalAdSpend) {
+      updateAdSpendMutation.mutate({ id: row.firstGlobalAdSpend.id, amount: newVal });
     } else {
-      createExpenseMutation.mutate({
-        title: "Ad Spend",
-        amount: newVal,
-        category: "marketing",
-        expense_date: row.dateStr,
-      });
+      createAdSpendMutation.mutate({ date: row.dateStr, amount: newVal });
     }
   };
 
   const handleChatterAdSpend = (cr, newVal) => {
-    if (cr.firstAdExp) {
-      updateExpenseMutation.mutate({ id: cr.firstAdExp.id, amount: newVal });
+    if (cr.firstAdSpend) {
+      updateAdSpendMutation.mutate({ id: cr.firstAdSpend.id, amount: newVal });
     } else {
-      createExpenseMutation.mutate({
-        title: "Ad Spend",
+      createAdSpendMutation.mutate({
+        date: cr.dateStr,
         amount: newVal,
-        category: "marketing",
         model_id: cr.email,
         model_name: cr.name,
-        expense_date: cr.dateStr,
       });
     }
   };

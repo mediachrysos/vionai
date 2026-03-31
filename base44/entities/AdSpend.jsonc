@@ -1,0 +1,27 @@
+{
+  "name": "AdSpend",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum ad spendu (YYYY-MM-DD)"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "ID modelky (null = glob\u00e1ln\u00ed)"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Jm\u00e9no modelky pro zobrazen\u00ed"
+    },
+    "amount": {
+      "type": "number",
+      "description": "\u010c\u00e1stka ad spendu"
+    }
+  },
+  "required": [
+    "date",
+    "amount"
+  ]
+}
