@@ -216,7 +216,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
         firstGlobalAdSpend, chatterRevenues, dayPayments,
       };
     });
-  }, [daysInMonth, viewYear, viewMonth, monthPayments, monthExpenses, chatters]);
+  }, [daysInMonth, viewYear, viewMonth, monthPayments, monthAdSpends, chatters]);
 
   const totals = useMemo(() => ({
     totalRevenue: rows.reduce((s, r) => s + r.totalRevenue, 0),
