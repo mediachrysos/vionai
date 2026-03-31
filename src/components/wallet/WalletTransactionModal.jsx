@@ -101,7 +101,7 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
           <div>
             <Label className="text-xs text-gray-500">Datum</Label>
             <div className="mt-1">
-              <DatePicker value={form.transaction_date} onChange={v => setForm(p => ({ ...p, transaction_date: v }))} variant="ghost" />
+              <DatePicker value={form.transaction_date} onChange={v => setForm(p => ({ ...p, transaction_date: v }))} />
             </div>
           </div>
 
