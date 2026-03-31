@@ -169,7 +169,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
       const d = p.payment_date || p.created_date?.split("T")[0];
       if (d < monthStart || d > monthEnd) return false;
       if (!showAll && currentUser?.email) {
-        return p.chatter_email === currentUser.email || myModelIds.includes(p.model_id);
+        return myModelIds.includes(p.model_id);
       }
       return true;
     }), [payments, monthStart, monthEnd, showAll, currentUser, myModelIds]);
@@ -183,9 +183,9 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
   const chatters = useMemo(() => {
     const map = new Map();
     monthPayments.forEach(p => {
-      if (p.chatter_email) map.set(p.chatter_email, p.chatter_name || p.chatter_email);
+      if (p.model_id) map.set(p.model_id, p.model_name || p.model_id);
     });
-    return Array.from(map.entries()).map(([email, name]) => ({ email, name }));
+    return Array.from(map.entries()).map(([id, name]) => ({ email: id, name }));
   }, [monthPayments]);
 
   const rows = useMemo(() => {
@@ -200,14 +200,14 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
       const globalProfit = totalRevenue - globalAdSpend;
       const firstGlobalAdExpense = dayExpenses.find(e => e.category === "marketing");
 
-      // Per chatter: revenue, ad spend (their own marketing expense), profit
+      // Per model: revenue, ad spend, profit
       const chatterRevenues = chatters.map(c => {
-        const cPayments = dayPayments.filter(p => p.chatter_email === c.email);
+        const cPayments = dayPayments.filter(p => p.model_id === c.email);
         const revenue = cPayments.reduce((s, p) => s + (p.amount || 0), 0);
         // chatter-specific ad spend: marketing expenses tagged with chatter somehow — 
         // for now we share global ad spend proportionally, but allow editing per chatter via their own expense record
         // We'll use a marketing expense with note = chatter email
-        const cAdExpenses = dayExpenses.filter(e => e.category === "marketing" && e.note === c.email);
+        const cAdExpenses = dayExpenses.filter(e => e.category === "marketing" && e.note === c.email); // note stores model_id
         const adSpend = cAdExpenses.reduce((s, e) => s + (e.amount || 0), 0);
         const profit = revenue - adSpend;
         const firstAdExp = cAdExpenses[0];
