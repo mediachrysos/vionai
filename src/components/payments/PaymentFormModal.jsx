@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const quickAmounts = [100, 200, 300, 500, 700];
 
-export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers, models, users, currentUser }) {
+export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers, models, users, currentUser, existingPayment }) {
   const { data: bankAccounts = [] } = useQuery({
     queryKey: ["bankAccounts"],
     queryFn: () => base44.entities.BankAccount.filter({ is_active: true })
@@ -31,16 +31,35 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
   useEffect(() => {
     if (open) {
-      setForm((prev) => ({
-        ...prev, customer_id: "", customer_name: "", amount: "",
-        service_type: "", model_id: "", model_name: "",
-        chatter_email: currentUser?.email || "", chatter_name: currentUser?.full_name || "",
-        destination_account: "", bank_account_id: "", payment_date: new Date().toISOString().split("T")[0],
-        note: "", status: "completed"
-      }));
-      setCustomerSearch("");
+      if (existingPayment) {
+        setForm({
+          customer_id: existingPayment.customer_id || "",
+          customer_name: existingPayment.customer_name || "",
+          amount: existingPayment.amount?.toString() || "",
+          service_type: existingPayment.service_type || "",
+          model_id: existingPayment.model_id || "",
+          model_name: existingPayment.model_name || "",
+          chatter_email: existingPayment.chatter_email || "",
+          chatter_name: existingPayment.chatter_name || "",
+          destination_account: existingPayment.destination_account || "",
+          bank_account_id: existingPayment.bank_account_id || "",
+          payment_date: existingPayment.payment_date || new Date().toISOString().split("T")[0],
+          note: existingPayment.note || "",
+          status: existingPayment.status || "completed",
+        });
+        setCustomerSearch(existingPayment.customer_name || "");
+      } else {
+        setForm((prev) => ({
+          ...prev, customer_id: "", customer_name: "", amount: "",
+          service_type: "", model_id: "", model_name: "",
+          chatter_email: currentUser?.email || "", chatter_name: currentUser?.full_name || "",
+          destination_account: "", bank_account_id: "", payment_date: new Date().toISOString().split("T")[0],
+          note: "", status: "completed"
+        }));
+        setCustomerSearch("");
+      }
     }
-  }, [open, currentUser]);
+  }, [open, currentUser, existingPayment]);
 
   const filteredCustomers = customers.filter((c) =>
   customerSearch && (
@@ -84,8 +103,8 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               <CreditCard className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Přidat platbu</h2>
-              <p className="text-amber-100 text-xs">Zaznamenejte novou příchozí platbu</p>
+              <h2 className="text-lg font-bold text-white">{existingPayment ? "Upravit platbu" : "Přidat platbu"}</h2>
+              <p className="text-amber-100 text-xs">{existingPayment ? "Upravte údaje platby" : "Zaznamenejte novou příchozí platbu"}</p>
             </div>
           </div>
         </div>
@@ -208,7 +227,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               disabled={saving || !form.customer_id || !form.amount}
               className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white hover:from-[#A8841C] hover:to-[#8a6c16]"
             >
-              {saving ? "Ukládám..." : "Přidat platbu"}
+              {saving ? "Ukládám..." : existingPayment ? "Uložit změny" : "Přidat platbu"}
             </Button>
           </div>
         </div>

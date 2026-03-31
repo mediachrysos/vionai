@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, CreditCard, Filter } from "lucide-react";
+import { Plus, Search, CreditCard, Filter, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import PageHeader from "../components/ui-custom/PageHeader";
@@ -25,6 +25,7 @@ const statusColors = {
 export default function Payments({ currentUser }) {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [editingPayment, setEditingPayment] = useState(null);
   const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
   const [modelFilter, setModelFilter] = useState("all");
@@ -61,7 +62,6 @@ export default function Payments({ currentUser }) {
   const saveMutation = useMutation({
     mutationFn: async (data) => {
       const payment = await base44.entities.Payment.create(data);
-      // Update customer totals
       if (data.customer_id) {
         const cust = customers.find(c => c.id === data.customer_id);
         if (cust) {
@@ -77,6 +77,14 @@ export default function Payments({ currentUser }) {
       qc.invalidateQueries({ queryKey: ["payments"] });
       qc.invalidateQueries({ queryKey: ["customers"] });
       setShowForm(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (data) => base44.entities.Payment.update(editingPayment.id, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["payments"] });
+      setEditingPayment(null);
     },
   });
 
@@ -150,10 +158,11 @@ export default function Payments({ currentUser }) {
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Modelka</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Účet</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
-                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
-                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Faktura</th>
-                   <th className="px-5 py-3"></th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Faktura</th>
+                  <th className="px-5 py-3"></th>
                    </tr>
               </thead>
               <tbody>
@@ -178,6 +187,9 @@ export default function Payments({ currentUser }) {
                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">
                       {p.payment_date ? format(new Date(p.payment_date), "MMM d, yyyy") : p.created_date ? format(new Date(p.created_date), "MMM d") : "—"}
                     </td>
+                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">
+                      {p.account_name || p.destination_account || <span className="text-gray-200">—</span>}
+                    </td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[p.status] || statusColors.completed}>
                         {p.status || "completed"}
@@ -190,14 +202,24 @@ export default function Payments({ currentUser }) {
                       <PaymentInvoiceActions payment={p} onInvoiceCreated={() => qc.invalidateQueries({ queryKey: ["invoices"] })} />
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDelete(p)}
-                        className="h-8 w-8 p-0 text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      >
-                        <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" />
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setEditingPayment(p)}
+                          className="h-8 w-8 p-0 text-gray-300 hover:text-amber-500 hover:bg-amber-50 transition-colors"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(p)}
+                          className="h-8 w-8 p-0 text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" />
+                        </Button>
+                      </div>
                     </td>
                     </motion.tr>
                 ))}
@@ -217,6 +239,20 @@ export default function Payments({ currentUser }) {
         users={users}
         currentUser={currentUser}
       />
+
+      {/* Edit modal */}
+      {editingPayment && (
+        <PaymentFormModal
+          open={!!editingPayment}
+          onClose={() => setEditingPayment(null)}
+          onSave={updateMutation.mutateAsync}
+          customers={customers}
+          models={models}
+          users={users}
+          currentUser={currentUser}
+          existingPayment={editingPayment}
+        />
+      )}
 
       <CustomerFormModal
         open={showCustomerForm}
