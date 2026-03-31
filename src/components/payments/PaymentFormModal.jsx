@@ -11,7 +11,7 @@ import { Search, UserPlus, CreditCard, Zap } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 import { useQuery } from "@tanstack/react-query";
 
-const quickAmounts = [300, 500, 1000, 1500, 2000];
+const quickAmounts = [100, 200, 300, 500, 700, 1000];
 
 export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers, models, users, currentUser }) {
   const { data: bankAccounts = [] } = useQuery({
@@ -159,22 +159,19 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 </button>
               )}
             </div>
-            <Input
-              type="number"
-              value={form.amount}
-              onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
-              placeholder="Vlastní částka" />
-            
-          </div>
-
-          <div>
-            <Label>Modelka</Label>
-            <Select value={form.model_id} onValueChange={handleModelChange}>
-              <SelectTrigger><SelectValue placeholder="Vybrat modelku" /></SelectTrigger>
-              <SelectContent>
-                {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                type="number"
+                value={form.amount}
+                onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
+                placeholder="Vlastní částka" />
+              <Select value={form.model_id} onValueChange={handleModelChange}>
+                <SelectTrigger><SelectValue placeholder="Vybrat modelku" /></SelectTrigger>
+                <SelectContent>
+                  {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
