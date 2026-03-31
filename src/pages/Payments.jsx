@@ -188,7 +188,7 @@ export default function Payments({ currentUser }) {
                       {p.payment_date ? format(new Date(p.payment_date), "MMM d, yyyy") : p.created_date ? format(new Date(p.created_date), "MMM d") : "—"}
                     </td>
                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">
-                      {p.account_name || p.destination_account || <span className="text-gray-200">—</span>}
+                      {p.account_name || <span className="text-gray-200">—</span>}
                     </td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[p.status] || statusColors.completed}>

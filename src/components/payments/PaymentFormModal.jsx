@@ -21,7 +21,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   const [form, setForm] = useState({
     customer_id: "", customer_name: "", amount: "", service_type: "",
     model_id: "", model_name: "", chatter_email: "", chatter_name: "",
-    destination_account: "", payment_date: new Date().toISOString().split("T")[0],
+    bank_account_id: "", account_name: "", payment_date: new Date().toISOString().split("T")[0],
     note: "", status: "completed"
   });
   const [customerSearch, setCustomerSearch] = useState("");
@@ -41,8 +41,8 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           model_name: existingPayment.model_name || "",
           chatter_email: existingPayment.chatter_email || "",
           chatter_name: existingPayment.chatter_name || "",
-          destination_account: existingPayment.destination_account || "",
           bank_account_id: existingPayment.bank_account_id || "",
+          account_name: existingPayment.account_name || "",
           payment_date: existingPayment.payment_date || new Date().toISOString().split("T")[0],
           note: existingPayment.note || "",
           status: existingPayment.status || "completed",
@@ -53,7 +53,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           ...prev, customer_id: "", customer_name: "", amount: "",
           service_type: "", model_id: "", model_name: "",
           chatter_email: currentUser?.email || "", chatter_name: currentUser?.full_name || "",
-          destination_account: "", bank_account_id: "", payment_date: new Date().toISOString().split("T")[0],
+          bank_account_id: "", account_name: "", payment_date: new Date().toISOString().split("T")[0],
           note: "", status: "completed"
         }));
         setCustomerSearch("");
@@ -196,23 +196,17 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Cílový účet</Label>
-            {bankAccounts.length > 0 ?
             <Select value={form.bank_account_id} onValueChange={(v) => {
               const acc = bankAccounts.find((a) => a.id === v);
-              setForm((prev) => ({ ...prev, bank_account_id: v, destination_account: acc?.account_number || "" }));
+              setForm((prev) => ({ ...prev, bank_account_id: v, account_name: acc?.name || "" }));
             }}>
-                <SelectTrigger><SelectValue placeholder="Vybrat účet" /></SelectTrigger>
-                <SelectContent>
-                  {bankAccounts.map((a) =>
-                <SelectItem key={a.id} value={a.id}>
-                      {a.name} — {a.account_number}{a.bank_name ? ` (${a.bank_name})` : ""}
-                    </SelectItem>
+              <SelectTrigger><SelectValue placeholder="Vybrat účet" /></SelectTrigger>
+              <SelectContent>
+                {bankAccounts.map((a) =>
+                  <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
                 )}
-                </SelectContent>
-              </Select> :
-
-            <Input value={form.destination_account} onChange={(e) => setForm((prev) => ({ ...prev, destination_account: e.target.value }))} placeholder="Bankovní účet / cíl platby" />
-            }
+              </SelectContent>
+            </Select>
             </div>
             <div>
               <Label>Datum platby</Label>
