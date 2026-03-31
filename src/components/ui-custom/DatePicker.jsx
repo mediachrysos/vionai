@@ -33,8 +33,8 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handler, true);
-    return () => document.removeEventListener("mousedown", handler, true);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   useEffect(() => {
@@ -45,8 +45,8 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
     if (btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect();
       setDropdownPos({
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + rect.width / 2 + window.scrollX,
+        top: rect.bottom + 4,
+        left: rect.left + rect.width / 2,
       });
     }
     setOpen(v => !v);
@@ -94,8 +94,9 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
   const dropdown = open ? createPortal(
     <div
       ref={ref}
-      style={{ position: "absolute", top: dropdownPos.top, left: dropdownPos.left, transform: "translateX(-50%)" }}
+      style={{ position: "fixed", top: dropdownPos.top, left: dropdownPos.left, transform: "translateX(-50%)" }}
       className="z-[9999] bg-white border border-gray-200 rounded-2xl shadow-xl p-4 w-72"
+      onMouseDown={(e) => e.stopPropagation()}
     >
       {/* Month + Year selectors */}
       <div className="flex items-center gap-2 mb-3">
