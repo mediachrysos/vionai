@@ -162,11 +162,43 @@ export default function SubscriptionsSection({ accounts }) {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      if (editing) return base44.entities.Subscription.update(editing.id, data);
-      return base44.entities.Subscription.create(data);
+      const result = editing
+        ? await base44.entities.Subscription.update(editing.id, data)
+        : await base44.entities.Subscription.create(data);
+
+      // When creating a new subscription, auto-log a WalletTransaction for current month
+      // if billing_day has already passed (or is today)
+      if (!editing && data.is_active && data.account_id) {
+        const today = new Date();
+        const billingDay = parseInt(data.billing_day) || 1;
+        if (today.getDate() >= billingDay) {
+          const txDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(billingDay).padStart(2, "0")}`;
+          await base44.entities.WalletTransaction.create({
+            title: `Předplatné – ${data.name}`,
+            amount: parseFloat(data.amount) || 0,
+            type: "expense",
+            category: "Předplatné",
+            account_id: data.account_id,
+            account_name: data.account_name || "",
+            transaction_date: txDate,
+            note: `Automaticky odečteno při přidání předplatného`,
+          });
+          // Deduct from account balance
+          const freshAccounts = await base44.entities.BankAccount.filter({ is_active: true });
+          const acc = freshAccounts.find((a) => a.id === data.account_id);
+          if (acc) {
+            await base44.entities.BankAccount.update(data.account_id, {
+              balance: (acc.balance || 0) - (parseFloat(data.amount) || 0),
+            });
+          }
+        }
+      }
+      return result;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["subscriptions"] });
+      qc.invalidateQueries({ queryKey: ["walletTransactions"] });
+      qc.invalidateQueries({ queryKey: ["bankAccounts"] });
       setEditing(null);
     }
   });
@@ -179,6 +211,37 @@ export default function SubscriptionsSection({ accounts }) {
   const toggleMutation = useMutation({
     mutationFn: ({ id, is_active }) => base44.entities.Subscription.update(id, { is_active }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["subscriptions"] })
+  });
+
+  const deductNowMutation = useMutation({
+    mutationFn: async (sub) => {
+      const today = new Date();
+      const billingDay = parseInt(sub.billing_day) || 1;
+      const txDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(Math.min(billingDay, 28)).padStart(2, "0")}`;
+      await base44.entities.WalletTransaction.create({
+        title: `Předplatné – ${sub.name}`,
+        amount: parseFloat(sub.amount) || 0,
+        type: "expense",
+        category: "Předplatné",
+        account_id: sub.account_id,
+        account_name: sub.account_name || "",
+        transaction_date: txDate,
+        note: `Manuálně odečteno`,
+      });
+      if (sub.account_id) {
+        const freshAccounts = await base44.entities.BankAccount.filter({ is_active: true });
+        const acc = freshAccounts.find((a) => a.id === sub.account_id);
+        if (acc) {
+          await base44.entities.BankAccount.update(sub.account_id, {
+            balance: (acc.balance || 0) - (parseFloat(sub.amount) || 0),
+          });
+        }
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["walletTransactions"] });
+      qc.invalidateQueries({ queryKey: ["bankAccounts"] });
+    }
   });
 
   const handleEdit = (sub) => {setEditing(sub);setShowModal(true);};
@@ -242,6 +305,16 @@ export default function SubscriptionsSection({ accounts }) {
               <span className="text-sm font-semibold text-red-600 flex-shrink-0">
                 -{(sub.amount || 0).toLocaleString("cs-CZ")} Kč
               </span>
+
+              {/* Manual deduct button */}
+              {sub.is_active && (
+                <button
+                  onClick={() => window.confirm(`Odečíst ${(sub.amount || 0).toLocaleString()} Kč za "${sub.name}" nyní?`) && deductNowMutation.mutate(sub)}
+                  title="Odečíst za tento měsíc"
+                  className="text-xs text-amber-600 hover:text-amber-800 border border-amber-200 rounded-lg px-2 py-0.5 flex-shrink-0 font-medium hover:bg-amber-50 transition-colors">
+                  Odečíst
+                </button>
+              )}
 
               {/* Toggle — green = active, red = inactive */}
               <button
