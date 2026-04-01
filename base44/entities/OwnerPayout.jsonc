@@ -1,0 +1,31 @@
+{
+  "name": "OwnerPayout",
+  "type": "object",
+  "properties": {
+    "owner": {
+      "type": "string",
+      "enum": [
+        "luky",
+        "maty"
+      ],
+      "description": "Kdo si vyplatil"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Vyplacen\u00e1 \u010d\u00e1stka"
+    },
+    "month": {
+      "type": "string",
+      "description": "M\u011bs\u00edc ve form\u00e1tu YYYY-MM"
+    },
+    "note": {
+      "type": "string",
+      "description": "Pozn\u00e1mka"
+    }
+  },
+  "required": [
+    "owner",
+    "amount",
+    "month"
+  ]
+}

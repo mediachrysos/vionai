@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { TrendingDown, TrendingUp, Building2, User, ChevronLeft, ChevronRight } from "lucide-react";
+import OwnerPayoutRow from "./OwnerPayoutRow";
 
 const MONTH_NAMES = [
 "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
@@ -136,8 +137,8 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
-        <Row label="Výplata – Já" sublabel="50 % z čistého zisku" icon={User} color="text-emerald-600" bgColor="bg-emerald-50" value={ownerPayout} />
-        <Row label="Výplata – Maty" sublabel="50 % z čistého zisku" icon={User} color="text-emerald-600" bgColor="bg-emerald-50" value={ownerPayout} />
+        <OwnerPayoutRow owner="luky" label="Luky" monthStr={monthStr} totalDue={ownerPayout} />
+        <OwnerPayoutRow owner="maty" label="Maty" monthStr={monthStr} totalDue={ownerPayout} />
       </div>
     </div>);
 
