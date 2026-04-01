@@ -62,7 +62,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
   const totalExpenses =
   monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-  monthWalletTxs.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+  monthWalletTxs.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;

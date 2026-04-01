@@ -71,7 +71,7 @@ export default function Finance({ currentUser }) {
     (e) => (e.expense_date || e.created_date?.split("T")[0]) >= monthStart
   );
   const monthWalletExpenses = walletTxs.filter(
-    (t) => t.type === "expense" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart
+    (t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart
   );
   const monthExpTotal =
     monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
@@ -82,7 +82,7 @@ export default function Finance({ currentUser }) {
   const totalRev = filteredPayments.reduce((s, p) => s + (p.amount || 0), 0);
   const totalExp =
     expenses.reduce((s, e) => s + (e.amount || 0), 0) +
-    walletTxs.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+    walletTxs.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
   const totalNetProfit = totalRev - totalExp;
 
   // Lawyer sees only their payout card

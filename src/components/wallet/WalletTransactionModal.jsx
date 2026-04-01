@@ -14,12 +14,14 @@ const AD_SPEND_CATEGORY = "Facebook Ads";
 
 const PRESET_CATEGORIES = ["Výplata Advokát", "Facebook Ads", "Software", "Poplatek za převod", "Bankovní poplatek"];
 
-export default function WalletTransactionModal({ open, onClose, onSave, accounts }) {
+export default function WalletTransactionModal({ open, onClose, onSave, onTransfer, accounts }) {
   const [form, setForm] = useState({
     title: "", amount: "", type: "income", category: "", account_id: "", account_name: "",
     transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "",
     model_id: "", model_name: ""
   });
+  const [transferForm, setTransferForm] = useState({ from_account_id: "", to_account_id: "", amount: "", transaction_date: new Date().toISOString().split("T")[0], note: "" });
+  const [mode, setMode] = useState("tx"); // "tx" | "transfer"
   const [saving, setSaving] = useState(false);
   const [categoryMode, setCategoryMode] = useState("select"); // "select" | "new"
   const [uploading, setUploading] = useState(false);
@@ -44,7 +46,9 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
   useEffect(() => {
     if (open) {
       setForm({ title: "", amount: "", type: "income", category: "", account_id: "", account_name: "", transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "", model_id: "", model_name: "" });
+      setTransferForm({ from_account_id: "", to_account_id: "", amount: "", transaction_date: new Date().toISOString().split("T")[0], note: "" });
       setCategoryMode("select");
+      setMode("tx");
     }
   }, [open]);
 
@@ -65,7 +69,11 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
 
   const handleSubmit = async () => {
     setSaving(true);
-    await onSave({ ...form, amount: parseFloat(form.amount) || 0 });
+    if (mode === "transfer") {
+      await onTransfer({ ...transferForm, amount: parseFloat(transferForm.amount) || 0 });
+    } else {
+      await onSave({ ...form, amount: parseFloat(form.amount) || 0 });
+    }
     setSaving(false);
   };
 
@@ -75,7 +83,61 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-3">
           <DialogTitle className="text-white text-base font-semibold">Přidat transakci</DialogTitle>
         </div>
+
+        {/* Mode tabs */}
+        <div className="flex border-b border-gray-100">
+          <button
+            onClick={() => setMode("tx")}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${mode === "tx" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-gray-400 hover:text-gray-600"}`}
+          >
+            Transakce
+          </button>
+          <button
+            onClick={() => setMode("transfer")}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${mode === "transfer" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-gray-400 hover:text-gray-600"}`}
+          >
+            Převod mezi účty
+          </button>
+        </div>
+
         <div className="p-5 space-y-3 overflow-y-auto flex-1">
+        {mode === "transfer" ? (
+          <>
+            <div>
+              <Label className="text-xs text-gray-500">Z účtu *</Label>
+              <Select value={transferForm.from_account_id} onValueChange={v => setTransferForm(p => ({ ...p, from_account_id: v }))}>
+                <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Vyberte zdrojový účet" /></SelectTrigger>
+                <SelectContent>
+                  {accounts.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Na účet *</Label>
+              <Select value={transferForm.to_account_id} onValueChange={v => setTransferForm(p => ({ ...p, to_account_id: v }))}>
+                <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Vyberte cílový účet" /></SelectTrigger>
+                <SelectContent>
+                  {accounts.filter(a => a.id !== transferForm.from_account_id).map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Částka (Kč) *</Label>
+              <Input type="number" value={transferForm.amount} onChange={e => setTransferForm(p => ({ ...p, amount: e.target.value }))} placeholder="0" className="mt-1 h-8 text-sm" />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Datum</Label>
+              <div className="mt-1">
+                <DatePicker value={transferForm.transaction_date} onChange={v => setTransferForm(p => ({ ...p, transaction_date: v }))} />
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Poznámka</Label>
+              <Textarea value={transferForm.note} onChange={e => setTransferForm(p => ({ ...p, note: e.target.value }))} rows={2} className="mt-1 text-sm resize-none" />
+            </div>
+          </>
+        ) : (
+          <>
           <div>
             <Label className="text-xs text-gray-500">Popis *</Label>
             <Input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="např. Výplata nájmu" className="mt-1 h-8 text-sm" />
@@ -188,12 +250,17 @@ export default function WalletTransactionModal({ open, onClose, onSave, accounts
             <Label className="text-xs text-gray-500">Poznámka</Label>
             <Textarea value={form.note} onChange={e => setForm(p => ({ ...p, note: e.target.value }))} rows={2} className="mt-1 text-sm resize-none" />
           </div>
+          </>
+        )}
         </div>
         <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100">
           <Button variant="outline" size="sm" onClick={onClose}>Zrušit</Button>
-          <Button size="sm" onClick={handleSubmit} disabled={!form.title || !form.amount || saving}
+          <Button size="sm" onClick={handleSubmit}
+            disabled={mode === "transfer"
+              ? (!transferForm.from_account_id || !transferForm.to_account_id || !transferForm.amount || saving)
+              : (!form.title || !form.amount || saving)}
             className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
-            {saving ? "Ukládám..." : "Přidat"}
+            {saving ? "Ukládám..." : mode === "transfer" ? "Převést" : "Přidat"}
           </Button>
         </div>
       </DialogContent>

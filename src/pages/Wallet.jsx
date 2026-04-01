@@ -70,7 +70,12 @@ export default function Wallet() {
       source: "Finance"
     }));
 
-    const manualTxs = walletTxs.map((t) => ({ ...t, source: "Wallet" }));
+    const manualTxs = walletTxs.map((t) => ({
+      ...t,
+      source: "Wallet",
+      // transfers and "Výplata" category are neutral — don't count as income/expense
+      type: t.type === "transfer" ? "transfer" : (t.category === "Výplata" ? "neutral" : t.type),
+    }));
 
     return [...paymentTxs, ...expenseTxs, ...manualTxs].sort((a, b) => {
       const da = a.transaction_date || a.created_date?.split("T")[0] || "";
@@ -86,6 +91,7 @@ export default function Wallet() {
   const totalExpenses = useMemo(() =>
   allTransactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0),
   [allTransactions]);
+  // Note: "transfer" and "neutral" (Výplata category) are intentionally excluded from both totals
 
   const filteredTransactions = useMemo(() => {
     if (txFilter === "all") return allTransactions;
@@ -149,6 +155,35 @@ export default function Wallet() {
         }
       }
       return tx;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["walletTransactions"] });
+      qc.invalidateQueries({ queryKey: ["bankAccounts"] });
+      setShowTxModal(false);
+    }
+  });
+
+  // Transfer between accounts — only updates balances, no income/expense record
+  const transferMutation = useMutation({
+    mutationFn: async ({ from_account_id, to_account_id, amount, transaction_date, note }) => {
+      const freshAccounts = await base44.entities.BankAccount.filter({ is_active: true });
+      const fromAcc = freshAccounts.find(a => a.id === from_account_id);
+      const toAcc = freshAccounts.find(a => a.id === to_account_id);
+      if (fromAcc) await base44.entities.BankAccount.update(from_account_id, { balance: (fromAcc.balance || 0) - amount });
+      if (toAcc) await base44.entities.BankAccount.update(to_account_id, { balance: (toAcc.balance || 0) + amount });
+      // Record as a neutral wallet tx for history
+      const fromName = fromAcc?.name || "?";
+      const toName = toAcc?.name || "?";
+      await base44.entities.WalletTransaction.create({
+        title: `Převod: ${fromName} → ${toName}`,
+        amount,
+        type: "transfer",
+        category: "Převod mezi účty",
+        account_id: from_account_id,
+        account_name: fromName,
+        transaction_date,
+        note,
+      });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["walletTransactions"] });
@@ -257,6 +292,7 @@ export default function Wallet() {
         open={showTxModal}
         onClose={() => setShowTxModal(false)}
         onSave={saveTxMutation.mutateAsync}
+        onTransfer={transferMutation.mutateAsync}
         accounts={accounts} />
       
       <WalletTransactionDetailModal
