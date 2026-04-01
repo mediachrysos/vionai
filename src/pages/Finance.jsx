@@ -25,8 +25,7 @@ export default function Finance({ currentUser }) {
   });
   const { data: walletTxs = [] } = useQuery({
     queryKey: ["walletTransactions"],
-    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 200),
-    enabled: isAdmin || isLawyer,
+    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 500),
   });
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
@@ -63,9 +62,13 @@ export default function Finance({ currentUser }) {
     (p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart
   );
 
-  const todayRev = todayPayments.reduce((s, p) => s + (p.amount || 0), 0);
-  const weekRev = weekPayments.reduce((s, p) => s + (p.amount || 0), 0);
-  const monthRev = monthPayments.reduce((s, p) => s + (p.amount || 0), 0);
+  const todayWalletIncome = walletTxs.filter(t => t.type === "income" && (t.transaction_date || t.created_date?.split("T")[0]) === today);
+  const weekWalletIncome = walletTxs.filter(t => t.type === "income" && (t.transaction_date || t.created_date?.split("T")[0]) >= weekAgo);
+  const monthWalletIncome = walletTxs.filter(t => t.type === "income" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart);
+
+  const todayRev = todayPayments.reduce((s, p) => s + (p.amount || 0), 0) + todayWalletIncome.reduce((s, t) => s + (t.amount || 0), 0);
+  const weekRev = weekPayments.reduce((s, p) => s + (p.amount || 0), 0) + weekWalletIncome.reduce((s, t) => s + (t.amount || 0), 0);
+  const monthRev = monthPayments.reduce((s, p) => s + (p.amount || 0), 0) + monthWalletIncome.reduce((s, t) => s + (t.amount || 0), 0);
 
   const monthExpenses = expenses.filter(
     (e) => (e.expense_date || e.created_date?.split("T")[0]) >= monthStart
