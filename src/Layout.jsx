@@ -38,6 +38,22 @@ export default function Layout({ children, currentPageName }) {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
+      // Payout mode — save only as WalletTransaction, do NOT update customer stats or payment list
+      if (data.is_payout) {
+        const acc = bankAccounts.find(a => a.id === data.bank_account_id);
+        const tx = await base44.entities.WalletTransaction.create({
+          title: data.note || "Výplata",
+          amount: data.amount,
+          type: "expense",
+          category: "Výplata",
+          account_id: data.bank_account_id || "",
+          account_name: acc?.name || "",
+          transaction_date: data.payment_date || new Date().toISOString().split("T")[0],
+          note: data.note || "",
+        });
+        return tx;
+      }
+
       const payment = await base44.entities.Payment.create(data);
       if (data.customer_id) {
         const cust = customers.find(c => c.id === data.customer_id);

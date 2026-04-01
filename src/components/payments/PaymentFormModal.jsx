@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Search, UserPlus, CreditCard, Zap } from "lucide-react";
+import { Search, UserPlus, CreditCard, Wallet } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 import { useQuery } from "@tanstack/react-query";
 
@@ -24,6 +24,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     bank_account_id: "", account_name: "", payment_date: new Date().toISOString().split("T")[0],
     note: "", status: "completed"
   });
+  const [mode, setMode] = useState("payment"); // "payment" | "payout"
   const [customerSearch, setCustomerSearch] = useState("");
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -31,6 +32,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
   useEffect(() => {
     if (open) {
+      setMode("payment");
       if (existingPayment) {
         setForm({
           customer_id: existingPayment.customer_id || "",
@@ -89,7 +91,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
   const handleSubmit = async () => {
     setSaving(true);
-    const data = { ...form, amount: parseFloat(form.amount) || 0 };
+    const data = { ...form, amount: parseFloat(form.amount) || 0, is_payout: mode === "payout" };
     await onSave(data);
     setSaving(false);
   };
@@ -109,8 +111,30 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           </div>
         </div>
 
+        {/* Mode tabs */}
+        <div className="flex border-b border-gray-100">
+          <button
+            onClick={() => setMode("payment")}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payment" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-gray-400 hover:text-gray-600"}`}
+          >
+            <CreditCard className="w-4 h-4" /> Příjem
+          </button>
+          <button
+            onClick={() => setMode("payout")}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payout" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-gray-400 hover:text-gray-600"}`}
+          >
+            <Wallet className="w-4 h-4" /> Výplata
+          </button>
+        </div>
+
         <div className="space-y-4 p-6">
-          {/* Customer Search */}
+          {/* Customer Search — only for payment mode */}
+          {mode === "payout" && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-700">
+              Výplata bude zapsána do historie transakcí, ale nebude se počítat jako příjem ani výdaj.
+            </div>
+          )}
+          {mode === "payment" && (
           <div className="relative">
             <Label>Zákazník *</Label>
             <div className="relative">
@@ -122,7 +146,6 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 onFocus={() => customerSearch && setShowCustomerDropdown(true)}
                 placeholder="Hledat zákazníka podle jména nebo emailu..."
                 className="pl-10" />
-              
             </div>
             {showCustomerDropdown && customerSearch &&
             <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
@@ -131,7 +154,6 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 key={c.id}
                 onClick={() => selectCustomer(c)}
                 className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm flex items-center gap-3">
-                
                     <div className="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-xs font-semibold text-[#C9A227]">
                       {c.full_name?.[0]?.toUpperCase()}
                     </div>
@@ -145,7 +167,6 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               <button
                 onClick={() => {onAddNewCustomer && onAddNewCustomer(customerSearch);setShowCustomerDropdown(false);}}
                 className="w-full text-left px-4 py-2.5 hover:bg-amber-50 text-sm flex items-center gap-3 text-[#C9A227] border-t border-gray-100">
-                
                     <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center">
                        <UserPlus className="w-3.5 h-3.5 text-[#C9A227]" />
                     </div>
@@ -158,6 +179,20 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               </div>
             }
           </div>
+          )}
+
+          {/* Payout note */}
+          {mode === "payout" && (
+            <div>
+              <Label>Popis výplaty</Label>
+              <Input
+                value={form.note}
+                onChange={(e) => setForm((prev) => ({ ...prev, note: e.target.value }))}
+                placeholder="např. Výplata Luky – duben 2026"
+                className="mt-1"
+              />
+            </div>
+          )}
 
           {/* Quick Amount */}
           <div>
@@ -218,7 +253,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             <Button variant="outline" onClick={onClose} disabled={saving}>Zrušit</Button>
             <Button
               onClick={handleSubmit}
-              disabled={saving || !form.customer_id || !form.amount}
+              disabled={saving || (mode === "payment" && !form.customer_id) || !form.amount}
               className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white hover:from-[#A8841C] hover:to-[#8a6c16]"
             >
               {saving ? "Ukládám..." : existingPayment ? "Uložit změny" : "Přidat platbu"}
