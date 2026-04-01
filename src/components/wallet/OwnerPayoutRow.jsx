@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Check, X } from "lucide-react";
 
-export default function OwnerPayoutRow({ owner, label, monthStr, totalDue }) {
+export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carryOver = 0 }) {
   const qc = useQueryClient();
   const [adding, setAdding] = useState(false);
   const [inputVal, setInputVal] = useState("");
@@ -29,7 +29,8 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue }) {
   });
 
   const paidOut = payouts.reduce((s, p) => s + (p.amount || 0), 0);
-  const remaining = totalDue - paidOut;
+  const totalWithCarry = totalDue + carryOver;
+  const remaining = totalWithCarry - paidOut;
 
   const handleAdd = () => {
     const val = parseFloat(inputVal);
@@ -46,6 +47,9 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue }) {
         </div>
         <div className="text-right">
           <p className="text-base font-bold text-emerald-600">{totalDue.toLocaleString("cs-CZ")} Kč</p>
+          {carryOver > 0 && (
+            <p className="text-xs text-orange-500 font-medium">+ {carryOver.toLocaleString("cs-CZ")} Kč převod</p>
+          )}
         </div>
       </div>
 

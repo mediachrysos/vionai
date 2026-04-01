@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { TrendingDown, TrendingUp, Building2, User, ChevronLeft, ChevronRight } from "lucide-react";
 import OwnerPayoutRow from "./OwnerPayoutRow";
 
@@ -71,6 +73,79 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
   const afterReserve = afterLawyer - companyReserve;
   const ownerPayout = afterReserve * 0.50;
 
+  // Load all payouts to calculate carryOver from previous months
+  const { data: allLukyPayouts = [] } = useQuery({
+    queryKey: ["ownerPayouts", "luky", "all"],
+    queryFn: () => base44.entities.OwnerPayout.filter({ owner: "luky" }),
+  });
+  const { data: allMatyPayouts = [] } = useQuery({
+    queryKey: ["ownerPayouts", "maty", "all"],
+    queryFn: () => base44.entities.OwnerPayout.filter({ owner: "maty" }),
+  });
+
+  // Calculate how much was paid in previous months vs. what was owed
+  // We only know ownerPayout for the CURRENT month here — for past months we sum up
+  // all payments made and compare to totalDue passed in for those months.
+  // Simplest: carryOver = (sum of all ownerPayout records for THIS month) - paidThisMonth
+  // But we need past months' "totalDue" which we don't have.
+  // Instead: carryOver = totalPaidOut for all months BEFORE this one subtracted from nothing
+  // The real approach: for each previous month, carryOver accumulates (totalDue - paid).
+  // Since we don't recalculate past totalDue here, we store carryOver as:
+  // sum of all payouts marked in months < monthStr, subtracted from... we can't.
+  //
+  // PRACTICAL APPROACH: User adds payouts manually. If they didn't pay last month's full amount,
+  // the remainder = last month totalDue - last month paid. We add that to this month's totalDue.
+  // We'll calculate this by fetching payouts for previous months and summing what remains unpaid
+  // compared to previous ownerPayout amounts stored in a simple way.
+  //
+  // SIMPLEST CORRECT APPROACH: track carryOver separately.
+  // We'll compute: for all months BEFORE current, sum (ownerPayout_that_month - paid_that_month).
+  // We don't have ownerPayout for past months in this component without recalculating everything.
+  //
+  // FINAL DECISION: We'll pass ALL historical data (payments, expenses, walletTxs) and compute
+  // each past month's ownerPayout, then subtract what was actually paid.
+
+  const computeMonthOwnerPayout = (mStr) => {
+    const mp = payments.filter((p) => {
+      const d = p.payment_date || p.created_date?.split("T")[0] || "";
+      return d.startsWith(mStr) && p.status !== "failed" && p.status !== "refunded";
+    });
+    const me = expenses.filter((e) => {
+      const d = e.expense_date || e.created_date?.split("T")[0] || "";
+      return d.startsWith(mStr);
+    });
+    const mw = walletTxs.filter((t) => {
+      const d = t.transaction_date || t.created_date?.split("T")[0] || "";
+      return d.startsWith(mStr);
+    });
+    const inc = mp.reduce((s, p) => s + (p.amount || 0), 0) + mw.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
+    const exp = me.reduce((s, e) => s + (e.amount || 0), 0) + mw.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
+    const gp = inc - exp;
+    const af = Math.max(0, gp) * 0.90;
+    const ar = af * 0.80;
+    return ar * 0.50;
+  };
+
+  // Get all unique months from data that are before current monthStr
+  const allMonths = new Set([
+    ...payments.map((p) => (p.payment_date || p.created_date?.split("T")[0] || "").slice(0, 7)),
+    ...expenses.map((e) => (e.expense_date || e.created_date?.split("T")[0] || "").slice(0, 7)),
+    ...walletTxs.map((t) => (t.transaction_date || t.created_date?.split("T")[0] || "").slice(0, 7)),
+  ]);
+  const pastMonths = [...allMonths].filter((m) => m && m < monthStr && m.length === 7);
+
+  const lukyCarryOver = pastMonths.reduce((sum, m) => {
+    const due = computeMonthOwnerPayout(m);
+    const paid = allLukyPayouts.filter((p) => p.month === m).reduce((s, p) => s + (p.amount || 0), 0);
+    return sum + Math.max(0, due - paid);
+  }, 0);
+
+  const matyCarryOver = pastMonths.reduce((sum, m) => {
+    const due = computeMonthOwnerPayout(m);
+    const paid = allMatyPayouts.filter((p) => p.month === m).reduce((s, p) => s + (p.amount || 0), 0);
+    return sum + Math.max(0, due - paid);
+  }, 0);
+
   return (
     <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
       {/* Header with month switcher */}
@@ -137,8 +212,8 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
-        <OwnerPayoutRow owner="luky" label="Luky" monthStr={monthStr} totalDue={ownerPayout} />
-        <OwnerPayoutRow owner="maty" label="Maty" monthStr={monthStr} totalDue={ownerPayout} />
+        <OwnerPayoutRow owner="luky" label="Luky" monthStr={monthStr} totalDue={ownerPayout} carryOver={lukyCarryOver} />
+        <OwnerPayoutRow owner="maty" label="Maty" monthStr={monthStr} totalDue={ownerPayout} carryOver={matyCarryOver} />
       </div>
     </div>);
 
