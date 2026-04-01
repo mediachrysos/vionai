@@ -39,7 +39,7 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
 
   const totalExpenses =
   monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-  monthWallet.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+  monthWallet.filter((t) => t.type === "expense" && t.category !== "Výplata").reduce((s, t) => s + (t.amount || 0), 0);
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;
@@ -127,7 +127,7 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
 
   const totalExpenses =
   monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-  monthWallet.filter((t) => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+  monthWallet.filter((t) => t.type === "expense" && t.category !== "Výplata").reduce((s, t) => s + (t.amount || 0), 0);
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;
