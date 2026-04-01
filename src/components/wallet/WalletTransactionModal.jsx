@@ -18,7 +18,7 @@ export default function WalletTransactionModal({ open, onClose, onSave, onTransf
   const [form, setForm] = useState({
     title: "", amount: "", type: "income", category: "", account_id: "", account_name: "",
     transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "",
-    model_id: "", model_name: ""
+    model_id: "", model_name: "", _payout: false,
   });
   const [transferForm, setTransferForm] = useState({ from_account_id: "", to_account_id: "", amount: "", transaction_date: new Date().toISOString().split("T")[0], note: "" });
   const [mode, setMode] = useState("tx"); // "tx" | "transfer"
@@ -45,7 +45,7 @@ export default function WalletTransactionModal({ open, onClose, onSave, onTransf
 
   useEffect(() => {
     if (open) {
-      setForm({ title: "", amount: "", type: "income", category: "", account_id: "", account_name: "", transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "", model_id: "", model_name: "" });
+      setForm({ title: "", amount: "", type: "income", category: "", account_id: "", account_name: "", transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "", model_id: "", model_name: "", _payout: false });
       setTransferForm({ from_account_id: "", to_account_id: "", amount: "", transaction_date: new Date().toISOString().split("T")[0], note: "" });
       setCategoryMode("select");
       setMode("tx");
@@ -146,11 +146,19 @@ export default function WalletTransactionModal({ open, onClose, onSave, onTransf
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-gray-500">Typ</Label>
-              <Select value={form.type} onValueChange={v => setForm(p => ({ ...p, type: v }))}>
+              <Select value={form._payout ? "payout" : form.type} onValueChange={v => {
+                setForm(p => ({
+                  ...p,
+                  type: v === "payout" ? "expense" : v,
+                  category: v === "payout" ? "Výplata" : (p.category === "Výplata" ? "" : p.category),
+                  _payout: v === "payout",
+                }));
+              }}>
                 <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="income">Příjem</SelectItem>
                   <SelectItem value="expense">Výdaj</SelectItem>
+                  <SelectItem value="payout">Výplata</SelectItem>
                 </SelectContent>
               </Select>
             </div>
