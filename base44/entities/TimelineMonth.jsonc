@@ -14,13 +14,6 @@
       "type": "integer",
       "description": "Po\u0159ad\u00ed pro \u0159azen\u00ed"
     },
-    "priorities": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Seznam priorit tohoto m\u011bs\u00edce"
-    },
     "targets": {
       "type": "array",
       "items": {
@@ -28,19 +21,19 @@
       },
       "description": "M\u011b\u0159iteln\u00e9 c\u00edle"
     },
+    "doneTargets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Spln\u011bn\u00e9 c\u00edle (seznam text\u016f)"
+    },
     "blockers": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Blokery / probl\u00e9my"
-    },
-    "decisions": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Kl\u00ed\u010dov\u00e1 rozhodnut\u00ed"
+      "description": "Blokery / slabiny"
     },
     "tasks": {
       "type": "array",
