@@ -1,0 +1,80 @@
+{
+  "name": "TimelineMonth",
+  "type": "object",
+  "properties": {
+    "month_key": {
+      "type": "string",
+      "description": "Identifik\u00e1tor m\u011bs\u00edce, nap\u0159. 2026-04"
+    },
+    "label": {
+      "type": "string",
+      "description": "Zobrazovan\u00fd n\u00e1zev, nap\u0159. Duben 2026"
+    },
+    "order": {
+      "type": "integer",
+      "description": "Po\u0159ad\u00ed pro \u0159azen\u00ed"
+    },
+    "priorities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Seznam priorit tohoto m\u011bs\u00edce"
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "M\u011b\u0159iteln\u00e9 c\u00edle"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Blokery / probl\u00e9my"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Kl\u00ed\u010dov\u00e1 rozhodnut\u00ed"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "todo",
+              "in_progress",
+              "done"
+            ]
+          },
+          "deadline": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "\u00dakoly tohoto m\u011bs\u00edce"
+    }
+  },
+  "required": [
+    "month_key",
+    "label",
+    "order"
+  ]
+}
