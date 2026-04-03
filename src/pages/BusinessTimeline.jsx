@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Map, Filter, User } from "lucide-react";
+import { Plus, Map, Filter, User, Pencil, Check, X } from "lucide-react";
 import { motion } from "framer-motion";
 import MonthCard from "@/components/timeline/MonthCard";
 
