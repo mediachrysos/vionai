@@ -6,19 +6,20 @@ import { CreditCard, X, Plus, UserPlus } from "lucide-react";
 import PaymentFormModal from "./components/payments/PaymentFormModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-function playAlertSound() {
+function speakAlert(text) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.4);
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "cs-CZ";
+    utter.rate = 1.15;
+    utter.pitch = 1.1;
+    utter.volume = 1;
+    // Pick Czech voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const czVoice = voices.find(v => v.lang === "cs-CZ") || voices.find(v => v.lang.startsWith("cs"));
+    if (czVoice) utter.voice = czVoice;
+    window.speechSynthesis.speak(utter);
   } catch (_) {}
 }
 
@@ -105,14 +106,17 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const unsubPayment = base44.entities.Payment.subscribe((event) => {
       if (event.type === "create" && event.data) {
-        playAlertSound();
+        const name = event.data.customer_name || "Zákazník";
+        const amount = event.data.amount ? `${event.data.amount.toLocaleString()} korun` : "";
+        speakAlert(`${name} poslal ${amount}. Děkujeme!`);
         setPaymentAlert(event.data);
         setTimeout(() => setPaymentAlert(null), 5000);
       }
     });
     const unsubCustomer = base44.entities.Customer.subscribe((event) => {
       if (event.type === "create" && event.data) {
-        playAlertSound();
+        const name = event.data.full_name || "Nový zákazník";
+        speakAlert(`Nový zákazník! ${name} se právě připojil.`);
         setCustomerAlert(event.data);
         setTimeout(() => setCustomerAlert(null), 5000);
       }
