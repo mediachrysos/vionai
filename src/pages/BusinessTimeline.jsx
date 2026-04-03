@@ -117,10 +117,21 @@ export default function BusinessTimeline() {
     });
   };
 
+  const [mainGoal, setMainGoal] = useState(() => localStorage.getItem("timeline_main_goal") || "100 000 Kč / měsíc");
+  const [mainGoalPct, setMainGoalPct] = useState(() => parseInt(localStorage.getItem("timeline_main_goal_pct") || "0"));
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [goalDraft, setGoalDraft] = useState(mainGoal);
+  const [pctDraft, setPctDraft] = useState(mainGoalPct);
+
+  const saveGoal = () => {
+    setMainGoal(goalDraft);
+    setMainGoalPct(pctDraft);
+    localStorage.setItem("timeline_main_goal", goalDraft);
+    localStorage.setItem("timeline_main_goal_pct", pctDraft.toString());
+    setEditingGoal(false);
+  };
+
   const sorted = [...months].sort((a, b) => a.order - b.order);
-  const totalTasks = months.flatMap(m => m.tasks || []);
-  const doneTasks = totalTasks.filter(t => t.status === "done").length;
-  const overallPct = totalTasks.length > 0 ? Math.round((doneTasks / totalTasks.length) * 100) : 0;
 
   return (
     <div className="p-4 lg:p-8 min-h-screen">
@@ -160,26 +171,55 @@ export default function BusinessTimeline() {
         </div>
       </div>
 
-      {/* Overall progress */}
-      <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.04)] px-5 py-3.5 mb-6 flex items-center gap-5">
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Celkový postup</span>
-            <span className="text-xs font-bold text-[#c29c24]">{overallPct}%</span>
-          </div>
-          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-[#c29c24] to-[#e8c84a]"
-              initial={{ width: 0 }}
-              animate={{ width: `${overallPct}%` }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+      {/* Main Goal */}
+      <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.04)] px-5 py-4 mb-6">
+        {editingGoal ? (
+          <div className="flex items-center gap-3 flex-wrap">
+            <input
+              autoFocus
+              value={goalDraft}
+              onChange={e => setGoalDraft(e.target.value)}
+              placeholder="Název hlavního cíle..."
+              className="flex-1 text-sm border border-amber-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#c29c24] min-w-[200px]"
             />
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400">Postup:</span>
+              <input
+                type="number"
+                min={0} max={100}
+                value={pctDraft}
+                onChange={e => setPctDraft(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
+                className="w-16 text-sm border border-amber-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#c29c24] text-center"
+              />
+              <span className="text-xs text-gray-400">%</span>
+            </div>
+            <button onClick={saveGoal} className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-[#c29c24] to-[#a8841c] text-white text-xs rounded-lg font-medium"><Check className="w-3.5 h-3.5" /> Uložit</button>
+            <button onClick={() => { setEditingGoal(false); setGoalDraft(mainGoal); setPctDraft(mainGoalPct); }} className="text-gray-400 hover:text-gray-600"><X className="w-4 h-4" /></button>
           </div>
-        </div>
-        <div className="text-right flex-shrink-0">
-          <p className="text-lg font-bold text-gray-800">{doneTasks}<span className="text-sm font-normal text-gray-400">/{totalTasks.length}</span></p>
-          <p className="text-xs text-gray-400">úkolů hotovo</p>
-        </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">🎯 Main Goal</span>
+                  <span className="text-sm font-bold text-gray-800">{mainGoal}</span>
+                </div>
+                <span className="text-xs font-bold text-[#c29c24]">{mainGoalPct}%</span>
+              </div>
+              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-[#c29c24] to-[#e8c84a]"
+                  initial={false}
+                  animate={{ width: `${mainGoalPct}%` }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                />
+              </div>
+            </div>
+            <button onClick={() => { setGoalDraft(mainGoal); setPctDraft(mainGoalPct); setEditingGoal(true); }} className="text-gray-300 hover:text-[#c29c24] transition-colors flex-shrink-0">
+              <Pencil className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Add month form */}
