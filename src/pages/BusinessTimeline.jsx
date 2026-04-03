@@ -201,7 +201,7 @@ export default function BusinessTimeline() {
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">🎯 Main Goal</span>
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">🎯 Long Term Goal</span>
                   <span className="text-sm font-bold text-gray-800">{mainGoal}</span>
                 </div>
                 <span className="text-xs font-bold text-[#c29c24]">{mainGoalPct}%</span>
