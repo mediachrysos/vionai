@@ -17,7 +17,6 @@ const customIcons = {
   Wallet: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_16_gtkobz.png",
   AdminUsers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png",
   CustomerScraper: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png",
-  ChattingAssistant: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_12_pi2sjg.png",
   Customers: "https://res.cloudinary.com/drkudvyog/image/upload/v1774300826/Chrysos_icon_19_jgrgx6.png",
   Payments: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png",
 };
@@ -32,7 +31,6 @@ const allPages = [
   { name: "Business Timeline", icon: null, page: "BusinessTimeline" },
   { name: "Admin Portál", icon: null, page: "AdminUsers" },
   { name: "Customer Scraper", icon: null, page: "CustomerScraper" },
-  { name: "Chatting Assistant", icon: null, page: "ChattingAssistant" },
 ];
 
 const defaultChatterPages = ["ChatterPortal", "Customers", "Payments"];

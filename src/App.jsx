@@ -8,7 +8,6 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CustomerOnboarding from './pages/CustomerOnboarding';
 import CustomerScraper from './pages/CustomerScraper';
-import ChattingAssistant from './pages/ChattingAssistant';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -77,7 +76,6 @@ function App() {
             <Route path="/CustomerOnboarding" element={<CustomerOnboarding />} />
             {/* Nové stránky */}
             <Route path="/CustomerScraper" element={<LayoutWrapper currentPageName="CustomerScraper"><CustomerScraper /></LayoutWrapper>} />
-            <Route path="/ChattingAssistant" element={<LayoutWrapper currentPageName="ChattingAssistant"><ChattingAssistant /></LayoutWrapper>} />
             {/* Všechny ostatní stránky vyžadují auth */}
             <Route path="*" element={<AuthenticatedApp />} />
           </Routes>
