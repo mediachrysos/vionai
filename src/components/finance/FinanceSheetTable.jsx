@@ -194,10 +194,11 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
       const dayAdSpends = monthAdSpends.filter(a => a.date === dateStr);
 
       const totalRevenue = dayPayments.reduce((s, p) => s + (p.amount || 0), 0);
-      // Global ad spend = AdSpend records with no model_id
-      const globalAdSpendRecords = dayAdSpends.filter(a => !a.model_id);
-      const globalAdSpend = globalAdSpendRecords.reduce((s, a) => s + (a.amount || 0), 0);
+      // Global ad spend = součet VŠECH AdSpend záznamů toho dne (všechny modelky)
+      const globalAdSpend = dayAdSpends.reduce((s, a) => s + (a.amount || 0), 0);
       const globalProfit = totalRevenue - globalAdSpend;
+      // firstGlobalAdSpend pro editaci "globálního" (bez model_id) záznamu
+      const globalAdSpendRecords = dayAdSpends.filter(a => !a.model_id);
       const firstGlobalAdSpend = globalAdSpendRecords[0];
 
       // Per model: revenue, ad spend, profit
