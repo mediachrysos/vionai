@@ -125,13 +125,6 @@ export default function Customers({ currentUser }) {
   };
 
   const today = new Date();
-  const todayDay = today.getDate();
-
-  // Customers with payday today
-  const payoutToday = useMemo(() =>
-    customers.filter((c) => c.pay_day_of_month === todayDay),
-    [customers, todayDay]
-  );
 
   const customerPaymentCount = {};
   allPayments.forEach((p) => {
@@ -153,12 +146,6 @@ export default function Customers({ currentUser }) {
     const matchModel = modelFilter === "all" || custModels.includes(modelFilter);
     return matchSearch && matchChatter && matchModel;
   }).sort((a, b) => {
-    // Always put payday customers on top
-    const aPayday = a.pay_day_of_month === todayDay;
-    const bPayday = b.pay_day_of_month === todayDay;
-    if (aPayday && !bPayday) return -1;
-    if (!aPayday && bPayday) return 1;
-
     const sa = customerStats[a.id] || {};
     const sb = customerStats[b.id] || {};
     if (sortBy === "most_paid") {
@@ -222,30 +209,6 @@ export default function Customers({ currentUser }) {
         }
       </div>
 
-      {/* Payday today banner */}
-      {payoutToday.length > 0 && (
-        <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-5 py-3">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-base">💰</span>
-            <span className="text-sm font-semibold text-amber-800">Výplaty dnes ({todayDay}. v měsíci)</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {payoutToday.map((c) => (
-              <span
-                key={c.id}
-                onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
-                className="cursor-pointer inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-amber-200 transition-colors"
-              >
-                <span className="w-5 h-5 rounded-full bg-amber-300 flex items-center justify-center text-[11px] font-bold text-amber-900">
-                  {c.full_name?.[0]?.toUpperCase()}
-                </span>
-                {c.full_name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Table */}
       {filtered.length === 0 && !isLoading ?
       <EmptyState icon={UserCircle} title="Žádní zákazníci" description="Přidej prvního zákazníka a začni" actionLabel="Přidat zákazníka" onAction={() => setShowForm(true)} /> :
@@ -273,18 +236,15 @@ export default function Customers({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className={`border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-amber-50/60 hover:bg-amber-50" : ""}`}
+                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
                     onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
                     
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${c.pay_day_of_month === todayDay ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-600"}`}>
+                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
                             {c.full_name?.[0]?.toUpperCase() || "?"}
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-medium text-gray-800">{c.full_name}</span>
-                            {c.pay_day_of_month === todayDay && <span className="text-[10px] font-bold text-amber-600 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 výplata</span>}
-                          </div>
+                          <span className="text-sm font-medium text-gray-800">{c.full_name}</span>
                         </div>
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden md:table-cell">
