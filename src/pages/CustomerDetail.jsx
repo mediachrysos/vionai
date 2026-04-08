@@ -43,6 +43,12 @@ export default function CustomerDetail({ currentUser }) {
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
   const { data: allCustomers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list() });
 
+  const { data: onboardingRequests = [] } = useQuery({
+    queryKey: ["onboarding-requests", id],
+    queryFn: () => base44.entities.CustomerOnboardingRequest.filter({ created_customer_id: id }),
+    enabled: !!id,
+  });
+
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Customer.update(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["customer", id] }); setShowEdit(false); },
@@ -54,6 +60,8 @@ export default function CustomerDetail({ currentUser }) {
 
   const modelMap = {};
   models.forEach(m => { modelMap[m.id] = m.name; });
+  const userMap = {};
+  users.forEach(u => { userMap[u.email] = u.full_name || u.email; });
 
   const assignedModelNames = (customer?.assigned_models || (customer?.assigned_model ? [customer.assigned_model] : [])).map(mid => modelMap[mid]).filter(Boolean);
 
@@ -291,6 +299,43 @@ export default function CustomerDetail({ currentUser }) {
           )}
         </div>
       </div>
+
+      {/* Onboarding history */}
+      {onboardingRequests.length > 0 && (
+        <div className="mt-4 bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+          <h3 className="text-sm font-semibold text-gray-800 mb-3">Onboarding</h3>
+          <div className="space-y-2">
+            {onboardingRequests.map(req => (
+              <div key={req.id} className="flex items-start gap-3 p-3 rounded-xl bg-indigo-50/40 border border-indigo-100">
+                <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0 text-base">
+                  📋
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${req.status === "completed" ? "bg-emerald-100 text-emerald-700" : req.status === "expired" ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-700"}`}>
+                      {req.status === "completed" ? "✅ Dokončeno" : req.status === "expired" ? "⌛ Expirováno" : "⏳ Čeká"}
+                    </span>
+                    {req.assigned_model && modelMap[req.assigned_model] && (
+                      <span className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded px-1.5 py-0.5 font-medium">
+                        {modelMap[req.assigned_model]}
+                      </span>
+                    )}
+                    {req.assigned_chatter && (
+                      <span className="text-xs text-gray-400">poslal: {userMap[req.assigned_chatter] || req.assigned_chatter}</span>
+                    )}
+                  </div>
+                  <div className="mt-1 flex gap-3 text-xs text-gray-400 flex-wrap">
+                    <span>Vytvořeno: {req.created_date ? format(new Date(req.created_date), "d. M. yyyy HH:mm") : "—"}</span>
+                    {req.status === "completed" && req.updated_date && (
+                      <span className="text-emerald-600 font-medium">Vyplněno: {format(new Date(req.updated_date), "d. M. yyyy HH:mm")}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* hidden file inputs per payment — we use one shared input triggered programmatically */}
       {payments.map(p => (
