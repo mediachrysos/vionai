@@ -223,8 +223,8 @@ export default function ModelDetail({ currentUser }) {
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
           <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"> Zákazníci</h3>
           {customers.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Žádní zákazníci</p> :
-          <div className="space-y-2">
-              {customers.map((c) =>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+              {customers.slice(0, 5).map((c) =>
             <Link key={c.id} to={createPageUrl("CustomerDetail") + `?id=${c.id}`} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#faf6e6]/50 hover:border-[#e8d99a]/50 border border-transparent transition-colors">
                   <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-xs font-semibold text-[#C9A227]">{c.full_name?.[0]?.toUpperCase()}</div>
                   <div>
