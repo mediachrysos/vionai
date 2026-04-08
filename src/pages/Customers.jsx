@@ -124,6 +124,56 @@ export default function Customers({ currentUser }) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["customers"] })
   });
 
+  const [merging, setMerging] = useState(false);
+
+  const handleMergeDuplicates = async () => {
+    // Group customers by normalized name
+    const nameGroups = {};
+    customers.forEach((c) => {
+      const key = c.full_name?.trim().toLowerCase();
+      if (!key) return;
+      if (!nameGroups[key]) nameGroups[key] = [];
+      nameGroups[key].push(c);
+    });
+
+    const groups = Object.values(nameGroups).filter((g) => g.length > 1);
+    if (groups.length === 0) return alert("Žádné duplikáty k sloučení.");
+
+    const totalDupes = groups.reduce((s, g) => s + g.length - 1, 0);
+    if (!window.confirm(`Sloučit ${groups.length} skupin duplikátů (celkem ${totalDupes} záznamů bude smazáno)? Všechny platby budou přesunuty na primární záznam.`)) return;
+
+    setMerging(true);
+    for (const group of groups) {
+      // Primary = first (oldest by position), rest are duplicates
+      const [primary, ...dupes] = group;
+      // Merge assigned_models from all duplicates into primary
+      const allModelIds = [...new Set([
+        ...(primary.assigned_models || []),
+        ...dupes.flatMap((d) => d.assigned_models || []),
+      ])];
+      // Update primary with merged models and sum totals
+      const mergedTotal = group.reduce((s, c) => s + (c.total_spent || 0), 0);
+      const mergedCount = group.reduce((s, c) => s + (c.payment_count || 0), 0);
+      await base44.entities.Customer.update(primary.id, {
+        assigned_models: allModelIds,
+        total_spent: mergedTotal,
+        payment_count: mergedCount,
+      });
+      // Reassign all payments from dupes to primary
+      for (const dupe of dupes) {
+        const dupePayments = allPayments.filter((p) => p.customer_id === dupe.id);
+        for (const p of dupePayments) {
+          await base44.entities.Payment.update(p.id, { customer_id: primary.id, customer_name: primary.full_name });
+        }
+        await base44.entities.Customer.delete(dupe.id);
+      }
+    }
+    setMerging(false);
+    qc.invalidateQueries({ queryKey: ["customers"] });
+    qc.invalidateQueries({ queryKey: ["payments"] });
+    alert(`Hotovo! Sloučeno ${groups.length} skupin duplikátů.`);
+  };
+
   const handleDelete = (e, c) => {
     e.stopPropagation();
     if (window.confirm(`Opravdu smazat zákazníka "${c.full_name}"? Tato akce je nevratná.`)) {
@@ -239,6 +289,16 @@ export default function Customers({ currentUser }) {
           <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
           </Button>
+          {duplicateNames.size > 0 && (
+            <Button
+              onClick={handleMergeDuplicates}
+              disabled={merging}
+              variant="outline"
+              className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 h-9"
+            >
+              {merging ? "Slučuji..." : `👥 Sloučit duplikáty (${duplicateNames.size / 2 | 0}+)`}
+            </Button>
+          )}
           <Button onClick={() => setShowOnboarding(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Onboarding odkaz
           </Button>
