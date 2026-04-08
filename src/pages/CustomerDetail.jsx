@@ -44,9 +44,19 @@ export default function CustomerDetail({ currentUser }) {
   const { data: allCustomers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list() });
 
   const { data: onboardingRequests = [] } = useQuery({
-    queryKey: ["onboarding-requests", id],
-    queryFn: () => base44.entities.CustomerOnboardingRequest.filter({ created_customer_id: id }),
-    enabled: !!id,
+    queryKey: ["onboarding-requests", id, customer?.full_name],
+    queryFn: async () => {
+      // First try by created_customer_id (newer records)
+      const byId = await base44.entities.CustomerOnboardingRequest.filter({ created_customer_id: id });
+      if (byId.length > 0) return byId;
+      // Fallback: by full_name (older records without created_customer_id)
+      if (customer?.full_name) {
+        const byName = await base44.entities.CustomerOnboardingRequest.filter({ full_name: customer.full_name });
+        return byName.filter(r => r.status === "completed");
+      }
+      return [];
+    },
+    enabled: !!id && !!customer,
   });
 
   const updateMutation = useMutation({
