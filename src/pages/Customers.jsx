@@ -65,6 +65,12 @@ export default function Customers({ currentUser }) {
     return stats;
   }, [allPayments]);
 
+  const modelMap = useMemo(() => {
+    const m = {};
+    models.forEach((mdl) => { m[mdl.id] = mdl.name; });
+    return m;
+  }, [models]);
+
   // Detect duplicate names — group customers by normalized full_name
   const duplicateNames = useMemo(() => {
     const nameGroups = {};
@@ -172,6 +178,8 @@ export default function Customers({ currentUser }) {
     URL.revokeObjectURL(url);
   };
 
+  const [expandedMerge, setExpandedMerge] = useState(null);
+
   const today = new Date();
   const todayDay = today.getDate();
 
@@ -180,11 +188,6 @@ export default function Customers({ currentUser }) {
     if (!p.customer_id) return;
     customerPaymentCount[p.customer_id] = (customerPaymentCount[p.customer_id] || 0) + 1;
   });
-
-  const modelMap = {};
-  models.forEach((m) => {modelMap[m.id] = m.name;});
-
-  const [expandedMerge, setExpandedMerge] = useState(null);
 
   // Filter out non-primary duplicates (show only first of each name group)
   const filtered = customers.filter((c) => {
