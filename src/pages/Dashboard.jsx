@@ -14,18 +14,22 @@ export default function Dashboard({ currentUser }) {
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
     queryFn: () => base44.entities.Payment.list("-created_date", 500),
+    staleTime: 60000,
   });
   const { data: customers = [] } = useQuery({
     queryKey: ["customers"],
     queryFn: () => base44.entities.Customer.list("-created_date", 500),
+    staleTime: 60000,
   });
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list(),
+    staleTime: 120000,
   });
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
     queryFn: () => base44.entities.User.list(),
+    staleTime: 120000,
   });
 
   // Models assigned to current user — from Model.assigned_chatters OR User.assigned_model_ids
