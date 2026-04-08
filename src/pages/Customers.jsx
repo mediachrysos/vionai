@@ -125,6 +125,7 @@ export default function Customers({ currentUser }) {
   };
 
   const today = new Date();
+  const todayDay = today.getDate();
 
   const customerPaymentCount = {};
   allPayments.forEach((p) => {
@@ -146,6 +147,12 @@ export default function Customers({ currentUser }) {
     const matchModel = modelFilter === "all" || custModels.includes(modelFilter);
     return matchSearch && matchChatter && matchModel;
   }).sort((a, b) => {
+    // Payday customers always on top
+    const aPayday = a.pay_day_of_month === todayDay;
+    const bPayday = b.pay_day_of_month === todayDay;
+    if (aPayday && !bPayday) return -1;
+    if (!aPayday && bPayday) return 1;
+
     const sa = customerStats[a.id] || {};
     const sb = customerStats[b.id] || {};
     if (sortBy === "most_paid") {
@@ -236,15 +243,15 @@ export default function Customers({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
+                    className={`border-b border-gray-50 transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-amber-50 hover:bg-amber-100/60" : "hover:bg-gray-50/60"}`}
                     onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
                     
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${c.pay_day_of_month === todayDay ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-600"}`}>
                             {c.full_name?.[0]?.toUpperCase() || "?"}
                           </div>
-                          <span className="text-sm font-medium text-gray-800">{c.full_name}</span>
+                          <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-800 font-semibold" : "text-gray-800"}`}>{c.full_name}</span>
                         </div>
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden md:table-cell">
