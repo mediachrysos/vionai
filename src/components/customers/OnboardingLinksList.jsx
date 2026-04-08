@@ -149,7 +149,10 @@ export default function OnboardingLinksList({ refreshTrigger, models = [] }) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-800 truncate">{link.full_name}</p>
                 <div className="flex items-center gap-2 flex-wrap mt-0.5">
-                  <p className="text-xs text-gray-400">{formatDateTime(link.created_date)}</p>
+                  <p className="text-xs text-gray-400">📤 {formatDateTime(link.created_date)}</p>
+                  {link.status === "completed" && link.updated_date && (
+                    <p className="text-xs text-emerald-600">✅ {formatDateTime(link.updated_date)}</p>
+                  )}
                   {link.assigned_model && (() => {
                     const m = models.find(x => x.id === link.assigned_model);
                     if (!m) return null;
