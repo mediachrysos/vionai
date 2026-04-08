@@ -65,6 +65,54 @@ export default function Customers({ currentUser }) {
     return stats;
   }, [allPayments]);
 
+  // Detect duplicate names — group customers by normalized full_name
+  const duplicateNames = useMemo(() => {
+    const nameGroups = {};
+    customers.forEach((c) => {
+      const key = c.full_name?.trim().toLowerCase();
+      if (!key) return;
+      if (!nameGroups[key]) nameGroups[key] = [];
+      nameGroups[key].push(c.id);
+    });
+    // Only names with 2+ customers
+    const dupes = new Set();
+    Object.values(nameGroups).forEach((ids) => {
+      if (ids.length > 1) ids.forEach((id) => dupes.add(id));
+    });
+    return dupes;
+  }, [customers]);
+
+  // For duplicates: compute merged stats (sum across all customers with same name) + payments per model
+  const mergedStats = useMemo(() => {
+    const nameGroups = {};
+    customers.forEach((c) => {
+      const key = c.full_name?.trim().toLowerCase();
+      if (!key) return;
+      if (!nameGroups[key]) nameGroups[key] = [];
+      nameGroups[key].push(c);
+    });
+    const result = {};
+    Object.entries(nameGroups).forEach(([key, custs]) => {
+      if (custs.length < 2) return;
+      const allIds = custs.map((c) => c.id);
+      const payments = allPayments.filter((p) => allIds.includes(p.customer_id));
+      const total = payments.reduce((s, p) => s + (p.amount || 0), 0);
+      const count = payments.length;
+      // Per model breakdown
+      const byModel = {};
+      payments.forEach((p) => {
+        const mname = p.model_name || modelMap[p.model_id] || "Bez modelky";
+        if (!byModel[mname]) byModel[mname] = { total: 0, count: 0 };
+        byModel[mname].total += p.amount || 0;
+        byModel[mname].count += 1;
+      });
+      allIds.forEach((id) => {
+        result[id] = { total, count, byModel, allIds, isPrimary: allIds[0] === id };
+      });
+    });
+    return result;
+  }, [customers, allPayments, modelMap]);
+
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Customer.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["customers"] })
@@ -136,10 +184,16 @@ export default function Customers({ currentUser }) {
   const modelMap = {};
   models.forEach((m) => {modelMap[m.id] = m.name;});
 
+  const [expandedMerge, setExpandedMerge] = useState(null);
+
+  // Filter out non-primary duplicates (show only first of each name group)
   const filtered = customers.filter((c) => {
+    const merged = mergedStats[c.id];
+    if (merged && !merged.isPrimary) return false;
     const matchSearch = !search ||
     c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
     c.email?.toLowerCase().includes(search.toLowerCase());
+
     const custModels = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
     const matchChatter = showAll || isAdmin ||
     c.assigned_chatter === currentUser?.email ||
@@ -235,11 +289,17 @@ export default function Customers({ currentUser }) {
               </thead>
               <tbody>
                 {filtered.map((c, i) => {
-                const st = customerStats[c.id] || {};
-                const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
+                const merged = mergedStats[c.id];
+                const st = merged ? { total: merged.total, lastDate: null, lastAmount: null } : (customerStats[c.id] || {});
+                const rawSt = customerStats[c.id] || {};
+                const displayTotal = merged ? merged.total : (rawSt.total || 0);
+                const displayCount = merged ? merged.count : (customerPaymentCount[c.id] || 0);
+                const daysSinceLast = rawSt.lastDate ? Math.floor((Date.now() - new Date(rawSt.lastDate)) / 86400000) : null;
+                const isExpanded = expandedMerge === c.id;
+
                 return (
+                  <React.Fragment key={c.id}>
                   <motion.tr
-                    key={c.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
@@ -254,10 +314,15 @@ export default function Customers({ currentUser }) {
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${c.pay_day_of_month === todayDay ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm shadow-amber-200" : "bg-gray-100 text-gray-600"}`}>
                             {c.full_name?.[0]?.toUpperCase() || "?"}
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-900 font-semibold" : "text-gray-800"}`}>{c.full_name}</span>
                             {c.pay_day_of_month === todayDay && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 výplata</span>
+                            )}
+                            {merged && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded-full">
+                                👥 {merged.allIds.length}× duplicita
+                              </span>
                             )}
                           </div>
                         </div>
@@ -279,19 +344,28 @@ export default function Customers({ currentUser }) {
                       })()}
                       </td>
                       <td className="px-5 py-3.5 text-right">
-                        <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
-                        <p className="text-xs text-gray-400">{customerPaymentCount[c.id] || 0}× plateb</p>
+                        <p className="text-sm font-semibold text-gray-800">{displayTotal.toLocaleString()} Kč</p>
+                        <p className="text-xs text-gray-400">{displayCount}× plateb</p>
                       </td>
-                      <td className="px-5 py-3.5 text-right">
+                      <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                         {daysSinceLast !== null ?
                       <div>
-                            <p className="text-xs font-medium text-gray-600">{st.lastAmount?.toLocaleString()} Kč</p>
+                            <p className="text-xs font-medium text-gray-600">{rawSt.lastAmount?.toLocaleString()} Kč</p>
                             <p className="text-xs text-gray-400">před {daysSinceLast} dny</p>
                           </div> :
                       <span className="text-xs text-gray-300">—</span>}
                       </td>
                       <td className="px-4 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          {merged && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setExpandedMerge(isExpanded ? null : c.id); }}
+                              className="w-8 h-8 rounded-lg bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center justify-center text-indigo-500 text-xs font-bold"
+                              title="Zobrazit platby po modelkách"
+                            >
+                              {isExpanded ? "▲" : "▼"}
+                            </button>
+                          )}
                           <button
                             onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
                             className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-amber-100 transition-colors flex items-center justify-center">
@@ -304,7 +378,25 @@ export default function Customers({ currentUser }) {
                           </button>
                         </div>
                       </td>
-                    </motion.tr>);
+                    </motion.tr>
+                    {/* Expanded: payments per model for duplicates */}
+                    {merged && isExpanded && (
+                      <tr className="bg-indigo-50/40 border-b border-indigo-100">
+                        <td colSpan={6} className="px-8 py-3">
+                          <p className="text-xs font-semibold text-indigo-600 mb-2">Platby po modelkách (sloučeno {merged.allIds.length} záznamů se stejným jménem):</p>
+                          <div className="flex flex-wrap gap-3">
+                            {Object.entries(merged.byModel).map(([modelName, data]) => (
+                              <div key={modelName} className="flex items-center gap-2 bg-white border border-indigo-100 rounded-lg px-3 py-1.5">
+                                <span className="text-xs font-medium text-amber-700 bg-amber-50 border border-amber-100 rounded px-1.5 py-0.5">{modelName}</span>
+                                <span className="text-sm font-bold text-gray-800">{data.total.toLocaleString()} Kč</span>
+                                <span className="text-xs text-gray-400">{data.count}× plateb</span>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>);
 
               })}
               </tbody>
