@@ -47,13 +47,32 @@ Deno.serve(async (req) => {
       return Response.json({ error: "Chybí souhlas s podmínkami." }, { status: 400 });
     }
 
-    // Create the customer
-    const customer = await base44.asServiceRole.entities.Customer.create({
-      full_name: onboardingRequest.full_name,
-      assigned_models: onboardingRequest.assigned_model ? [onboardingRequest.assigned_model] : [],
-      assigned_chatter: onboardingRequest.assigned_chatter || null,
-      status: "active",
-    });
+    // Check if customer with this name already exists
+    const existingCustomers = await base44.asServiceRole.entities.Customer.filter({ full_name: onboardingRequest.full_name });
+    
+    let customer;
+    if (existingCustomers.length > 0) {
+      // Use existing customer — just add the model if not already assigned
+      customer = existingCustomers[0];
+      const currentModels = customer.assigned_models || [];
+      const newModelId = onboardingRequest.assigned_model;
+      const updatedModels = newModelId && !currentModels.includes(newModelId)
+        ? [...currentModels, newModelId]
+        : currentModels;
+      
+      await base44.asServiceRole.entities.Customer.update(customer.id, {
+        assigned_models: updatedModels,
+        status: customer.status === "inactive" ? "active" : customer.status,
+      });
+    } else {
+      // Create new customer
+      customer = await base44.asServiceRole.entities.Customer.create({
+        full_name: onboardingRequest.full_name,
+        assigned_models: onboardingRequest.assigned_model ? [onboardingRequest.assigned_model] : [],
+        assigned_chatter: onboardingRequest.assigned_chatter || null,
+        status: "active",
+      });
+    }
 
     // Mark the onboarding request as completed
     await base44.asServiceRole.entities.CustomerOnboardingRequest.update(onboardingRequest.id, {
