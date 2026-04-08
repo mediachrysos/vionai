@@ -14,6 +14,13 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("cs-CZ", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+function formatDateTime(dateStr) {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("cs-CZ", { day: "2-digit", month: "2-digit", year: "numeric" }) + " " +
+    d.toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" });
+}
+
 function timeAgo(dateStr) {
   const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
   if (diff < 60) return `před ${diff}s`;
@@ -56,7 +63,7 @@ function Countdown({ expiresAt, onExpired }) {
   );
 }
 
-export default function OnboardingLinksList({ refreshTrigger }) {
+export default function OnboardingLinksList({ refreshTrigger, models = [] }) {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -126,7 +133,17 @@ export default function OnboardingLinksList({ refreshTrigger }) {
             <div key={link.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-800 truncate">{link.full_name}</p>
-                <p className="text-xs text-gray-400">{timeAgo(link.created_date)}</p>
+                <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                  <p className="text-xs text-gray-400">{formatDateTime(link.created_date)}</p>
+                  {link.assigned_model && (() => {
+                    const m = models.find(x => x.id === link.assigned_model);
+                    return m ? (
+                      <span className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded px-1.5 py-0.5 font-medium">
+                        {m.name}
+                      </span>
+                    ) : null;
+                  })()}
+                </div>
               </div>
 
               {hasExpiry ? (

@@ -189,7 +189,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
 
       <Section label="Přidat zákazníka" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_26_ybydei.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.customers} onToggle={() => toggle("customers")}>
         <AddCustomerInline users={users} onGenerateLink={() => setShowOnboardingModal(true)} />
-        <OnboardingLinksList refreshTrigger={onboardingRefresh} />
+        <OnboardingLinksList refreshTrigger={onboardingRefresh} models={models} />
       </Section>
 
       <OnboardingLinkModal
