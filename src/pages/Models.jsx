@@ -78,7 +78,7 @@ export default function Models({ currentUser }) {
       {filtered.length === 0 ?
       <EmptyState icon={Bot} title="Žádné modelky" actionLabel="Přidat modelku" onAction={handleCreateNew} /> :
 
-      <div className="space-y-3">
+      <div className="space-y-5">
           {filtered.map((m, i) =>
         <Link key={m.id} to={`${createPageUrl("ModelDetail")}?id=${m.id}`} className="group">
               <motion.div
