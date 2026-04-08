@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -31,11 +31,27 @@ export default function ModelDetail({ currentUser }) {
     queryFn: () => base44.entities.Payment.filter({ model_id: id }, "-created_date"),
     enabled: !!id
   });
-  const { data: customers = [] } = useQuery({
-    queryKey: ["model-customers", id],
-    queryFn: () => base44.entities.Customer.filter({ assigned_model: id }),
+  const { data: allCustomers = [] } = useQuery({
+    queryKey: ["customers"],
+    queryFn: () => base44.entities.Customer.list("-created_date", 500),
+    staleTime: 60000,
     enabled: !!id
   });
+
+  // Derive unique customers from payments (assigned_models is an array, can't filter server-side)
+  const customers = useMemo(() => {
+    const seen = new Set();
+    const result = [];
+    payments.forEach(p => {
+      if (p.customer_id && !seen.has(p.customer_id)) {
+        seen.add(p.customer_id);
+        const c = allCustomers.find(c => c.id === p.customer_id);
+        if (c) result.push(c);
+        else result.push({ id: p.customer_id, full_name: p.customer_name || "—" });
+      }
+    });
+    return result;
+  }, [payments, allCustomers]);
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
 
   const updateMutation = useMutation({
