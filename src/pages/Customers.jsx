@@ -243,15 +243,23 @@ export default function Customers({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className={`border-b border-gray-50 transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-amber-50 hover:bg-amber-100/60" : "hover:bg-gray-50/60"}`}
+                    className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-50 to-yellow-50/30 border-amber-100 hover:from-amber-100/70 hover:to-yellow-50/50" : "border-gray-50 hover:bg-gray-50/60"}`}
                     onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
                     
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${c.pay_day_of_month === todayDay ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-600"}`}>
+                          {c.pay_day_of_month === todayDay && (
+                            <div className="w-1 h-9 rounded-full bg-gradient-to-b from-[#C9A227] to-[#A8841C] -ml-1 flex-shrink-0" />
+                          )}
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${c.pay_day_of_month === todayDay ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm shadow-amber-200" : "bg-gray-100 text-gray-600"}`}>
                             {c.full_name?.[0]?.toUpperCase() || "?"}
                           </div>
-                          <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-800 font-semibold" : "text-gray-800"}`}>{c.full_name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-900 font-semibold" : "text-gray-800"}`}>{c.full_name}</span>
+                            {c.pay_day_of_month === todayDay && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 výplata</span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden md:table-cell">
