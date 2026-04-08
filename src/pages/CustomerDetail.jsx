@@ -198,33 +198,34 @@ export default function CustomerDetail({ currentUser }) {
             />
           ) : (
             <div className="space-y-3">
-              {customer.email && (
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.email}
-                </div>
-              )}
-              {customer.phone && (
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.phone}
-                </div>
-              )}
-              {customer.bank_name && (
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Building className="w-4 h-4 text-gray-400 flex-shrink-0" /> {customer.bank_name} — {customer.bank_account_number}
-                </div>
-              )}
-              {assignedModelNames.length > 0 && (
-                <div className="flex items-start gap-3 text-sm text-gray-600">
-                  <span className="text-gray-400 text-xs mt-0.5 flex-shrink-0">Modelky</span>
+              <div className="flex items-center gap-3 text-sm">
+                <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className={customer.email ? "text-gray-600" : "text-gray-300"}>{customer.email || "—"}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className={customer.phone ? "text-gray-600" : "text-gray-300"}>{customer.phone || "—"}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <Building className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className={customer.bank_name ? "text-gray-600" : "text-gray-300"}>
+                  {customer.bank_name ? `${customer.bank_name} — ${customer.bank_account_number || "—"}` : "—"}
+                </span>
+              </div>
+              <div className="flex items-start gap-3 text-sm">
+                <span className="text-gray-400 text-xs mt-0.5 flex-shrink-0 w-4 text-center">🎭</span>
+                {assignedModelNames.length > 0 ? (
                   <div className="flex flex-wrap gap-1">
                     {assignedModelNames.map(name => (
                       <Badge key={name} variant="outline" className="bg-amber-50 border-amber-200 text-amber-800 text-xs">{name}</Badge>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <span className="text-gray-300">—</span>
+                )}
+              </div>
               {customer.notes && (
-                <div className="mt-3 p-3 bg-[#faf6e6] rounded-xl text-sm text-gray-600">{customer.notes}</div>
+                <div className="mt-1 p-3 bg-[#faf6e6] rounded-xl text-sm text-gray-600">{customer.notes}</div>
               )}
             </div>
           )}
