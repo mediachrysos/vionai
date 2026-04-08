@@ -230,7 +230,7 @@ export default function Customers({ currentUser }) {
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelky</th>
                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Celkem / Platby</th>
                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Poslední platba</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 w-12"></th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 w-20"></th>
                 </tr>
               </thead>
               <tbody>
@@ -290,17 +290,17 @@ export default function Customers({ currentUser }) {
                           </div> :
                       <span className="text-xs text-gray-300">—</span>}
                       </td>
-                      <td className="px-5 py-3.5 text-right">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="px-4 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
-                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-5 h-5 object-contain" />
+                            className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-amber-100 transition-colors flex items-center justify-center">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-4 h-4 object-contain" />
                           </button>
                           <button
                             onClick={(e) => handleDelete(e, c)}
-                            className="p-1.5 rounded-lg bg-gray-100 hover:bg-red-100 transition-colors">
-                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" />
+                            className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-red-100 transition-colors flex items-center justify-center">
+                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
                           </button>
                         </div>
                       </td>
