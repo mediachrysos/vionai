@@ -5,7 +5,6 @@ import TodayChatterStats from "../components/dashboard/TodayChatterStats";
 import TodayNotesWidget from "../components/dashboard/TodayNotesWidget";
 import TodayPaymentsWidget from "../components/dashboard/TodayPaymentsWidget";
 import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget";
-import PaydayWidget from "../components/dashboard/PaydayWidget";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 
@@ -69,12 +68,9 @@ export default function Dashboard({ currentUser }) {
         </div>
       )}
 
-      {/* Payday alert */}
-      <PaydayWidget customers={customers} models={models} currentUser={currentUser} />
-
       {/* Top section: Notes (left) + Today chatter stats (right) */}
       <div className="grid lg:grid-cols-2 gap-4 mt-4">
-        <TodayNotesWidget currentUser={currentUser} />
+        <TodayNotesWidget currentUser={currentUser} paydayCustomers={customers.filter(c => c.pay_day_of_month === new Date().getDate() && c.status !== "blocked" && c.status !== "inactive")} models={models} />
         <TodayChatterStats payments={filteredPayments} showAll={showAll || isAdmin} currentUser={currentUser} />
       </div>
 

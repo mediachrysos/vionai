@@ -21,7 +21,7 @@ const emptyForm = () => ({
   content: ""
 });
 
-export default function TodayNotesWidget({ currentUser }) {
+export default function TodayNotesWidget({ currentUser, paydayCustomers = [], models: paydayModels = [] }) {
   const qc = useQueryClient();
   const today = new Date().toISOString().split("T")[0];
   const [showForm, setShowForm] = useState(false);
@@ -223,6 +223,21 @@ export default function TodayNotesWidget({ currentUser }) {
             </div>
           </div>
         }
+
+        {/* Payday strip */}
+        {paydayCustomers.length > 0 && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg flex-shrink-0">
+            <span className="text-sm">💰</span>
+            <span className="text-xs font-semibold text-amber-800">Dnes výplata:</span>
+            <div className="flex flex-wrap gap-1.5">
+              {paydayCustomers.map((c) => (
+                <span key={c.id} className="text-xs bg-amber-100 text-amber-800 border border-amber-200 rounded-full px-2 py-0.5 font-medium">
+                  {c.full_name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Notes list */}
         <div className="space-y-2 flex-1 overflow-y-auto">

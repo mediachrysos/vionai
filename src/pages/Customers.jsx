@@ -14,7 +14,6 @@ import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import PageHeader from "../components/ui-custom/PageHeader";
 import EmptyState from "../components/ui-custom/EmptyState";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
-import PaydayWidget from "../components/dashboard/PaydayWidget";
 
 function createPageUrl(page) {
   return `/${page}`;
@@ -285,7 +284,6 @@ export default function Customers({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
-      <PaydayWidget customers={customers} models={models} currentUser={currentUser} />
       <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
