@@ -28,6 +28,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
   const [form, setForm] = useState(emptyForm());
   const [customerSearch, setCustomerSearch] = useState("");
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const [noteSearch, setNoteSearch] = useState("");
 
   const { data: notes = [] } = useQuery({
     queryKey: ["notes"],
@@ -61,13 +62,22 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
     });
   }, [notes, isAdmin, myModelIds, currentUser]);
 
-  const sortedNotes = useMemo(() => [...visibleNotes].sort((a, b) => {
-    const aToday = a.note_date === today;
-    const bToday = b.note_date === today;
-    if (aToday && !bToday) return -1;
-    if (!aToday && bToday) return 1;
-    return new Date(b.created_date) - new Date(a.created_date);
-  }), [visibleNotes, today]);
+  const sortedNotes = useMemo(() => {
+    const filtered = noteSearch
+      ? visibleNotes.filter(n =>
+          n.customer_name?.toLowerCase().includes(noteSearch.toLowerCase()) ||
+          n.model_name?.toLowerCase().includes(noteSearch.toLowerCase()) ||
+          n.content?.toLowerCase().includes(noteSearch.toLowerCase())
+        )
+      : visibleNotes;
+    return [...filtered].sort((a, b) => {
+      const aToday = a.note_date === today;
+      const bToday = b.note_date === today;
+      if (aToday && !bToday) return -1;
+      if (!aToday && bToday) return 1;
+      return new Date(b.created_date) - new Date(a.created_date);
+    });
+  }, [visibleNotes, today, noteSearch]);
 
   const filteredCustomers = useMemo(() => {
     if (!customerSearch) return customers.slice(0, 8);
@@ -126,10 +136,25 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
           </div>
           <h3 className="text-sm font-semibold text-white">Poznámky</h3>
         </div>
-        <Button size="sm" variant="ghost" onClick={() => {setShowForm((v) => !v);setCustomerSearch("");}}
-        className="h-7 w-7 p-0 rounded-lg text-white hover:bg-white/20">
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-        </Button>
+        <div className="flex items-center gap-1">
+          <div className="relative">
+            <input
+              value={noteSearch}
+              onChange={e => setNoteSearch(e.target.value)}
+              placeholder="Hledat..."
+              className="h-7 w-28 bg-white/20 text-white text-xs placeholder-white/60 rounded-lg px-2.5 outline-none focus:bg-white/30 transition-colors"
+            />
+            {noteSearch && (
+              <button onClick={() => setNoteSearch("")} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-white/70 hover:text-white">
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+          <Button size="sm" variant="ghost" onClick={() => {setShowForm((v) => !v);setCustomerSearch("");}}
+          className="h-7 w-7 p-0 rounded-lg text-white hover:bg-white/20">
+            {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          </Button>
+        </div>
       </div>
 
       <div className="p-4 flex-1 overflow-hidden flex flex-col gap-3">
@@ -300,8 +325,11 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                       </span>
                   }
                     {n.model_name &&
-                  <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-violet-100 text-violet-700">
-                        
+                  <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
+                    n.model_name?.toLowerCase().includes("dominic") ? "bg-pink-100 text-pink-700" :
+                    n.model_name?.toLowerCase().includes("laura") ? "bg-violet-100 text-violet-700" :
+                    "bg-purple-100 text-purple-700"
+                  }`}>
                         {n.model_name}
                       </span>
                   }
