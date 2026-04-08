@@ -250,7 +250,7 @@ export default function CustomerDetail({ currentUser }) {
           {payments.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-6">Zatím žádné platby</p>
           ) : (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
+            <div className="space-y-2 max-h-[13.5rem] overflow-y-auto pr-1">
               {payments.map(p => {
                 const invoice = (customer.invoices || []).find(inv => inv.payment_id === p.id);
                 return (
