@@ -66,6 +66,7 @@ function Countdown({ expiresAt, onExpired }) {
 export default function OnboardingLinksList({ refreshTrigger, models = [] }) {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const exportCsv = () => {
     const completed = links.filter(l => l.status === "completed");
@@ -109,11 +110,25 @@ export default function OnboardingLinksList({ refreshTrigger, models = [] }) {
   if (loading) return <p className="text-xs text-gray-400 py-2">Načítám...</p>;
   if (links.length === 0) return <p className="text-xs text-gray-400 py-2">Žádné onboarding odkazy.</p>;
 
+  const filtered = search
+    ? links.filter(l => {
+        const m = models.find(x => x.id === l.assigned_model);
+        return l.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+               m?.name?.toLowerCase().includes(search.toLowerCase());
+      })
+    : links;
+
   return (
     <div className="space-y-2 mt-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Historie odkazů ({links.length})</p>
         <div className="flex items-center gap-2">
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Hledat jméno..."
+            className="h-6 text-xs px-2 border border-gray-200 rounded-lg outline-none focus:border-amber-300 w-28"
+          />
           <button onClick={exportCsv} className="text-gray-400 hover:text-emerald-600 transition-colors" title="Export do CSV">
             <Download className="w-3.5 h-3.5" />
           </button>
@@ -123,7 +138,7 @@ export default function OnboardingLinksList({ refreshTrigger, models = [] }) {
         </div>
       </div>
       <div className="space-y-1.5">
-        {links.map(link => {
+        {filtered.map(link => {
           const cfg = statusConfig[link.status] || statusConfig.expired;
           const Icon = cfg.icon;
           const isPending = link.status === "pending";
@@ -137,11 +152,19 @@ export default function OnboardingLinksList({ refreshTrigger, models = [] }) {
                   <p className="text-xs text-gray-400">{formatDateTime(link.created_date)}</p>
                   {link.assigned_model && (() => {
                     const m = models.find(x => x.id === link.assigned_model);
-                    return m ? (
-                      <span className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded px-1.5 py-0.5 font-medium">
+                    if (!m) return null;
+                    const isPink = m.name?.toLowerCase().includes("dominic");
+                    const isPurple = m.name?.toLowerCase().includes("laura");
+                    const cls = isPink
+                      ? "bg-pink-50 text-pink-700 border-pink-200"
+                      : isPurple
+                      ? "bg-violet-100 text-violet-700 border-violet-200"
+                      : "bg-amber-50 text-amber-700 border-amber-100";
+                    return (
+                      <span className={`text-xs border rounded px-1.5 py-0.5 font-medium ${cls}`}>
                         {m.name}
                       </span>
-                    ) : null;
+                    );
                   })()}
                 </div>
               </div>
