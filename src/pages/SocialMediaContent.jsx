@@ -51,6 +51,12 @@ export default function SocialMediaContent({ currentUser }) {
     queryFn: () => base44.entities.WeeklyProgram.filter({ week_start: weekStart }),
   });
 
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+    staleTime: 120000,
+  });
+
   const { data: submissions = [] } = useQuery({
     queryKey: ["daySubmissions", weekStart],
     queryFn: () => base44.entities.DaySubmission.filter({ week_start: weekStart }),
@@ -121,7 +127,7 @@ export default function SocialMediaContent({ currentUser }) {
 
         {/* Admin editor */}
         {isAdmin && showEditor && (
-          <AdminProgramEditor weekStart={weekStart} program={program} onSaved={() => { refresh(); setShowEditor(false); }} />
+          <AdminProgramEditor weekStart={weekStart} program={program} models={models} onSaved={() => { refresh(); setShowEditor(false); }} />
         )}
 
         {/* Weekly grid */}
@@ -151,6 +157,7 @@ export default function SocialMediaContent({ currentUser }) {
           weekStart={weekStart}
           isAdmin={isAdmin}
           onRefresh={refresh}
+          models={models}
         />
       )}
     </div>

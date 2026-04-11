@@ -23,10 +23,10 @@ const typeColors = {
 };
 
 function emptyTask() {
-  return { type: "Reels", customType: "", desc: "", inspiration_link: "" };
+  return { type: "Reels", customType: "", desc: "", inspiration_link: "", model_id: "" };
 }
 
-export default function AdminProgramEditor({ weekStart, program, onSaved }) {
+export default function AdminProgramEditor({ weekStart, program, models = [], onSaved }) {
   const [dayTasks, setDayTasks] = useState({});
   const [saving, setSaving] = useState(false);
 
@@ -152,6 +152,18 @@ export default function AdminProgramEditor({ weekStart, program, onSaved }) {
                       onChange={e => updateTask(key, idx, "desc", e.target.value)}
                       className="text-xs h-8"
                     />
+
+                    {/* Model selector */}
+                    <select
+                      value={task.model_id || ""}
+                      onChange={e => updateTask(key, idx, "model_id", e.target.value)}
+                      className="w-full text-xs h-8 border border-gray-200 rounded-md px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-amber-300"
+                    >
+                      <option value="">All models / no specific model</option>
+                      {models.filter(m => m.status === "active").map(m => (
+                        <option key={m.id} value={m.id}>{m.name}</option>
+                      ))}
+                    </select>
 
                     <div className="flex items-center gap-2">
                       <Link className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />

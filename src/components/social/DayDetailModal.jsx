@@ -51,7 +51,7 @@ function LinkBox({ label, url, onSave, editable }) {
   );
 }
 
-export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, isAdmin, onRefresh }) {
+export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, isAdmin, onRefresh, models = [] }) {
   const [saving, setSaving] = useState(false);
   const [designerLink, setDesignerLink] = useState(submission?.submitted_link || "");
   const [adminLink, setAdminLink] = useState(submission?.admin_link || "");
@@ -99,6 +99,10 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
                       <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${colorClass}`}>{label}</span>
                     </div>
                     {task.desc && <p className="text-sm text-gray-700">{task.desc}</p>}
+                    {task.model_id && (() => {
+                      const m = models.find(x => x.id === task.model_id);
+                      return m ? <p className="text-xs text-gray-400">📸 {m.name}</p> : null;
+                    })()}
                     {task.inspiration_link && (
                       <a href={task.inspiration_link} target="_blank" rel="noreferrer"
                         className="flex items-center gap-1.5 text-xs text-blue-500 hover:underline">
