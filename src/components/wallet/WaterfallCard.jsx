@@ -69,10 +69,9 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;
-  const afterLawyer = Math.max(0, grossProfit) - lawyerFee;
-  const companyReserve = afterLawyer * 0.20;
-  const afterReserve = afterLawyer - companyReserve;
-  const ownerPayout = afterReserve * 0.40;
+  const netProfit = grossProfit - lawyerFee;
+  const companyReserve = netProfit * 0.20;
+  const ownerPayout = netProfit * 0.40;
 
   // Load all payouts to calculate carryOver from previous months
   const { data: allLukyPayouts = [] } = useQuery({
@@ -122,9 +121,8 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
     const inc = mp.reduce((s, p) => s + (p.amount || 0), 0) + mw.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
     const exp = me.reduce((s, e) => s + (e.amount || 0), 0) + mw.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
     const gp = inc - exp;
-    const af = Math.max(0, gp) * 0.90;
-    const ar = af * 0.80;
-    return ar * 0.40;
+    const netP = Math.max(0, gp) * 0.90;
+    return netP * 0.40;
   };
 
   // Get all unique months from data that are before current monthStr
@@ -209,6 +207,13 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
         <Row label="Výplata PD" sublabel="10 % z hrubého zisku" color="text-gray-700" bgColor="bg-gray-50" prefix="- " value={lawyerFee} />
+
+        <div className="border-t border-dashed border-gray-200 my-1" />
+
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-50">
+          <p className="text-sm font-semibold text-gray-800">Čistý zisk</p>
+          <p className={`text-base font-bold ${netProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>{netProfit.toLocaleString("cs-CZ")} Kč</p>
+        </div>
 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
