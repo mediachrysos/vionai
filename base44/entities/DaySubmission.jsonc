@@ -3,8 +3,7 @@
   "type": "object",
   "properties": {
     "week_start": {
-      "type": "string",
-      "description": "Pond\u011bl\u00ed t\u00fddne (YYYY-MM-DD)"
+      "type": "string"
     },
     "day_key": {
       "type": "string",
@@ -14,6 +13,9 @@
       "type": "string"
     },
     "submitted_link": {
+      "type": "string"
+    },
+    "admin_link": {
       "type": "string"
     },
     "status": {

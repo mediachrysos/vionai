@@ -81,10 +81,7 @@ export default function SocialMediaContent({ currentUser }) {
 
   const selectedDayInfo = selectedDay ? DAYS.find(d => d.key === selectedDay) : null;
 
-  // Stats for admin
-  const totalSubmitted = submissions.filter(s => s.status === "submitted").length;
-  const totalApproved = submissions.filter(s => s.status === "approved").length;
-  const totalRejected = submissions.filter(s => s.status === "rejected").length;
+
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-6">
@@ -133,8 +130,7 @@ export default function SocialMediaContent({ currentUser }) {
             <DayCard
               key={key}
               dayName={label}
-              taskTitle={program?.[`${key}_title`]}
-              taskDesc={program?.[`${key}_desc`]}
+              tasks={program?.[`${key}_tasks`] || []}
               submission={submissionMap[key]}
               isToday={todayDayKey === key}
               onClick={() => setSelectedDay(key)}
@@ -150,8 +146,7 @@ export default function SocialMediaContent({ currentUser }) {
           onClose={() => setSelectedDay(null)}
           dayName={selectedDayInfo?.label}
           dayKey={selectedDay}
-          taskTitle={program?.[`${selectedDay}_title`]}
-          taskDesc={program?.[`${selectedDay}_desc`]}
+          tasks={program?.[`${selectedDay}_tasks`] || []}
           submission={submissionMap[selectedDay]}
           weekStart={weekStart}
           isAdmin={isAdmin}

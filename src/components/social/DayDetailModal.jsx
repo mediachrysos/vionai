@@ -1,172 +1,155 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
-import { CheckCircle, XCircle, Edit2, ExternalLink } from "lucide-react";
+import { ExternalLink, Link, Send } from "lucide-react";
 
-const statusLabels = {
-  not_started: { label: "Not started", color: "text-gray-500 bg-gray-100" },
-  submitted: { label: "Pending review", color: "text-amber-700 bg-amber-100" },
-  approved: { label: "Approved", color: "text-emerald-700 bg-emerald-100" },
-  rejected: { label: "Rejected", color: "text-red-600 bg-red-100" },
+const typeColors = {
+  Reels: "bg-purple-100 text-purple-700",
+  Post: "bg-blue-100 text-blue-700",
+  Story: "bg-pink-100 text-pink-700",
 };
 
-export default function DayDetailModal({ open, onClose, dayName, taskTitle, taskDesc, submission, weekStart, dayKey, isAdmin, onRefresh }) {
-  const [link, setLink] = useState(submission?.submitted_link || "");
-  const [adminNote, setAdminNote] = useState("");
-  const [editNote, setEditNote] = useState("");
+function LinkBox({ label, url, onSave, editable }) {
+  const [editing, setEditing] = useState(false);
+  const [val, setVal] = useState(url || "");
+
+  useEffect(() => { setVal(url || ""); }, [url]);
+
+  return (
+    <div className="space-y-1">
+      <p className="text-xs font-semibold text-gray-400 uppercase">{label}</p>
+      {url && !editing ? (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-3">
+          <p className="text-xs text-gray-600 truncate flex-1">{url}</p>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {editable && (
+              <button onClick={() => setEditing(true)} className="text-xs text-gray-400 hover:text-gray-600 underline">Edit</button>
+            )}
+            <a href={url} target="_blank" rel="noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C9A227] hover:bg-[#A8841C] text-white text-xs font-medium rounded-lg transition-colors">
+              <ExternalLink className="w-3 h-3" /> Open
+            </a>
+          </div>
+        </div>
+      ) : editable ? (
+        <div className="flex gap-2">
+          <Input
+            placeholder="https://..."
+            value={val}
+            onChange={e => setVal(e.target.value)}
+            className="text-sm flex-1"
+          />
+          <Button size="sm" onClick={() => { onSave(val); setEditing(false); }} disabled={!val}
+            className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1">
+            <Send className="w-3 h-3" />
+          </Button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, isAdmin, onRefresh }) {
   const [saving, setSaving] = useState(false);
-  const [action, setAction] = useState(null); // "approve" | "reject" | "edit"
+  const [designerLink, setDesignerLink] = useState(submission?.submitted_link || "");
+  const [adminLink, setAdminLink] = useState(submission?.admin_link || "");
 
-  const status = submission?.status || "not_started";
+  useEffect(() => {
+    setDesignerLink(submission?.submitted_link || "");
+    setAdminLink(submission?.admin_link || "");
+  }, [submission]);
 
-  const handleSubmitLink = async () => {
-    if (!link) return;
+  const saveField = async (field, value) => {
     setSaving(true);
-    const data = {
+    const base = {
       week_start: weekStart,
       day_key: dayKey,
       day_name: dayName,
-      submitted_link: link,
-      status: "submitted",
-      submitted_at: new Date().toISOString(),
-      admin_note: "",
     };
     if (submission?.id) {
-      await base44.entities.DaySubmission.update(submission.id, data);
+      await base44.entities.DaySubmission.update(submission.id, { [field]: value });
     } else {
-      await base44.entities.DaySubmission.create(data);
+      await base44.entities.DaySubmission.create({ ...base, [field]: value, status: "submitted", submitted_at: new Date().toISOString() });
     }
     setSaving(false);
     onRefresh();
-    onClose();
   };
-
-  const handleAdminAction = async (actionType) => {
-    if (!submission?.id) return;
-    setSaving(true);
-    const note = actionType === "approve" ? "" : actionType === "reject" ? adminNote : editNote;
-    const newStatus = actionType === "approve" ? "approved" : actionType === "reject" ? "rejected" : "rejected";
-    await base44.entities.DaySubmission.update(submission.id, {
-      status: newStatus,
-      admin_note: note,
-      reviewed_at: new Date().toISOString(),
-    });
-    setSaving(false);
-    setAction(null);
-    setAdminNote("");
-    setEditNote("");
-    onRefresh();
-    onClose();
-  };
-
-  const cfg = statusLabels[status];
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold text-gray-800">{dayName}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 pt-1">
-          {/* Task */}
-          <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Task</p>
-            <p className="text-sm font-semibold text-gray-800">{taskTitle || "—"}</p>
-            {taskDesc && <p className="text-xs text-gray-500 mt-1">{taskDesc}</p>}
-          </div>
+        <div className="space-y-5 pt-1">
+          {/* Tasks list */}
+          {tasks.length === 0 ? (
+            <div className="bg-gray-50 rounded-xl p-4 text-center text-sm text-gray-400 italic">No tasks assigned for this day.</div>
+          ) : (
+            <div className="space-y-3">
+              {tasks.map((task, i) => {
+                const label = task.type === "custom" ? (task.customType || "Custom") : task.type;
+                const colorClass = typeColors[task.type] || "bg-amber-100 text-amber-700";
+                return (
+                  <div key={i} className="bg-gray-50 rounded-xl p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${colorClass}`}>{label}</span>
+                    </div>
+                    {task.desc && <p className="text-sm text-gray-700">{task.desc}</p>}
+                    {task.inspiration_link && (
+                      <a href={task.inspiration_link} target="_blank" rel="noreferrer"
+                        className="flex items-center gap-1.5 text-xs text-blue-500 hover:underline">
+                        <Link className="w-3 h-3" /> Inspiration
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-          {/* Status */}
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${cfg.color}`}>{cfg.label}</span>
-            {submission?.submitted_link && (
-            <div className="w-full mt-1">
-              <p className="text-xs font-semibold text-gray-400 uppercase mb-1.5">Submitted link</p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-3">
-                <p className="text-xs text-gray-600 truncate flex-1">{submission.submitted_link}</p>
-                <a
-                  href={submission.submitted_link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C9A227] hover:bg-[#A8841C] text-white text-xs font-medium rounded-lg flex-shrink-0 transition-colors"
-                >
-                  <ExternalLink className="w-3 h-3" /> Open
-                </a>
+          <div className="border-t border-dashed border-gray-200" />
+
+          {/* Designer link */}
+          <LinkBox
+            label="Designer's link"
+            url={designerLink}
+            editable={!isAdmin}
+            onSave={(val) => { setDesignerLink(val); saveField("submitted_link", val); }}
+          />
+          {!isAdmin && !designerLink && (
+            <div className="space-y-1 -mt-3">
+              <p className="text-xs font-semibold text-gray-400 uppercase">Designer's link</p>
+              <div className="flex gap-2">
+                <Input placeholder="https://..." value={designerLink} onChange={e => setDesignerLink(e.target.value)} className="text-sm" />
+                <Button size="sm" onClick={() => saveField("submitted_link", designerLink)} disabled={!designerLink || saving}
+                  className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1">
+                  <Send className="w-3 h-3" /> Submit
+                </Button>
               </div>
             </div>
           )}
-          </div>
 
-          {/* Admin rejection note */}
-          {status === "rejected" && submission?.admin_note && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-              <p className="text-xs font-semibold text-red-600 mb-0.5">Admin note:</p>
-              <p className="text-xs text-red-500">{submission.admin_note}</p>
-
-            </div>
-          )}
-
-          {/* Designer: submit link */}
-          {!isAdmin && (status === "not_started" || status === "rejected") && (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-gray-600">{status === "rejected" ? "Resubmit link:" : "Submit link:"}</p>
-              <Input
-                placeholder="https://..."
-                value={link}
-                onChange={e => setLink(e.target.value)}
-                className="text-sm"
-              />
-              <Button onClick={handleSubmitLink} disabled={!link || saving} className="w-full bg-[#C9A227] hover:bg-[#A8841C] text-white">
-                {saving ? "Submitting..." : "Submit"}
-              </Button>
-            </div>
-          )}
-
-          {/* Admin: review actions */}
-          {isAdmin && status === "submitted" && (
-            <div className="space-y-3">
-              {!action && (
-                <div className="flex gap-2">
-                  <Button onClick={() => setAction("approve")} size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white gap-1">
-                    <CheckCircle className="w-3.5 h-3.5" /> Approve
-                  </Button>
-                  <Button onClick={() => setAction("edit")} size="sm" variant="outline" className="flex-1 gap-1">
-                    <Edit2 className="w-3.5 h-3.5" /> Edit
-                  </Button>
-                  <Button onClick={() => setAction("reject")} size="sm" className="flex-1 bg-red-500 hover:bg-red-600 text-white gap-1">
-                    <XCircle className="w-3.5 h-3.5" /> Reject
-                  </Button>
-                </div>
-              )}
-              {action === "approve" && (
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Confirm approval?</p>
-                  <div className="flex gap-2">
-                    <Button onClick={() => handleAdminAction("approve")} size="sm" disabled={saving} className="bg-emerald-500 hover:bg-emerald-600 text-white">Confirm</Button>
-                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Cancel</Button>
-                  </div>
-                </div>
-              )}
-              {action === "reject" && (
-                <div className="space-y-2">
-                  <Input placeholder="Rejection note (required)" value={adminNote} onChange={e => setAdminNote(e.target.value)} className="text-sm" />
-                  <div className="flex gap-2">
-                    <Button onClick={() => handleAdminAction("reject")} size="sm" disabled={!adminNote || saving} className="bg-red-500 hover:bg-red-600 text-white">Reject</Button>
-                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Cancel</Button>
-                  </div>
-                </div>
-              )}
-              {action === "edit" && (
-                <div className="space-y-2">
-                  <Input placeholder="What needs to be changed?" value={editNote} onChange={e => setEditNote(e.target.value)} className="text-sm" />
-                  <div className="flex gap-2">
-                    <Button onClick={() => handleAdminAction("edit")} size="sm" disabled={!editNote || saving} variant="outline">Send note</Button>
-                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Cancel</Button>
-                  </div>
-                </div>
-              )}
+          {/* Admin link */}
+          <LinkBox
+            label="Admin's link"
+            url={adminLink}
+            editable={isAdmin}
+            onSave={(val) => { setAdminLink(val); saveField("admin_link", val); }}
+          />
+          {isAdmin && !adminLink && (
+            <div className="space-y-1 -mt-3">
+              <p className="text-xs font-semibold text-gray-400 uppercase">Admin's link</p>
+              <div className="flex gap-2">
+                <Input placeholder="https://..." value={adminLink} onChange={e => setAdminLink(e.target.value)} className="text-sm" />
+                <Button size="sm" onClick={() => saveField("admin_link", adminLink)} disabled={!adminLink || saving}
+                  className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1">
+                  <Send className="w-3 h-3" /> Save
+                </Button>
+              </div>
             </div>
           )}
         </div>
