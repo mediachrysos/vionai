@@ -1,0 +1,31 @@
+{
+  "name": "CompanyReserve",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": "number",
+      "description": "\u010c\u00e1stka transakce"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "deposit",
+        "expense"
+      ],
+      "description": "Typ: deposit = p\u0159\u00edjem do rezervy, expense = v\u00fddaj z rezervy"
+    },
+    "month": {
+      "type": "string",
+      "description": "M\u011bs\u00edc ve form\u00e1tu YYYY-MM"
+    },
+    "note": {
+      "type": "string",
+      "description": "Pozn\u00e1mka k transakci"
+    }
+  },
+  "required": [
+    "amount",
+    "type",
+    "month"
+  ]
+}

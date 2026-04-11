@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { TrendingDown, TrendingUp, Building2, User, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import OwnerPayoutRow from "./OwnerPayoutRow";
+import CompanyReserveRow from "./CompanyReserveRow";
 
 const MONTH_NAMES = [
 "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
@@ -71,7 +72,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
   const afterLawyer = Math.max(0, grossProfit) - lawyerFee;
   const companyReserve = afterLawyer * 0.20;
   const afterReserve = afterLawyer - companyReserve;
-  const ownerPayout = afterReserve * 0.50;
+  const ownerPayout = afterReserve * 0.40;
 
   // Load all payouts to calculate carryOver from previous months
   const { data: allLukyPayouts = [] } = useQuery({
@@ -123,7 +124,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
     const gp = inc - exp;
     const af = Math.max(0, gp) * 0.90;
     const ar = af * 0.80;
-    return ar * 0.50;
+    return ar * 0.40;
   };
 
   // Get all unique months from data that are before current monthStr
@@ -207,11 +208,11 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
-        <Row label="Výplata PD" sublabel="10 % z hrubého zisku" icon={Building2} color="text-gray-700" bgColor="bg-gray-50" prefix="- " value={lawyerFee} />
-        <Row label="Firemní rezerva" sublabel="20 % ze zbytku po advokátovi" icon={Building2} color="text-blue-600" bgColor="bg-gray-50" prefix="- " value={companyReserve} />
+        <Row label="Výplata PD" sublabel="10 % z hrubého zisku" color="text-gray-700" bgColor="bg-gray-50" prefix="- " value={lawyerFee} />
 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
+        <CompanyReserveRow monthStr={monthStr} totalAllocated={companyReserve} />
         <OwnerPayoutRow owner="luky" label="Luky" monthStr={monthStr} totalDue={ownerPayout} carryOver={lukyCarryOver} />
         <OwnerPayoutRow owner="maty" label="Maty" monthStr={monthStr} totalDue={ownerPayout} carryOver={matyCarryOver} />
       </div>

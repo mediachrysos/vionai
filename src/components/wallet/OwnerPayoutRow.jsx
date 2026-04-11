@@ -43,7 +43,7 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-semibold text-gray-800">Výplata – {label}</p>
-          <p className="text-xs text-gray-400">50 % z čistého zisku</p>
+          <p className="text-xs text-gray-400">40 % ze zbytku po rezervě</p>
         </div>
         <div className="text-right">
           <p className="text-base font-bold text-emerald-600">{totalDue.toLocaleString("cs-CZ")} Kč</p>
