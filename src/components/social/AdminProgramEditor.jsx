@@ -5,13 +5,13 @@ import { base44 } from "@/api/base44Client";
 import { Save } from "lucide-react";
 
 const DAYS = [
-  { key: "mon", label: "Pondělí" },
-  { key: "tue", label: "Úterý" },
-  { key: "wed", label: "Středa" },
-  { key: "thu", label: "Čtvrtek" },
-  { key: "fri", label: "Pátek" },
-  { key: "sat", label: "Sobota" },
-  { key: "sun", label: "Neděle" },
+  { key: "mon", label: "Monday" },
+  { key: "tue", label: "Tuesday" },
+  { key: "wed", label: "Wednesday" },
+  { key: "thu", label: "Thursday" },
+  { key: "fri", label: "Friday" },
+  { key: "sat", label: "Saturday" },
+  { key: "sun", label: "Sunday" },
 ];
 
 export default function AdminProgramEditor({ weekStart, program, onSaved }) {
@@ -48,9 +48,9 @@ export default function AdminProgramEditor({ weekStart, program, onSaved }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-800">Editace týdenního programu</h3>
+        <h3 className="text-sm font-semibold text-gray-800">Edit Weekly Program</h3>
         <Button onClick={handleSave} disabled={saving} size="sm" className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1.5">
-          <Save className="w-3.5 h-3.5" /> {saving ? "Ukládám..." : "Uložit"}
+          <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : "Save"}
         </Button>
       </div>
       <div className="space-y-3">
@@ -58,13 +58,13 @@ export default function AdminProgramEditor({ weekStart, program, onSaved }) {
           <div key={key} className="bg-gray-50 rounded-xl p-3 space-y-2">
             <p className="text-xs font-semibold text-gray-500 uppercase">{label}</p>
             <Input
-              placeholder="Název úkolu"
+            placeholder="Task title"
               value={form[`${key}_title`] || ""}
               onChange={e => setForm(f => ({ ...f, [`${key}_title`]: e.target.value }))}
               className="text-sm bg-white"
             />
             <Input
-              placeholder="Popis úkolu"
+            placeholder="Task description"
               value={form[`${key}_desc`] || ""}
               onChange={e => setForm(f => ({ ...f, [`${key}_desc`]: e.target.value }))}
               className="text-sm bg-white"

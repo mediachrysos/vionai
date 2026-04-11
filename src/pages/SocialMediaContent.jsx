@@ -7,13 +7,13 @@ import DayDetailModal from "../components/social/DayDetailModal";
 import AdminProgramEditor from "../components/social/AdminProgramEditor";
 
 const DAYS = [
-  { key: "mon", label: "Pondělí", short: "Po" },
-  { key: "tue", label: "Úterý", short: "Út" },
-  { key: "wed", label: "Středa", short: "St" },
-  { key: "thu", label: "Čtvrtek", short: "Čt" },
-  { key: "fri", label: "Pátek", short: "Pá" },
-  { key: "sat", label: "Sobota", short: "So" },
-  { key: "sun", label: "Neděle", short: "Ne" },
+  { key: "mon", label: "Monday", short: "Mon" },
+  { key: "tue", label: "Tuesday", short: "Tue" },
+  { key: "wed", label: "Wednesday", short: "Wed" },
+  { key: "thu", label: "Thursday", short: "Thu" },
+  { key: "fri", label: "Friday", short: "Fri" },
+  { key: "sat", label: "Saturday", short: "Sat" },
+  { key: "sun", label: "Sunday", short: "Sun" },
 ];
 
 function getMondayOf(date) {
@@ -93,7 +93,7 @@ export default function SocialMediaContent({ currentUser }) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-gray-900">Social Media Content</h1>
-            <p className="text-sm text-gray-400 mt-0.5">Týdenní plán grafika</p>
+            <p className="text-sm text-gray-400 mt-0.5">Weekly Designer Schedule</p>
           </div>
           {isAdmin && (
             <button
@@ -101,7 +101,7 @@ export default function SocialMediaContent({ currentUser }) {
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showEditor ? "bg-[#faf6e6] border-[#C9A227] text-[#C9A227]" : "bg-white border-gray-200 text-gray-600 hover:border-[#C9A227]"}`}
             >
               <Settings className="w-4 h-4" />
-              {showEditor ? "Zavřít editor" : "Editovat program"}
+              {showEditor ? "Close editor" : "Edit program"}
             </button>
           )}
         </div>
@@ -116,7 +116,7 @@ export default function SocialMediaContent({ currentUser }) {
             <ChevronRight className="w-4 h-4 text-gray-500" />
           </button>
           <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-[#faf6e6]">
-            Tento týden
+            This week
           </button>
         </div>
 
@@ -125,15 +125,15 @@ export default function SocialMediaContent({ currentUser }) {
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-center">
               <p className="text-xl font-bold text-amber-700">{totalSubmitted}</p>
-              <p className="text-xs text-amber-600">Čeká na review</p>
+              <p className="text-xs text-amber-600">Pending review</p>
             </div>
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-center">
               <p className="text-xl font-bold text-emerald-700">{totalApproved}</p>
-              <p className="text-xs text-emerald-600">Schváleno</p>
+              <p className="text-xs text-emerald-600">Approved</p>
             </div>
             <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center">
               <p className="text-xl font-bold text-red-600">{totalRejected}</p>
-              <p className="text-xs text-red-500">Zamítnuto</p>
+              <p className="text-xs text-red-500">Rejected</p>
             </div>
           </div>
         )}

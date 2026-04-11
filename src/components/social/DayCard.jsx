@@ -2,10 +2,10 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 const statusConfig = {
-  not_started: { label: "Nezačato", className: "bg-gray-100 text-gray-500" },
-  submitted: { label: "Čeká na review", className: "bg-amber-100 text-amber-700" },
-  approved: { label: "Schváleno", className: "bg-emerald-100 text-emerald-700" },
-  rejected: { label: "Zamítnuto", className: "bg-red-100 text-red-600" },
+  not_started: { label: "Not started", className: "bg-gray-100 text-gray-500" },
+  submitted: { label: "Pending review", className: "bg-amber-100 text-amber-700" },
+  approved: { label: "Approved", className: "bg-emerald-100 text-emerald-700" },
+  rejected: { label: "Rejected", className: "bg-red-100 text-red-600" },
 };
 
 export default function DayCard({ dayName, dayShort, taskTitle, taskDesc, submission, onClick, isToday }) {
@@ -25,10 +25,10 @@ export default function DayCard({ dayName, dayShort, taskTitle, taskDesc, submis
       <div className="flex items-start justify-between gap-2 mb-2">
         <div>
           <p className={cn("text-xs font-semibold uppercase tracking-wide mb-0.5", isToday ? "text-[#C9A227]" : "text-gray-400")}>
-            {isToday ? "Dnes · " : ""}{dayName}
+            {isToday ? "Today · " : ""}{dayName}
           </p>
           <p className="text-sm font-semibold text-gray-800 leading-snug">
-            {taskTitle || <span className="text-gray-300 italic">Žádný úkol</span>}
+            {taskTitle || <span className="text-gray-300 italic">No task assigned</span>}
           </p>
         </div>
         <span className={cn("text-xs font-medium px-2 py-1 rounded-full flex-shrink-0", cfg.className)}>

@@ -6,10 +6,10 @@ import { base44 } from "@/api/base44Client";
 import { CheckCircle, XCircle, Edit2, ExternalLink } from "lucide-react";
 
 const statusLabels = {
-  not_started: { label: "Nezačato", color: "text-gray-500 bg-gray-100" },
-  submitted: { label: "Čeká na review", color: "text-amber-700 bg-amber-100" },
-  approved: { label: "Schváleno", color: "text-emerald-700 bg-emerald-100" },
-  rejected: { label: "Zamítnuto", color: "text-red-600 bg-red-100" },
+  not_started: { label: "Not started", color: "text-gray-500 bg-gray-100" },
+  submitted: { label: "Pending review", color: "text-amber-700 bg-amber-100" },
+  approved: { label: "Approved", color: "text-emerald-700 bg-emerald-100" },
+  rejected: { label: "Rejected", color: "text-red-600 bg-red-100" },
 };
 
 export default function DayDetailModal({ open, onClose, dayName, taskTitle, taskDesc, submission, weekStart, dayKey, isAdmin, onRefresh }) {
@@ -73,7 +73,7 @@ export default function DayDetailModal({ open, onClose, dayName, taskTitle, task
         <div className="space-y-4 pt-1">
           {/* Task */}
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Úkol</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase mb-1">Task</p>
             <p className="text-sm font-semibold text-gray-800">{taskTitle || "—"}</p>
             {taskDesc && <p className="text-xs text-gray-500 mt-1">{taskDesc}</p>}
           </div>
@@ -83,7 +83,7 @@ export default function DayDetailModal({ open, onClose, dayName, taskTitle, task
             <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${cfg.color}`}>{cfg.label}</span>
             {submission?.submitted_link && (
               <a href={submission.submitted_link} target="_blank" rel="noreferrer" className="text-xs text-blue-500 flex items-center gap-1 hover:underline">
-                <ExternalLink className="w-3 h-3" /> Zobrazit odkaz
+                <ExternalLink className="w-3 h-3" /> View link
               </a>
             )}
           </div>
@@ -91,15 +91,16 @@ export default function DayDetailModal({ open, onClose, dayName, taskTitle, task
           {/* Admin rejection note */}
           {status === "rejected" && submission?.admin_note && (
             <div className="bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-              <p className="text-xs font-semibold text-red-600 mb-0.5">Poznámka admina:</p>
+              <p className="text-xs font-semibold text-red-600 mb-0.5">Admin note:</p>
               <p className="text-xs text-red-500">{submission.admin_note}</p>
+
             </div>
           )}
 
           {/* Designer: submit link */}
           {!isAdmin && (status === "not_started" || status === "rejected") && (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-gray-600">{status === "rejected" ? "Znovu odeslat odkaz:" : "Odeslat odkaz:"}</p>
+              <p className="text-xs font-medium text-gray-600">{status === "rejected" ? "Resubmit link:" : "Submit link:"}</p>
               <Input
                 placeholder="https://..."
                 value={link}
@@ -107,7 +108,7 @@ export default function DayDetailModal({ open, onClose, dayName, taskTitle, task
                 className="text-sm"
               />
               <Button onClick={handleSubmitLink} disabled={!link || saving} className="w-full bg-[#C9A227] hover:bg-[#A8841C] text-white">
-                {saving ? "Odesílám..." : "Odeslat"}
+                {saving ? "Submitting..." : "Submit"}
               </Button>
             </div>
           )}
@@ -118,40 +119,40 @@ export default function DayDetailModal({ open, onClose, dayName, taskTitle, task
               {!action && (
                 <div className="flex gap-2">
                   <Button onClick={() => setAction("approve")} size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white gap-1">
-                    <CheckCircle className="w-3.5 h-3.5" /> Schválit
+                    <CheckCircle className="w-3.5 h-3.5" /> Approve
                   </Button>
                   <Button onClick={() => setAction("edit")} size="sm" variant="outline" className="flex-1 gap-1">
-                    <Edit2 className="w-3.5 h-3.5" /> Upravit
+                    <Edit2 className="w-3.5 h-3.5" /> Edit
                   </Button>
                   <Button onClick={() => setAction("reject")} size="sm" className="flex-1 bg-red-500 hover:bg-red-600 text-white gap-1">
-                    <XCircle className="w-3.5 h-3.5" /> Zamítnout
+                    <XCircle className="w-3.5 h-3.5" /> Reject
                   </Button>
                 </div>
               )}
               {action === "approve" && (
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Opravdu schválit?</p>
+                  <p className="text-sm text-gray-600">Confirm approval?</p>
                   <div className="flex gap-2">
-                    <Button onClick={() => handleAdminAction("approve")} size="sm" disabled={saving} className="bg-emerald-500 hover:bg-emerald-600 text-white">Potvrdit</Button>
-                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Zrušit</Button>
+                    <Button onClick={() => handleAdminAction("approve")} size="sm" disabled={saving} className="bg-emerald-500 hover:bg-emerald-600 text-white">Confirm</Button>
+                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Cancel</Button>
                   </div>
                 </div>
               )}
               {action === "reject" && (
                 <div className="space-y-2">
-                  <Input placeholder="Poznámka k zamítnutí (povinné)" value={adminNote} onChange={e => setAdminNote(e.target.value)} className="text-sm" />
+                  <Input placeholder="Rejection note (required)" value={adminNote} onChange={e => setAdminNote(e.target.value)} className="text-sm" />
                   <div className="flex gap-2">
-                    <Button onClick={() => handleAdminAction("reject")} size="sm" disabled={!adminNote || saving} className="bg-red-500 hover:bg-red-600 text-white">Zamítnout</Button>
-                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Zrušit</Button>
+                    <Button onClick={() => handleAdminAction("reject")} size="sm" disabled={!adminNote || saving} className="bg-red-500 hover:bg-red-600 text-white">Reject</Button>
+                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Cancel</Button>
                   </div>
                 </div>
               )}
               {action === "edit" && (
                 <div className="space-y-2">
-                  <Input placeholder="Co je potřeba upravit?" value={editNote} onChange={e => setEditNote(e.target.value)} className="text-sm" />
+                  <Input placeholder="What needs to be changed?" value={editNote} onChange={e => setEditNote(e.target.value)} className="text-sm" />
                   <div className="flex gap-2">
-                    <Button onClick={() => handleAdminAction("edit")} size="sm" disabled={!editNote || saving} variant="outline">Odeslat poznámku</Button>
-                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Zrušit</Button>
+                    <Button onClick={() => handleAdminAction("edit")} size="sm" disabled={!editNote || saving} variant="outline">Send note</Button>
+                    <Button onClick={() => setAction(null)} size="sm" variant="outline">Cancel</Button>
                   </div>
                 </div>
               )}
