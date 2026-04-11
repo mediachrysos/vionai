@@ -120,23 +120,7 @@ export default function SocialMediaContent({ currentUser }) {
           </button>
         </div>
 
-        {/* Admin stats */}
-        {isAdmin && (
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-center">
-              <p className="text-xl font-bold text-amber-700">{totalSubmitted}</p>
-              <p className="text-xs text-amber-600">Pending review</p>
-            </div>
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-center">
-              <p className="text-xl font-bold text-emerald-700">{totalApproved}</p>
-              <p className="text-xs text-emerald-600">Approved</p>
-            </div>
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center">
-              <p className="text-xl font-bold text-red-600">{totalRejected}</p>
-              <p className="text-xs text-red-500">Rejected</p>
-            </div>
-          </div>
-        )}
+
 
         {/* Admin editor */}
         {isAdmin && showEditor && (

@@ -82,10 +82,21 @@ export default function DayDetailModal({ open, onClose, dayName, taskTitle, task
           <div className="flex items-center gap-2">
             <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${cfg.color}`}>{cfg.label}</span>
             {submission?.submitted_link && (
-              <a href={submission.submitted_link} target="_blank" rel="noreferrer" className="text-xs text-blue-500 flex items-center gap-1 hover:underline">
-                <ExternalLink className="w-3 h-3" /> View link
-              </a>
-            )}
+            <div className="w-full mt-1">
+              <p className="text-xs font-semibold text-gray-400 uppercase mb-1.5">Submitted link</p>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-3">
+                <p className="text-xs text-gray-600 truncate flex-1">{submission.submitted_link}</p>
+                <a
+                  href={submission.submitted_link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C9A227] hover:bg-[#A8841C] text-white text-xs font-medium rounded-lg flex-shrink-0 transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3" /> Open
+                </a>
+              </div>
+            </div>
+          )}
           </div>
 
           {/* Admin rejection note */}
