@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const customIcons = {
+  SocialMediaContent: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png",
   BusinessTimeline: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png",
   Dashboard: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_15_tmcn0g.png",
   Models: "https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png",
@@ -29,6 +30,7 @@ const allPages = [
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
   { name: "Business Timeline", icon: null, page: "BusinessTimeline" },
+  { name: "Social Media", icon: null, page: "SocialMediaContent" },
   { name: "Admin Portál", icon: null, page: "AdminUsers" },
   { name: "Customer Scraper", icon: null, page: "CustomerScraper" },
 ];

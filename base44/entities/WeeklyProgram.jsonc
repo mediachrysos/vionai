@@ -1,0 +1,55 @@
+{
+  "name": "WeeklyProgram",
+  "type": "object",
+  "properties": {
+    "week_start": {
+      "type": "string",
+      "description": "Pond\u011bl\u00ed t\u00fddne (YYYY-MM-DD)"
+    },
+    "mon_title": {
+      "type": "string"
+    },
+    "mon_desc": {
+      "type": "string"
+    },
+    "tue_title": {
+      "type": "string"
+    },
+    "tue_desc": {
+      "type": "string"
+    },
+    "wed_title": {
+      "type": "string"
+    },
+    "wed_desc": {
+      "type": "string"
+    },
+    "thu_title": {
+      "type": "string"
+    },
+    "thu_desc": {
+      "type": "string"
+    },
+    "fri_title": {
+      "type": "string"
+    },
+    "fri_desc": {
+      "type": "string"
+    },
+    "sat_title": {
+      "type": "string"
+    },
+    "sat_desc": {
+      "type": "string"
+    },
+    "sun_title": {
+      "type": "string"
+    },
+    "sun_desc": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "week_start"
+  ]
+}

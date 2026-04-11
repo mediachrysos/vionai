@@ -1,0 +1,43 @@
+{
+  "name": "DaySubmission",
+  "type": "object",
+  "properties": {
+    "week_start": {
+      "type": "string",
+      "description": "Pond\u011bl\u00ed t\u00fddne (YYYY-MM-DD)"
+    },
+    "day_key": {
+      "type": "string",
+      "description": "mon/tue/wed/thu/fri/sat/sun"
+    },
+    "day_name": {
+      "type": "string"
+    },
+    "submitted_link": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "submitted",
+        "approved",
+        "rejected"
+      ],
+      "default": "not_started"
+    },
+    "admin_note": {
+      "type": "string"
+    },
+    "submitted_at": {
+      "type": "string"
+    },
+    "reviewed_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "week_start",
+    "day_key"
+  ]
+}
