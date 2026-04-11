@@ -96,8 +96,8 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
             </div>
           )}
 
-          {/* Designer: submit / resubmit */}
-          {!isAdmin && (status === "not_started" || status === "rejected" || status === "edit_requested") && (
+          {/* Designer: submit / resubmit — visible to everyone */}
+          {(status === "not_started" || status === "rejected" || status === "edit_requested") && (
             <div className="flex gap-2">
               <Input
                 placeholder="https://..."
