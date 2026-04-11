@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Check, X } from "lucide-react";
 
-export default function CompanyReserveRow({ monthStr, totalAllocated = 0 }) {
+export default function CompanyReserveRow({ monthStr, totalAllocated = 0, carryOver = 0 }) {
   const qc = useQueryClient();
   const [adding, setAdding] = useState(false);
   const [inputVal, setInputVal] = useState("");
@@ -33,7 +33,8 @@ export default function CompanyReserveRow({ monthStr, totalAllocated = 0 }) {
     .filter((tx) => tx.type === "expense")
     .reduce((s, tx) => s + (tx.amount || 0), 0);
 
-  const remaining = totalAllocated - spent;
+  const totalWithCarry = totalAllocated + carryOver;
+  const remaining = totalWithCarry - spent;
 
   const handleAdd = () => {
     const amount = parseFloat(inputVal);
@@ -48,7 +49,10 @@ export default function CompanyReserveRow({ monthStr, totalAllocated = 0 }) {
           <p className="text-sm font-semibold text-gray-800">Firemní rezerva</p>
           <p className="text-xs text-gray-400">20 % ze zbytku po advokátovi</p>
         </div>
-        <p className="text-base font-bold text-blue-600">{totalAllocated.toLocaleString("cs-CZ")} Kč</p>
+        <div className="text-right">
+          <p className="text-base font-bold text-blue-600">{totalAllocated.toLocaleString("cs-CZ")} Kč</p>
+          {carryOver > 0 && <p className="text-xs text-blue-400">+ {carryOver.toLocaleString("cs-CZ")} Kč z min. měsíce</p>}
+        </div>
       </div>
 
       {reserveTxs.length > 0 && (

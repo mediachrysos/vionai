@@ -73,7 +73,11 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
   const companyReserve = netProfit * 0.20;
   const ownerPayout = netProfit * 0.40;
 
-  // Load all payouts to calculate carryOver from previous months
+  // Load all data for carry-over calculations
+  const { data: allCompanyReserveTxs = [] } = useQuery({
+    queryKey: ["companyReserveAll"],
+    queryFn: () => base44.entities.CompanyReserve.list(),
+  });
   const { data: allLukyPayouts = [] } = useQuery({
     queryKey: ["ownerPayouts", "luky", "all"],
     queryFn: () => base44.entities.OwnerPayout.filter({ owner: "luky" }),
@@ -105,7 +109,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
   // FINAL DECISION: We'll pass ALL historical data (payments, expenses, walletTxs) and compute
   // each past month's ownerPayout, then subtract what was actually paid.
 
-  const computeMonthOwnerPayout = (mStr) => {
+  const computeMonthNetProfit = (mStr) => {
     const mp = payments.filter((p) => {
       const d = p.payment_date || p.created_date?.split("T")[0] || "";
       return d.startsWith(mStr) && p.status !== "failed" && p.status !== "refunded";
@@ -121,7 +125,11 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
     const inc = mp.reduce((s, p) => s + (p.amount || 0), 0) + mw.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
     const exp = me.reduce((s, e) => s + (e.amount || 0), 0) + mw.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
     const gp = inc - exp;
-    const netP = Math.max(0, gp) * 0.90;
+    return gp - gp * 0.10; // netProfit
+  };
+
+  const computeMonthOwnerPayout = (mStr) => {
+    const netP = Math.max(0, computeMonthNetProfit(mStr));
     return netP * 0.40;
   };
 
@@ -132,6 +140,12 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
     ...walletTxs.map((t) => (t.transaction_date || t.created_date?.split("T")[0] || "").slice(0, 7)),
   ]);
   const pastMonths = [...allMonths].filter((m) => m && m < monthStr && m.length === 7);
+
+  const reserveCarryOver = pastMonths.reduce((sum, m) => {
+    const due = Math.max(0, computeMonthNetProfit(m)) * 0.20;
+    const spent = allCompanyReserveTxs.filter((tx) => tx.month === m && tx.type === "expense").reduce((s, tx) => s + (tx.amount || 0), 0);
+    return sum + Math.max(0, due - spent);
+  }, 0);
 
   const lukyCarryOver = pastMonths.reduce((sum, m) => {
     const due = computeMonthOwnerPayout(m);
@@ -217,7 +231,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="border-t border-dashed border-gray-200 my-1" />
 
-        <CompanyReserveRow monthStr={monthStr} totalAllocated={companyReserve} />
+        <CompanyReserveRow monthStr={monthStr} totalAllocated={companyReserve} carryOver={reserveCarryOver} />
         <OwnerPayoutRow owner="luky" label="Luky" monthStr={monthStr} totalDue={ownerPayout} carryOver={lukyCarryOver} />
         <OwnerPayoutRow owner="maty" label="Maty" monthStr={monthStr} totalDue={ownerPayout} carryOver={matyCarryOver} />
       </div>
