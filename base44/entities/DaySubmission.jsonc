@@ -12,30 +12,41 @@
     "day_name": {
       "type": "string"
     },
-    "submitted_link": {
-      "type": "string"
-    },
     "admin_link": {
       "type": "string"
     },
-    "status": {
-      "type": "string",
-      "enum": [
-        "not_started",
-        "submitted",
-        "approved",
-        "rejected"
-      ],
-      "default": "not_started"
-    },
-    "admin_note": {
-      "type": "string"
-    },
-    "submitted_at": {
-      "type": "string"
-    },
-    "reviewed_at": {
-      "type": "string"
+    "task_submissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_idx": {
+            "type": "integer"
+          },
+          "submitted_link": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_started",
+              "submitted",
+              "approved",
+              "rejected",
+              "edit_requested"
+            ]
+          },
+          "admin_note": {
+            "type": "string"
+          },
+          "submitted_at": {
+            "type": "string"
+          },
+          "reviewed_at": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "required": [
