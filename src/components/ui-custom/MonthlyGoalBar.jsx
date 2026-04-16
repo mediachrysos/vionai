@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import confetti from "canvas-confetti";
 
 
 export default function MonthlyGoalBar() {
@@ -30,6 +31,39 @@ export default function MonthlyGoalBar() {
   const pct = Math.min(100, Math.round(monthRev / goal * 100));
   const reached = monthRev >= goal;
 
+  // Konfety + zvuk při splnění cíle
+  const celebratedRef = useRef(false);
+  useEffect(() => {
+    if (reached && !celebratedRef.current && goals.length > 0) {
+      celebratedRef.current = true;
+      // Konfety přes celou stránku
+      const duration = 4000;
+      const end = Date.now() + duration;
+      const frame = () => {
+        confetti({ particleCount: 6, angle: 60, spread: 70, origin: { x: 0, y: 0.6 }, colors: ["#C9A227", "#fff", "#A8841C", "#f5d56e"] });
+        confetti({ particleCount: 6, angle: 120, spread: 70, origin: { x: 1, y: 0.6 }, colors: ["#C9A227", "#fff", "#A8841C", "#f5d56e"] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      };
+      frame();
+      // Zvuk výhry
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523, 659, 784, 1047];
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.frequency.value = freq;
+          osc.type = "sine";
+          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.18);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.4);
+          osc.start(ctx.currentTime + i * 0.18);
+          osc.stop(ctx.currentTime + i * 0.18 + 0.5);
+        });
+      } catch (_) {}
+    }
+  }, [reached, goals.length]);
+
   // Zbývající dny a denní požadavek
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -49,15 +83,12 @@ export default function MonthlyGoalBar() {
           <span className="text-xs font-semibold text-white/90 uppercase tracking-wider">Měsíční cíl</span>
         </div>
         <div className="flex items-center gap-2">
-          {reached ?
-          <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">🎉 Cíl splněn!</span> :
-
           <span className="text-xs text-white/80">
-              <span className="font-bold text-white">{monthRev.toLocaleString()} Kč</span>
-              {" / "}
-              {goal.toLocaleString()} Kč
-            </span>
-          }
+            <span className="font-bold text-white">{monthRev.toLocaleString()} Kč</span>
+            {" / "}
+            {goal.toLocaleString()} Kč
+          </span>
+          {reached && <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">🎉 Cíl splněn!</span>}
           <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">{pct}%</span>
         </div>
       </div>
@@ -66,20 +97,26 @@ export default function MonthlyGoalBar() {
           className="h-full rounded-full bg-white transition-all duration-700"
           style={{ width: `${pct}%` }} />
       </div>
-      {!reached && (
-        <div className="flex items-center gap-2 mt-2.5">
-          <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
-            <span className="text-sm">⏳</span>
-            <span className="text-xs text-white/70">Zbývá</span>
-            <span className="text-xs font-bold text-white">{daysLeft} dní</span>
-          </div>
+      <div className="flex items-center gap-2 mt-2.5">
+        <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
+          <span className="text-sm">⏳</span>
+          <span className="text-xs text-white/70">Zbývá</span>
+          <span className="text-xs font-bold text-white">{daysLeft} dní</span>
+        </div>
+        {!reached && (
           <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
             <span className="text-sm">⚡</span>
             <span className="text-xs text-white/70">Denně</span>
             <span className="text-xs font-bold text-white">{dailyNeeded.toLocaleString()} Kč</span>
           </div>
-        </div>
-      )}
+        )}
+        {reached && (
+          <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
+            <span className="text-sm">🚀</span>
+            <span className="text-xs font-bold text-white">Jedeme dál! +{(monthRev - goal).toLocaleString()} Kč nad cíl</span>
+          </div>
+        )}
+      </div>
     </div>);
 
 }
