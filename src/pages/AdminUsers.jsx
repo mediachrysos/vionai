@@ -246,8 +246,10 @@ const PAGE_OPTIONS = [
 { page: "Finance", label: "Finance" },
 { page: "Wallet", label: "Wallet" },
 { page: "CustomerScraper", label: "Customer Scraper" },
-{ page: "ChattingAssistant", label: "Chatting Assistant" },
-{ page: "Tasks", label: "Úkoly" }];
+{ page: "SocialMediaContent", label: "Social Media" },
+{ page: "Tasks", label: "Úkoly" },
+{ page: "BusinessTimeline", label: "Timeline" },
+{ page: "Expenses", label: "Výdaje" }];
 
 function UserRow({ user, onUpdate, onDelete, models }) {
   const [showPerms, setShowPerms] = useState(false);
