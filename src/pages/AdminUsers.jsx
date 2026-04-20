@@ -251,18 +251,19 @@ const PAGE_OPTIONS = [
 
 function UserRow({ user, onUpdate, onDelete, models }) {
   const [showPerms, setShowPerms] = useState(false);
+  const [allowedPages, setAllowedPages] = useState(user.allowed_pages || []);
+  const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || []);
   const status = user.account_status || "pending";
   const role = user.role || "user";
   const statusCfg = statusConfig[status] || statusConfig.pending;
   const StatusIcon = statusCfg.icon;
-  const assignedIds = user.assigned_model_ids || [];
-  const allowedPages = user.allowed_pages || [];
   const isAdmin = role === "admin";
 
   const toggleModel = (modelId) => {
     const next = assignedIds.includes(modelId) ?
     assignedIds.filter((id) => id !== modelId) :
     [...assignedIds, modelId];
+    setAssignedIds(next);
     onUpdate(user.id, { assigned_model_ids: next });
   };
 
@@ -270,6 +271,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
     const next = allowedPages.includes(page) ?
     allowedPages.filter((p) => p !== page) :
     [...allowedPages, page];
+    setAllowedPages(next);
     onUpdate(user.id, { allowed_pages: next });
   };
 
@@ -340,7 +342,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
             })}
           </div>
           {allowedPages.length > 0 &&
-        <button onClick={() => onUpdate(user.id, { allowed_pages: [] })}
+        <button onClick={() => { setAllowedPages([]); onUpdate(user.id, { allowed_pages: [] }); }}
         className="mt-2 text-[11px] text-gray-400 hover:text-red-400 transition-colors underline">
               Resetovat na výchozí
             </button>
