@@ -106,19 +106,41 @@ export default function SocialMediaContent({ currentUser }) {
 
   const { data: programs = [] } = useQuery({
     queryKey: ["weeklyProgram", weekStart, programQueryKey],
-    queryFn: () => base44.entities.WeeklyProgram.filter({
-      week_start: weekStart,
-      designer_email: `dashboard:${activeDashboard.id}`,
-    }),
+    queryFn: async () => {
+      // Try new format first (dashboard:id), fallback to old format (designer email)
+      const byDashboardId = await base44.entities.WeeklyProgram.filter({
+        week_start: weekStart,
+        designer_email: `dashboard:${activeDashboard.id}`,
+      });
+      if (byDashboardId.length > 0) return byDashboardId;
+      // Fallback: find by designer email (legacy records)
+      if (activeDashboard.designer_email) {
+        return base44.entities.WeeklyProgram.filter({
+          week_start: weekStart,
+          designer_email: activeDashboard.designer_email,
+        });
+      }
+      return [];
+    },
     enabled: !!activeDashboard,
   });
 
   const { data: submissions = [] } = useQuery({
     queryKey: ["daySubmissions", weekStart, programQueryKey],
-    queryFn: () => base44.entities.DaySubmission.filter({
-      week_start: weekStart,
-      designer_email: `dashboard:${activeDashboard.id}`,
-    }),
+    queryFn: async () => {
+      const byDashboardId = await base44.entities.DaySubmission.filter({
+        week_start: weekStart,
+        designer_email: `dashboard:${activeDashboard.id}`,
+      });
+      if (byDashboardId.length > 0) return byDashboardId;
+      if (activeDashboard.designer_email) {
+        return base44.entities.DaySubmission.filter({
+          week_start: weekStart,
+          designer_email: activeDashboard.designer_email,
+        });
+      }
+      return [];
+    },
     enabled: !!activeDashboard,
   });
 
