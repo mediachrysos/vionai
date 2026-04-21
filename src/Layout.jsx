@@ -95,6 +95,21 @@ export default function Layout({ children, currentPageName }) {
       const me = await base44.auth.me();
       setUser(me);
       setLoading(false);
+
+      // Redirect non-admins to their first allowed page if they're on a page they can't access
+      if (me?.role !== "admin") {
+        const allowedPages = me?.allowed_pages?.length > 0
+          ? me.allowed_pages
+          : me?.role === "lawyer"
+            ? ["Finance"]
+            : ["ChatterPortal", "Customers", "Payments"];
+
+        const currentPath = window.location.pathname.replace("/", "") || "Dashboard";
+        if (!allowedPages.includes(currentPath)) {
+          const firstPage = allowedPages[0] || "ChatterPortal";
+          window.location.replace(`/${firstPage}`);
+        }
+      }
     };
     loadUser();
   }, []);
