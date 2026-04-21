@@ -21,6 +21,9 @@ export default function DayCard({ dayName, tasks = [], submission, onClick, isTo
 
   const allStatuses = tasks.map((_, i) => taskSubMap[i]?.status || "not_started");
   const hasAny = allStatuses.some(s => s !== "not_started");
+  const done = allStatuses.filter(s => s === "approved").length;
+  const total = tasks.length;
+  const remaining = total - done;
 
   return (
     <button
@@ -31,25 +34,22 @@ export default function DayCard({ dayName, tasks = [], submission, onClick, isTo
         hasAny && "border-amber-200"
       )}
     >
-      <p className={cn("text-xs font-semibold uppercase tracking-wide mb-2", isToday ? "text-[#C9A227]" : "text-gray-400")}>
+      <p className={cn("text-xs font-semibold uppercase tracking-wide mb-3", isToday ? "text-[#C9A227]" : "text-gray-400")}>
         {isToday ? "Today · " : ""}{dayName}
       </p>
 
       {tasks.length === 0 ? (
         <p className="text-xs text-gray-300 italic">No tasks</p>
       ) : (
-        <div className="space-y-1.5">
-          {tasks.map((task, i) => {
-            const label = task.type === "custom" ? (task.customType || "Custom") : task.type;
-            const colorClass = typeColors[task.type] || "bg-amber-100 text-amber-700";
-            const st = allStatuses[i];
-            return (
-              <div key={i} className="flex items-center gap-2">
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${colorClass}`}>{label}</span>
-                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDot[st] || "bg-gray-300"}`} />
-              </div>
-            );
-          })}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <span className="text-2xl font-bold text-gray-800">{remaining}</span>
+            <span className="text-xs text-gray-400 leading-tight">remaining<br/>tasks</span>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-emerald-600 font-semibold">{done}/{total}</span>
+            <p className="text-[10px] text-gray-400">done</p>
+          </div>
         </div>
       )}
     </button>
