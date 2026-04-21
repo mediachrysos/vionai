@@ -263,13 +263,72 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
         )
       )}
 
-      {/* Admin: delete active session */}
-      {isAdmin && activeSession && (
-        <div className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2">
-          <span className="text-xs text-gray-400">{fmtTime(activeSession.started_at)} – now (active)</span>
-          <button onClick={() => handleDelete(activeSession.id)} className="text-gray-300 hover:text-red-400 transition-colors">
-            <X className="w-3.5 h-3.5" />
-          </button>
+      {/* Admin: stop active session + manage today sessions */}
+      {isAdmin && (
+        <div className="flex flex-col gap-2">
+          {activeSession && (
+            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs text-gray-500">Running since {fmtTime(activeSession.started_at)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleStop}
+                  className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded-lg transition-colors"
+                >
+                  <Square className="w-3 h-3" /> Stop
+                </button>
+                <button onClick={() => handleDelete(activeSession.id)} className="text-gray-300 hover:text-red-400 transition-colors">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Today's finished sessions — admin can edit */}
+          {todaySessions.filter(s => !s.is_active).map(s => (
+            <div key={s.id} className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
+              {editingSession === s.id ? (
+                <>
+                  <Input
+                    value={editMinutes}
+                    onChange={e => setEditMinutes(e.target.value)}
+                    className="h-6 text-xs w-16 px-2"
+                    type="number"
+                    min="0"
+                  />
+                  <span className="text-gray-400 text-[10px]">min</span>
+                  <button onClick={() => handleEditSave(s)} className="text-emerald-600 hover:text-emerald-800 ml-auto">
+                    <Check className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => setEditingSession(null)} className="text-gray-300 hover:text-gray-500">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span className="flex-1 text-gray-400">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
+                  <span className="font-semibold text-gray-700">{minutesToDisplay(s.minutes_worked || 0)}</span>
+                  <button onClick={() => { setEditingSession(s.id); setEditMinutes(String(s.minutes_worked || 0)); }} className="text-gray-300 hover:text-amber-500 transition-colors">
+                    <Edit2 className="w-3 h-3" />
+                  </button>
+                  <button onClick={() => handleDelete(s.id)} className="text-gray-300 hover:text-red-400 transition-colors">
+                    <X className="w-3 h-3" />
+                  </button>
+                </>
+              )}
+            </div>
+          ))}
+
+          {!activeSession && (
+            <button
+              onClick={handleStart}
+              className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-medium rounded-xl py-2 transition-colors"
+            >
+              <Play className="w-3.5 h-3.5" /> Start session for designer
+            </button>
+          )}
         </div>
       )}
     </div>
