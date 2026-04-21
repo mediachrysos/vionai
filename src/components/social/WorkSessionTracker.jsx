@@ -16,7 +16,7 @@ function minutesToDisplay(mins) {
 }
 
 function roundDownTo15(minutes) {
-  return Math.floor(minutes / 15) * 15;
+  return minutes;
 }
 
 function fmtTime(iso) {
