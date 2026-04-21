@@ -213,18 +213,18 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
 
   // ── TODAY VIEW (default) ──
   return (
-    <div className="bg-gradient-to-br from-[#C9A227] to-[#A8841C] rounded-2xl shadow-md p-5 flex flex-col gap-4">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
-            <Clock className="w-3.5 h-3.5 text-white" />
+          <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+            <Clock className="w-3.5 h-3.5 text-gray-500" />
           </div>
-          <span className="text-sm font-semibold text-white/90">Today's work</span>
+          <span className="text-sm font-semibold text-gray-800">Today's work</span>
         </div>
         <button
           onClick={() => setShowHistory(true)}
-          className="text-white/50 hover:text-white transition-colors"
+          className="text-gray-300 hover:text-gray-500 transition-colors"
           title="View full history"
         >
           <History className="w-4 h-4" />
@@ -233,12 +233,12 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
 
       {/* Big time display */}
       <div className="flex flex-col items-center py-3">
-        <span className="text-5xl font-extrabold text-white tabular-nums tracking-tight drop-shadow">
+        <span className="text-5xl font-extrabold tabular-nums tracking-tight" style={{ color: "#C9A227" }}>
           {minutesToDisplay(roundedTotal)}
         </span>
         {activeSession && (
-          <span className="text-xs text-white/70 mt-1.5 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span className="text-xs text-gray-400 mt-1.5 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Running since {fmtTime(activeSession.started_at)}
           </span>
         )}
@@ -249,14 +249,14 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
         !activeSession ? (
           <button
             onClick={handleStart}
-            className="w-full flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors border border-white/25"
+            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors"
           >
             <Play className="w-4 h-4" /> Start working
           </button>
         ) : (
           <button
             onClick={handleStop}
-            className="w-full flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors border border-white/25"
+            className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors"
           >
             <Square className="w-4 h-4" /> Stop
           </button>
@@ -265,9 +265,9 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
 
       {/* Admin: delete active session */}
       {isAdmin && activeSession && (
-        <div className="flex items-center justify-between bg-white/15 rounded-xl px-3 py-2">
-          <span className="text-xs text-white/80">{fmtTime(activeSession.started_at)} – now (active)</span>
-          <button onClick={() => handleDelete(activeSession.id)} className="text-white/40 hover:text-red-300 transition-colors">
+        <div className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2">
+          <span className="text-xs text-gray-400">{fmtTime(activeSession.started_at)} – now (active)</span>
+          <button onClick={() => handleDelete(activeSession.id)} className="text-gray-300 hover:text-red-400 transition-colors">
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
