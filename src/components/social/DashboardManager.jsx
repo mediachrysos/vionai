@@ -26,14 +26,14 @@ export default function DashboardManager({ dashboards, designers, onRefresh }) {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Smazat dashboard?")) return;
+    if (!window.confirm("Delete dashboard?")) return;
     await base44.entities.SocialDashboard.delete(id);
     onRefresh();
   };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
-      <h3 className="text-sm font-semibold text-gray-800">Správa dashboardů</h3>
+      <h3 className="text-sm font-semibold text-gray-800">Manage dashboards</h3>
 
       <div className="space-y-2">
         {dashboards.map(db => (
@@ -49,7 +49,7 @@ export default function DashboardManager({ dashboards, designers, onRefresh }) {
 
       <div className="flex gap-2 pt-2 border-t border-gray-100">
         <Input
-          placeholder="Název nového dashboardu..."
+          placeholder="New dashboard name..."
           value={newName}
           onChange={e => setNewName(e.target.value)}
           onKeyDown={e => e.key === "Enter" && handleCreate()}
@@ -57,7 +57,7 @@ export default function DashboardManager({ dashboards, designers, onRefresh }) {
         />
         <Button onClick={handleCreate} disabled={!newName.trim() || saving} size="sm"
           className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1 flex-shrink-0">
-          <Plus className="w-3.5 h-3.5" /> Přidat
+          <Plus className="w-3.5 h-3.5" /> Add
         </Button>
       </div>
     </div>
@@ -91,14 +91,14 @@ function DashboardRow({ dashboard, designers, onUpdate, onDelete }) {
         onChange={e => { setDesignerEmail(e.target.value); setDirty(true); }}
         className="text-xs h-8 border border-gray-200 rounded-md px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-amber-300 flex-1 min-w-[160px]"
       >
-        <option value="">— Bez grafika —</option>
+        <option value="">— No designer —</option>
         {designers.map(d => (
           <option key={d.email} value={d.email}>{d.full_name || d.email}</option>
         ))}
       </select>
       {dirty && (
         <Button size="sm" onClick={handleSave} className="bg-[#C9A227] hover:bg-[#A8841C] text-white h-8 gap-1">
-          <Save className="w-3 h-3" /> Uložit
+          <Save className="w-3 h-3" /> Save
         </Button>
       )}
       <button onClick={() => onDelete(dashboard.id)} className="text-gray-300 hover:text-red-400 transition-colors">

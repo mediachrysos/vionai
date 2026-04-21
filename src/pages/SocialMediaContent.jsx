@@ -6,6 +6,8 @@ import DayCard from "../components/social/DayCard";
 import DayDetailModal from "../components/social/DayDetailModal";
 import AdminProgramEditor from "../components/social/AdminProgramEditor";
 import DashboardManager from "../components/social/DashboardManager";
+import WorkSessionTracker from "../components/social/WorkSessionTracker";
+import DesignerPayWidget from "../components/social/DesignerPayWidget";
 
 const DAYS = [
   { key: "mon", label: "Monday" },
@@ -68,20 +70,25 @@ export default function SocialMediaContent({ currentUser }) {
     );
   }, [allUsers, isAdmin]);
 
-  // Fetch dashboards
+  // Fetch dashboards — needed by both admin and designer
   const { data: dashboards = [], refetch: refetchDashboards } = useQuery({
     queryKey: ["socialDashboards"],
     queryFn: () => base44.entities.SocialDashboard.list("order", 50),
     staleTime: 30000,
-    enabled: isAdmin,
   });
 
   // Auto-select first dashboard
   useEffect(() => {
-    if (isAdmin && dashboards.length > 0 && !selectedDashboardId) {
-      setSelectedDashboardId(dashboards[0].id);
+    if (dashboards.length > 0 && !selectedDashboardId) {
+      if (isAdmin) {
+        setSelectedDashboardId(dashboards[0].id);
+      } else {
+        // For designer: find their dashboard
+        const mine = dashboards.find(d => d.designer_email === myEmail);
+        if (mine) setSelectedDashboardId(mine.id);
+      }
     }
-  }, [dashboards, isAdmin, selectedDashboardId]);
+  }, [dashboards, isAdmin, myEmail, selectedDashboardId]);
 
   // Active dashboard & its designer
   const activeDashboard = dashboards.find(d => d.id === selectedDashboardId) || null;
@@ -254,6 +261,23 @@ export default function SocialMediaContent({ currentUser }) {
             designerName={activeDashboard?.designer_name || activeDashboard?.name}
             onSaved={() => { refresh(); setShowEditor(false); }}
           />
+        )}
+
+        {/* Work tracker + Pay widget — shown when there's an active dashboard with a designer */}
+        {activeDashboard && effectiveDesignerEmail && !effectiveDesignerEmail.startsWith("dashboard:") && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <WorkSessionTracker
+              designerEmail={effectiveDesignerEmail}
+              dashboardId={activeDashboard.id}
+              isAdmin={isAdmin}
+            />
+            <DesignerPayWidget
+              designerEmail={effectiveDesignerEmail}
+              dashboard={activeDashboard}
+              isAdmin={isAdmin}
+              onRateChange={refetchDashboards}
+            />
+          </div>
         )}
 
         {/* Weekly grid */}

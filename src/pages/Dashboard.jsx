@@ -7,6 +7,7 @@ import TodayPaymentsWidget from "../components/dashboard/TodayPaymentsWidget";
 import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
+import DesignerPayoutAlert from "../components/dashboard/DesignerPayoutAlert";
 
 export default function Dashboard({ currentUser }) {
   const { showAll, toggle } = useChatterFilter();
@@ -64,6 +65,7 @@ export default function Dashboard({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
+      {isAdmin && <DesignerPayoutAlert />}
 
       {/* Filter toggle — visible only for non-admins */}
       {!isAdmin && (

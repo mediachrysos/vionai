@@ -1,0 +1,42 @@
+{
+  "name": "DesignerWorkSession",
+  "type": "object",
+  "properties": {
+    "designer_email": {
+      "type": "string",
+      "description": "Email of the designer"
+    },
+    "dashboard_id": {
+      "type": "string",
+      "description": "ID of the dashboard"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the work session (YYYY-MM-DD)"
+    },
+    "started_at": {
+      "type": "string",
+      "description": "ISO timestamp when work started"
+    },
+    "ended_at": {
+      "type": "string",
+      "description": "ISO timestamp when work ended (null = still working)"
+    },
+    "minutes_worked": {
+      "type": "number",
+      "default": 0,
+      "description": "Total minutes worked (rounded down to 15-min blocks)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is the designer currently working?"
+    }
+  },
+  "required": [
+    "designer_email",
+    "dashboard_id",
+    "date"
+  ]
+}

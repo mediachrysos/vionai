@@ -1,0 +1,30 @@
+{
+  "name": "DesignerPayout",
+  "type": "object",
+  "properties": {
+    "designer_email": {
+      "type": "string",
+      "description": "Email of the designer"
+    },
+    "dashboard_id": {
+      "type": "string",
+      "description": "ID of the dashboard"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Amount paid out in MAD"
+    },
+    "period": {
+      "type": "string",
+      "description": "Period label e.g. 2026-04"
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "designer_email",
+    "dashboard_id",
+    "amount"
+  ]
+}
