@@ -95,9 +95,9 @@ export default function SocialMediaContent({ currentUser }) {
   const activeDesignerEmail = isAdmin
     ? (activeDashboard?.designer_email || null)
     : myEmail;
-  // For admin: we can always show a calendar — use dashboard_id as the program key when no designer assigned
+  // Always use dashboard:id as the program key for admin dashboards (consistent regardless of designer assignment)
   const programQueryKey = isAdmin && activeDashboard
-    ? (activeDashboard.designer_email || `dashboard:${selectedDashboardId}`)
+    ? `dashboard:${selectedDashboardId}`
     : activeDesignerEmail;
 
   const { data: models = [] } = useQuery({
@@ -110,8 +110,7 @@ export default function SocialMediaContent({ currentUser }) {
     queryKey: ["weeklyProgram", weekStart, programQueryKey],
     queryFn: () => {
       const filter = { week_start: weekStart };
-      if (activeDesignerEmail) filter.designer_email = activeDesignerEmail;
-      else filter.designer_email = `dashboard:${selectedDashboardId}`;
+      filter.designer_email = isAdmin ? `dashboard:${selectedDashboardId}` : activeDesignerEmail;
       return base44.entities.WeeklyProgram.filter(filter);
     },
     enabled: isAdmin ? !!selectedDashboardId : !!activeDesignerEmail,
@@ -121,8 +120,7 @@ export default function SocialMediaContent({ currentUser }) {
     queryKey: ["daySubmissions", weekStart, programQueryKey],
     queryFn: () => {
       const filter = { week_start: weekStart };
-      if (activeDesignerEmail) filter.designer_email = activeDesignerEmail;
-      else filter.designer_email = `dashboard:${selectedDashboardId}`;
+      filter.designer_email = isAdmin ? `dashboard:${selectedDashboardId}` : activeDesignerEmail;
       return base44.entities.DaySubmission.filter(filter);
     },
     enabled: isAdmin ? !!selectedDashboardId : !!activeDesignerEmail,
