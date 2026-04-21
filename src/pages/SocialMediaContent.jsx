@@ -88,6 +88,10 @@ export default function SocialMediaContent({ currentUser }) {
   const activeDesignerEmail = isAdmin
     ? (activeDashboard?.designer_email || null)
     : myEmail;
+  // For admin: we can always show a calendar — use dashboard_id as the program key when no designer assigned
+  const programQueryKey = isAdmin && activeDashboard
+    ? (activeDashboard.designer_email || `dashboard:${selectedDashboardId}`)
+    : activeDesignerEmail;
 
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
@@ -96,21 +100,25 @@ export default function SocialMediaContent({ currentUser }) {
   });
 
   const { data: programs = [] } = useQuery({
-    queryKey: ["weeklyProgram", weekStart, activeDesignerEmail],
-    queryFn: () => base44.entities.WeeklyProgram.filter({
-      week_start: weekStart,
-      designer_email: activeDesignerEmail,
-    }),
-    enabled: !!activeDesignerEmail,
+    queryKey: ["weeklyProgram", weekStart, programQueryKey],
+    queryFn: () => {
+      const filter = { week_start: weekStart };
+      if (activeDesignerEmail) filter.designer_email = activeDesignerEmail;
+      else filter.designer_email = `dashboard:${selectedDashboardId}`;
+      return base44.entities.WeeklyProgram.filter(filter);
+    },
+    enabled: isAdmin ? !!selectedDashboardId : !!activeDesignerEmail,
   });
 
   const { data: submissions = [] } = useQuery({
-    queryKey: ["daySubmissions", weekStart, activeDesignerEmail],
-    queryFn: () => base44.entities.DaySubmission.filter({
-      week_start: weekStart,
-      designer_email: activeDesignerEmail,
-    }),
-    enabled: !!activeDesignerEmail,
+    queryKey: ["daySubmissions", weekStart, programQueryKey],
+    queryFn: () => {
+      const filter = { week_start: weekStart };
+      if (activeDesignerEmail) filter.designer_email = activeDesignerEmail;
+      else filter.designer_email = `dashboard:${selectedDashboardId}`;
+      return base44.entities.DaySubmission.filter(filter);
+    },
+    enabled: isAdmin ? !!selectedDashboardId : !!activeDesignerEmail,
   });
 
   const program = programs[0] || null;
@@ -131,9 +139,12 @@ export default function SocialMediaContent({ currentUser }) {
   }, [weekStart]);
 
   const refresh = () => {
-    qc.invalidateQueries({ queryKey: ["weeklyProgram", weekStart, activeDesignerEmail] });
-    qc.invalidateQueries({ queryKey: ["daySubmissions", weekStart, activeDesignerEmail] });
+    qc.invalidateQueries({ queryKey: ["weeklyProgram", weekStart, programQueryKey] });
+    qc.invalidateQueries({ queryKey: ["daySubmissions", weekStart, programQueryKey] });
   };
+
+  // Email to use when saving program/submissions (fallback for dashboards without designer)
+  const effectiveDesignerEmail = activeDesignerEmail || `dashboard:${selectedDashboardId}`;
 
   const selectedDayInfo = selectedDay ? DAYS.find(d => d.key === selectedDay) : null;
 
@@ -210,15 +221,15 @@ export default function SocialMediaContent({ currentUser }) {
           </div>
         )}
 
-        {/* No designer assigned to this dashboard */}
+        {/* No designer assigned — info only */}
         {isAdmin && activeDashboard && !activeDashboard.designer_email && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500">
-            Tomuto dashboardu není přiřazen žádný grafik. Klikněte na <strong>Dashboardy</strong> a přiřaďte grafika.
+            Žádný grafik není přiřazen — program je viditelný pouze pro adminy.
           </div>
         )}
 
         {/* Week nav */}
-        {(activeDesignerEmail || !isAdmin) && (
+        {(activeDesignerEmail || isAdmin) && (
           <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-200 px-4 py-3">
             <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
               <ChevronLeft className="w-4 h-4 text-gray-500" />
@@ -234,19 +245,19 @@ export default function SocialMediaContent({ currentUser }) {
         )}
 
         {/* Admin editor */}
-        {isAdmin && showEditor && activeDesignerEmail && (
+        {isAdmin && showEditor && activeDashboard && (
           <AdminProgramEditor
             weekStart={weekStart}
             program={program}
             models={models}
-            designerEmail={activeDesignerEmail}
-            designerName={activeDashboard?.designer_name || activeDesignerEmail}
+            designerEmail={effectiveDesignerEmail}
+            designerName={activeDashboard?.designer_name || activeDashboard?.name}
             onSaved={() => { refresh(); setShowEditor(false); }}
           />
         )}
 
         {/* Weekly grid */}
-        {activeDesignerEmail ? (
+        {(isAdmin ? !!activeDashboard : !!activeDesignerEmail) ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {DAYS.map(({ key, label }) => (
               <DayCard
@@ -260,11 +271,9 @@ export default function SocialMediaContent({ currentUser }) {
             ))}
           </div>
         ) : (
-          !isAdmin && (
-            <div className="text-center py-16 text-gray-400 text-sm">
-              Nemáte přiřazen žádný program.
-            </div>
-          )
+          <div className="text-center py-16 text-gray-400 text-sm">
+            {isAdmin ? "Vyberte dashboard." : "Nemáte přiřazen žádný program."}
+          </div>
         )}
       </div>
 
@@ -278,7 +287,7 @@ export default function SocialMediaContent({ currentUser }) {
           tasks={program?.[`${selectedDay}_tasks`] || []}
           submission={submissionMap[selectedDay]}
           weekStart={weekStart}
-          designerEmail={activeDesignerEmail}
+          designerEmail={effectiveDesignerEmail}
           isAdmin={isAdmin}
           onRefresh={refresh}
           models={models}
