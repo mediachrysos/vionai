@@ -57,11 +57,14 @@ export default function SocialMediaContent({ currentUser }) {
     enabled: isAdmin,
   });
 
-  // Designers = users who have SocialMediaContent in their allowed_pages (or admins)
+  // Designers = users with role "grafik" OR SocialMediaContent in allowed_pages
   const designers = useMemo(() => {
     if (!isAdmin) return [];
     return allUsers.filter(u =>
-      u.role !== "admin" && (u.allowed_pages || []).includes("SocialMediaContent")
+      u.role !== "admin" && (
+        u.role === "grafik" ||
+        (u.allowed_pages || []).includes("SocialMediaContent")
+      )
     );
   }, [allUsers, isAdmin]);
 

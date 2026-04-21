@@ -299,6 +299,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
             <SelectItem value="admin">👑 Admin</SelectItem>
             <SelectItem value="chatter">💬 Chatter</SelectItem>
             <SelectItem value="lawyer">⚖️ Advokát</SelectItem>
+            <SelectItem value="grafik">🎨 Grafik</SelectItem>
             <SelectItem value="user">👤 Uživatel</SelectItem>
           </SelectContent>
         </Select>
