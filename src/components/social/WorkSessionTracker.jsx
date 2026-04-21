@@ -149,8 +149,8 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
           <span className="text-xs text-gray-400">{allSessions.filter(s => !s.is_active).length} sessions</span>
         </div>
 
-        {/* Scrollable list */}
-        <div className="overflow-y-auto max-h-64 flex flex-col gap-3 pr-1">
+        {/* Scrollable list — fixed height forces scroll */}
+        <div style={{ maxHeight: "260px", overflowY: "auto" }} className="flex flex-col gap-3 pr-1">
           {historyByDay.length === 0 && (
             <p className="text-xs text-gray-400 text-center py-4">No recorded sessions yet.</p>
           )}
@@ -213,66 +213,64 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
 
   // ── TODAY VIEW (default) ──
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4">
+    <div className="bg-gradient-to-br from-[#C9A227] to-[#A8841C] rounded-2xl shadow-md p-5 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
-            <Clock className="w-3.5 h-3.5 text-gray-500" />
+          <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
+            <Clock className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-sm font-semibold text-gray-800">Today's work</span>
+          <span className="text-sm font-semibold text-white/90">Today's work</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xl font-bold text-gray-900 tabular-nums">{minutesToDisplay(roundedTotal)}</span>
-          <button
-            onClick={() => setShowHistory(true)}
-            className="text-gray-300 hover:text-gray-500 transition-colors"
-            title="View full history"
-          >
-            <History className="w-4 h-4" />
-          </button>
-        </div>
+        <button
+          onClick={() => setShowHistory(true)}
+          className="text-white/50 hover:text-white transition-colors"
+          title="View full history"
+        >
+          <History className="w-4 h-4" />
+        </button>
       </div>
 
-      {/* Active session pill */}
-      {activeSession && (
-        <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-medium text-emerald-800">
-              {fmtTime(activeSession.started_at)} – now
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-emerald-700 tabular-nums">
-              {minutesToDisplay(roundDownTo15(liveMinutes))}
-            </span>
-            {isAdmin && (
-              <button onClick={() => handleDelete(activeSession.id)} className="text-emerald-300 hover:text-red-400 transition-colors">
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Big time display */}
+      <div className="flex flex-col items-center py-3">
+        <span className="text-5xl font-extrabold text-white tabular-nums tracking-tight drop-shadow">
+          {minutesToDisplay(roundedTotal)}
+        </span>
+        {activeSession && (
+          <span className="text-xs text-white/70 mt-1.5 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            Running since {fmtTime(activeSession.started_at)}
+          </span>
+        )}
+      </div>
 
       {/* Start / Stop — designer only */}
       {!isAdmin && (
         !activeSession ? (
           <button
             onClick={handleStart}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors border border-white/25"
           >
             <Play className="w-4 h-4" /> Start working
           </button>
         ) : (
           <button
             onClick={handleStop}
-            className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors border border-white/25"
           >
             <Square className="w-4 h-4" /> Stop
           </button>
         )
+      )}
+
+      {/* Admin: delete active session */}
+      {isAdmin && activeSession && (
+        <div className="flex items-center justify-between bg-white/15 rounded-xl px-3 py-2">
+          <span className="text-xs text-white/80">{fmtTime(activeSession.started_at)} – now (active)</span>
+          <button onClick={() => handleDelete(activeSession.id)} className="text-white/40 hover:text-red-300 transition-colors">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
       )}
     </div>
   );
