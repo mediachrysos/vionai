@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Play, Square, Clock, Edit2, Check, X, History } from "lucide-react";
+import { Play, Square, Clock, Edit2, Check, X, History, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 function getToday() {
@@ -24,6 +24,12 @@ function fmtTime(iso) {
   return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
+function fmtDate(dateStr) {
+  if (!dateStr) return "?";
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+}
+
 export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin }) {
   const qc = useQueryClient();
   const today = getToday();
@@ -32,10 +38,12 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
   const [editMinutes, setEditMinutes] = useState("");
   const [showHistory, setShowHistory] = useState(false);
 
-  const queryKey = ["workSessions", designerEmail, dashboardId, today];
+  const todayKey = ["workSessions", designerEmail, dashboardId, today];
+  const allKey = ["workSessionsAll", designerEmail, dashboardId];
 
-  const { data: sessions = [] } = useQuery({
-    queryKey,
+  // Today's sessions (for timer)
+  const { data: todaySessions = [] } = useQuery({
+    queryKey: todayKey,
     queryFn: () => base44.entities.DesignerWorkSession.filter({
       designer_email: designerEmail,
       dashboard_id: dashboardId,
@@ -45,9 +53,19 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
     enabled: !!designerEmail && !!dashboardId,
   });
 
-  const activeSession = sessions.find(s => s.is_active);
-  const pastSessions = sessions.filter(s => !s.is_active);
-  const totalMinutes = sessions.reduce((sum, s) => sum + (s.minutes_worked || 0), 0);
+  // All sessions (for history view)
+  const { data: allSessions = [] } = useQuery({
+    queryKey: allKey,
+    queryFn: () => base44.entities.DesignerWorkSession.filter({
+      designer_email: designerEmail,
+      dashboard_id: dashboardId,
+    }),
+    enabled: !!designerEmail && !!dashboardId && showHistory,
+    staleTime: 30000,
+  });
+
+  const activeSession = todaySessions.find(s => s.is_active);
+  const totalMinutes = todaySessions.reduce((sum, s) => sum + (s.minutes_worked || 0), 0);
   const liveMinutes = activeSession ? Math.floor(elapsed / 60) : 0;
   const roundedTotal = roundDownTo15(totalMinutes + liveMinutes);
 
@@ -69,7 +87,7 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
       is_active: true,
       minutes_worked: 0,
     });
-    qc.invalidateQueries({ queryKey });
+    qc.invalidateQueries({ queryKey: todayKey });
   };
 
   const handleStop = async () => {
@@ -80,7 +98,8 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
       is_active: false,
       minutes_worked: roundDownTo15(rawMins),
     });
-    qc.invalidateQueries({ queryKey });
+    qc.invalidateQueries({ queryKey: todayKey });
+    qc.invalidateQueries({ queryKey: allKey });
   };
 
   const handleEditSave = async (session) => {
@@ -92,17 +111,110 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
       ended_at: session.ended_at || new Date().toISOString(),
     });
     setEditingSession(null);
-    qc.invalidateQueries({ queryKey });
+    qc.invalidateQueries({ queryKey: todayKey });
+    qc.invalidateQueries({ queryKey: allKey });
   };
 
   const handleDelete = async (id) => {
     await base44.entities.DesignerWorkSession.delete(id);
-    qc.invalidateQueries({ queryKey });
+    qc.invalidateQueries({ queryKey: todayKey });
+    qc.invalidateQueries({ queryKey: allKey });
   };
 
+  // Group history sessions by date (exclude active)
+  const historyByDay = React.useMemo(() => {
+    const past = allSessions.filter(s => !s.is_active);
+    const grouped = {};
+    past.forEach(s => {
+      const d = s.date || today;
+      if (!grouped[d]) grouped[d] = [];
+      grouped[d].push(s);
+    });
+    // Sort dates descending
+    return Object.entries(grouped).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [allSessions, today]);
+
+  // ── HISTORY VIEW ──
+  if (showHistory) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setShowHistory(false)}
+            className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" /> Work history
+          </button>
+          <span className="text-xs text-gray-400">{allSessions.filter(s => !s.is_active).length} sessions</span>
+        </div>
+
+        {/* Scrollable list */}
+        <div className="overflow-y-auto max-h-64 flex flex-col gap-3 pr-1">
+          {historyByDay.length === 0 && (
+            <p className="text-xs text-gray-400 text-center py-4">No recorded sessions yet.</p>
+          )}
+          {historyByDay.map(([date, sessions]) => (
+            <div key={date}>
+              {/* Day label */}
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                  {date === today ? "Today" : fmtDate(date)}
+                </span>
+                <span className="text-[11px] text-gray-400">
+                  {minutesToDisplay(sessions.reduce((s, x) => s + (x.minutes_worked || 0), 0))}
+                </span>
+              </div>
+              <div className="space-y-1">
+                {sessions.map(s => (
+                  <div key={s.id} className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
+                    {editingSession === s.id ? (
+                      <>
+                        <Input
+                          value={editMinutes}
+                          onChange={e => setEditMinutes(e.target.value)}
+                          className="h-6 text-xs w-16 px-2"
+                          type="number"
+                          min="0"
+                        />
+                        <span className="text-gray-400 text-[10px]">min</span>
+                        <button onClick={() => handleEditSave(s)} className="text-emerald-600 hover:text-emerald-800 ml-auto">
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={() => setEditingSession(null)} className="text-gray-300 hover:text-gray-500">
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="flex-1 text-gray-400">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
+                        <span className="font-semibold text-gray-700">{minutesToDisplay(s.minutes_worked || 0)}</span>
+                        {isAdmin && (
+                          <>
+                            <button onClick={() => { setEditingSession(s.id); setEditMinutes(String(s.minutes_worked || 0)); }} className="text-gray-300 hover:text-amber-500 transition-colors">
+                              <Edit2 className="w-3 h-3" />
+                            </button>
+                            <button onClick={() => handleDelete(s.id)} className="text-gray-300 hover:text-red-400 transition-colors">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ── TODAY VIEW (default) ──
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4">
-      {/* Header row */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
@@ -110,7 +222,16 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
           </div>
           <span className="text-sm font-semibold text-gray-800">Today's work</span>
         </div>
-        <span className="text-xl font-bold text-gray-900 tabular-nums">{minutesToDisplay(roundedTotal)}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-bold text-gray-900 tabular-nums">{minutesToDisplay(roundedTotal)}</span>
+          <button
+            onClick={() => setShowHistory(true)}
+            className="text-gray-300 hover:text-gray-500 transition-colors"
+            title="View full history"
+          >
+            <History className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Active session pill */}
@@ -152,61 +273,6 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
             <Square className="w-4 h-4" /> Stop
           </button>
         )
-      )}
-
-      {/* History */}
-      {pastSessions.length > 0 && (
-        <div>
-          <button
-            onClick={() => setShowHistory(v => !v)}
-            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <History className="w-3.5 h-3.5" />
-            {showHistory ? "Hide" : "Show"} history ({pastSessions.length} sessions)
-          </button>
-
-          {showHistory && (
-            <div className="mt-2 space-y-1">
-              {pastSessions.map(s => (
-                <div key={s.id} className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
-                  {editingSession === s.id ? (
-                    <>
-                      <Input
-                        value={editMinutes}
-                        onChange={e => setEditMinutes(e.target.value)}
-                        className="h-6 text-xs w-16 px-2"
-                        type="number"
-                        min="0"
-                      />
-                      <span className="text-gray-400 text-[10px]">min</span>
-                      <button onClick={() => handleEditSave(s)} className="text-emerald-600 hover:text-emerald-800 ml-auto">
-                        <Check className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => setEditingSession(null)} className="text-gray-300 hover:text-gray-500">
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <span className="flex-1 text-gray-400">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
-                      <span className="font-semibold text-gray-700">{minutesToDisplay(s.minutes_worked || 0)}</span>
-                      {isAdmin && (
-                        <>
-                          <button onClick={() => { setEditingSession(s.id); setEditMinutes(String(s.minutes_worked || 0)); }} className="text-gray-300 hover:text-amber-500 transition-colors">
-                            <Edit2 className="w-3 h-3" />
-                          </button>
-                          <button onClick={() => handleDelete(s.id)} className="text-gray-300 hover:text-red-400 transition-colors">
-                            <X className="w-3 h-3" />
-                          </button>
-                        </>
-                      )}
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       )}
     </div>
   );
