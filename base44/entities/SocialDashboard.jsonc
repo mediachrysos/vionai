@@ -1,0 +1,26 @@
+{
+  "name": "SocialDashboard",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "N\u00e1zev dashboardu (nap\u0159. Dashboard 1)"
+    },
+    "designer_email": {
+      "type": "string",
+      "description": "Email p\u0159i\u0159azen\u00e9ho grafika"
+    },
+    "designer_name": {
+      "type": "string",
+      "description": "Jm\u00e9no grafika pro zobrazen\u00ed"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Po\u0159ad\u00ed dashboardu"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

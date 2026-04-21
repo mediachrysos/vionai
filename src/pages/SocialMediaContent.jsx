@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Settings } from "lucide-react";
 import DayCard from "../components/social/DayCard";
 import DayDetailModal from "../components/social/DayDetailModal";
 import AdminProgramEditor from "../components/social/AdminProgramEditor";
+import DashboardManager from "../components/social/DashboardManager";
 
 const DAYS = [
   { key: "mon", label: "Monday" },
@@ -41,15 +42,14 @@ export default function SocialMediaContent({ currentUser }) {
   const [weekStart, setWeekStart] = useState(() => getMondayOf(new Date()));
   const [selectedDay, setSelectedDay] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
-  const [selectedDesignerEmail, setSelectedDesignerEmail] = useState(null);
+  const [showDashboardManager, setShowDashboardManager] = useState(false);
+  const [selectedDashboardId, setSelectedDashboardId] = useState(null);
   const qc = useQueryClient();
 
   const isAdmin = currentUser?.role === "admin";
   const myEmail = currentUser?.email;
 
-  // For non-admins, always view their own calendar
-  const activeDesignerEmail = isAdmin ? selectedDesignerEmail : myEmail;
-
+  // Fetch all users (admin only)
   const { data: allUsers = [] } = useQuery({
     queryKey: ["users"],
     queryFn: () => base44.entities.User.list(),
@@ -68,12 +68,26 @@ export default function SocialMediaContent({ currentUser }) {
     );
   }, [allUsers, isAdmin]);
 
-  // Auto-select first designer
-  React.useEffect(() => {
-    if (isAdmin && designers.length > 0 && !selectedDesignerEmail) {
-      setSelectedDesignerEmail(designers[0].email);
+  // Fetch dashboards
+  const { data: dashboards = [], refetch: refetchDashboards } = useQuery({
+    queryKey: ["socialDashboards"],
+    queryFn: () => base44.entities.SocialDashboard.list("order", 50),
+    staleTime: 30000,
+    enabled: isAdmin,
+  });
+
+  // Auto-select first dashboard
+  useEffect(() => {
+    if (isAdmin && dashboards.length > 0 && !selectedDashboardId) {
+      setSelectedDashboardId(dashboards[0].id);
     }
-  }, [designers, isAdmin, selectedDesignerEmail]);
+  }, [dashboards, isAdmin, selectedDashboardId]);
+
+  // Active dashboard & its designer
+  const activeDashboard = dashboards.find(d => d.id === selectedDashboardId) || null;
+  const activeDesignerEmail = isAdmin
+    ? (activeDashboard?.designer_email || null)
+    : myEmail;
 
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
@@ -123,67 +137,101 @@ export default function SocialMediaContent({ currentUser }) {
 
   const selectedDayInfo = selectedDay ? DAYS.find(d => d.key === selectedDay) : null;
 
-  // Non-admin with no program assigned yet
   if (!isAdmin && !myEmail) return null;
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-6">
       <div className="max-w-4xl mx-auto space-y-6">
+
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-xl font-bold text-gray-900">Social Media Content</h1>
             <p className="text-sm text-gray-400 mt-0.5">Weekly Designer Schedule</p>
           </div>
-          {isAdmin && (
-            <button
-              onClick={() => setShowEditor(e => !e)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showEditor ? "bg-[#faf6e6] border-[#C9A227] text-[#C9A227]" : "bg-white border-gray-200 text-gray-600 hover:border-[#C9A227]"}`}
-            >
-              <Settings className="w-4 h-4" />
-              {showEditor ? "Close editor" : "Edit program"}
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {isAdmin && activeDashboard && (
+              <button
+                onClick={() => { setShowEditor(e => !e); setShowDashboardManager(false); }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showEditor ? "bg-[#faf6e6] border-[#C9A227] text-[#C9A227]" : "bg-white border-gray-200 text-gray-600 hover:border-[#C9A227]"}`}
+              >
+                <Settings className="w-4 h-4" />
+                {showEditor ? "Zavřít editor" : "Editovat program"}
+              </button>
+            )}
+            {isAdmin && (
+              <button
+                onClick={() => { setShowDashboardManager(e => !e); setShowEditor(false); }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showDashboardManager ? "bg-violet-50 border-violet-300 text-violet-700" : "bg-white border-gray-200 text-gray-600 hover:border-violet-300"}`}
+              >
+                <Settings className="w-4 h-4" />
+                Dashboardy
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Admin: designer tabs */}
-        {isAdmin && designers.length > 0 && (
+        {/* Dashboard manager */}
+        {isAdmin && showDashboardManager && (
+          <DashboardManager
+            dashboards={dashboards}
+            designers={designers}
+            onRefresh={() => { refetchDashboards(); setShowDashboardManager(false); }}
+          />
+        )}
+
+        {/* Admin: dashboard tabs */}
+        {isAdmin && dashboards.length > 0 && (
           <div className="flex gap-2 flex-wrap">
-            {designers.map(d => (
+            {dashboards.map(db => (
               <button
-                key={d.email}
-                onClick={() => { setSelectedDesignerEmail(d.email); setShowEditor(false); }}
-                className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
-                  selectedDesignerEmail === d.email
+                key={db.id}
+                onClick={() => { setSelectedDashboardId(db.id); setShowEditor(false); }}
+                className={`flex flex-col items-start px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                  selectedDashboardId === db.id
                     ? "bg-[#C9A227] text-white border-[#C9A227] shadow-sm"
                     : "bg-white border-gray-200 text-gray-600 hover:border-[#C9A227]"
                 }`}
               >
-                {d.full_name || d.email}
+                <span>{db.name}</span>
+                {db.designer_name && (
+                  <span className={`text-xs mt-0.5 ${selectedDashboardId === db.id ? "text-white/70" : "text-gray-400"}`}>
+                    🎨 {db.designer_name}
+                  </span>
+                )}
               </button>
             ))}
           </div>
         )}
 
-        {isAdmin && designers.length === 0 && (
+        {isAdmin && dashboards.length === 0 && !showDashboardManager && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700">
-            Žádní grafici nemají přístup k Social Media. Přidejte jim stránku v Admin → Uživatelé.
+            Žádné dashboardy. Klikněte na <strong>Dashboardy</strong> a vytvořte první.
+          </div>
+        )}
+
+        {/* No designer assigned to this dashboard */}
+        {isAdmin && activeDashboard && !activeDashboard.designer_email && (
+          <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500">
+            Tomuto dashboardu není přiřazen žádný grafik. Klikněte na <strong>Dashboardy</strong> a přiřaďte grafika.
           </div>
         )}
 
         {/* Week nav */}
-        <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-200 px-4 py-3">
-          <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-            <ChevronLeft className="w-4 h-4 text-gray-500" />
-          </button>
-          <p className="flex-1 text-center text-sm font-semibold text-gray-700">{formatWeekLabel(weekStart)}</p>
-          <button onClick={() => setWeekStart(w => addWeeks(w, 1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-            <ChevronRight className="w-4 h-4 text-gray-500" />
-          </button>
-          <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-[#faf6e6]">
-            This week
-          </button>
-        </div>
+        {(activeDesignerEmail || !isAdmin) && (
+          <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-200 px-4 py-3">
+            <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
+              <ChevronLeft className="w-4 h-4 text-gray-500" />
+            </button>
+            <p className="flex-1 text-center text-sm font-semibold text-gray-700">{formatWeekLabel(weekStart)}</p>
+            <button onClick={() => setWeekStart(w => addWeeks(w, 1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
+              <ChevronRight className="w-4 h-4 text-gray-500" />
+            </button>
+            <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-[#faf6e6]">
+              Tento týden
+            </button>
+          </div>
+        )}
 
         {/* Admin editor */}
         {isAdmin && showEditor && activeDesignerEmail && (
@@ -192,7 +240,7 @@ export default function SocialMediaContent({ currentUser }) {
             program={program}
             models={models}
             designerEmail={activeDesignerEmail}
-            designerName={designers.find(d => d.email === activeDesignerEmail)?.full_name || activeDesignerEmail}
+            designerName={activeDashboard?.designer_name || activeDesignerEmail}
             onSaved={() => { refresh(); setShowEditor(false); }}
           />
         )}
@@ -212,9 +260,11 @@ export default function SocialMediaContent({ currentUser }) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 text-gray-400 text-sm">
-            {isAdmin ? "Vyberte grafika výše." : "Nemáte přiřazen žádný program."}
-          </div>
+          !isAdmin && (
+            <div className="text-center py-16 text-gray-400 text-sm">
+              Nemáte přiřazen žádný program.
+            </div>
+          )
         )}
       </div>
 
