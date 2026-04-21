@@ -12,6 +12,10 @@
     "day_name": {
       "type": "string"
     },
+    "designer_email": {
+      "type": "string",
+      "description": "Email of the designer"
+    },
     "admin_link": {
       "type": "string"
     },

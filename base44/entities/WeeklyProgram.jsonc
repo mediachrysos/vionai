@@ -6,6 +6,10 @@
       "type": "string",
       "description": "Monday of the week (YYYY-MM-DD)"
     },
+    "designer_email": {
+      "type": "string",
+      "description": "Email of the designer this program belongs to"
+    },
     "mon_tasks": {
       "type": "array",
       "items": {

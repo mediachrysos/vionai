@@ -152,7 +152,7 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
   );
 }
 
-export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, isAdmin, onRefresh, models = [] }) {
+export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, designerEmail, isAdmin, onRefresh, models = [] }) {
   const [adminLink, setAdminLink] = useState(submission?.admin_link || "");
   const [savingAdminLink, setSavingAdminLink] = useState(false);
 
@@ -162,6 +162,7 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
     if (submission?.id) return submission;
     return await base44.entities.DaySubmission.create({
       week_start: weekStart, day_key: dayKey, day_name: dayName,
+      designer_email: designerEmail,
       task_submissions: [], ...extraData,
     });
   };

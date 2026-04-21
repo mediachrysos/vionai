@@ -26,7 +26,7 @@ function emptyTask() {
   return { type: "Reels", customType: "", desc: "", inspiration_link: "", model_id: "" };
 }
 
-export default function AdminProgramEditor({ weekStart, program, models = [], onSaved }) {
+export default function AdminProgramEditor({ weekStart, program, models = [], designerEmail, designerName, onSaved }) {
   const [dayTasks, setDayTasks] = useState({});
   const [saving, setSaving] = useState(false);
 
@@ -62,7 +62,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], on
 
   const handleSave = async () => {
     setSaving(true);
-    const data = { week_start: weekStart };
+    const data = { week_start: weekStart, designer_email: designerEmail };
     DAYS.forEach(({ key }) => { data[`${key}_tasks`] = dayTasks[key] || []; });
     if (program?.id) {
       await base44.entities.WeeklyProgram.update(program.id, data);
@@ -76,7 +76,10 @@ export default function AdminProgramEditor({ weekStart, program, models = [], on
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-800">Edit Weekly Program</h3>
+        <div>
+          <h3 className="text-sm font-semibold text-gray-800">Edit Weekly Program</h3>
+          {designerName && <p className="text-xs text-gray-400 mt-0.5">Grafik: {designerName}</p>}
+        </div>
         <Button onClick={handleSave} disabled={saving} size="sm" className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1.5">
           <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : "Save"}
         </Button>
