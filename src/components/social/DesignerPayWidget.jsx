@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { DollarSign, Plus, ChevronDown, ChevronUp, Edit2, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Banknote, Plus, ChevronDown, ChevronUp, Edit2, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 function minutesToHours(mins) {
@@ -25,7 +24,6 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
 
   const hourlyRate = dashboard?.hourly_rate ?? 35;
 
-  // Fetch all work sessions for this designer/dashboard
   const { data: sessions = [] } = useQuery({
     queryKey: ["allWorkSessions", designerEmail, dashboard?.id],
     queryFn: () => base44.entities.DesignerWorkSession.filter({
@@ -36,7 +34,6 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
     staleTime: 30000,
   });
 
-  // Fetch payouts
   const { data: payouts = [] } = useQuery({
     queryKey: ["designerPayouts", designerEmail, dashboard?.id],
     queryFn: () => base44.entities.DesignerPayout.filter({
@@ -79,93 +76,93 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-4">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <DollarSign className="w-4 h-4 text-amber-500" />
-          <span className="text-sm font-semibold text-gray-700">Salary</span>
+          <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+            <Banknote className="w-3.5 h-3.5 text-amber-600" />
+          </div>
+          <span className="text-sm font-semibold text-gray-800">Salary</span>
         </div>
-        {/* Hourly rate */}
-        <div className="flex items-center gap-1.5">
-          {editingRate && isAdmin ? (
-            <>
-              <Input
-                value={rateValue}
-                onChange={e => setRateValue(e.target.value)}
-                className="h-7 text-xs w-16"
-                type="number"
-                min="0"
-              />
-              <span className="text-xs text-gray-400">MAD/h</span>
-              <button onClick={handleRateSave} className="text-emerald-600 hover:text-emerald-800">
-                <Check className="w-3.5 h-3.5" />
+
+        {/* Rate */}
+        {editingRate && isAdmin ? (
+          <div className="flex items-center gap-1.5">
+            <Input
+              value={rateValue}
+              onChange={e => setRateValue(e.target.value)}
+              className="h-7 text-xs w-16 px-2"
+              type="number"
+              min="0"
+            />
+            <span className="text-xs text-gray-400">MAD/h</span>
+            <button onClick={handleRateSave} className="text-emerald-600 hover:text-emerald-800">
+              <Check className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">
+              {hourlyRate} MAD/h
+            </span>
+            {isAdmin && (
+              <button
+                onClick={() => { setEditingRate(true); setRateValue(String(hourlyRate)); }}
+                className="text-gray-300 hover:text-amber-500 transition-colors"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
               </button>
-            </>
-          ) : (
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full font-medium">
-                {hourlyRate} MAD/h
-              </span>
-              {isAdmin && (
-                <button onClick={() => { setEditingRate(true); setRateValue(String(hourlyRate)); }} className="text-gray-300 hover:text-amber-500">
-                  <Edit2 className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="text-center bg-amber-50 rounded-xl p-3">
-          <p className="text-xs text-gray-500 mb-1">Earned</p>
-          <p className="text-sm font-bold text-amber-700">{totalEarned.toLocaleString()} MAD</p>
-          <p className="text-[10px] text-gray-400">{totalHours}h worked</p>
+      <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-col items-center bg-amber-50 rounded-xl px-2 py-3 gap-0.5">
+          <span className="text-[10px] text-amber-700/70 font-medium uppercase tracking-wide">Earned</span>
+          <span className="text-base font-bold text-amber-700 tabular-nums">{totalEarned.toLocaleString()}</span>
+          <span className="text-[10px] text-amber-600/60">{totalHours}h worked</span>
         </div>
-        <div className="text-center bg-emerald-50 rounded-xl p-3">
-          <p className="text-xs text-gray-500 mb-1">Paid out</p>
-          <p className="text-sm font-bold text-emerald-700">{totalPaid.toLocaleString()} MAD</p>
-          <p className="text-[10px] text-gray-400">{payouts.length} payments</p>
+        <div className="flex flex-col items-center bg-emerald-50 rounded-xl px-2 py-3 gap-0.5">
+          <span className="text-[10px] text-emerald-700/70 font-medium uppercase tracking-wide">Paid out</span>
+          <span className="text-base font-bold text-emerald-700 tabular-nums">{totalPaid.toLocaleString()}</span>
+          <span className="text-[10px] text-emerald-600/60">{payouts.length} payments</span>
         </div>
-        <div className={`text-center rounded-xl p-3 ${remaining > 0 ? "bg-rose-50" : "bg-gray-50"}`}>
-          <p className="text-xs text-gray-500 mb-1">Remaining</p>
-          <p className={`text-sm font-bold ${remaining > 0 ? "text-rose-600" : "text-gray-400"}`}>
-            {remaining.toLocaleString()} MAD
-          </p>
-          <p className="text-[10px] text-gray-400">to pay</p>
+        <div className={`flex flex-col items-center rounded-xl px-2 py-3 gap-0.5 ${remaining > 0 ? "bg-rose-50" : "bg-gray-50"}`}>
+          <span className={`text-[10px] font-medium uppercase tracking-wide ${remaining > 0 ? "text-rose-600/70" : "text-gray-500/70"}`}>To pay</span>
+          <span className={`text-base font-bold tabular-nums ${remaining > 0 ? "text-rose-600" : "text-gray-400"}`}>
+            {remaining.toLocaleString()}
+          </span>
+          <span className={`text-[10px] ${remaining > 0 ? "text-rose-500/60" : "text-gray-400/60"}`}>MAD</span>
         </div>
       </div>
 
       {/* Admin: add payout */}
       {isAdmin && (
-        <div className="space-y-2 border-t border-gray-100 pt-3">
-          <p className="text-xs font-semibold text-gray-500">Record payout</p>
-          <div className="flex gap-2">
-            <Input
-              value={payoutAmount}
-              onChange={e => setPayoutAmount(e.target.value)}
-              placeholder="Amount (MAD)"
-              type="number"
-              min="0"
-              className="h-8 text-xs flex-1"
-            />
-            <Input
-              value={payoutNote}
-              onChange={e => setPayoutNote(e.target.value)}
-              placeholder="Note (optional)"
-              className="h-8 text-xs flex-1"
-            />
-            <Button
-              onClick={handleAddPayout}
-              disabled={addingPayout || !payoutAmount}
-              size="sm"
-              className="bg-[#C9A227] hover:bg-[#A8841C] text-white h-8 gap-1 flex-shrink-0"
-            >
-              <Plus className="w-3 h-3" /> Pay
-            </Button>
-          </div>
+        <div className="flex gap-2 items-center border-t border-gray-100 pt-3">
+          <Input
+            value={payoutAmount}
+            onChange={e => setPayoutAmount(e.target.value)}
+            placeholder="Amount (MAD)"
+            type="number"
+            min="0"
+            className="h-8 text-xs w-28 flex-shrink-0"
+          />
+          <Input
+            value={payoutNote}
+            onChange={e => setPayoutNote(e.target.value)}
+            placeholder="Note (optional)"
+            className="h-8 text-xs flex-1 min-w-0"
+          />
+          <button
+            onClick={handleAddPayout}
+            disabled={addingPayout || !payoutAmount}
+            className="flex items-center gap-1 text-xs font-semibold bg-[#C9A227] hover:bg-[#A8841C] disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" /> Pay
+          </button>
         </div>
       )}
 
@@ -174,7 +171,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
         <div>
           <button
             onClick={() => setShowPayouts(v => !v)}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600"
+            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
           >
             {showPayouts ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             Payout history ({payouts.length})
@@ -182,10 +179,10 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
           {showPayouts && (
             <div className="mt-2 space-y-1">
               {[...payouts].reverse().map(p => (
-                <div key={p.id} className="flex items-center justify-between text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-1.5">
+                <div key={p.id} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2">
                   <span className="text-gray-400">{p.created_date?.split("T")[0] || p.period}</span>
-                  <span>{p.note && <span className="text-gray-400 mr-2">{p.note}</span>}</span>
-                  <span className="font-semibold text-emerald-700">+{p.amount} MAD</span>
+                  {p.note && <span className="text-gray-400 truncate mx-2">{p.note}</span>}
+                  <span className="font-semibold text-emerald-700 ml-auto">+{p.amount} MAD</span>
                 </div>
               ))}
             </div>

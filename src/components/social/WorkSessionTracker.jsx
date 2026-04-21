@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Play, Square, Clock, Edit2, Check, X, ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Play, Square, Clock, Edit2, Check, X, History } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 function getToday() {
@@ -49,9 +48,9 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
   const activeSession = sessions.find(s => s.is_active);
   const pastSessions = sessions.filter(s => !s.is_active);
   const totalMinutes = sessions.reduce((sum, s) => sum + (s.minutes_worked || 0), 0);
-  const roundedTotal = roundDownTo15(totalMinutes + (activeSession ? Math.floor(elapsed / 60) : 0));
+  const liveMinutes = activeSession ? Math.floor(elapsed / 60) : 0;
+  const roundedTotal = roundDownTo15(totalMinutes + liveMinutes);
 
-  // Live timer
   useEffect(() => {
     if (!activeSession) { setElapsed(0); return; }
     const start = new Date(activeSession.started_at).getTime();
@@ -75,13 +74,11 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
 
   const handleStop = async () => {
     if (!activeSession) return;
-    const startTime = new Date(activeSession.started_at).getTime();
-    const rawMins = Math.floor((Date.now() - startTime) / 60000);
-    const rounded = roundDownTo15(rawMins);
+    const rawMins = Math.floor((Date.now() - new Date(activeSession.started_at).getTime()) / 60000);
     await base44.entities.DesignerWorkSession.update(activeSession.id, {
       ended_at: new Date().toISOString(),
       is_active: false,
-      minutes_worked: rounded,
+      minutes_worked: roundDownTo15(rawMins),
     });
     qc.invalidateQueries({ queryKey });
   };
@@ -89,9 +86,8 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
   const handleEditSave = async (session) => {
     const mins = parseInt(editMinutes, 10);
     if (isNaN(mins) || mins < 0) return;
-    const rounded = roundDownTo15(mins);
     await base44.entities.DesignerWorkSession.update(session.id, {
-      minutes_worked: rounded,
+      minutes_worked: roundDownTo15(mins),
       is_active: false,
       ended_at: session.ended_at || new Date().toISOString(),
     });
@@ -99,110 +95,107 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
     qc.invalidateQueries({ queryKey });
   };
 
-  const handleDeleteSession = async (id) => {
+  const handleDelete = async (id) => {
     await base44.entities.DesignerWorkSession.delete(id);
     qc.invalidateQueries({ queryKey });
   };
 
-  const liveElapsedDisplay = minutesToDisplay(roundDownTo15(Math.floor(elapsed / 60)));
-
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-3">
-      {/* Header */}
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4">
+      {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-gray-400" />
-          <span className="text-sm font-semibold text-gray-700">Today's work</span>
+          <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+            <Clock className="w-3.5 h-3.5 text-gray-500" />
+          </div>
+          <span className="text-sm font-semibold text-gray-800">Today's work</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-gray-800">{minutesToDisplay(roundedTotal)}</span>
-          {activeSession && (
-            <span className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium animate-pulse">
-              ● Working
-            </span>
-          )}
-        </div>
+        <span className="text-xl font-bold text-gray-900 tabular-nums">{minutesToDisplay(roundedTotal)}</span>
       </div>
 
-      {/* Start / Stop button — designer only */}
-      {!isAdmin && (
-        <div>
-          {!activeSession ? (
-            <Button onClick={handleStart} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white gap-2 h-9">
-              <Play className="w-4 h-4" /> Start working
-            </Button>
-          ) : (
-            <Button onClick={handleStop} className="w-full bg-red-500 hover:bg-red-600 text-white gap-2 h-9">
-              <Square className="w-4 h-4" /> Stop ({liveElapsedDisplay})
-            </Button>
-          )}
-        </div>
-      )}
-
-      {/* Active session row — always visible */}
+      {/* Active session pill */}
       {activeSession && (
-        <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
-          <span className="flex-1 font-medium">
-            {fmtTime(activeSession.started_at)} – now
-          </span>
-          <span className="font-semibold">{minutesToDisplay(roundDownTo15(Math.floor(elapsed / 60)))}</span>
-          <span className="text-emerald-500 font-bold">●</span>
-          {isAdmin && (
-            <button onClick={() => handleDeleteSession(activeSession.id)} className="text-emerald-300 hover:text-red-400 ml-1">
-              <X className="w-3 h-3" />
-            </button>
-          )}
+        <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs font-medium text-emerald-800">
+              {fmtTime(activeSession.started_at)} – now
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-emerald-700 tabular-nums">
+              {minutesToDisplay(roundDownTo15(liveMinutes))}
+            </span>
+            {isAdmin && (
+              <button onClick={() => handleDelete(activeSession.id)} className="text-emerald-300 hover:text-red-400 transition-colors">
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
         </div>
       )}
 
-      {/* History toggle */}
+      {/* Start / Stop — designer only */}
+      {!isAdmin && (
+        !activeSession ? (
+          <button
+            onClick={handleStart}
+            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors"
+          >
+            <Play className="w-4 h-4" /> Start working
+          </button>
+        ) : (
+          <button
+            onClick={handleStop}
+            className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-xl py-2.5 transition-colors"
+          >
+            <Square className="w-4 h-4" /> Stop
+          </button>
+        )
+      )}
+
+      {/* History */}
       {pastSessions.length > 0 && (
         <div>
           <button
             onClick={() => setShowHistory(v => !v)}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
           >
-            {showHistory ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            {showHistory ? "Hide" : "Show"} history ({pastSessions.length})
+            <History className="w-3.5 h-3.5" />
+            {showHistory ? "Hide" : "Show"} history ({pastSessions.length} sessions)
           </button>
 
           {showHistory && (
-            <div className="space-y-1.5 mt-2">
+            <div className="mt-2 space-y-1">
               {pastSessions.map(s => (
-                <div key={s.id} className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
+                <div key={s.id} className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
                   {editingSession === s.id ? (
                     <>
                       <Input
                         value={editMinutes}
                         onChange={e => setEditMinutes(e.target.value)}
-                        className="h-7 text-xs w-20"
-                        placeholder="min"
+                        className="h-6 text-xs w-16 px-2"
                         type="number"
                         min="0"
                       />
-                      <span className="text-gray-400">min</span>
-                      <button onClick={() => handleEditSave(s)} className="text-emerald-600 hover:text-emerald-800">
+                      <span className="text-gray-400 text-[10px]">min</span>
+                      <button onClick={() => handleEditSave(s)} className="text-emerald-600 hover:text-emerald-800 ml-auto">
                         <Check className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => setEditingSession(null)} className="text-gray-400 hover:text-gray-600">
+                      <button onClick={() => setEditingSession(null)} className="text-gray-300 hover:text-gray-500">
                         <X className="w-3.5 h-3.5" />
                       </button>
                     </>
                   ) : (
                     <>
-                      <span className="flex-1">
-                        {fmtTime(s.started_at)} – {fmtTime(s.ended_at)}
-                      </span>
-                      <span className="font-semibold text-gray-800">{minutesToDisplay(s.minutes_worked || 0)}</span>
+                      <span className="flex-1 text-gray-400">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
+                      <span className="font-semibold text-gray-700">{minutesToDisplay(s.minutes_worked || 0)}</span>
                       {isAdmin && (
                         <>
-                          <button
-                            onClick={() => { setEditingSession(s.id); setEditMinutes(String(s.minutes_worked || 0)); }}
-                            className="text-gray-300 hover:text-amber-500 ml-1"
-                          >
+                          <button onClick={() => { setEditingSession(s.id); setEditMinutes(String(s.minutes_worked || 0)); }} className="text-gray-300 hover:text-amber-500 transition-colors">
                             <Edit2 className="w-3 h-3" />
                           </button>
-                          <button onClick={() => handleDeleteSession(s.id)} className="text-gray-200 hover:text-red-400">
+                          <button onClick={() => handleDelete(s.id)} className="text-gray-300 hover:text-red-400 transition-colors">
                             <X className="w-3 h-3" />
                           </button>
                         </>
