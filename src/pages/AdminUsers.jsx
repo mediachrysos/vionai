@@ -70,6 +70,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   const [loading, setLoading] = useState(true);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [onboardingRefresh, setOnboardingRefresh] = useState(0);
+  const [dashboards, setDashboards] = useState([]);
 
   const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false, invoices: false });
 
@@ -94,11 +95,13 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
     Promise.all([
     base44.entities.User.list("-created_date", 100),
     base44.entities.Model.list(),
-    base44.entities.BankAccount.list("-created_date", 100)]
-    ).then(([u, m, a]) => {
+    base44.entities.BankAccount.list("-created_date", 100),
+    base44.entities.SocialDashboard.list("order", 50)]
+    ).then(([u, m, a, db]) => {
       setUsers(u);
       setModels(m);
       setAccounts(a);
+      setDashboards(db);
       setLoading(false);
     });
 
@@ -167,13 +170,13 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
                   <Clock className="w-3 h-3" /> Pending approval ({pending.length})
                 </p>
                 <div className="space-y-2">
-                  {pending.map((u) => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} />)}
+                  {pending.map((u) => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} dashboards={dashboards} setDashboards={setDashboards} />)}
                 </div>
               </div>
           }
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">All users ({others.length})</p>
             <div className="space-y-2">
-              {others.map((u) => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} />)}
+              {others.map((u) => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} dashboards={dashboards} setDashboards={setDashboards} />)}
             </div>
           </>
         }
@@ -251,7 +254,7 @@ const PAGE_OPTIONS = [
 { page: "BusinessTimeline", label: "Timeline" },
 { page: "Expenses", label: "Výdaje" }];
 
-function UserRow({ user, onUpdate, onDelete, models }) {
+function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboards }) {
   const [showPerms, setShowPerms] = useState(false);
   const [allowedPages, setAllowedPages] = useState(user.allowed_pages || []);
   const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || []);
@@ -260,6 +263,29 @@ function UserRow({ user, onUpdate, onDelete, models }) {
   const statusCfg = statusConfig[status] || statusConfig.pending;
   const StatusIcon = statusCfg.icon;
   const isAdmin = role === "admin";
+  const isDesigner = role === "grafik";
+
+  const assignedDashboard = dashboards.find(d => d.designer_email === user.email);
+
+  const handleDashboardAssign = async (dashboardId) => {
+    // Unassign from current dashboard if any
+    if (assignedDashboard) {
+      await base44.entities.SocialDashboard.update(assignedDashboard.id, {
+        designer_email: "",
+        designer_name: "",
+      });
+    }
+    // Assign to new dashboard (if not "none")
+    if (dashboardId && dashboardId !== "none") {
+      await base44.entities.SocialDashboard.update(dashboardId, {
+        designer_email: user.email,
+        designer_name: user.full_name || user.email,
+      });
+    }
+    // Refresh dashboards
+    const updated = await base44.entities.SocialDashboard.list("order", 50);
+    setDashboards(updated);
+  };
 
   const toggleModel = (modelId) => {
     const next = assignedIds.includes(modelId) ?
@@ -366,6 +392,29 @@ function UserRow({ user, onUpdate, onDelete, models }) {
                 {assigned ? "✓ " : ""}{m.name}
               </button>);
           })}
+        </div>
+      }
+
+      {isDesigner && dashboards.length > 0 &&
+        <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-gray-100 bg-violet-50/40">
+          <span className="text-[10px] font-semibold text-violet-500 uppercase tracking-wider">Social Dashboard:</span>
+          <select
+            value={assignedDashboard?.id || "none"}
+            onChange={e => handleDashboardAssign(e.target.value)}
+            className="text-xs h-7 border border-gray-200 rounded-lg px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-violet-300"
+          >
+            <option value="none">— not assigned —</option>
+            {dashboards.map(db => (
+              <option key={db.id} value={db.id}>
+                {db.name}{db.designer_email && db.designer_email !== user.email ? ` (${db.designer_name || db.designer_email})` : ""}
+              </option>
+            ))}
+          </select>
+          {assignedDashboard && (
+            <span className="text-[10px] text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full">
+              ✓ {assignedDashboard.name}
+            </span>
+          )}
         </div>
       }
     </div>);
