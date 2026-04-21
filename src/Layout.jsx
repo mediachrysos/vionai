@@ -108,7 +108,7 @@ export default function Layout({ children, currentPageName }) {
       if (event.type === "create" && event.data) {
         const name = event.data.customer_name || "Customer";
         const amount = event.data.amount ? `${event.data.amount.toLocaleString()} CZK` : "";
-        speakAlert(`${name} sent ${amount}. Thank you!`);
+        if (user?.role === "admin") speakAlert(`${name} sent ${amount}. Thank you!`);
         setPaymentAlert(event.data);
         setTimeout(() => setPaymentAlert(null), 5000);
       }
@@ -116,13 +116,13 @@ export default function Layout({ children, currentPageName }) {
     const unsubCustomer = base44.entities.Customer.subscribe((event) => {
       if (event.type === "create" && event.data) {
         const name = event.data.full_name || "New customer";
-        speakAlert(`New customer! ${name} just joined.`);
+        if (user?.role === "admin") speakAlert(`New customer! ${name} just joined.`);
         setCustomerAlert(event.data);
         setTimeout(() => setCustomerAlert(null), 5000);
       }
     });
     return () => { unsubPayment(); unsubCustomer(); };
-  }, []);
+  }, [user]);
 
   // CustomerOnboarding is a public page — skip auth entirely
   if (currentPageName === "CustomerOnboarding") {
