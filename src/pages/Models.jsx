@@ -39,11 +39,11 @@ export default function Models({ currentUser }) {
 
   const handleDelete = (e, m) => {
     e.stopPropagation();
-    if (window.confirm(`Opravdu smazat modelku "${m.name}"?`)) deleteMutation.mutate(m.id);
+    if (window.confirm(`Are you sure you want to delete model "${m.name}"?`)) deleteMutation.mutate(m.id);
   };
 
   const handleCreateNew = async () => {
-    const name = prompt("Jméno modelky:");
+    const name = prompt("Model name:");
     if (name) createMutation.mutate({ name, status: "active" });
   };
 
@@ -62,21 +62,21 @@ export default function Models({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
-      <PageHeader title="Modelky" subtitle={`${models.length} modelek celkem`}>
+      <PageHeader title="Models" subtitle={`${models.length} models total`}>
         {currentUser?.role === "admin" &&
         <Button onClick={handleCreateNew} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
-            <Plus className="w-4 h-4 mr-2" /> Přidat modelku
+            <Plus className="w-4 h-4 mr-2" /> Add model
           </Button>
         }
       </PageHeader>
 
       <div className="relative max-w-md mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Hledat modelky..." className="pl-10" />
+        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search models..." className="pl-10" />
       </div>
 
       {filtered.length === 0 ?
-      <EmptyState icon={Bot} title="Žádné modelky" actionLabel="Přidat modelku" onAction={handleCreateNew} /> :
+      <EmptyState icon={Bot} title="No models" actionLabel="Add model" onAction={handleCreateNew} /> :
 
       <div className="space-y-5">
           {filtered.map((m, i) =>
@@ -105,11 +105,11 @@ export default function Models({ currentUser }) {
                   </div>
                   <div className="flex items-center gap-4 ml-4">
                     <div className="text-right">
-                      <p className="text-xs text-gray-400">Tržby</p>
-                      <p className="text-sm font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} Kč</p>
+                      <p className="text-xs text-gray-400">Revenue</p>
+                      <p className="text-sm font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} CZK</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-400">Platby</p>
+                      <p className="text-xs text-gray-400">Payments</p>
                       <p className="text-sm font-semibold text-gray-900">{modelPaymentCount[m.id] || 0}</p>
                     </div>
                     {currentUser?.role === "admin" &&

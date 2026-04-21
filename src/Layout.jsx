@@ -43,10 +43,10 @@ export default function Layout({ children, currentPageName }) {
       if (data.is_payout) {
         const acc = bankAccounts.find(a => a.id === data.bank_account_id);
         const tx = await base44.entities.WalletTransaction.create({
-          title: data.note || "Výplata",
+          title: data.note || "Payout",
           amount: data.amount,
           type: "expense",
-          category: "Výplata",
+          category: "Payout",
           account_id: data.bank_account_id || "",
           account_name: acc?.name || "",
           transaction_date: data.payment_date || new Date().toISOString().split("T")[0],
@@ -106,17 +106,17 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const unsubPayment = base44.entities.Payment.subscribe((event) => {
       if (event.type === "create" && event.data) {
-        const name = event.data.customer_name || "Zákazník";
-        const amount = event.data.amount ? `${event.data.amount.toLocaleString()} korun` : "";
-        speakAlert(`${name} poslal ${amount}. Děkujeme!`);
+        const name = event.data.customer_name || "Customer";
+        const amount = event.data.amount ? `${event.data.amount.toLocaleString()} CZK` : "";
+        speakAlert(`${name} sent ${amount}. Thank you!`);
         setPaymentAlert(event.data);
         setTimeout(() => setPaymentAlert(null), 5000);
       }
     });
     const unsubCustomer = base44.entities.Customer.subscribe((event) => {
       if (event.type === "create" && event.data) {
-        const name = event.data.full_name || "Nový zákazník";
-        speakAlert(`Nový zákazník! ${name} se právě připojil.`);
+        const name = event.data.full_name || "New customer";
+        speakAlert(`New customer! ${name} just joined.`);
         setCustomerAlert(event.data);
         setTimeout(() => setCustomerAlert(null), 5000);
       }
@@ -134,7 +134,7 @@ export default function Layout({ children, currentPageName }) {
       <div className="h-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-3">
           <div className="w-6 h-6 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-gray-400 tracking-wide">Načítám...</p>
+          <p className="text-xs text-gray-400 tracking-wide">Loading...</p>
         </div>
       </div>
     );
@@ -148,9 +148,9 @@ export default function Layout({ children, currentPageName }) {
           <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🚫</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Přístup zablokován</h2>
-          <p className="text-sm text-gray-500 mb-4">Váš účet byl zablokován. Kontaktujte administrátora.</p>
-          <button onClick={handleLogout} className="text-xs text-gray-400 hover:text-gray-600 underline">Odhlásit se</button>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Access Blocked</h2>
+          <p className="text-sm text-gray-500 mb-4">Your account has been blocked. Please contact an administrator.</p>
+          <button onClick={handleLogout} className="text-xs text-gray-400 hover:text-gray-600 underline">Log out</button>
         </div>
       </div>
     );
@@ -164,9 +164,9 @@ export default function Layout({ children, currentPageName }) {
           <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">⏳</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Čeká se na schválení</h2>
-          <p className="text-sm text-gray-500 mb-4">Váš účet čeká na schválení administrátorem. Jakmile bude schválen, budete mít plný přístup.</p>
-          <button onClick={handleLogout} className="text-xs text-gray-400 hover:text-gray-600 underline">Odhlásit se</button>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Pending Approval</h2>
+          <p className="text-sm text-gray-500 mb-4">Your account is waiting for administrator approval. Once approved, you will have full access.</p>
+          <button onClick={handleLogout} className="text-xs text-gray-400 hover:text-gray-600 underline">Log out</button>
         </div>
       </div>
     );
@@ -218,9 +218,9 @@ export default function Layout({ children, currentPageName }) {
               <CreditCard className="w-4 h-4 text-emerald-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-gray-800">Nová platba přidána!</p>
+              <p className="text-sm font-semibold text-gray-800">New payment added!</p>
               <p className="text-xs text-gray-500">
-                {paymentAlert.customer_name || "Zákazník"} · {(paymentAlert.amount || 0).toLocaleString()} Kč
+                {paymentAlert.customer_name || "Customer"} · {(paymentAlert.amount || 0).toLocaleString()} CZK
               </p>
             </div>
             <button onClick={() => setPaymentAlert(null)} className="text-gray-300 hover:text-gray-500">
@@ -243,8 +243,8 @@ export default function Layout({ children, currentPageName }) {
               <UserPlus className="w-4 h-4 text-indigo-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-gray-800">Nový zákazník!</p>
-              <p className="text-xs text-gray-500">{customerAlert.full_name || "Nový zákazník"} se přidal do platformy</p>
+              <p className="text-sm font-semibold text-gray-800">New customer!</p>
+              <p className="text-xs text-gray-500">{customerAlert.full_name || "New customer"} just joined the platform</p>
             </div>
             <button onClick={() => setCustomerAlert(null)} className="text-gray-300 hover:text-gray-500">
               <X className="w-4 h-4" />

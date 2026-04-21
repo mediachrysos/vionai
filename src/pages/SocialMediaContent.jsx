@@ -35,7 +35,7 @@ function formatWeekLabel(weekStart) {
   const d = new Date(weekStart);
   const end = new Date(weekStart);
   end.setDate(end.getDate() + 6);
-  return `${d.toLocaleDateString("cs-CZ", { day: "numeric", month: "short" })} – ${end.toLocaleDateString("cs-CZ", { day: "numeric", month: "short", year: "numeric" })}`;
+  return `${d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })} – ${end.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`;
 }
 
 export default function SocialMediaContent({ currentUser }) {
@@ -167,7 +167,7 @@ export default function SocialMediaContent({ currentUser }) {
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showEditor ? "bg-[#faf6e6] border-[#C9A227] text-[#C9A227]" : "bg-white border-gray-200 text-gray-600 hover:border-[#C9A227]"}`}
               >
                 <Settings className="w-4 h-4" />
-                {showEditor ? "Zavřít editor" : "Editovat program"}
+                {showEditor ? "Close editor" : "Edit program"}
               </button>
             )}
             {isAdmin && (
@@ -176,7 +176,7 @@ export default function SocialMediaContent({ currentUser }) {
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showDashboardManager ? "bg-violet-50 border-violet-300 text-violet-700" : "bg-white border-gray-200 text-gray-600 hover:border-violet-300"}`}
               >
                 <Settings className="w-4 h-4" />
-                Dashboardy
+                Dashboards
               </button>
             )}
           </div>
@@ -217,14 +217,14 @@ export default function SocialMediaContent({ currentUser }) {
 
         {isAdmin && dashboards.length === 0 && !showDashboardManager && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700">
-            Žádné dashboardy. Klikněte na <strong>Dashboardy</strong> a vytvořte první.
+            No dashboards. Click <strong>Dashboards</strong> to create the first one.
           </div>
         )}
 
         {/* No designer assigned — info only */}
         {isAdmin && activeDashboard && !activeDashboard.designer_email && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500">
-            Žádný grafik není přiřazen — program je viditelný pouze pro adminy.
+            No designer assigned — the program is visible to admins only.
           </div>
         )}
 
@@ -239,7 +239,7 @@ export default function SocialMediaContent({ currentUser }) {
               <ChevronRight className="w-4 h-4 text-gray-500" />
             </button>
             <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-[#faf6e6]">
-              Tento týden
+              This week
             </button>
           </div>
         )}
@@ -272,7 +272,7 @@ export default function SocialMediaContent({ currentUser }) {
           </div>
         ) : (
           <div className="text-center py-16 text-gray-400 text-sm">
-            {isAdmin ? "Vyberte dashboard." : "Nemáte přiřazen žádný program."}
+            {isAdmin ? "Select a dashboard." : "You have no program assigned."}
           </div>
         )}
       </div>

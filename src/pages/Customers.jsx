@@ -137,10 +137,10 @@ export default function Customers({ currentUser }) {
     });
 
     const groups = Object.values(nameGroups).filter((g) => g.length > 1);
-    if (groups.length === 0) return alert("Žádné duplikáty k sloučení.");
+    if (groups.length === 0) return alert("No duplicates to merge.");
 
     const totalDupes = groups.reduce((s, g) => s + g.length - 1, 0);
-    if (!window.confirm(`Sloučit ${groups.length} skupin duplikátů (celkem ${totalDupes} záznamů bude smazáno)? Všechny platby budou přesunuty na primární záznam.`)) return;
+    if (!window.confirm(`Merge ${groups.length} duplicate groups (${totalDupes} records will be deleted)? All payments will be moved to the primary record.`)) return;
 
     setMerging(true);
     for (const group of groups) {
@@ -171,12 +171,12 @@ export default function Customers({ currentUser }) {
     setMerging(false);
     qc.invalidateQueries({ queryKey: ["customers"] });
     qc.invalidateQueries({ queryKey: ["payments"] });
-    alert(`Hotovo! Sloučeno ${groups.length} skupin duplikátů.`);
+    alert(`Done! Merged ${groups.length} duplicate groups.`);
   };
 
   const handleDelete = (e, c) => {
     e.stopPropagation();
-    if (window.confirm(`Opravdu smazat zákazníka "${c.full_name}"? Tato akce je nevratná.`)) {
+    if (window.confirm(`Are you sure you want to delete customer "${c.full_name}"? This action cannot be undone.`)) {
       deleteMutation.mutate(c.id);
     }
   };
@@ -212,7 +212,7 @@ export default function Customers({ currentUser }) {
 
   const downloadXlsx = () => {
     const rows = [
-    ["Jméno", "Email", "Telefon", "Banka", "Číslo účtu", "Den výplaty", "Celkem", "Počet plateb"],
+    ["Name", "Email", "Phone", "Bank", "Account Number", "Pay Day", "Total", "Payment Count"],
     ...customers.map((c) => {
       const st = customerStats[c.id] || {};
       return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter((p) => p.customer_id === c.id).length];
@@ -223,7 +223,7 @@ export default function Customers({ currentUser }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "zakaznici.csv";
+    a.download = "customers.csv";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -284,7 +284,7 @@ export default function Customers({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
-      <PageHeader title="Zákazníci" subtitle={`${customers.length} zákazníků celkem`}>
+      <PageHeader title="Customers" subtitle={`${customers.length} customers total`}>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
@@ -296,11 +296,11 @@ export default function Customers({ currentUser }) {
               variant="outline"
               className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 h-9"
             >
-              {merging ? "Slučuji..." : `👥 Sloučit duplikáty (${duplicateNames.size / 2 | 0}+)`}
+              {merging ? "Merging..." : `👥 Merge duplicates (${duplicateNames.size / 2 | 0}+)`}
             </Button>
           )}
           <Button onClick={() => setShowOnboarding(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Onboarding odkaz
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Onboarding link
           </Button>
         </div>
       </PageHeader>
@@ -309,20 +309,20 @@ export default function Customers({ currentUser }) {
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_13_up9fpo.png" alt="" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 object-contain" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Hledat zákazníky..." className="pl-10" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search customers..." className="pl-10" />
         </div>
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="last_payment">Poslední platba</SelectItem>
-            <SelectItem value="most_paid">Nejvyšší celková platba</SelectItem>
-            <SelectItem value="pay_day">Nejbližší výplata</SelectItem>
+            <SelectItem value="last_payment">Last payment</SelectItem>
+            <SelectItem value="most_paid">Highest total</SelectItem>
+            <SelectItem value="pay_day">Nearest pay day</SelectItem>
           </SelectContent>
         </Select>
         <Select value={modelFilter} onValueChange={setModelFilter}>
-          <SelectTrigger className="w-44"><SelectValue placeholder="Všechny modelky" /></SelectTrigger>
+          <SelectTrigger className="w-44"><SelectValue placeholder="All models" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Všechny modelky</SelectItem>
+            <SelectItem value="all">All models</SelectItem>
             {models.map((m) =>
             <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
             )}
@@ -335,18 +335,18 @@ export default function Customers({ currentUser }) {
 
       {/* Table */}
       {filtered.length === 0 && !isLoading ?
-      <EmptyState icon={UserCircle} title="Žádní zákazníci" description="Přidej prvního zákazníka a začni" actionLabel="Přidat zákazníka" onAction={() => setShowForm(true)} /> :
+      <EmptyState icon={UserCircle} title="No customers" description="Add your first customer to get started" actionLabel="Add customer" onAction={() => setShowForm(true)} /> :
 
       <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Jméno</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Den výplaty</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelky</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Celkem / Platby</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Poslední platba</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Name</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Models</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Total / Payments</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Last payment</th>
                   <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 w-20"></th>
                 </tr>
               </thead>
@@ -380,11 +380,11 @@ export default function Customers({ currentUser }) {
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-900 font-semibold" : "text-gray-800"}`}>{c.full_name}</span>
                             {c.pay_day_of_month === todayDay && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 výplata</span>
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 payday</span>
                             )}
                             {merged && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded-full">
-                                👥 {merged.allIds.length}× duplicita
+                                👥 {merged.allIds.length}× duplicate
                               </span>
                             )}
                           </div>
@@ -392,7 +392,7 @@ export default function Customers({ currentUser }) {
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden md:table-cell">
                         {c.pay_day_of_month ?
-                      <span className="text-sm font-medium text-gray-700">{c.pay_day_of_month}. v měsíci</span> :
+                      <span className="text-sm font-medium text-gray-700">Day {c.pay_day_of_month}</span> :
                       <span className="text-gray-300">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden lg:table-cell">
@@ -408,13 +408,13 @@ export default function Customers({ currentUser }) {
                       </td>
                       <td className="px-5 py-3.5 text-right">
                         <p className="text-sm font-semibold text-gray-800">{displayTotal.toLocaleString()} Kč</p>
-                        <p className="text-xs text-gray-400">{displayCount}× plateb</p>
+                        <p className="text-xs text-gray-400">{displayCount}× payments</p>
                       </td>
                       <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                         {daysSinceLast !== null ?
                       <div>
                             <p className="text-xs font-medium text-gray-600">{rawSt.lastAmount?.toLocaleString()} Kč</p>
-                            <p className="text-xs text-gray-400">před {daysSinceLast} dny</p>
+                            <p className="text-xs text-gray-400">{daysSinceLast} days ago</p>
                           </div> :
                       <span className="text-xs text-gray-300">—</span>}
                       </td>
@@ -424,7 +424,7 @@ export default function Customers({ currentUser }) {
                             <button
                               onClick={(e) => { e.stopPropagation(); setExpandedMerge(isExpanded ? null : c.id); }}
                               className="w-8 h-8 rounded-lg bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center justify-center text-indigo-500 text-xs font-bold"
-                              title="Zobrazit platby po modelkách"
+                              title="Show payments by model"
                             >
                               {isExpanded ? "▲" : "▼"}
                             </button>
@@ -446,13 +446,13 @@ export default function Customers({ currentUser }) {
                     {merged && isExpanded && (
                       <tr className="bg-indigo-50/40 border-b border-indigo-100">
                         <td colSpan={6} className="px-8 py-3">
-                          <p className="text-xs font-semibold text-indigo-600 mb-2">Platby po modelkách (sloučeno {merged.allIds.length} záznamů se stejným jménem):</p>
+                          <p className="text-xs font-semibold text-indigo-600 mb-2">Payments by model (merged {merged.allIds.length} records with the same name):</p>
                           <div className="flex flex-wrap gap-3">
                             {Object.entries(merged.byModel).map(([modelName, data]) => (
                               <div key={modelName} className="flex items-center gap-2 bg-white border border-indigo-100 rounded-lg px-3 py-1.5">
                                 <span className="text-xs font-medium text-amber-700 bg-amber-50 border border-amber-100 rounded px-1.5 py-0.5">{modelName}</span>
                                 <span className="text-sm font-bold text-gray-800">{data.total.toLocaleString()} Kč</span>
-                                <span className="text-xs text-gray-400">{data.count}× plateb</span>
+                                <span className="text-xs text-gray-400">{data.count}× payments</span>
                               </div>
                             ))}
                           </div>

@@ -57,9 +57,9 @@ function GoalDatePicker({ value, onChange, placeholder }) {
 }
 
 const statusConfig = {
-  pending: { label: "Čeká na schválení", color: "bg-amber-100 text-amber-700", icon: Clock },
-  approved: { label: "Schváleno", color: "bg-green-100 text-green-700", icon: CheckCircle },
-  blocked: { label: "Zablokováno", color: "bg-red-100 text-red-700", icon: XCircle }
+  pending: { label: "Pending approval", color: "bg-amber-100 text-amber-700", icon: Clock },
+  approved: { label: "Approved", color: "bg-green-100 text-green-700", icon: CheckCircle },
+  blocked: { label: "Blocked", color: "bg-red-100 text-red-700", icon: XCircle }
 };
 
 export default function AdminUsers({ currentUser: currentUserProp }) {
@@ -129,8 +129,8 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <Shield className="w-12 h-12 text-red-400 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-gray-800">Přístup odepřen</h2>
-          <p className="text-sm text-gray-500 mt-1">Tato stránka je pouze pro administrátory.</p>
+          <h2 className="text-lg font-semibold text-gray-800">Access Denied</h2>
+          <p className="text-sm text-gray-500 mt-1">This page is for administrators only.</p>
         </div>
       </div>);
   }
@@ -145,33 +145,33 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Admin Portál</h1>
-          <p className="text-sm text-gray-500">Správa uživatelů, plateb a oprávnění</p>
+          <h1 className="text-xl font-bold text-gray-900">Admin Portal</h1>
+          <p className="text-sm text-gray-500">Manage users, payments and permissions</p>
         </div>
       </div>
 
       <Section
-        label="Uživatelé"
+        label="Users"
         icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" /></div>}
         badge={pending.length > 0 ? pending.length : null}
         open={openSections.users}
         onToggle={() => toggle("users")}>
         
         {loading ?
-        <p className="text-sm text-gray-400 py-4 text-center">Načítám...</p> :
+        <p className="text-sm text-gray-400 py-4 text-center">Loading...</p> :
 
         <>
             {pending.length > 0 &&
           <div className="mb-4">
                 <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-2 flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> Čeká na schválení ({pending.length})
+                  <Clock className="w-3 h-3" /> Pending approval ({pending.length})
                 </p>
                 <div className="space-y-2">
                   {pending.map((u) => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} />)}
                 </div>
               </div>
           }
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Všichni uživatelé ({others.length})</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">All users ({others.length})</p>
             <div className="space-y-2">
               {others.map((u) => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} />)}
             </div>
@@ -298,22 +298,22 @@ function UserRow({ user, onUpdate, onDelete, models }) {
           <SelectContent>
             <SelectItem value="admin">👑 Admin</SelectItem>
             <SelectItem value="chatter">💬 Chatter</SelectItem>
-            <SelectItem value="lawyer">⚖️ Advokát</SelectItem>
-            <SelectItem value="grafik">🎨 Grafik</SelectItem>
-            <SelectItem value="user">👤 Uživatel</SelectItem>
+            <SelectItem value="lawyer">⚖️ Lawyer</SelectItem>
+            <SelectItem value="grafik">🎨 Designer</SelectItem>
+            <SelectItem value="user">👤 User</SelectItem>
           </SelectContent>
         </Select>
         <div className="flex gap-2">
           {status !== "approved" &&
           <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 rounded-lg"
-          onClick={() => onUpdate(user.id, { account_status: "approved" })}>Schválit</Button>
+          onClick={() => onUpdate(user.id, { account_status: "approved" })}>Approve</Button>
           }
           {!isAdmin &&
           <Button size="sm" variant="outline"
           onClick={() => setShowPerms((v) => !v)}
           className={`h-8 text-xs px-3 rounded-lg ${showPerms ? "bg-violet-50 border-violet-200 text-violet-700" : "border-gray-200 text-gray-500"}`}>
               {showPerms ? <Unlock className="w-3 h-3 mr-1" /> : <Lock className="w-3 h-3 mr-1" />}
-              Oprávnění
+              Permissions
             </Button>
           }
           <Button size="sm" variant="outline" className="h-8 text-xs text-red-500 border-red-200 hover:bg-red-50 px-3 rounded-lg"
@@ -327,8 +327,8 @@ function UserRow({ user, onUpdate, onDelete, models }) {
       <div className="px-4 py-3 border-t border-gray-100 bg-white">
           <div className="flex items-center gap-2 mb-3">
             <Lock className="w-3.5 h-3.5 text-violet-500" />
-            <span className="text-xs font-semibold text-gray-600">Přístup k sekcím</span>
-            <span className="text-[10px] text-gray-400 ml-1">(prázdné = výchozí podle role)</span>
+            <span className="text-xs font-semibold text-gray-600">Section access</span>
+            <span className="text-[10px] text-gray-400 ml-1">(empty = default by role)</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {PAGE_OPTIONS.map(({ page, label }) => {
@@ -347,7 +347,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
           {allowedPages.length > 0 &&
         <button onClick={() => { setAllowedPages([]); onUpdate(user.id, { allowed_pages: [] }); }}
         className="mt-2 text-[11px] text-gray-400 hover:text-red-400 transition-colors underline">
-              Resetovat na výchozí
+              Reset to default
             </button>
         }
         </div>
@@ -355,7 +355,7 @@ function UserRow({ user, onUpdate, onDelete, models }) {
 
       {models.filter((m) => m.status === "active").length > 0 &&
       <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-gray-100 bg-white/60">
-          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Modelky:</span>
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Models:</span>
           {models.filter((m) => m.status === "active").map((m) => {
           const assigned = assignedIds.includes(m.id);
           return (
@@ -390,22 +390,22 @@ function AddModelInline({ models, setModels }) {
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_160px_auto] gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Jméno *</label>
-          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" className="h-9" />
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Name *</label>
+          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Model name" className="h-9" />
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Status</label>
           <Select value={form.status} onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}>
             <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="active">Aktivní</SelectItem>
-              <SelectItem value="inactive">Neaktivní</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex items-end">
           <Button onClick={handleSave} disabled={!form.name || saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 w-full text-sm font-semibold whitespace-nowrap px-6 text-white">
-            {done ? "✓ Přidáno!" : saving ? "..." : "Přidat modelku"}
+            {done ? "✓ Added!" : saving ? "..." : "Add model"}
           </Button>
         </div>
       </div>
@@ -438,25 +438,25 @@ function AddCustomerInline({ users, onGenerateLink }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Celé jméno *</label>
-        <Input value={form.full_name} onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="Jan Novák" className="h-9" />
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Full name *</label>
+        <Input value={form.full_name} onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="John Smith" className="h-9" />
       </div>
       <div>
         <label className="text-xs font-semibold text-gray-600 block mb-1">Email</label>
         <Input value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="jan@example.com" className="h-9" />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Název banky</label>
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Bank name</label>
         <Input value={form.bank_name} onChange={(e) => setForm((p) => ({ ...p, bank_name: e.target.value }))} className="h-9" />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Číslo účtu</label>
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Account number</label>
         <Input value={form.bank_account_number} onChange={(e) => setForm((p) => ({ ...p, bank_account_number: e.target.value }))} className="h-9" />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Přiřazený chatter</label>
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Assigned chatter</label>
         <Select value={form.assigned_chatter} onValueChange={(v) => setForm((p) => ({ ...p, assigned_chatter: v }))}>
-          <SelectTrigger className="h-9"><SelectValue placeholder="Vybrat chattera" /></SelectTrigger>
+          <SelectTrigger className="h-9"><SelectValue placeholder="Select chatter" /></SelectTrigger>
           <SelectContent>
             {users.map((u) => <SelectItem key={u.email} value={u.email}>{u.full_name}</SelectItem>)}
           </SelectContent>
@@ -464,17 +464,17 @@ function AddCustomerInline({ users, onGenerateLink }) {
       </div>
       <div className="flex items-end">
         <Button onClick={handleSave} disabled={!form.full_name || saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 w-full text-sm font-semibold text-white">
-          {done ? "✓ Přidáno!" : saving ? "..." : "Vytvořit zákazníka"}
+          {done ? "✓ Added!" : saving ? "..." : "Create customer"}
         </Button>
       </div>
       <div className="col-span-2 flex items-center gap-2 pt-1">
         <div className="flex-1 border-t border-gray-100" />
-        <span className="text-xs text-gray-400">nebo</span>
+        <span className="text-xs text-gray-400">or</span>
         <div className="flex-1 border-t border-gray-100" />
       </div>
       <div className="col-span-2">
         <Button variant="outline" onClick={onGenerateLink} className="w-full h-9 text-sm border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]">
-          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Vygenerovat onboarding odkaz
+          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Generate onboarding link
         </Button>
       </div>
     </div>);
@@ -519,7 +519,7 @@ function GoalSettingsInline() {
   return (
     <div className="space-y-3 max-w-md">
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Cíl (Kč)</label>
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Goal (CZK)</label>
         <Input
           type="number"
           value={goal}
@@ -529,19 +529,19 @@ function GoalSettingsInline() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Začátek období</label>
-          <GoalDatePicker value={startDate} onChange={setStartDate} placeholder="Vybrat datum" />
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Period start</label>
+          <GoalDatePicker value={startDate} onChange={setStartDate} placeholder="Select date" />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Konec období</label>
-          <GoalDatePicker value={endDate} onChange={setEndDate} placeholder="Vybrat datum" />
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Period end</label>
+          <GoalDatePicker value={endDate} onChange={setEndDate} placeholder="Select date" />
         </div>
       </div>
       <Button
         onClick={handleSave}
         disabled={!goal || saving}
         className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 text-sm font-semibold text-white px-5">
-        {done ? "✓ Uloženo!" : saving ? "..." : "Uložit cíl"}
+        {done ? "✓ Saved!" : saving ? "..." : "Save goal"}
       </Button>
     </div>);
 }
@@ -582,7 +582,7 @@ function InvoiceSettingsInline() {
       setDone(true);
       setTimeout(() => setDone(false), 2000);
     } catch (error) {
-      alert('Chyba: ' + error.message);
+      alert('Error: ' + error.message);
     } finally {
       setSaving(false);
     }
@@ -591,20 +591,20 @@ function InvoiceSettingsInline() {
   return (
     <div className="space-y-3">
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Název firmy *</label>
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Company name *</label>
         <Input 
           value={settings.company_name || ""} 
           onChange={(e) => setSettings({ ...settings, company_name: e.target.value })}
-          placeholder="Vaše společnost, s.r.o."
+          placeholder="Your Company Ltd."
           className="h-9" 
         />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Sídlo firmy</label>
+        <label className="text-xs font-semibold text-gray-600 block mb-1">Company address</label>
         <Input 
           value={settings.company_address || ""} 
           onChange={(e) => setSettings({ ...settings, company_address: e.target.value })}
-          placeholder="Ulice 123, 110 00 Praha 1"
+          placeholder="Street 123, City"
           className="h-9" 
         />
       </div>
@@ -640,7 +640,7 @@ function InvoiceSettingsInline() {
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Telefon</label>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Phone</label>
           <Input 
             value={settings.phone || ""} 
             onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
@@ -654,7 +654,7 @@ function InvoiceSettingsInline() {
         disabled={saving || !settings.company_name}
         className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 text-sm font-semibold text-white px-6"
       >
-        {done ? "✓ Uloženo!" : saving ? "Ukládám..." : "Uložit nastavení"}
+        {done ? "✓ Saved!" : saving ? "Saving..." : "Save settings"}
       </Button>
     </div>
   );
@@ -682,7 +682,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
   };
 
   const deleteAccount = async (id) => {
-    if (!window.confirm("Smazat účet?")) return;
+    if (!window.confirm("Delete account?")) return;
     await base44.entities.BankAccount.delete(id);
     setAccounts((prev) => prev.filter((a) => a.id !== id));
   };
@@ -702,17 +702,17 @@ function BankAccountsInline({ accounts, setAccounts }) {
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Název *</label>
-          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Hlavní účet" className="h-9" />
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Name *</label>
+          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Main account" className="h-9" />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Číslo účtu *</label>
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Account number *</label>
           <Input value={form.account_number} onChange={(e) => setForm((p) => ({ ...p, account_number: e.target.value }))} placeholder="123456/0100" className="h-9" />
         </div>
         <div className="flex items-end">
           <Button onClick={handleSave} disabled={!form.name || !form.account_number || saving} className="bg-teal-600 hover:bg-teal-700 h-9 w-full text-sm font-semibold whitespace-nowrap px-6">
             <Plus className="w-3.5 h-3.5 mr-1" />
-            {done ? "✓ Přidáno!" : saving ? "..." : "Přidat účet"}
+            {done ? "✓ Added!" : saving ? "..." : "Add account"}
           </Button>
         </div>
       </div>
@@ -742,9 +742,9 @@ function BankAccountsInline({ accounts, setAccounts }) {
                 <span className="text-xs text-gray-400 ml-2">{a.account_number}{a.bank_name ? ` · ${a.bank_name}` : ""}</span>
               </div>
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.is_active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
-                {a.is_active ? "Aktivní" : "Neaktivní"}
+                {a.is_active ? "Active" : "Inactive"}
               </span>
-              <button onClick={() => toggleActive(a)} className="text-xs text-[#C9A227] hover:underline">{a.is_active ? "Deaktivovat" : "Aktivovat"}</button>
+              <button onClick={() => toggleActive(a)} className="text-xs text-[#C9A227] hover:underline">{a.is_active ? "Deactivate" : "Activate"}</button>
               <button onClick={() => deleteAccount(a.id)} className="opacity-50 hover:opacity-100 transition-opacity">
                 <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
               </button>

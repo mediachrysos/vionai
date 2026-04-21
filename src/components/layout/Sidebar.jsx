@@ -23,15 +23,15 @@ const customIcons = {
 };
 
 const allPages = [
-  { name: "Přehled", icon: null, page: "Dashboard" },
-  { name: "Zákazníci", icon: Users, page: "Customers" },
-  { name: "Platby", icon: CreditCard, page: "Payments" },
-  { name: "Modelky", icon: null, page: "Models" },
+  { name: "Dashboard", icon: null, page: "Dashboard" },
+  { name: "Customers", icon: Users, page: "Customers" },
+  { name: "Payments", icon: CreditCard, page: "Payments" },
+  { name: "Models", icon: null, page: "Models" },
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
   { name: "Business Timeline", icon: null, page: "BusinessTimeline" },
   { name: "Social Media", icon: null, page: "SocialMediaContent" },
-  { name: "Admin Portál", icon: null, page: "AdminUsers" },
+  { name: "Admin Portal", icon: null, page: "AdminUsers" },
   { name: "Customer Scraper", icon: null, page: "CustomerScraper" },
 ];
 
@@ -57,7 +57,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
     // Default chatter nav
     const chatterPages = ["ChatterPortal", "Customers", "Payments"];
     items = [
-      { name: "Můj přehled", icon: LayoutDashboard, page: "ChatterPortal" },
+      { name: "My Overview", icon: LayoutDashboard, page: "ChatterPortal" },
       ...allPages.filter(p => chatterPages.includes(p.page) && p.page !== "ChatterPortal"),
     ];
   }
@@ -126,8 +126,8 @@ export default function Sidebar({ currentPage, user, onLogout }) {
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-gray-800 truncate">{user?.full_name || "Uživatel"}</p>
-              <p className="text-[11px] text-gray-400 truncate">{isAdmin ? "Admin" : isLawyer ? "Advokát" : "Chatter"}</p>
+              <p className="text-xs font-medium text-gray-800 truncate">{user?.full_name || "User"}</p>
+              <p className="text-[11px] text-gray-400 truncate">{isAdmin ? "Admin" : isLawyer ? "Lawyer" : "Chatter"}</p>
             </div>
           )}
           {!collapsed && (

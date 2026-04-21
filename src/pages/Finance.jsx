@@ -74,7 +74,7 @@ export default function Finance({ currentUser }) {
     (e) => (e.expense_date || e.created_date?.split("T")[0]) >= monthStart
   );
   const monthWalletExpenses = walletTxs.filter(
-    (t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart
+    (t) => t.type === "expense" && t.category !== "Payout" && t.type !== "transfer" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart
   );
   const monthExpTotal =
   monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
@@ -85,14 +85,14 @@ export default function Finance({ currentUser }) {
   const totalRev = filteredPayments.reduce((s, p) => s + (p.amount || 0), 0);
   const totalExp =
   expenses.reduce((s, e) => s + (e.amount || 0), 0) +
-  walletTxs.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
+  walletTxs.filter((t) => t.type === "expense" && t.category !== "Payout" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
   const totalNetProfit = totalRev - totalExp;
 
   // Lawyer sees only their payout card
   if (isLawyer) {
     return (
       <div className="p-4 lg:p-8 max-w-2xl mx-auto">
-        <PageHeader title="Finance" subtitle="Váš přehled výplat" />
+        <PageHeader title="Finance" subtitle="Your payout overview" />
         <div className="mt-6">
           <LawyerPayoutCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
         </div>
@@ -104,7 +104,7 @@ export default function Finance({ currentUser }) {
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
       <div className="flex items-start justify-between flex-wrap gap-2">
-        <PageHeader title="Finance" subtitle="Přehled tržeb, výdajů a ziskovosti" goalCurrent={monthRev} goalTarget={100000} />
+        <PageHeader title="Finance" subtitle="Revenue, expenses and profitability overview" goalCurrent={monthRev} goalTarget={100000} />
         {!isAdmin &&
         <div className="mt-1">
             <ChatterFilterToggle showAll={showAll} onToggle={toggle} />

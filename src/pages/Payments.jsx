@@ -55,7 +55,7 @@ export default function Payments({ currentUser }) {
   });
 
   const handleDelete = (p) => {
-    if (window.confirm(`Opravdu chcete smazat platbu od "${p.customer_name || "?"}" (${(p.amount || 0).toLocaleString()} Kč)?`)) {
+    if (window.confirm(`Are you sure you want to delete the payment from "${p.customer_name || "?"}" (${(p.amount || 0).toLocaleString()} CZK)?`)) {
       deleteMutation.mutate(p.id);
     }
   };
@@ -119,50 +119,50 @@ export default function Payments({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
-      <PageHeader title="Platby" subtitle={`${payments.length} celkem · ${totalAmount.toLocaleString()} Kč`}>
+      <PageHeader title="Payments" subtitle={`${payments.length} total · ${totalAmount.toLocaleString()} CZK`}>
         <Button onClick={() => setShowForm(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
-          <Plus className="w-4 h-4 mr-2" /> Přidat platbu
+          <Plus className="w-4 h-4 mr-2" /> Add payment
         </Button>
       </PageHeader>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat podle zákazníka, modelky, chattera..." className="pl-10" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by customer, model, chatter..." className="pl-10" />
         </div>
         <Select value={modelFilter} onValueChange={setModelFilter}>
           <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Všechny modelky</SelectItem>
+            <SelectItem value="all">All models</SelectItem>
             {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Nejnovější</SelectItem>
-            <SelectItem value="highest">Nejvyšší</SelectItem>
-            <SelectItem value="lowest">Nejnižší</SelectItem>
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="highest">Highest</SelectItem>
+            <SelectItem value="lowest">Lowest</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {filtered.length === 0 && !isLoading ? (
-        <EmptyState icon={CreditCard} title="Žádné platby" description="Přidej první platbu" actionLabel="Přidat platbu" onAction={() => setShowForm(true)} />
+        <EmptyState icon={CreditCard} title="No payments" description="Add your first payment" actionLabel="Add payment" onAction={() => setShowForm(true)} />
       ) : (
         <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Zákazník</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Modelka</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Customer</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Model</th>
                   <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Datum</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Účet</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Faktura</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Date</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Account</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Status</th>
+                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Amount</th>
+                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Invoice</th>
                   <th className="px-5 py-3"></th>
                    </tr>
               </thead>
@@ -197,7 +197,7 @@ export default function Payments({ currentUser }) {
                       </Badge>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-900">
-                      {(p.amount || 0).toLocaleString()} Kč
+                      {(p.amount || 0).toLocaleString()} CZK
                     </td>
                     <td className="px-5 py-3.5">
                       <PaymentInvoiceActions payment={p} onInvoiceCreated={() => qc.invalidateQueries({ queryKey: ["invoices"] })} />
