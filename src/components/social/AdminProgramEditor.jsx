@@ -29,6 +29,7 @@ function emptyTask() {
 export default function AdminProgramEditor({ weekStart, program, models = [], designerEmail, designerName, onSaved }) {
   const [dayTasks, setDayTasks] = useState({});
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const loadedProgramId = useRef(null);
   const loadedWeekStart = useRef(null);
 
@@ -77,12 +78,17 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
     setSaving(true);
     const data = { week_start: weekStart, designer_email: designerEmail };
     DAYS.forEach(({ key }) => { data[`${key}_tasks`] = dayTasks[key] || []; });
+    let savedProgram;
     if (program?.id) {
-      await base44.entities.WeeklyProgram.update(program.id, data);
+      savedProgram = await base44.entities.WeeklyProgram.update(program.id, data);
     } else {
-      await base44.entities.WeeklyProgram.create(data);
+      savedProgram = await base44.entities.WeeklyProgram.create(data);
+      // Update ref so next refetch doesn't reset state
+      if (savedProgram?.id) loadedProgramId.current = savedProgram.id;
     }
     setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
     onSaved();
   };
 
@@ -93,8 +99,8 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
           <h3 className="text-sm font-semibold text-gray-800">Edit Weekly Program</h3>
           {designerName && <p className="text-xs text-gray-400 mt-0.5">Grafik: {designerName}</p>}
         </div>
-        <Button onClick={handleSave} disabled={saving} size="sm" className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1.5">
-          <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : "Save"}
+        <Button onClick={handleSave} disabled={saving} size="sm" className={`text-white gap-1.5 transition-colors ${saved ? "bg-emerald-500 hover:bg-emerald-600" : "bg-[#C9A227] hover:bg-[#A8841C]"}`}>
+          <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : saved ? "Saved ✓" : "Save"}
         </Button>
       </div>
 

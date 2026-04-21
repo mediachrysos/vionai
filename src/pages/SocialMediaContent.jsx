@@ -253,7 +253,7 @@ export default function SocialMediaContent({ currentUser }) {
             models={models}
             designerEmail={effectiveDesignerEmail}
             designerName={activeDashboard?.designer_name || activeDashboard?.name}
-            onSaved={() => { refresh(); setShowEditor(false); }}
+            onSaved={() => { refresh(); }}
           />
         )}
 
