@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Banknote, Plus, ChevronDown, ChevronUp, Edit2, Check } from "lucide-react";
+import { Banknote, Plus, ChevronDown, ChevronUp, Edit2, Check, Gift } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 function minutesToHours(mins) {
@@ -21,6 +21,10 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
   const [addingPayout, setAddingPayout] = useState(false);
   const [editingRate, setEditingRate] = useState(false);
   const [rateValue, setRateValue] = useState(String(dashboard?.hourly_rate ?? 35));
+  const [bonusAmount, setBonusAmount] = useState("");
+  const [bonusNote, setBonusNote] = useState("");
+  const [addingBonus, setAddingBonus] = useState(false);
+  const [showBonusForm, setShowBonusForm] = useState(false);
 
   const hourlyRate = dashboard?.hourly_rate ?? 35;
 
@@ -65,6 +69,30 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
     setPayoutNote("");
     setAddingPayout(false);
     qc.invalidateQueries({ queryKey: ["designerPayouts", designerEmail, dashboard?.id] });
+  };
+
+  const handleAddBonus = async () => {
+    const amount = parseFloat(bonusAmount);
+    if (isNaN(amount) || amount <= 0) return;
+    setAddingBonus(true);
+    // Convert MAD amount to minutes based on hourly rate, so it shows up in "Earned"
+    const minutes = Math.round((amount / hourlyRate) * 60);
+    const today = new Date().toISOString().split("T")[0];
+    await base44.entities.DesignerWorkSession.create({
+      designer_email: designerEmail,
+      dashboard_id: dashboard?.id,
+      date: today,
+      started_at: new Date().toISOString(),
+      ended_at: new Date().toISOString(),
+      is_active: false,
+      minutes_worked: minutes,
+      note: bonusNote || "Manual bonus",
+    });
+    setBonusAmount("");
+    setBonusNote("");
+    setAddingBonus(false);
+    setShowBonusForm(false);
+    qc.invalidateQueries({ queryKey: ["allWorkSessions", designerEmail, dashboard?.id] });
   };
 
   const handleRateSave = async () => {
@@ -163,6 +191,43 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
           >
             <Plus className="w-3.5 h-3.5" /> Pay
           </button>
+        </div>
+      )}
+
+      {/* Admin: add bonus to earned */}
+      {isAdmin && (
+        <div className="border-t border-gray-100 pt-3">
+          <button
+            onClick={() => setShowBonusForm(v => !v)}
+            className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-800 font-medium transition-colors"
+          >
+            <Gift className="w-3.5 h-3.5" /> Add bonus to earned
+          </button>
+          {showBonusForm && (
+            <div className="flex gap-2 items-center mt-2">
+              <Input
+                value={bonusAmount}
+                onChange={e => setBonusAmount(e.target.value)}
+                placeholder="Amount (MAD)"
+                type="number"
+                min="0"
+                className="h-8 text-xs w-28 flex-shrink-0"
+              />
+              <Input
+                value={bonusNote}
+                onChange={e => setBonusNote(e.target.value)}
+                placeholder="Note (optional)"
+                className="h-8 text-xs flex-1 min-w-0"
+              />
+              <button
+                onClick={handleAddBonus}
+                disabled={addingBonus || !bonusAmount}
+                className="flex items-center gap-1 text-xs font-semibold bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add
+              </button>
+            </div>
+          )}
         </div>
       )}
 
