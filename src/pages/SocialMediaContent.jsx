@@ -95,10 +95,8 @@ export default function SocialMediaContent({ currentUser }) {
   const activeDesignerEmail = isAdmin
     ? (activeDashboard?.designer_email || null)
     : myEmail;
-  // Always use dashboard:id as the program key for admin dashboards (consistent regardless of designer assignment)
-  const programQueryKey = isAdmin && activeDashboard
-    ? `dashboard:${selectedDashboardId}`
-    : activeDesignerEmail;
+  // Always use dashboard:id as the program key — consistent for both admin and designer
+  const programQueryKey = activeDashboard ? `dashboard:${activeDashboard.id}` : null;
 
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
@@ -108,22 +106,20 @@ export default function SocialMediaContent({ currentUser }) {
 
   const { data: programs = [] } = useQuery({
     queryKey: ["weeklyProgram", weekStart, programQueryKey],
-    queryFn: () => {
-      const filter = { week_start: weekStart };
-      filter.designer_email = isAdmin ? `dashboard:${selectedDashboardId}` : activeDesignerEmail;
-      return base44.entities.WeeklyProgram.filter(filter);
-    },
-    enabled: isAdmin ? !!selectedDashboardId : !!activeDesignerEmail,
+    queryFn: () => base44.entities.WeeklyProgram.filter({
+      week_start: weekStart,
+      designer_email: `dashboard:${activeDashboard.id}`,
+    }),
+    enabled: !!activeDashboard,
   });
 
   const { data: submissions = [] } = useQuery({
     queryKey: ["daySubmissions", weekStart, programQueryKey],
-    queryFn: () => {
-      const filter = { week_start: weekStart };
-      filter.designer_email = isAdmin ? `dashboard:${selectedDashboardId}` : activeDesignerEmail;
-      return base44.entities.DaySubmission.filter(filter);
-    },
-    enabled: isAdmin ? !!selectedDashboardId : !!activeDesignerEmail,
+    queryFn: () => base44.entities.DaySubmission.filter({
+      week_start: weekStart,
+      designer_email: `dashboard:${activeDashboard.id}`,
+    }),
+    enabled: !!activeDashboard,
   });
 
   const program = programs[0] || null;
@@ -279,7 +275,7 @@ export default function SocialMediaContent({ currentUser }) {
         )}
 
         {/* Weekly grid */}
-        {(isAdmin ? !!activeDashboard : !!activeDesignerEmail) ? (
+        {!!activeDashboard ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {DAYS.map(({ key, label }) => (
               <DayCard
@@ -294,7 +290,7 @@ export default function SocialMediaContent({ currentUser }) {
           </div>
         ) : (
           <div className="text-center py-16 text-gray-400 text-sm">
-            {isAdmin ? "Select a dashboard." : "You have no program assigned."}
+            {isAdmin ? "Select a dashboard." : "You have no dashboard assigned yet."}
           </div>
         )}
       </div>
