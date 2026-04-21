@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
@@ -29,8 +29,20 @@ function emptyTask() {
 export default function AdminProgramEditor({ weekStart, program, models = [], designerEmail, designerName, onSaved }) {
   const [dayTasks, setDayTasks] = useState({});
   const [saving, setSaving] = useState(false);
+  const loadedProgramId = useRef(null);
+  const loadedWeekStart = useRef(null);
 
   useEffect(() => {
+    // Only re-initialize when the week changes OR when we load a new program for the first time
+    const programId = program?.id ?? "__none__";
+    const weekChanged = loadedWeekStart.current !== weekStart;
+    const programChanged = loadedProgramId.current !== programId;
+
+    if (!weekChanged && !programChanged) return;
+
+    loadedWeekStart.current = weekStart;
+    loadedProgramId.current = programId;
+
     const f = {};
     DAYS.forEach(({ key }) => {
       const tasks = program?.[`${key}_tasks`];
@@ -39,6 +51,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
         customType: t.customType || "",
         desc: t.desc || "",
         inspiration_link: t.inspiration_link || "",
+        model_id: t.model_id || "",
       })) : [];
     });
     setDayTasks(f);
