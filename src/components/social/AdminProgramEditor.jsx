@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
-import { Save, Plus, Trash2, Link } from "lucide-react";
+import { Save, Plus, Trash2, Link, CloudOff } from "lucide-react";
 
 const DAYS = [
   { key: "mon", label: "Monday" },
@@ -30,8 +30,11 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
   const [dayTasks, setDayTasks] = useState({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [hasUnsaved, setHasUnsaved] = useState(false);
   const loadedProgramId = useRef(null);
   const loadedWeekStart = useRef(null);
+  const autosaveTimer = useRef(null);
+  const isInitialized = useRef(false);
 
   useEffect(() => {
     // Only re-initialize when the week changes OR when we load a new program for the first time
@@ -43,6 +46,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
 
     loadedWeekStart.current = weekStart;
     loadedProgramId.current = programId;
+    isInitialized.current = false;
 
     const f = {};
     DAYS.forEach(({ key }) => {
@@ -56,14 +60,33 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
       })) : [];
     });
     setDayTasks(f);
+    // Mark as initialized after state update settles
+    setTimeout(() => { isInitialized.current = true; }, 100);
   }, [program, weekStart]);
 
+  const triggerAutosave = useCallback(() => {
+    if (!isInitialized.current) return;
+    setHasUnsaved(true);
+    if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
+    autosaveTimer.current = setTimeout(() => {
+      setDayTasks(current => {
+        doSave(current);
+        return current;
+      });
+    }, 1500);
+  }, []);
+
   const addTask = (dayKey) => {
-    setDayTasks(prev => ({ ...prev, [dayKey]: [...(prev[dayKey] || []), emptyTask()] }));
+    setDayTasks(prev => {
+      const next = { ...prev, [dayKey]: [...(prev[dayKey] || []), emptyTask()] };
+      return next;
+    });
+    triggerAutosave();
   };
 
   const removeTask = (dayKey, idx) => {
     setDayTasks(prev => ({ ...prev, [dayKey]: prev[dayKey].filter((_, i) => i !== idx) }));
+    triggerAutosave();
   };
 
   const updateTask = (dayKey, idx, field, value) => {
@@ -72,25 +95,28 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
       tasks[idx] = { ...tasks[idx], [field]: value };
       return { ...prev, [dayKey]: tasks };
     });
+    triggerAutosave();
   };
 
-  const handleSave = async () => {
+  const doSave = async (tasks) => {
     setSaving(true);
     const data = { week_start: weekStart, designer_email: designerEmail };
-    DAYS.forEach(({ key }) => { data[`${key}_tasks`] = dayTasks[key] || []; });
+    DAYS.forEach(({ key }) => { data[`${key}_tasks`] = tasks[key] || []; });
     let savedProgram;
-    if (program?.id) {
-      savedProgram = await base44.entities.WeeklyProgram.update(program.id, data);
+    if (loadedProgramId.current && loadedProgramId.current !== "__none__") {
+      savedProgram = await base44.entities.WeeklyProgram.update(loadedProgramId.current, data);
     } else {
       savedProgram = await base44.entities.WeeklyProgram.create(data);
-      // Update ref so next refetch doesn't reset state
       if (savedProgram?.id) loadedProgramId.current = savedProgram.id;
     }
     setSaving(false);
+    setHasUnsaved(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
     onSaved();
   };
+
+  const handleSave = () => doSave(dayTasks);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
@@ -99,9 +125,14 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
           <h3 className="text-sm font-semibold text-gray-800">Edit Weekly Program</h3>
           {designerName && <p className="text-xs text-gray-400 mt-0.5">Grafik: {designerName}</p>}
         </div>
-        <Button onClick={handleSave} disabled={saving} size="sm" className={`text-white gap-1.5 transition-colors ${saved ? "bg-emerald-500 hover:bg-emerald-600" : "bg-[#C9A227] hover:bg-[#A8841C]"}`}>
-          <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : saved ? "Saved ✓" : "Save"}
-        </Button>
+        <div className="flex items-center gap-2">
+          {hasUnsaved && !saving && (
+            <span className="text-xs text-amber-500 font-medium">Unsaved changes...</span>
+          )}
+          <Button onClick={handleSave} disabled={saving} size="sm" className={`text-white gap-1.5 transition-colors ${saved ? "bg-emerald-500 hover:bg-emerald-600" : "bg-[#C9A227] hover:bg-[#A8841C]"}`}>
+            <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : saved ? "Saved ✓" : "Save"}
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">
