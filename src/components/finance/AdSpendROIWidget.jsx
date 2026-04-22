@@ -214,27 +214,27 @@ export default function AdSpendROIWidget() {
           <thead>
             <tr className="text-xs text-gray-400 font-medium border-b border-gray-100">
               <th className="text-left pb-2 pr-3">Modelka</th>
-              <th className="text-right pb-2 px-2">Ad Spend</th>
-              <th className="text-right pb-2 px-2">Noví klienti</th>
-              <th className="text-right pb-2 px-2">Výnos</th>
-              <th className="text-right pb-2 px-2">Profit</th>
-              <th className="text-right pb-2 px-2">ROI dnes</th>
-              <th className="text-right pb-2 pl-2">Ø ROI (průměr/den)</th>
+              <th className="text-center pb-2 px-2">Ad Spend</th>
+              <th className="text-center pb-2 px-2">Noví klienti</th>
+              <th className="text-center pb-2 px-2">Výnos</th>
+              <th className="text-center pb-2 px-2">Profit</th>
+              <th className="text-center pb-2 px-2">ROI dnes</th>
+              <th className="text-center pb-2 pl-2">Ø ROI (průměr/den)</th>
             </tr>
           </thead>
           <tbody>
             {data.rows.map((row) => (
               <tr key={row.modelId} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td className="py-2.5 pr-3 font-medium text-gray-800">{row.modelName}</td>
-                <td className="py-2.5 px-2 text-right text-red-500">{row.adSpend > 0 ? fmt(row.adSpend) : <span className="text-gray-300">—</span>}</td>
-                <td className="py-2.5 px-2 text-right">
-                  <span className="inline-flex items-center gap-1 text-blue-600 font-medium">
+                <td className="py-2.5 px-2 text-center text-red-500">{row.adSpend > 0 ? fmt(row.adSpend) : <span className="text-gray-300">—</span>}</td>
+                <td className="py-2.5 px-2 text-center">
+                  <span className="inline-flex items-center justify-center gap-1 text-blue-600 font-medium">
                     <Users className="w-3 h-3" />
                     {row.newCustomers}
                   </span>
                 </td>
-                <td className="py-2.5 px-2 text-right text-emerald-600 font-medium">{row.revenue > 0 ? fmt(row.revenue) : <span className="text-gray-300">—</span>}</td>
-                <td className="py-2.5 px-2 text-right">
+                <td className="py-2.5 px-2 text-center text-emerald-600 font-medium">{row.revenue > 0 ? fmt(row.revenue) : <span className="text-gray-300">—</span>}</td>
+                <td className="py-2.5 px-2 text-center">
                   {row.adSpend > 0 ? (
                     <span className={`font-semibold ${row.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                       {fmt(row.profit)}
@@ -243,9 +243,9 @@ export default function AdSpendROIWidget() {
                     <span className="text-gray-300">—</span>
                   )}
                 </td>
-                <td className="py-2.5 px-2 text-right">
+                <td className="py-2.5 px-2 text-center">
                   {row.roi !== null ? (
-                    <span className={`inline-flex items-center gap-1 font-semibold ${row.roi >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                    <span className={`inline-flex items-center justify-center gap-1 font-semibold ${row.roi >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                       {row.roi >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                       {row.roi.toFixed(0)}%
                     </span>
@@ -253,9 +253,9 @@ export default function AdSpendROIWidget() {
                     <span className="text-gray-300">—</span>
                   )}
                 </td>
-                <td className="py-2.5 pl-2 text-right">
+                <td className="py-2.5 pl-2 text-center">
                   {row.allTimeRoi !== null ? (
-                    <span className={`inline-flex items-center gap-1 font-semibold text-xs px-2 py-0.5 rounded-full ${row.allTimeRoi >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
+                    <span className={`inline-flex items-center justify-center gap-1 font-semibold text-xs px-2 py-0.5 rounded-full ${row.allTimeRoi >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
                       {row.allTimeRoi >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {row.allTimeRoi.toFixed(0)}%
                     </span>
