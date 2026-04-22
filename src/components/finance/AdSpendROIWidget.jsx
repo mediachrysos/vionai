@@ -240,8 +240,8 @@ export default function AdSpendROIWidget() {
             <tr className="text-[10px] font-semibold uppercase tracking-wider">
               <th className="pb-1 pr-3" />
               <th colSpan={5} className="pb-1 px-2 text-center text-gray-400 border-b-2 border-gray-200">Dnešní výsledky</th>
-              <th colSpan={2} className="pb-1 px-2 text-center text-[#C9A227] border-b-2 border-amber-200">Cena za zákazníka</th>
-              <th colSpan={2} className="pb-1 px-2 text-center text-emerald-500 border-b-2 border-emerald-200">Hodnota zákazníka</th>
+              <th colSpan={2} className="pb-1 px-2 text-center text-[#C9A227] border-b-2 border-amber-200">Cena za získání zákazníka</th>
+              <th colSpan={2} className="pb-1 px-2 text-center text-emerald-500 border-b-2 border-emerald-200">Průměrná hodnota zákazníka</th>
               <th colSpan={1} className="pb-1 pl-2 text-center text-indigo-400 border-b-2 border-indigo-200">Celkový průměr</th>
             </tr>
             {/* Column headers */}
@@ -252,10 +252,10 @@ export default function AdSpendROIWidget() {
               <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Výnos</th>
               <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Profit</th>
               <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">ROI</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Dnes</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Ø Celkem</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Dnes</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Ø Celkem</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Dnes (ad spend ÷ noví klienti)</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Ø Historicky</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Dnes (výnos ÷ noví klienti)</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Ø Historicky</th>
               <th className="text-center pt-2 pb-3 pl-2 whitespace-nowrap text-indigo-400">Ø ROI/den</th>
             </tr>
           </thead>
