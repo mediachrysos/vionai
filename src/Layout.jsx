@@ -144,6 +144,7 @@ export default function Layout({ children, currentPageName }) {
         if (justSubmitted.length > 0) {
           const designer = event.data.designer_email?.split("@")[0] || "Designer";
           const dayName = event.data.day_name || event.data.day_key || "";
+          speakAlert(`${designer} submitted a task for review.`);
           setTaskSubmitAlert({ designer, dayName, count: justSubmitted.length });
           setTimeout(() => setTaskSubmitAlert(null), 6000);
         }
