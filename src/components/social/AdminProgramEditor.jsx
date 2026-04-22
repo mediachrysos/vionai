@@ -64,6 +64,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
         desc: t.desc || "",
         inspiration_link: t.inspiration_link || "",
         model_id: t.model_id || "",
+        priority: t.priority || "normal",
       })) : [];
     });
     setDayTasks(f);
