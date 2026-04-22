@@ -122,17 +122,17 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const unsubPayment = base44.entities.Payment.subscribe((event) => {
       if (event.type === "create" && event.data) {
-        const name = event.data.customer_name || "Customer";
-        const amount = event.data.amount ? `${event.data.amount.toLocaleString()} CZK` : "";
-        if (user?.role === "admin") speakAlert(`${name} sent ${amount}. Thank you!`);
+        const name = event.data.customer_name || "Zákazník";
+        const amount = event.data.amount ? `${event.data.amount.toLocaleString()} korun` : "";
+        if (user?.role === "admin") speakAlert(`${name} poslal ${amount}. Děkujeme!`);
         setPaymentAlert(event.data);
         setTimeout(() => setPaymentAlert(null), 5000);
       }
     });
     const unsubCustomer = base44.entities.Customer.subscribe((event) => {
       if (event.type === "create" && event.data) {
-        const name = event.data.full_name || "New customer";
-        if (user?.role === "admin") speakAlert(`New customer! ${name} just joined.`);
+        const name = event.data.full_name || "Nový zákazník";
+        if (user?.role === "admin") speakAlert(`Nový zákazník! ${name} se právě přidal.`);
         setCustomerAlert(event.data);
         setTimeout(() => setCustomerAlert(null), 5000);
       }
