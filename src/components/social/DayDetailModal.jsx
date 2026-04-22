@@ -164,7 +164,7 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
   );
 }
 
-export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, designerEmail, isAdmin, onRefresh, models = [] }) {
+export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, designerEmail, designerName, isAdmin, onRefresh, models = [] }) {
   const [adminLink, setAdminLink] = useState(submission?.admin_link || "");
   const [savingAdminLink, setSavingAdminLink] = useState(false);
 
@@ -194,6 +194,19 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
     else taskSubs.push(entry);
     await base44.entities.DaySubmission.update(sub.id, { task_submissions: taskSubs });
     onRefresh();
+
+    // Notify admins (fire-and-forget)
+    const task = tasks[taskIdx];
+    const taskLabel = task?.type === "custom" ? (task?.customType || "Custom") : (task?.type || "Task");
+    base44.functions.invoke("notifyAdminTaskSubmitted", {
+      designerName: designerName || designerEmail,
+      designerEmail,
+      dayName,
+      taskLabel,
+      taskDesc: task?.desc || "",
+      submittedLink: link,
+      weekStart,
+    }).catch(() => {});
   };
 
   const handleAdminAction = async (taskIdx, actionType, note) => {

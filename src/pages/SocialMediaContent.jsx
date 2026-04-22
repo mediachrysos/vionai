@@ -328,6 +328,7 @@ export default function SocialMediaContent({ currentUser }) {
           submission={submissionMap[selectedDay]}
           weekStart={weekStart}
           designerEmail={effectiveDesignerEmail}
+          designerName={activeDashboard?.designer_name || effectiveDesignerEmail}
           isAdmin={isAdmin}
           onRefresh={refresh}
           models={models}
