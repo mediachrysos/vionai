@@ -188,7 +188,8 @@ export default function AdSpendROIWidget() {
               <th className="text-right pb-2 px-2">Ad Spend</th>
               <th className="text-right pb-2 px-2">Noví klienti</th>
               <th className="text-right pb-2 px-2">Výnos</th>
-              <th className="text-right pb-2 pl-2">Profit / ROI</th>
+              <th className="text-right pb-2 px-2">Profit</th>
+              <th className="text-right pb-2 pl-2">ROI</th>
             </tr>
           </thead>
           <tbody>
@@ -203,11 +204,20 @@ export default function AdSpendROIWidget() {
                   </span>
                 </td>
                 <td className="py-2.5 px-2 text-right text-emerald-600 font-medium">{row.revenue > 0 ? fmt(row.revenue) : <span className="text-gray-300">—</span>}</td>
-                <td className="py-2.5 pl-2 text-right">
+                <td className="py-2.5 px-2 text-right">
                   {row.adSpend > 0 ? (
-                    <span className={`inline-flex items-center gap-1 font-semibold ${row.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
-                      {row.profit >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                      {row.roi !== null ? `${row.roi.toFixed(0)}%` : "—"}
+                    <span className={`font-semibold ${row.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                      {fmt(row.profit)}
+                    </span>
+                  ) : (
+                    <span className="text-gray-300">—</span>
+                  )}
+                </td>
+                <td className="py-2.5 pl-2 text-right">
+                  {row.roi !== null ? (
+                    <span className={`inline-flex items-center gap-1 font-semibold ${row.roi >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                      {row.roi >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                      {row.roi.toFixed(0)}%
                     </span>
                   ) : (
                     <span className="text-gray-300">—</span>
@@ -215,28 +225,6 @@ export default function AdSpendROIWidget() {
                 </td>
               </tr>
             ))}
-            {/* Totals row */}
-            <tr className="border-t-2 border-gray-200 bg-gray-50 font-semibold">
-              <td className="py-2.5 pr-3 text-gray-700 text-xs uppercase tracking-wide">Celkem</td>
-              <td className="py-2.5 px-2 text-right text-red-600">{data.totals.adSpend > 0 ? fmt(data.totals.adSpend) : <span className="text-gray-300">—</span>}</td>
-              <td className="py-2.5 px-2 text-right">
-                <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">
-                  <Users className="w-3 h-3" />
-                  {data.totals.newCustomers}
-                </span>
-              </td>
-              <td className="py-2.5 px-2 text-right text-emerald-700">{data.totals.revenue > 0 ? fmt(data.totals.revenue) : <span className="text-gray-300">—</span>}</td>
-              <td className="py-2.5 pl-2 text-right">
-                {data.totals.roi !== null ? (
-                  <span className={`inline-flex items-center gap-1 font-bold ${data.totals.roi >= 0 ? "text-emerald-600" : "text-red-500"}`}>
-                    {data.totals.roi >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                    {data.totals.roi.toFixed(0)}%
-                  </span>
-                ) : (
-                  <span className="text-gray-300">—</span>
-                )}
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
