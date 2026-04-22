@@ -7,6 +7,7 @@ import RevenueChart from "../components/dashboard/RevenueChart";
 import PageHeader from "../components/ui-custom/PageHeader";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import FinanceSheetTable from "../components/finance/FinanceSheetTable";
+import AdSpendROIWidget from "../components/finance/AdSpendROIWidget";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 import LawyerPayoutCard from "../components/finance/LawyerPayoutCard";
 
@@ -157,6 +158,10 @@ export default function Finance({ currentUser }) {
 
       <div className="mt-6">
         <RevenueChart payments={filteredPayments} />
+      </div>
+
+      <div className="mt-6">
+        <AdSpendROIWidget />
       </div>
 
       <FinanceSheetTable currentUser={currentUser} showAll={showAll || isAdmin} myModelIds={myModelIds} />
