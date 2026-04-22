@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import Sidebar from "./components/layout/Sidebar";
 import { AnimatePresence, motion } from "framer-motion";
-import { CreditCard, X, Plus, UserPlus } from "lucide-react";
+import { CreditCard, X, Plus, UserPlus, ImagePlay } from "lucide-react";
 import PaymentFormModal from "./components/payments/PaymentFormModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -28,6 +28,7 @@ export default function Layout({ children, currentPageName }) {
   const [loading, setLoading] = useState(true);
   const [paymentAlert, setPaymentAlert] = useState(null);
   const [customerAlert, setCustomerAlert] = useState(null);
+  const [taskSubmitAlert, setTaskSubmitAlert] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const qc = useQueryClient();
 
@@ -136,7 +137,19 @@ export default function Layout({ children, currentPageName }) {
         setTimeout(() => setCustomerAlert(null), 5000);
       }
     });
-    return () => { unsubPayment(); unsubCustomer(); };
+    const unsubTaskSubmit = base44.entities.DaySubmission.subscribe((event) => {
+      if ((event.type === "create" || event.type === "update") && event.data && user?.role === "admin") {
+        const subs = event.data.task_submissions || [];
+        const justSubmitted = subs.filter(ts => ts.status === "submitted");
+        if (justSubmitted.length > 0) {
+          const designer = event.data.designer_email?.split("@")[0] || "Designer";
+          const dayName = event.data.day_name || event.data.day_key || "";
+          setTaskSubmitAlert({ designer, dayName, count: justSubmitted.length });
+          setTimeout(() => setTaskSubmitAlert(null), 6000);
+        }
+      }
+    });
+    return () => { unsubPayment(); unsubCustomer(); unsubTaskSubmit(); };
   }, [user]);
 
   // CustomerOnboarding is a public page — skip auth entirely
@@ -262,6 +275,29 @@ export default function Layout({ children, currentPageName }) {
               <p className="text-xs text-gray-500">{customerAlert.full_name || "New customer"} just joined the platform</p>
             </div>
             <button onClick={() => setCustomerAlert(null)} className="text-gray-300 hover:text-gray-500">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Task submitted alert */}
+      <AnimatePresence>
+        {taskSubmitAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: 60, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 60, x: "-50%" }}
+            className="fixed bottom-44 left-1/2 z-50 bg-white border border-purple-200 rounded-2xl shadow-xl px-5 py-3.5 flex items-center gap-3 min-w-[280px]"
+          >
+            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+              <ImagePlay className="w-4 h-4 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-800">Task submitted for review!</p>
+              <p className="text-xs text-gray-500">{taskSubmitAlert.designer} · {taskSubmitAlert.dayName}</p>
+            </div>
+            <button onClick={() => setTaskSubmitAlert(null)} className="text-gray-300 hover:text-gray-500">
               <X className="w-4 h-4" />
             </button>
           </motion.div>
