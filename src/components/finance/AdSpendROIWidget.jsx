@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { TrendingUp, TrendingDown, Users, Megaphone, ChevronLeft, ChevronRight } from "lucide-react";
+import ModelROIChart from "./ModelROIChart";
 
 function formatDate(d) {
   return d.toISOString().split("T")[0];
@@ -256,6 +257,8 @@ export default function AdSpendROIWidget() {
           </tbody>
         </table>
       </div>
+
+      <ModelROIChart payments={payments} adSpends={adSpends} models={models} />
     </div>
   );
 }
