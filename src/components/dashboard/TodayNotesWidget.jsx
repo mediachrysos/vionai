@@ -35,6 +35,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
   const [noteSearch, setNoteSearch] = useState("");
   const [slideIdx, setSlideIdx] = useState(0); // which extra field is showing
+  const [noteIdx, setNoteIdx] = useState(0); // which note is showing in carousel
 
   const { data: notes = [] } = useQuery({
     queryKey: ["notes"],
@@ -135,6 +136,9 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
 
   const prevSlide = () => setSlideIdx(i => (i - 1 + SLIDES.length) % SLIDES.length);
   const nextSlide = () => setSlideIdx(i => (i + 1) % SLIDES.length);
+
+  const prevNote = () => setNoteIdx(i => Math.max(0, i - 1));
+  const nextNote = () => setNoteIdx(i => Math.min(sortedNotes.length - 1, i + 1));
 
   const currentSlide = SLIDES[slideIdx];
 
@@ -312,77 +316,103 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
           </div>
         )}
 
-        {/* Notes list */}
-        <div className="space-y-2 flex-1 overflow-y-auto">
-          {sortedNotes.length === 0 && (
+        {/* Notes carousel — 1 note at a time */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {sortedNotes.length === 0 ? (
             <p className="text-xs text-gray-400 text-center py-6">Zatím žádné poznámky</p>
-          )}
-          {sortedNotes.map((n) => {
+          ) : (() => {
+            const safeIdx = Math.min(noteIdx, sortedNotes.length - 1);
+            const n = sortedNotes[safeIdx];
             const isToday = n.note_date === today;
             const accountLabel = n.account_name || bankAccounts.find((a) => a.id === n.account)?.name || n.account;
             return (
-              <div key={n.id}
-                className={`group relative rounded-2xl border p-4 transition-all shadow-sm ${
-                  isToday
-                    ? "bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200"
-                    : "bg-white border-gray-100 hover:border-amber-200 hover:shadow-md"
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
-                      isToday ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-500"}`}>
-                      {n.customer_name ? n.customer_name.charAt(0).toUpperCase() : "?"}
-                    </div>
-                    {n.customer_name
-                      ? <span className={`text-sm font-bold truncate ${isToday ? "text-amber-900" : "text-gray-800"}`}>{n.customer_name}</span>
-                      : <span className="text-xs text-gray-400 italic">Bez klienta</span>}
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {isToday
-                      ? <span className="text-[10px] font-bold tracking-wide text-white bg-amber-500 rounded-full px-2.5 py-0.5">DNES</span>
-                      : n.note_date
-                        ? <span className="text-[11px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">{format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}</span>
-                        : null}
-                    <button onClick={() => deleteMutation.mutate(n.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+              <div className="flex flex-col gap-2 flex-1">
+                {/* Navigation bar */}
+                <div className="flex items-center justify-between px-1">
+                  <button
+                    onClick={prevNote}
+                    disabled={safeIdx === 0}
+                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-gray-500" />
+                  </button>
+                  <span className="text-[11px] text-gray-400 font-medium">
+                    {safeIdx + 1} / {sortedNotes.length}
+                  </span>
+                  <button
+                    onClick={nextNote}
+                    disabled={safeIdx === sortedNotes.length - 1}
+                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4 text-gray-500" />
+                  </button>
                 </div>
 
-                {(n.amount || accountLabel || n.model_name) && (
-                  <div className="flex flex-wrap gap-1.5 mb-2.5">
-                    {n.amount && (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                        {Number(n.amount).toLocaleString("cs-CZ")} Kč
-                      </span>
-                    )}
-                    {accountLabel && (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">
-                        {accountLabel}
-                      </span>
-                    )}
-                    {n.model_name && (
-                      <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
-                        n.model_name?.toLowerCase().includes("dominic") ? "bg-pink-100 text-pink-700" :
-                        n.model_name?.toLowerCase().includes("laura") ? "bg-violet-100 text-violet-700" :
-                        "bg-purple-100 text-purple-700"
-                      }`}>
-                        {n.model_name}
-                      </span>
-                    )}
+                {/* Single note card */}
+                <div
+                  key={n.id}
+                  className={`group relative rounded-2xl border p-4 transition-all shadow-sm flex-1 ${
+                    isToday
+                      ? "bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200"
+                      : "bg-white border-gray-100"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
+                        isToday ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-500"}`}>
+                        {n.customer_name ? n.customer_name.charAt(0).toUpperCase() : "?"}
+                      </div>
+                      {n.customer_name
+                        ? <span className={`text-sm font-bold truncate ${isToday ? "text-amber-900" : "text-gray-800"}`}>{n.customer_name}</span>
+                        : <span className="text-xs text-gray-400 italic">Bez klienta</span>}
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {isToday
+                        ? <span className="text-[10px] font-bold tracking-wide text-white bg-amber-500 rounded-full px-2.5 py-0.5">DNES</span>
+                        : n.note_date
+                          ? <span className="text-[11px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">{format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}</span>
+                          : null}
+                      <button onClick={() => { deleteMutation.mutate(n.id); setNoteIdx(i => Math.max(0, i - 1)); }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                )}
 
-                {n.content && (
-                  <p className={`text-xs leading-relaxed pl-9 ${isToday ? "text-amber-800" : "text-gray-500"}`}>
-                    {n.content}
-                  </p>
-                )}
+                  {(n.amount || accountLabel || n.model_name) && (
+                    <div className="flex flex-wrap gap-1.5 mb-2.5">
+                      {n.amount && (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                          {Number(n.amount).toLocaleString("cs-CZ")} Kč
+                        </span>
+                      )}
+                      {accountLabel && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">
+                          {accountLabel}
+                        </span>
+                      )}
+                      {n.model_name && (
+                        <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
+                          n.model_name?.toLowerCase().includes("dominic") ? "bg-pink-100 text-pink-700" :
+                          n.model_name?.toLowerCase().includes("laura") ? "bg-violet-100 text-violet-700" :
+                          "bg-purple-100 text-purple-700"
+                        }`}>
+                          {n.model_name}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {n.content && (
+                    <p className={`text-xs leading-relaxed pl-9 ${isToday ? "text-amber-800" : "text-gray-500"}`}>
+                      {n.content}
+                    </p>
+                  )}
+                </div>
               </div>
             );
-          })}
+          })()}
         </div>
       </div>
     </div>
