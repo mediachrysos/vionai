@@ -48,43 +48,50 @@ export default function AdSpendROIWidget() {
         spendByModel[key] = (spendByModel[key] || 0) + (a.amount || 0);
       });
 
-    // For each customer, find their FIRST payment ever
-    const firstPaymentByCustomer = {};
+    // For each (customer, model) pair, find the earliest payment date on that model
+    // "nový zákazník na modelce X" = první platba zákazníka na modelce X je dnes
+    const firstPaymentByCustomerModel = {};
     [...payments]
-      .sort((a, b) => (a.payment_date || a.created_date) > (b.payment_date || b.created_date) ? 1 : -1)
+      .sort((a, b) => {
+        const da = a.payment_date || a.created_date?.split("T")[0] || "";
+        const db = b.payment_date || b.created_date?.split("T")[0] || "";
+        return da > db ? 1 : -1;
+      })
       .forEach((p) => {
-        if (p.customer_id && !firstPaymentByCustomer[p.customer_id]) {
-          firstPaymentByCustomer[p.customer_id] = p;
+        if (!p.customer_id || !p.model_id) return;
+        const key = `${p.customer_id}__${p.model_id}`;
+        if (!firstPaymentByCustomerModel[key]) {
+          firstPaymentByCustomerModel[key] = p;
         }
       });
 
-    // New customers today = first payment is today
-    const newCustomersToday = Object.values(firstPaymentByCustomer).filter(
-      (p) => (p.payment_date || p.created_date?.split("T")[0]) === date
-    );
-
-    // Group by model_id
+    // "Noví zákazníci dnes na dané modelce" = záznamy, kde první platba na té modelce je dnes
     const byModel = {};
 
-    newCustomersToday.forEach((p) => {
-      const modelId = p.model_id || "__none__";
+    Object.values(firstPaymentByCustomerModel).forEach((p) => {
+      const firstDate = p.payment_date || p.created_date?.split("T")[0];
+      if (firstDate !== date) return;
+      const modelId = p.model_id;
       if (!byModel[modelId]) byModel[modelId] = { newCustomers: 0, revenue: 0, adSpend: 0 };
       byModel[modelId].newCustomers += 1;
-      // Sum ALL payments from this new customer today on this model
     });
 
-    // Sum revenue from new customers today
-    const newCustomerIds = new Set(newCustomersToday.map((p) => p.customer_id).filter(Boolean));
-    payments
-      .filter((p) => {
-        const pd = p.payment_date || p.created_date?.split("T")[0];
-        return pd === date && newCustomerIds.has(p.customer_id);
-      })
-      .forEach((p) => {
-        const modelId = p.model_id || "__none__";
-        if (!byModel[modelId]) byModel[modelId] = { newCustomers: 0, revenue: 0, adSpend: 0 };
-        byModel[modelId].revenue += p.amount || 0;
-      });
+    // Revenue = všechny platby dnes od nových zákazníků (první platba na té modelce = dnes), přiřazené té modelce
+    const newPairs = new Set(
+      Object.values(firstPaymentByCustomerModel)
+        .filter((p) => (p.payment_date || p.created_date?.split("T")[0]) === date)
+        .map((p) => `${p.customer_id}__${p.model_id}`)
+    );
+
+    payments.forEach((p) => {
+      const pd = p.payment_date || p.created_date?.split("T")[0];
+      if (pd !== date || !p.customer_id || !p.model_id) return;
+      const pair = `${p.customer_id}__${p.model_id}`;
+      if (!newPairs.has(pair)) return;
+      const modelId = p.model_id;
+      if (!byModel[modelId]) byModel[modelId] = { newCustomers: 0, revenue: 0, adSpend: 0 };
+      byModel[modelId].revenue += p.amount || 0;
+    });
 
     // Attach ad spend
     Object.entries(spendByModel).forEach(([modelId, spend]) => {
@@ -92,26 +99,34 @@ export default function AdSpendROIWidget() {
       byModel[modelId].adSpend += spend;
     });
 
-    // Build rows — include all models that appear in either spend or payments
-    const allModelIds = new Set([...Object.keys(byModel)]);
+    // Fixed order: all known models alphabetically, always shown
+    const allModelIds = new Set([
+      ...models.map((m) => m.id),
+      ...Object.keys(byModel),
+    ]);
+
     const rows = [...allModelIds].map((modelId) => {
       const model = models.find((m) => m.id === modelId);
+      if (!model) return null; // skip unknowns without a name
       const d = byModel[modelId] || { newCustomers: 0, revenue: 0, adSpend: 0 };
       return {
         modelId,
-        modelName: model?.name || (modelId === "__global__" ? "Globální" : modelId === "__none__" ? "Bez modelky" : "Neznámá"),
+        modelName: model.name,
         ...d,
         profit: d.revenue - d.adSpend,
         roi: d.adSpend > 0 ? ((d.revenue - d.adSpend) / d.adSpend) * 100 : null,
       };
-    }).sort((a, b) => b.revenue - a.revenue);
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.modelName.localeCompare(b.modelName, "cs"));
 
     const totals = rows.reduce(
       (acc, r) => ({ adSpend: acc.adSpend + r.adSpend, revenue: acc.revenue + r.revenue, newCustomers: acc.newCustomers + r.newCustomers }),
       { adSpend: 0, revenue: 0, newCustomers: 0 }
     );
+    const totalRoi = totals.adSpend > 0 ? ((totals.revenue - totals.adSpend) / totals.adSpend) * 100 : null;
 
-    return { rows, totals };
+    return { rows, totals: { ...totals, profit: totals.revenue - totals.adSpend, roi: totalRoi } };
   }, [payments, adSpends, models, date]);
 
   const displayDate = new Date(date).toLocaleDateString("cs-CZ", { weekday: "long", day: "numeric", month: "long" });
@@ -143,7 +158,7 @@ export default function AdSpendROIWidget() {
       </div>
 
       {/* Summary totals */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         <div className="bg-red-50 rounded-xl p-3 text-center">
           <p className="text-xs text-red-400 font-medium mb-1">Ad Spend</p>
           <p className="text-base font-bold text-red-600">{fmt(data.totals.adSpend)}</p>
@@ -155,6 +170,12 @@ export default function AdSpendROIWidget() {
         <div className="bg-blue-50 rounded-xl p-3 text-center">
           <p className="text-xs text-blue-400 font-medium mb-1">Noví zákazníci</p>
           <p className="text-base font-bold text-blue-600">{data.totals.newCustomers}</p>
+        </div>
+        <div className={`rounded-xl p-3 text-center ${data.totals.roi === null ? "bg-gray-50" : data.totals.roi >= 0 ? "bg-emerald-50" : "bg-red-50"}`}>
+          <p className={`text-xs font-medium mb-1 ${data.totals.roi === null ? "text-gray-400" : data.totals.roi >= 0 ? "text-emerald-500" : "text-red-400"}`}>Celkové ROI</p>
+          <p className={`text-base font-bold ${data.totals.roi === null ? "text-gray-400" : data.totals.roi >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+            {data.totals.roi !== null ? `${data.totals.roi.toFixed(0)}%` : "—"}
+          </p>
         </div>
       </div>
 
