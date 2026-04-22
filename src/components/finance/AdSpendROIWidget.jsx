@@ -222,74 +222,100 @@ export default function AdSpendROIWidget() {
 
       {/* Per-model table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm border-separate border-spacing-0">
           <thead>
-            <tr className="text-xs text-gray-400 font-medium border-b border-gray-100">
-              <th className="text-left pb-2 pr-3">Modelka</th>
-              <th className="text-center pb-2 px-2">Ad Spend</th>
-              <th className="text-center pb-2 px-2">Noví klienti</th>
-              <th className="text-center pb-2 px-2">Výnos</th>
-              <th className="text-center pb-2 px-2">Profit</th>
-              <th className="text-center pb-2 px-2">ROI dnes</th>
-              <th className="text-center pb-2 px-2">Cena/zákazník dnes</th>
-              <th className="text-center pb-2 px-2">Ø Cena/zákazník</th>
-              <th className="text-center pb-2 pl-2">Ø ROI (průměr/den)</th>
+            {/* Group headers */}
+            <tr className="text-[10px] font-semibold uppercase tracking-wider">
+              <th className="pb-1 pr-3" />
+              <th colSpan={5} className="pb-1 px-2 text-center text-gray-400 border-b-2 border-gray-200">Dnešní výsledky</th>
+              <th colSpan={2} className="pb-1 px-2 text-center text-[#C9A227] border-b-2 border-amber-200">Cena za zákazníka</th>
+              <th colSpan={1} className="pb-1 pl-2 text-center text-indigo-400 border-b-2 border-indigo-200">Celkový průměr</th>
+            </tr>
+            {/* Column headers */}
+            <tr className="text-xs text-gray-400 font-medium">
+              <th className="text-left pt-2 pb-3 pr-3 min-w-[120px]">Modelka</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Ad Spend</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Noví klienti</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Výnos</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Profit</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">ROI</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Dnes</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Ø Celkem</th>
+              <th className="text-center pt-2 pb-3 pl-2 whitespace-nowrap text-indigo-400">Ø ROI/den</th>
             </tr>
           </thead>
           <tbody>
             {data.rows.map((row) => (
-              <tr key={row.modelId} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                <td className="py-2.5 pr-3 font-medium text-gray-800">{row.modelName}</td>
-                <td className="py-2.5 px-2 text-center text-red-500">{row.adSpend > 0 ? fmt(row.adSpend) : <span className="text-gray-300">—</span>}</td>
-                <td className="py-2.5 px-2 text-center">
-                  <span className="inline-flex items-center justify-center gap-1 text-blue-600 font-medium">
+              <tr key={row.modelId} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors group">
+                <td className="py-3 pr-3 font-semibold text-gray-800 text-sm">{row.modelName}</td>
+
+                {/* Ad Spend */}
+                <td className="py-3 px-2 text-center">
+                  {row.adSpend > 0
+                    ? <span className="text-red-500 font-medium">{fmt(row.adSpend)}</span>
+                    : <span className="text-gray-200">—</span>}
+                </td>
+
+                {/* Noví klienti */}
+                <td className="py-3 px-2 text-center">
+                  <span className={`inline-flex items-center justify-center gap-1 font-semibold ${row.newCustomers > 0 ? "text-blue-600" : "text-gray-300"}`}>
                     <Users className="w-3 h-3" />
                     {row.newCustomers}
                   </span>
                 </td>
-                <td className="py-2.5 px-2 text-center text-emerald-600 font-medium">{row.revenue > 0 ? fmt(row.revenue) : <span className="text-gray-300">—</span>}</td>
-                <td className="py-2.5 px-2 text-center">
+
+                {/* Výnos */}
+                <td className="py-3 px-2 text-center">
+                  {row.revenue > 0
+                    ? <span className="text-emerald-600 font-medium">{fmt(row.revenue)}</span>
+                    : <span className="text-gray-200">—</span>}
+                </td>
+
+                {/* Profit */}
+                <td className="py-3 px-2 text-center">
                   {row.adSpend > 0 ? (
                     <span className={`font-semibold ${row.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                       {fmt(row.profit)}
                     </span>
-                  ) : (
-                    <span className="text-gray-300">—</span>
-                  )}
+                  ) : <span className="text-gray-200">—</span>}
                 </td>
-                <td className="py-2.5 px-2 text-center">
+
+                {/* ROI dnes */}
+                <td className="py-3 px-2 text-center">
                   {row.roi !== null ? (
-                    <span className={`inline-flex items-center justify-center gap-1 font-semibold ${row.roi >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                    <span className={`inline-flex items-center justify-center gap-0.5 font-bold text-sm ${row.roi >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                       {row.roi >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                       {row.roi.toFixed(0)}%
                     </span>
-                  ) : (
-                    <span className="text-gray-300">—</span>
-                  )}
+                  ) : <span className="text-gray-200">—</span>}
                 </td>
-                <td className="py-2.5 px-2 text-center">
+
+                {/* CPC dnes */}
+                <td className="py-3 px-2 text-center">
                   {row.cpc !== null ? (
-                    <span className="font-medium text-gray-700">{fmt(Math.round(row.cpc))}</span>
-                  ) : (
-                    <span className="text-gray-300">—</span>
-                  )}
+                    <span className="inline-block bg-amber-50 border border-amber-100 text-amber-700 font-semibold text-xs px-2 py-1 rounded-lg">
+                      {fmt(Math.round(row.cpc))}
+                    </span>
+                  ) : <span className="text-gray-200">—</span>}
                 </td>
-                <td className="py-2.5 px-2 text-center">
+
+                {/* CPC all-time */}
+                <td className="py-3 px-2 text-center">
                   {row.allTimeCpc !== null ? (
-                    <span className="text-xs text-gray-500">{fmt(Math.round(row.allTimeCpc))}</span>
-                  ) : (
-                    <span className="text-gray-300 text-xs">—</span>
-                  )}
+                    <span className="inline-block bg-amber-50 border border-amber-100 text-amber-600 font-medium text-xs px-2 py-1 rounded-lg">
+                      {fmt(Math.round(row.allTimeCpc))}
+                    </span>
+                  ) : <span className="text-gray-200">—</span>}
                 </td>
-                <td className="py-2.5 pl-2 text-center">
+
+                {/* Ø ROI all-time */}
+                <td className="py-3 pl-2 text-center">
                   {row.allTimeRoi !== null ? (
-                    <span className={`inline-flex items-center justify-center gap-1 font-semibold text-xs px-2 py-0.5 rounded-full ${row.allTimeRoi >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
+                    <span className={`inline-flex items-center justify-center gap-0.5 font-bold text-xs px-2 py-1 rounded-lg ${row.allTimeRoi >= 0 ? "bg-indigo-50 text-indigo-600" : "bg-red-50 text-red-500"}`}>
                       {row.allTimeRoi >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {row.allTimeRoi.toFixed(0)}%
                     </span>
-                  ) : (
-                    <span className="text-gray-300 text-xs">bez dat</span>
-                  )}
+                  ) : <span className="text-gray-200 text-xs">—</span>}
                 </td>
               </tr>
             ))}
