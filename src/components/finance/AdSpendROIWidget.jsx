@@ -133,18 +133,30 @@ export default function AdSpendROIWidget() {
 
     const allModelIds = new Set([...models.map((m) => m.id), ...Object.keys(byModel)]);
 
+    // All-time cost per customer per model
+    const allTimeCpcByModel = {};
+    models.forEach((m) => {
+      const totalSpend = allTimeSpendByModel[m.id] || 0;
+      const totalNewCustomers = Object.values(allFirstPayments).filter(
+        (p) => p.model_id === m.id
+      ).length;
+      allTimeCpcByModel[m.id] = totalNewCustomers > 0 ? totalSpend / totalNewCustomers : null;
+    });
+
     const rows = [...allModelIds].map((modelId) => {
-      const model = models.find((m) => m.id === modelId);
-      if (!model) return null;
-      const d = byModel[modelId] || { newCustomers: 0, revenue: 0, adSpend: 0 };
-      return {
-        modelId,
-        modelName: model.name,
-        ...d,
-        profit: d.revenue - d.adSpend,
-        roi: d.adSpend > 0 ? ((d.revenue - d.adSpend) / d.adSpend) * 100 : null,
-        allTimeRoi: allTimeRoiByModel[modelId] ?? null,
-      };
+    const model = models.find((m) => m.id === modelId);
+    if (!model) return null;
+    const d = byModel[modelId] || { newCustomers: 0, revenue: 0, adSpend: 0 };
+    return {
+      modelId,
+      modelName: model.name,
+      ...d,
+      profit: d.revenue - d.adSpend,
+      roi: d.adSpend > 0 ? ((d.revenue - d.adSpend) / d.adSpend) * 100 : null,
+      allTimeRoi: allTimeRoiByModel[modelId] ?? null,
+      cpc: d.newCustomers > 0 ? d.adSpend / d.newCustomers : null,
+      allTimeCpc: allTimeCpcByModel[modelId] ?? null,
+    };
     })
     .filter(Boolean)
     .sort((a, b) => a.modelName.localeCompare(b.modelName, "cs"));
@@ -219,6 +231,8 @@ export default function AdSpendROIWidget() {
               <th className="text-center pb-2 px-2">Výnos</th>
               <th className="text-center pb-2 px-2">Profit</th>
               <th className="text-center pb-2 px-2">ROI dnes</th>
+              <th className="text-center pb-2 px-2">Cena/zákazník dnes</th>
+              <th className="text-center pb-2 px-2">Ø Cena/zákazník</th>
               <th className="text-center pb-2 pl-2">Ø ROI (průměr/den)</th>
             </tr>
           </thead>
@@ -251,6 +265,20 @@ export default function AdSpendROIWidget() {
                     </span>
                   ) : (
                     <span className="text-gray-300">—</span>
+                  )}
+                </td>
+                <td className="py-2.5 px-2 text-center">
+                  {row.cpc !== null ? (
+                    <span className="font-medium text-gray-700">{fmt(Math.round(row.cpc))}</span>
+                  ) : (
+                    <span className="text-gray-300">—</span>
+                  )}
+                </td>
+                <td className="py-2.5 px-2 text-center">
+                  {row.allTimeCpc !== null ? (
+                    <span className="text-xs text-gray-500">{fmt(Math.round(row.allTimeCpc))}</span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">—</span>
                   )}
                 </td>
                 <td className="py-2.5 pl-2 text-center">
