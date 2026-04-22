@@ -72,11 +72,22 @@ export default function AdSpendROIWidget() {
       allTimeRevenueByModel[p.model_id] = (allTimeRevenueByModel[p.model_id] || 0) + (p.amount || 0);
     });
 
+    // Average daily ROI per model (average across days that had ad spend)
     const allTimeRoiByModel = {};
     models.forEach((m) => {
-      const spend = allTimeSpendByModel[m.id] || 0;
-      const revenue = allTimeRevenueByModel[m.id] || 0;
-      allTimeRoiByModel[m.id] = spend > 0 ? ((revenue - spend) / spend) * 100 : null;
+      const days = adSpends.filter((a) => a.model_id === m.id);
+      const uniqueDates = [...new Set(days.map((a) => a.date))];
+      const dailyRois = uniqueDates.map((d) => {
+        const spend = adSpends.filter((a) => a.model_id === m.id && a.date === d).reduce((s, a) => s + a.amount, 0);
+        const revenue = payments.filter((p) => {
+          const pd = p.payment_date || p.created_date?.split("T")[0];
+          if (pd !== d || p.model_id !== m.id || !p.customer_id) return false;
+          const pair = `${p.customer_id}__${p.model_id}`;
+          return allFirstPayments[pair] && (allFirstPayments[pair].payment_date || allFirstPayments[pair].created_date?.split("T")[0]) === d;
+        }).reduce((s, p) => s + (p.amount || 0), 0);
+        return spend > 0 ? ((revenue - spend) / spend) * 100 : null;
+      }).filter((r) => r !== null);
+      allTimeRoiByModel[m.id] = dailyRois.length > 0 ? dailyRois.reduce((s, r) => s + r, 0) / dailyRois.length : null;
     });
 
     // === TODAY ===
@@ -208,7 +219,7 @@ export default function AdSpendROIWidget() {
               <th className="text-right pb-2 px-2">Výnos</th>
               <th className="text-right pb-2 px-2">Profit</th>
               <th className="text-right pb-2 px-2">ROI dnes</th>
-              <th className="text-right pb-2 pl-2">Ø ROI celkem</th>
+              <th className="text-right pb-2 pl-2">Ø ROI (průměr/den)</th>
             </tr>
           </thead>
           <tbody>
