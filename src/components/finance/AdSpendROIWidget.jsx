@@ -39,18 +39,16 @@ export default function AdSpendROIWidget() {
   };
 
   const data = useMemo(() => {
-    // Ad spend for selected date per model
-    const spendByModel = {};
-    adSpends
-      .filter((a) => a.date === date)
-      .forEach((a) => {
-        const key = a.model_id || "__global__";
-        spendByModel[key] = (spendByModel[key] || 0) + (a.amount || 0);
-      });
+    // === LONG-TERM ROI per model (all history) ===
+    // Total ad spend per model across all days
+    const allTimeSpendByModel = {};
+    adSpends.forEach((a) => {
+      const key = a.model_id || "__global__";
+      allTimeSpendByModel[key] = (allTimeSpendByModel[key] || 0) + (a.amount || 0);
+    });
 
-    // For each (customer, model) pair, find the earliest payment date on that model
-    // "nový zákazník na modelce X" = první platba zákazníka na modelce X je dnes
-    const firstPaymentByCustomerModel = {};
+    // First payment per (customer, model) pair across all history
+    const allFirstPayments = {};
     [...payments]
       .sort((a, b) => {
         const da = a.payment_date || a.created_date?.split("T")[0] || "";
@@ -60,14 +58,38 @@ export default function AdSpendROIWidget() {
       .forEach((p) => {
         if (!p.customer_id || !p.model_id) return;
         const key = `${p.customer_id}__${p.model_id}`;
-        if (!firstPaymentByCustomerModel[key]) {
-          firstPaymentByCustomerModel[key] = p;
-        }
+        if (!allFirstPayments[key]) allFirstPayments[key] = p;
       });
 
-    // "Noví zákazníci dnes na dané modelce" = záznamy, kde první platba na té modelce je dnes
-    const byModel = {};
+    // Revenue from new customers (first payment on that model) per model — all time
+    const allTimeRevenueByModel = {};
+    const allNewPairs = new Set(Object.keys(allFirstPayments));
+    payments.forEach((p) => {
+      if (!p.customer_id || !p.model_id) return;
+      const pair = `${p.customer_id}__${p.model_id}`;
+      if (!allNewPairs.has(pair)) return;
+      allTimeRevenueByModel[p.model_id] = (allTimeRevenueByModel[p.model_id] || 0) + (p.amount || 0);
+    });
 
+    const allTimeRoiByModel = {};
+    models.forEach((m) => {
+      const spend = allTimeSpendByModel[m.id] || 0;
+      const revenue = allTimeRevenueByModel[m.id] || 0;
+      allTimeRoiByModel[m.id] = spend > 0 ? ((revenue - spend) / spend) * 100 : null;
+    });
+
+    // === TODAY ===
+    const spendByModel = {};
+    adSpends
+      .filter((a) => a.date === date)
+      .forEach((a) => {
+        const key = a.model_id || "__global__";
+        spendByModel[key] = (spendByModel[key] || 0) + (a.amount || 0);
+      });
+
+    const firstPaymentByCustomerModel = allFirstPayments;
+
+    const byModel = {};
     Object.values(firstPaymentByCustomerModel).forEach((p) => {
       const firstDate = p.payment_date || p.created_date?.split("T")[0];
       if (firstDate !== date) return;
@@ -76,7 +98,6 @@ export default function AdSpendROIWidget() {
       byModel[modelId].newCustomers += 1;
     });
 
-    // Revenue = všechny platby dnes od nových zákazníků (první platba na té modelce = dnes), přiřazené té modelce
     const newPairs = new Set(
       Object.values(firstPaymentByCustomerModel)
         .filter((p) => (p.payment_date || p.created_date?.split("T")[0]) === date)
@@ -93,21 +114,16 @@ export default function AdSpendROIWidget() {
       byModel[modelId].revenue += p.amount || 0;
     });
 
-    // Attach ad spend
     Object.entries(spendByModel).forEach(([modelId, spend]) => {
       if (!byModel[modelId]) byModel[modelId] = { newCustomers: 0, revenue: 0, adSpend: 0 };
       byModel[modelId].adSpend += spend;
     });
 
-    // Fixed order: all known models alphabetically, always shown
-    const allModelIds = new Set([
-      ...models.map((m) => m.id),
-      ...Object.keys(byModel),
-    ]);
+    const allModelIds = new Set([...models.map((m) => m.id), ...Object.keys(byModel)]);
 
     const rows = [...allModelIds].map((modelId) => {
       const model = models.find((m) => m.id === modelId);
-      if (!model) return null; // skip unknowns without a name
+      if (!model) return null;
       const d = byModel[modelId] || { newCustomers: 0, revenue: 0, adSpend: 0 };
       return {
         modelId,
@@ -115,6 +131,7 @@ export default function AdSpendROIWidget() {
         ...d,
         profit: d.revenue - d.adSpend,
         roi: d.adSpend > 0 ? ((d.revenue - d.adSpend) / d.adSpend) * 100 : null,
+        allTimeRoi: allTimeRoiByModel[modelId] ?? null,
       };
     })
     .filter(Boolean)
@@ -189,7 +206,8 @@ export default function AdSpendROIWidget() {
               <th className="text-right pb-2 px-2">Noví klienti</th>
               <th className="text-right pb-2 px-2">Výnos</th>
               <th className="text-right pb-2 px-2">Profit</th>
-              <th className="text-right pb-2 pl-2">ROI</th>
+              <th className="text-right pb-2 px-2">ROI dnes</th>
+              <th className="text-right pb-2 pl-2">Ø ROI celkem</th>
             </tr>
           </thead>
           <tbody>
@@ -213,7 +231,7 @@ export default function AdSpendROIWidget() {
                     <span className="text-gray-300">—</span>
                   )}
                 </td>
-                <td className="py-2.5 pl-2 text-right">
+                <td className="py-2.5 px-2 text-right">
                   {row.roi !== null ? (
                     <span className={`inline-flex items-center gap-1 font-semibold ${row.roi >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                       {row.roi >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
@@ -221,6 +239,16 @@ export default function AdSpendROIWidget() {
                     </span>
                   ) : (
                     <span className="text-gray-300">—</span>
+                  )}
+                </td>
+                <td className="py-2.5 pl-2 text-right">
+                  {row.allTimeRoi !== null ? (
+                    <span className={`inline-flex items-center gap-1 font-semibold text-xs px-2 py-0.5 rounded-full ${row.allTimeRoi >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
+                      {row.allTimeRoi >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      {row.allTimeRoi.toFixed(0)}%
+                    </span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">bez dat</span>
                   )}
                 </td>
               </tr>
