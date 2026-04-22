@@ -22,8 +22,15 @@ const typeColors = {
   Story: "bg-pink-100 text-pink-700",
 };
 
+const PRIORITIES = [
+  { value: "urgent", label: "🔴 Urgent" },
+  { value: "high", label: "🟠 High" },
+  { value: "normal", label: "🟢 Normal" },
+  { value: "low", label: "⚪ Low" },
+];
+
 function emptyTask() {
-  return { type: "Reels", customType: "", desc: "", inspiration_link: "", model_id: "" };
+  return { type: "Reels", customType: "", desc: "", inspiration_link: "", model_id: "", priority: "normal" };
 }
 
 export default function AdminProgramEditor({ weekStart, program, models = [], designerEmail, designerName, onSaved }) {
@@ -217,6 +224,26 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
                         <option key={m.id} value={m.id}>{m.name}</option>
                       ))}
                     </select>
+
+                    {/* Priority selector */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wide flex-shrink-0">Priority:</span>
+                      <div className="flex gap-1 flex-wrap">
+                        {PRIORITIES.map(p => (
+                          <button
+                            key={p.value}
+                            onClick={() => updateTask(key, idx, "priority", p.value)}
+                            className={`text-xs px-2 py-0.5 rounded-full border transition-all ${
+                              (task.priority || "normal") === p.value
+                                ? "bg-gray-800 text-white border-gray-800"
+                                : "border-gray-200 text-gray-400 hover:border-gray-400"
+                            }`}
+                          >
+                            {p.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
                     <div className="flex items-center gap-2">
                       <Link className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />

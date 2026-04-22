@@ -11,6 +11,13 @@ const typeColors = {
   Story: "bg-pink-100 text-pink-700",
 };
 
+const priorityConfig = {
+  urgent: { label: "🔴 Urgent", color: "bg-red-100 text-red-700 border border-red-200" },
+  high:   { label: "🟠 High",   color: "bg-orange-100 text-orange-700 border border-orange-200" },
+  normal: null, // don't show badge for normal
+  low:    { label: "⚪ Low",    color: "bg-gray-100 text-gray-500 border border-gray-200" },
+};
+
 const statusConfig = {
   not_started: { label: "Not started", color: "bg-gray-100 text-gray-500" },
   submitted: { label: "Pending review", color: "bg-amber-100 text-amber-700" },
@@ -60,6 +67,11 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colorClass}`}>{label}</span>
           {model && <span className="text-xs text-gray-400">📸 {model.name}</span>}
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cfg.color}`}>{cfg.label}</span>
+          {task.priority && task.priority !== "normal" && priorityConfig[task.priority] && (
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${priorityConfig[task.priority].color}`}>
+              {priorityConfig[task.priority].label}
+            </span>
+          )}
         </div>
         {expanded ? <ChevronUp className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />}
       </button>

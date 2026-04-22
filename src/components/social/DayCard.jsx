@@ -15,6 +15,12 @@ const statusDot = {
   not_started: "bg-gray-300",
 };
 
+const priorityDot = {
+  urgent: "🔴",
+  high: "🟠",
+};
+
+
 export default function DayCard({ dayName, tasks = [], submission, onClick, isToday }) {
   const taskSubMap = {};
   (submission?.task_submissions || []).forEach(ts => { taskSubMap[ts.task_idx] = ts; });
@@ -24,6 +30,8 @@ export default function DayCard({ dayName, tasks = [], submission, onClick, isTo
   const done = allStatuses.filter(s => s === "approved").length;
   const total = tasks.length;
   const remaining = total - done;
+  const urgentCount = tasks.filter(t => t.priority === "urgent").length;
+  const highCount = tasks.filter(t => t.priority === "high").length;
 
   return (
     <button
@@ -41,15 +49,31 @@ export default function DayCard({ dayName, tasks = [], submission, onClick, isTo
       {tasks.length === 0 ? (
         <p className="text-xs text-gray-300 italic">No tasks</p>
       ) : (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className="text-2xl font-bold text-gray-800">{remaining}</span>
-            <span className="text-xs text-gray-400 leading-tight">remaining<br/>tasks</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="text-2xl font-bold text-gray-800">{remaining}</span>
+              <span className="text-xs text-gray-400 leading-tight">remaining<br/>tasks</span>
+            </div>
+            <div className="text-right">
+              <span className="text-xs text-emerald-600 font-semibold">{done}/{total}</span>
+              <p className="text-[10px] text-gray-400">done</p>
+            </div>
           </div>
-          <div className="text-right">
-            <span className="text-xs text-emerald-600 font-semibold">{done}/{total}</span>
-            <p className="text-[10px] text-gray-400">done</p>
-          </div>
+          {(urgentCount > 0 || highCount > 0) && (
+            <div className="flex gap-1 flex-wrap">
+              {urgentCount > 0 && (
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                  🔴 {urgentCount} urgent
+                </span>
+              )}
+              {highCount > 0 && (
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+                  🟠 {highCount} high
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
     </button>
