@@ -168,6 +168,8 @@ export default function AdSpendROIWidget() {
       allTimeCpc: allTimeCpcByModel[modelId] ?? null,
       avgValue: d.newCustomers > 0 ? d.revenue / d.newCustomers : null,
       allTimeAvgValue: allTimeAvgValueByModel[modelId] ?? null,
+      profitPerCustomer: (d.newCustomers > 0 && d.newCustomers > 0) ? (d.revenue / d.newCustomers) - (d.adSpend / d.newCustomers) : null,
+      allTimeProfitPerCustomer: (allTimeAvgValueByModel[modelId] !== null && allTimeCpcByModel[modelId] !== null) ? allTimeAvgValueByModel[modelId] - allTimeCpcByModel[modelId] : null,
     };
     })
     .filter(Boolean)
@@ -242,6 +244,7 @@ export default function AdSpendROIWidget() {
               <th colSpan={5} className="pb-1 px-2 text-center text-gray-400 border-b-2 border-gray-200">Dnešní výsledky</th>
               <th colSpan={2} className="pb-1 px-2 text-center text-[#C9A227] border-b-2 border-amber-200">Cena za získání zákazníka</th>
               <th colSpan={2} className="pb-1 px-2 text-center text-emerald-500 border-b-2 border-emerald-200">Průměrná hodnota zákazníka</th>
+              <th colSpan={2} className="pb-1 px-2 text-center text-violet-500 border-b-2 border-violet-200">Zisk na zákazníka (hodnota − cena)</th>
               <th colSpan={1} className="pb-1 pl-2 text-center text-indigo-400 border-b-2 border-indigo-200">Celkový průměr</th>
             </tr>
             {/* Column headers */}
@@ -256,6 +259,8 @@ export default function AdSpendROIWidget() {
               <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Ø Historicky</th>
               <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Dnes (výnos ÷ noví klienti)</th>
               <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Ø Historicky</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-violet-500">Dnes (hodnota − cena)</th>
+              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-violet-500">Ø Historicky</th>
               <th className="text-center pt-2 pb-3 pl-2 whitespace-nowrap text-indigo-400">Ø ROI/den</th>
             </tr>
           </thead>
@@ -337,6 +342,24 @@ export default function AdSpendROIWidget() {
                   {row.allTimeAvgValue !== null ? (
                     <span className="inline-block bg-emerald-50 border border-emerald-100 text-emerald-600 font-medium text-xs px-2 py-1 rounded-lg">
                       {fmt(Math.round(row.allTimeAvgValue))}
+                    </span>
+                  ) : <span className="text-gray-200">—</span>}
+                </td>
+
+                {/* Zisk/zákazník dnes */}
+                <td className="py-3 px-2 text-center">
+                  {row.profitPerCustomer !== null ? (
+                    <span className={`inline-block border font-semibold text-xs px-2 py-1 rounded-lg ${row.profitPerCustomer >= 0 ? "bg-violet-50 border-violet-100 text-violet-700" : "bg-red-50 border-red-100 text-red-600"}`}>
+                      {fmt(Math.round(row.profitPerCustomer))}
+                    </span>
+                  ) : <span className="text-gray-200">—</span>}
+                </td>
+
+                {/* Zisk/zákazník all-time */}
+                <td className="py-3 px-2 text-center">
+                  {row.allTimeProfitPerCustomer !== null ? (
+                    <span className={`inline-block border font-medium text-xs px-2 py-1 rounded-lg ${row.allTimeProfitPerCustomer >= 0 ? "bg-violet-50 border-violet-100 text-violet-600" : "bg-red-50 border-red-100 text-red-500"}`}>
+                      {fmt(Math.round(row.allTimeProfitPerCustomer))}
                     </span>
                   ) : <span className="text-gray-200">—</span>}
                 </td>
