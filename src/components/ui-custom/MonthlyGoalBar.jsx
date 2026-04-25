@@ -7,7 +7,7 @@ import confetti from "canvas-confetti";
 export default function MonthlyGoalBar() {
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 2000),
+    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
     staleTime: 60000
   });
 

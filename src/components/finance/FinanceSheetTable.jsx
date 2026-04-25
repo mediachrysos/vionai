@@ -144,11 +144,11 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-payment_date", 2000),
+    queryFn: () => base44.entities.Payment.list("-payment_date", 5000),
   });
   const { data: adSpends = [] } = useQuery({
     queryKey: ["adSpends"],
-    queryFn: () => base44.entities.AdSpend.list("-date", 2000),
+    queryFn: () => base44.entities.AdSpend.list("-date", 5000),
     staleTime: 0,
   });
 

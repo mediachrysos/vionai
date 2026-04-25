@@ -18,7 +18,7 @@ export default function Finance({ currentUser }) {
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 500)
+    queryFn: () => base44.entities.Payment.list("-created_date", 5000)
   });
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses"],
@@ -32,6 +32,15 @@ export default function Finance({ currentUser }) {
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list()
   });
+  const { data: goals = [] } = useQuery({
+    queryKey: ["goalSettings"],
+    queryFn: () => base44.entities.GoalSettings.list()
+  });
+
+  const goalSettings = goals[0];
+  // Use same period as MonthlyGoalBar so numbers are consistent
+  const periodStart = goalSettings?.goal_start_date || new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
+  const periodEnd = goalSettings?.goal_end_date || new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0];
 
   const myModelIds = useMemo(() => {
     if (!currentUser?.email) return [];
@@ -43,50 +52,47 @@ export default function Finance({ currentUser }) {
   const filteredPayments = useMemo(() => {
     if (showAll || isAdmin) return payments;
     return payments.filter((p) =>
-    p.chatter_email === currentUser?.email || myModelIds.includes(p.model_id)
+      p.chatter_email === currentUser?.email || myModelIds.includes(p.model_id)
     );
   }, [payments, showAll, isAdmin, currentUser, myModelIds]);
 
   const today = new Date().toISOString().split("T")[0];
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
-  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).
-  toISOString().
-  split("T")[0];
 
-  const todayPayments = filteredPayments.filter(
-    (p) => (p.payment_date || p.created_date?.split("T")[0]) === today
-  );
-  const weekPayments = filteredPayments.filter(
-    (p) => (p.payment_date || p.created_date?.split("T")[0]) >= weekAgo
-  );
-  const monthPayments = filteredPayments.filter(
-    (p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart
-  );
+  const todayRev = filteredPayments
+    .filter(p => (p.payment_date || p.created_date?.split("T")[0]) === today)
+    .reduce((s, p) => s + (p.amount || 0), 0);
 
-  const todayWalletIncome = walletTxs.filter((t) => t.type === "income" && (t.transaction_date || t.created_date?.split("T")[0]) === today);
-  const weekWalletIncome = walletTxs.filter((t) => t.type === "income" && (t.transaction_date || t.created_date?.split("T")[0]) >= weekAgo);
-  const monthWalletIncome = walletTxs.filter((t) => t.type === "income" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart);
+  const weekRev = filteredPayments
+    .filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= weekAgo)
+    .reduce((s, p) => s + (p.amount || 0), 0);
 
-  const todayRev = todayPayments.reduce((s, p) => s + (p.amount || 0), 0) + todayWalletIncome.reduce((s, t) => s + (t.amount || 0), 0);
-  const weekRev = weekPayments.reduce((s, p) => s + (p.amount || 0), 0) + weekWalletIncome.reduce((s, t) => s + (t.amount || 0), 0);
-  const monthRev = monthPayments.reduce((s, p) => s + (p.amount || 0), 0) + monthWalletIncome.reduce((s, t) => s + (t.amount || 0), 0);
+  // Goal period revenue — identical logic to MonthlyGoalBar (payments only, no wallet)
+  const monthRev = filteredPayments
+    .filter(p => {
+      const d = p.payment_date || p.created_date?.split("T")[0];
+      return d >= periodStart && d <= periodEnd;
+    })
+    .reduce((s, p) => s + (p.amount || 0), 0);
 
   const monthExpenses = expenses.filter(
-    (e) => (e.expense_date || e.created_date?.split("T")[0]) >= monthStart
+    (e) => (e.expense_date || e.created_date?.split("T")[0]) >= periodStart &&
+            (e.expense_date || e.created_date?.split("T")[0]) <= periodEnd
   );
   const monthWalletExpenses = walletTxs.filter(
-    (t) => t.type === "expense" && t.category !== "Payout" && t.type !== "transfer" && (t.transaction_date || t.created_date?.split("T")[0]) >= monthStart
+    (t) => t.type === "expense" && t.category !== "Payout" &&
+            (t.transaction_date || t.created_date?.split("T")[0]) >= periodStart &&
+            (t.transaction_date || t.created_date?.split("T")[0]) <= periodEnd
   );
   const monthExpTotal =
-  monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-  monthWalletExpenses.reduce((s, t) => s + (t.amount || 0), 0);
-  const monthExpCount = monthExpenses.length + monthWalletExpenses.length;
+    monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
+    monthWalletExpenses.reduce((s, t) => s + (t.amount || 0), 0);
   const monthNetProfit = monthRev - monthExpTotal;
 
   const totalRev = filteredPayments.reduce((s, p) => s + (p.amount || 0), 0);
   const totalExp =
-  expenses.reduce((s, e) => s + (e.amount || 0), 0) +
-  walletTxs.filter((t) => t.type === "expense" && t.category !== "Payout" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
+    expenses.reduce((s, e) => s + (e.amount || 0), 0) +
+    walletTxs.filter((t) => t.type === "expense" && t.category !== "Payout").reduce((s, t) => s + (t.amount || 0), 0);
   const totalNetProfit = totalRev - totalExp;
 
   // Lawyer sees only their payout card
