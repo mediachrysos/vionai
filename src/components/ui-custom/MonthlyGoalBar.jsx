@@ -2,14 +2,11 @@ import React, { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import confetti from "canvas-confetti";
+import { usePayments } from "@/hooks/usePayments";
 
 
 export default function MonthlyGoalBar() {
-  const { data: payments = [] } = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-    staleTime: 60000
-  });
+  const { data: payments = [] } = usePayments();
 
   const { data: goals = [] } = useQuery({
     queryKey: ["goalSettings"],

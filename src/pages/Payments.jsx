@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { usePayments } from "@/hooks/usePayments";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -37,10 +38,7 @@ export default function Payments({ currentUser }) {
     if (urlParams.get("action") === "new") setShowForm(true);
   }, []);
 
-  const { data: payments = [], isLoading } = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-  });
+  const { data: payments = [], isLoading } = usePayments();
   const { data: customers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list("-created_date", 5000) });
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list() });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });

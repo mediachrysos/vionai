@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePayments } from "@/hooks/usePayments";
 import { ChevronLeft, ChevronRight, Check, X, Plus, Download } from "lucide-react";
 import { getDaysInMonth } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -142,10 +143,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
   const daysInMonth = getDaysInMonth(new Date(viewYear, viewMonth));
   const monthEnd = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(daysInMonth).padStart(2, "0")}`;
 
-  const { data: payments = [] } = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-payment_date", 5000),
-  });
+  const { data: payments = [] } = usePayments();
   const { data: adSpends = [] } = useQuery({
     queryKey: ["adSpends"],
     queryFn: () => base44.entities.AdSpend.list("-date", 5000),

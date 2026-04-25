@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { usePayments } from "@/hooks/usePayments";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import TodayChatterStats from "../components/dashboard/TodayChatterStats";
@@ -12,11 +13,7 @@ import DesignerPayoutAlert from "../components/dashboard/DesignerPayoutAlert";
 export default function Dashboard({ currentUser }) {
   const { showAll, toggle } = useChatterFilter();
 
-  const { data: payments = [] } = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-    staleTime: 60000,
-  });
+  const { data: payments = [] } = usePayments();
   const { data: customers = [] } = useQuery({
     queryKey: ["customers"],
     queryFn: () => base44.entities.Customer.list("-created_date", 5000),

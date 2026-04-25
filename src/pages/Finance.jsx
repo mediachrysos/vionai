@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { DollarSign, CreditCard, TrendingDown, TrendingUp } from "lucide-react";
+import { usePayments } from "@/hooks/usePayments";
 import StatCard from "../components/ui-custom/StatCard";
 import RevenueChart from "../components/dashboard/RevenueChart";
 import PageHeader from "../components/ui-custom/PageHeader";
@@ -16,10 +17,7 @@ export default function Finance({ currentUser }) {
   const isAdmin = currentUser?.role === "admin";
   const isLawyer = currentUser?.role === "lawyer";
 
-  const { data: payments = [] } = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000)
-  });
+  const { data: payments = [] } = usePayments();
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses"],
     queryFn: () => base44.entities.Expense.list("-expense_date", 500)

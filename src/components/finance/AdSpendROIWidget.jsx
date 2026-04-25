@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { usePayments } from "@/hooks/usePayments";
 import { TrendingUp, TrendingDown, Users, Megaphone, ChevronLeft, ChevronRight } from "lucide-react";
 import ModelROIChart from "./ModelROIChart";
 
@@ -15,11 +16,7 @@ function fmt(n) {
 export default function AdSpendROIWidget() {
   const [date, setDate] = useState(() => formatDate(new Date()));
 
-  const { data: payments = [] } = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-    staleTime: 60000,
-  });
+  const { data: payments = [] } = usePayments();
 
   const { data: adSpends = [] } = useQuery({
     queryKey: ["adSpends"],
