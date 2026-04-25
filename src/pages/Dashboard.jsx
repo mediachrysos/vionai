@@ -14,12 +14,12 @@ export default function Dashboard({ currentUser }) {
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 500),
+    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
     staleTime: 60000,
   });
   const { data: customers = [] } = useQuery({
     queryKey: ["customers"],
-    queryFn: () => base44.entities.Customer.list("-created_date", 500),
+    queryFn: () => base44.entities.Customer.list("-created_date", 5000),
     staleTime: 60000,
   });
   const { data: models = [] } = useQuery({

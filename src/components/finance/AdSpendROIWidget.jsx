@@ -17,7 +17,7 @@ export default function AdSpendROIWidget() {
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 1000),
+    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
     staleTime: 60000,
   });
 
