@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ExternalLink, Link, Send, CheckCircle, XCircle, Edit2, ChevronDown, ChevronUp } from "lucide-react";
 
 const typeColors = {
@@ -164,11 +165,47 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
   );
 }
 
-export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission, weekStart, dayKey, designerEmail, designerName, isAdmin, onRefresh, models = [] }) {
+export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission: submissionProp, weekStart, dayKey, designerEmail, designerName, isAdmin, onRefresh, models = [] }) {
+  const qc = useQueryClient();
+
+  // Always fetch live data inside the modal so grafik sees admin notes immediately
+  const queryKey = ["daySubmissionModal", weekStart, dayKey, designerEmail];
+  const { data: liveSubmission, refetch } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      // Try dashboard:id format first, then designer email fallback
+      const results = await base44.entities.DaySubmission.filter({
+        week_start: weekStart,
+        day_key: dayKey,
+        designer_email: designerEmail,
+      });
+      return results[0] || submissionProp || null;
+    },
+    enabled: open,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+  });
+
+  const submission = liveSubmission ?? submissionProp;
+
   const [adminLink, setAdminLink] = useState(submission?.admin_link || "");
   const [savingAdminLink, setSavingAdminLink] = useState(false);
 
-  useEffect(() => { setAdminLink(submission?.admin_link || ""); }, [submission]);
+  useEffect(() => { setAdminLink(submission?.admin_link || ""); }, [submission?.admin_link]);
+
+  // Real-time: re-fetch when DaySubmission changes (so grafik sees admin notes live)
+  useEffect(() => {
+    if (!open) return;
+    const unsub = base44.entities.DaySubmission.subscribe((event) => {
+      if (event.type === "update") refetch();
+    });
+    return unsub;
+  }, [open]);
+
+  const refreshAll = () => {
+    refetch();
+    onRefresh();
+  };
 
   const getOrCreateSubmission = async (extraData = {}) => {
     if (submission?.id) return submission;
@@ -193,7 +230,7 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
     if (existing >= 0) taskSubs[existing] = { ...taskSubs[existing], ...entry };
     else taskSubs.push(entry);
     await base44.entities.DaySubmission.update(sub.id, { task_submissions: taskSubs });
-    onRefresh();
+    refreshAll();
   };
 
   const handleAdminAction = async (taskIdx, actionType, note) => {
@@ -203,7 +240,7 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
     const update = { status: actionType, admin_note: note, reviewed_at: new Date().toISOString() };
     if (existing >= 0) taskSubs[existing] = { ...taskSubs[existing], ...update };
     await base44.entities.DaySubmission.update(submission.id, { task_submissions: taskSubs });
-    onRefresh();
+    refreshAll();
   };
 
   const handleSaveAdminLink = async () => {
@@ -211,7 +248,7 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
     const sub = await getOrCreateSubmission();
     await base44.entities.DaySubmission.update(sub.id, { admin_link: adminLink });
     setSavingAdminLink(false);
-    onRefresh();
+    refreshAll();
   };
 
   const taskSubMap = {};
