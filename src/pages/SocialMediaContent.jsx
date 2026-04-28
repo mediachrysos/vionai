@@ -21,16 +21,24 @@ const DAYS = [
 
 function getMondayOf(date) {
   const d = new Date(date);
-  const day = d.getDay();
+  // Use local date to avoid timezone issues
+  const day = d.getDay(); // 0=Sun, 1=Mon, ...
   const diff = day === 0 ? -6 : 1 - day;
   d.setDate(d.getDate() + diff);
-  return d.toISOString().split("T")[0];
+  // Return local date string to avoid UTC offset shifting the day
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 function addWeeks(weekStart, n) {
   const d = new Date(weekStart);
   d.setDate(d.getDate() + n * 7);
-  return d.toISOString().split("T")[0];
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 function formatWeekLabel(weekStart) {
@@ -107,22 +115,28 @@ export default function SocialMediaContent({ currentUser }) {
   const { data: programs = [] } = useQuery({
     queryKey: ["weeklyProgram", weekStart, programQueryKey],
     queryFn: async () => {
-      // Try new format first (dashboard:id), fallback to old format (designer email)
-      const byDashboardId = await base44.entities.WeeklyProgram.filter({
-        week_start: weekStart,
-        designer_email: `dashboard:${activeDashboard.id}`,
-      });
-      if (byDashboardId.length > 0) return byDashboardId;
-      // Fallback: find by designer email (legacy records)
+      // Fetch both dashboard:id and designer email records in parallel, merge & deduplicate
+      const promises = [
+        base44.entities.WeeklyProgram.filter({
+          week_start: weekStart,
+          designer_email: `dashboard:${activeDashboard.id}`,
+        }),
+      ];
       if (activeDashboard.designer_email) {
-        return base44.entities.WeeklyProgram.filter({
+        promises.push(base44.entities.WeeklyProgram.filter({
           week_start: weekStart,
           designer_email: activeDashboard.designer_email,
-        });
+        }));
       }
-      return [];
+      const results = await Promise.all(promises);
+      const all = results.flat();
+      // Deduplicate by id, return all (sorted by updated_date descending)
+      const seen = new Set();
+      return all.filter(r => { if (seen.has(r.id)) return false; seen.add(r.id); return true; })
+                .sort((a, b) => new Date(b.updated_date || 0) - new Date(a.updated_date || 0));
     },
     enabled: !!activeDashboard,
+    staleTime: 0,
   });
 
   const { data: submissions = [] } = useQuery({
@@ -144,7 +158,10 @@ export default function SocialMediaContent({ currentUser }) {
     enabled: !!activeDashboard,
   });
 
-  const program = programs[0] || null;
+  // Take the most recently updated program in case of duplicates
+  const program = programs.length > 0
+    ? [...programs].sort((a, b) => new Date(b.updated_date || 0) - new Date(a.updated_date || 0))[0]
+    : null;
 
   const submissionMap = useMemo(() => {
     const m = {};
