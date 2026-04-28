@@ -38,22 +38,22 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [hasUnsaved, setHasUnsaved] = useState(false);
-  const loadedProgramId = useRef(null);
-  const loadedWeekStart = useRef(null);
+
+  // Use refs for values that doSave needs without causing re-renders / stale closures
+  const programIdRef = useRef(program?.id ?? null);
+  const dayTasksRef = useRef({});
   const autosaveTimer = useRef(null);
   const isInitialized = useRef(false);
+  const isSavingRef = useRef(false);
 
+  // Sync programIdRef when program changes
   useEffect(() => {
-    // Only re-initialize when the week changes OR when we load a new program for the first time
-    const programId = program?.id ?? "__none__";
-    const weekChanged = loadedWeekStart.current !== weekStart;
-    const programChanged = loadedProgramId.current !== programId;
+    if (program?.id) programIdRef.current = program.id;
+  }, [program?.id]);
 
-    if (!weekChanged && !programChanged) return;
-
-    loadedWeekStart.current = weekStart;
-    loadedProgramId.current = programId;
-    isInitialized.current = false;
+  // Re-initialize only when week or program identity changes, and not while user is editing
+  useEffect(() => {
+    if (isInitialized.current && hasUnsaved) return; // Don't overwrite unsaved changes
 
     const f = {};
     DAYS.forEach(({ key }) => {
@@ -67,33 +67,59 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
         priority: t.priority || "normal",
       })) : [];
     });
+    dayTasksRef.current = f;
     setDayTasks(f);
-    // Mark as initialized after state update settles
-    setTimeout(() => { isInitialized.current = true; }, 100);
-  }, [program, weekStart]);
+    isInitialized.current = true;
+  }, [program?.id, weekStart]); // Only re-init when program ID or week changes
+
+  const doSave = useCallback(async (tasks) => {
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
+    setSaving(true);
+    const data = { week_start: weekStart, designer_email: designerEmail };
+    DAYS.forEach(({ key }) => { data[`${key}_tasks`] = tasks[key] || []; });
+    try {
+      let savedProgram;
+      if (programIdRef.current) {
+        savedProgram = await base44.entities.WeeklyProgram.update(programIdRef.current, data);
+      } else {
+        savedProgram = await base44.entities.WeeklyProgram.create(data);
+        if (savedProgram?.id) programIdRef.current = savedProgram.id;
+      }
+      setHasUnsaved(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+      onSaved();
+    } finally {
+      setSaving(false);
+      isSavingRef.current = false;
+    }
+  }, [weekStart, designerEmail, onSaved]);
 
   const triggerAutosave = useCallback(() => {
     if (!isInitialized.current) return;
     setHasUnsaved(true);
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
     autosaveTimer.current = setTimeout(() => {
-      setDayTasks(current => {
-        doSave(current);
-        return current;
-      });
+      doSave(dayTasksRef.current);
     }, 1500);
-  }, []);
+  }, [doSave]);
 
   const addTask = (dayKey) => {
     setDayTasks(prev => {
       const next = { ...prev, [dayKey]: [...(prev[dayKey] || []), emptyTask()] };
+      dayTasksRef.current = next;
       return next;
     });
     triggerAutosave();
   };
 
   const removeTask = (dayKey, idx) => {
-    setDayTasks(prev => ({ ...prev, [dayKey]: prev[dayKey].filter((_, i) => i !== idx) }));
+    setDayTasks(prev => {
+      const next = { ...prev, [dayKey]: prev[dayKey].filter((_, i) => i !== idx) };
+      dayTasksRef.current = next;
+      return next;
+    });
     triggerAutosave();
   };
 
@@ -101,30 +127,14 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
     setDayTasks(prev => {
       const tasks = [...(prev[dayKey] || [])];
       tasks[idx] = { ...tasks[idx], [field]: value };
-      return { ...prev, [dayKey]: tasks };
+      const next = { ...prev, [dayKey]: tasks };
+      dayTasksRef.current = next;
+      return next;
     });
     triggerAutosave();
   };
 
-  const doSave = async (tasks) => {
-    setSaving(true);
-    const data = { week_start: weekStart, designer_email: designerEmail };
-    DAYS.forEach(({ key }) => { data[`${key}_tasks`] = tasks[key] || []; });
-    let savedProgram;
-    if (loadedProgramId.current && loadedProgramId.current !== "__none__") {
-      savedProgram = await base44.entities.WeeklyProgram.update(loadedProgramId.current, data);
-    } else {
-      savedProgram = await base44.entities.WeeklyProgram.create(data);
-      if (savedProgram?.id) loadedProgramId.current = savedProgram.id;
-    }
-    setSaving(false);
-    setHasUnsaved(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
-    onSaved();
-  };
-
-  const handleSave = () => doSave(dayTasks);
+  const handleSave = () => doSave(dayTasksRef.current);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
