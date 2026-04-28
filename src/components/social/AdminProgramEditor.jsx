@@ -89,6 +89,23 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
       setHasUnsaved(false);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+      // Re-initialize from saved data so UI reflects actual DB state
+      if (savedProgram) {
+        const f = {};
+        DAYS.forEach(({ key }) => {
+          const savedTasks = savedProgram[`${key}_tasks`];
+          f[key] = (Array.isArray(savedTasks) && savedTasks.length > 0) ? savedTasks.map(t => ({
+            type: t.type || "Reels",
+            customType: t.customType || "",
+            desc: t.desc || "",
+            inspiration_link: t.inspiration_link || "",
+            model_id: t.model_id || "",
+            priority: t.priority || "normal",
+          })) : [];
+        });
+        dayTasksRef.current = f;
+        setDayTasks(f);
+      }
       onSaved();
     } finally {
       setSaving(false);
