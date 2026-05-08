@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2, Link2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
-import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
+import OnboardingLinkInline from "../components/customers/OnboardingLinkInline";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import PageHeader from "../components/ui-custom/PageHeader";
 import EmptyState from "../components/ui-custom/EmptyState";
@@ -25,7 +25,6 @@ export default function Customers({ currentUser }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("last_payment");
   const [modelFilter, setModelFilter] = useState("all");
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [defaultModelSet, setDefaultModelSet] = useState(false);
 
   const { showAll, toggle } = useChatterFilter();
@@ -299,9 +298,7 @@ export default function Customers({ currentUser }) {
               {merging ? "Merging..." : `👥 Merge duplicates (${duplicateNames.size / 2 | 0}+)`}
             </Button>
           )}
-          <Button onClick={() => setShowOnboarding(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Onboarding link
-          </Button>
+          <OnboardingLinkInline models={models} onLinkCreated={() => {}} />
         </div>
       </PageHeader>
 
@@ -478,11 +475,7 @@ export default function Customers({ currentUser }) {
         allCustomers={customers} />
       
 
-      <OnboardingLinkModal
-        open={showOnboarding}
-        onClose={() => setShowOnboarding(false)}
-        models={models}
-        users={users} />
+
       
     </div>);
 
