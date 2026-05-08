@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2, Link2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
-import OnboardingLinkInline from "../components/customers/OnboardingLinkInline";
+import OnboardingLinkForm from "../components/customers/OnboardingLinkForm";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import PageHeader from "../components/ui-custom/PageHeader";
 import EmptyState from "../components/ui-custom/EmptyState";
@@ -298,7 +298,7 @@ export default function Customers({ currentUser }) {
               {merging ? "Merging..." : `👥 Merge duplicates (${duplicateNames.size / 2 | 0}+)`}
             </Button>
           )}
-          <OnboardingLinkInline models={models} onLinkCreated={() => {}} />
+          <OnboardingLinkForm models={models} />
         </div>
       </PageHeader>
 
