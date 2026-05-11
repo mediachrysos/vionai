@@ -27,17 +27,17 @@ export default function Wallet() {
 
   const { data: walletTxs = [] } = useQuery({
     queryKey: ["walletTransactions"],
-    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 200)
+    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 5000)
   });
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-payment_date", 500)
+    queryFn: () => base44.entities.Payment.list("-payment_date", 5000)
   });
 
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses"],
-    queryFn: () => base44.entities.Expense.list("-expense_date", 500)
+    queryFn: () => base44.entities.Expense.list("-expense_date", 5000)
   });
 
   // Build unified transaction list
