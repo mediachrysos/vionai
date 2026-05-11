@@ -17,7 +17,7 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
     mutationFn: (amount) =>
       base44.entities.OwnerPayout.create({ owner, month: monthStr, amount }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["ownerPayouts", owner, monthStr] });
+      qc.invalidateQueries({ queryKey: ["ownerPayouts", owner] });
       setAdding(false);
       setInputVal("");
     },
@@ -25,7 +25,7 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.OwnerPayout.delete(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["ownerPayouts", owner, monthStr] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["ownerPayouts", owner] }),
   });
 
   const paidOut = payouts.reduce((s, p) => s + (p.amount || 0), 0);

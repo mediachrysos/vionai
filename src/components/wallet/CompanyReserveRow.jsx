@@ -17,7 +17,7 @@ export default function CompanyReserveRow({ monthStr, totalAllocated = 0, carryO
   const addMutation = useMutation({
     mutationFn: (data) => base44.entities.CompanyReserve.create(data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["companyReserve", monthStr] });
+      qc.invalidateQueries({ queryKey: ["companyReserve"] });
       setAdding(false);
       setInputVal("");
       setNoteVal("");
@@ -26,7 +26,7 @@ export default function CompanyReserveRow({ monthStr, totalAllocated = 0, carryO
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.CompanyReserve.delete(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["companyReserve", monthStr] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["companyReserve"] }),
   });
 
   const spent = reserveTxs
