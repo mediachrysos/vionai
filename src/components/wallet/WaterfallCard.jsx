@@ -125,7 +125,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
     const inc = mp.reduce((s, p) => s + (p.amount || 0), 0) + mw.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
     const exp = me.reduce((s, e) => s + (e.amount || 0), 0) + mw.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
     const gp = inc - exp;
-    return gp - gp * 0.10; // netProfit
+    return gp - Math.max(0, gp) * 0.10; // netProfit
   };
 
   const computeMonthOwnerPayout = (mStr) => {
