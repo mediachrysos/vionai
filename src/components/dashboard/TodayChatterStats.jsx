@@ -13,18 +13,19 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
     (p) => (p.payment_date || p.created_date?.split("T")[0]) === selectedDate
   );
 
-  const chatterMap = {};
+  // Group by model
+  const modelMap = {};
   dayPayments.forEach((p) => {
-    const key = p.chatter_email || "unknown";
-    const name = p.chatter_name || p.chatter_email || "Neznámý";
-    if (!chatterMap[key]) chatterMap[key] = { key, name, total: 0, count: 0 };
-    chatterMap[key].total += p.amount || 0;
-    chatterMap[key].count += 1;
+    const key = p.model_id || p.model_name || "unknown";
+    const modelName = p.model_name || "Neznámá modelka";
+    if (!modelMap[key]) modelMap[key] = { key, modelName, total: 0, chatters: new Set() };
+    modelMap[key].total += p.amount || 0;
+    if (p.chatter_name || p.chatter_email) {
+      modelMap[key].chatters.add(p.chatter_name || p.chatter_email);
+    }
   });
 
-  const allChatters = Object.values(chatterMap).sort((a, b) => b.total - a.total);
-  // If not showing all, highlight current user's row but still show others dimmed
-  const chatters = allChatters;
+  const chatters = Object.values(modelMap).sort((a, b) => b.total - a.total);
   const totalDay = dayPayments.reduce((s, p) => s + (p.amount || 0), 0);
 
   const prevDay = () => setSelectedDate(subDays(new Date(selectedDate), 1).toISOString().split("T")[0]);
@@ -73,24 +74,31 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
         <>
           <div className="space-y-2 mb-4">
             {chatters.map((c) => {
-              const isMe = currentUser?.email && c.key === currentUser.email;
+              const chatterNames = [...c.chatters].join(", ");
               return (
-                <div key={c.name} className={`flex items-center justify-between ${!showAll && !isMe ? "opacity-40" : ""}`}>
-                <div className="flex items-center gap-2">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isMe && !showAll ? "bg-[#C9A227] text-white" : "bg-amber-50 text-[#C9A227]"}`}>
-                    {c.name[0]?.toUpperCase()}
+                <div key={c.key} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center text-[10px] font-bold text-[#C9A227] flex-shrink-0">
+                      {c.modelName[0]?.toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs font-medium text-gray-800 truncate block max-w-[140px]">
+                        {c.modelName}
+                      </span>
+                      {chatterNames && (
+                        <span className="text-[10px] text-gray-400 truncate block max-w-[140px]">
+                          ({chatterNames})
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <span className="text-xs font-medium text-gray-700 truncate max-w-[120px]">
-                    {c.name}
-                  </span>
+                  <div className="text-right flex-shrink-0">
+                    <span className="text-xs font-bold text-gray-900">
+                      {c.total.toLocaleString()} Kč
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs font-bold text-gray-900">
-                    {c.total.toLocaleString()} Kč
-                  </span>
-                </div>
-              </div>);
-
+              );
             })}
           </div>
           <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
