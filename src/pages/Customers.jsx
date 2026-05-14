@@ -34,7 +34,7 @@ export default function Customers({ currentUser }) {
 
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ["customers"],
-    queryFn: () => base44.entities.Customer.list("-created_date")
+    queryFn: () => base44.entities.Customer.list("-created_date", 5000)
   });
   const { data: allPayments = [] } = useQuery({
     queryKey: ["payments"],
