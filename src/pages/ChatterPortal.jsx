@@ -173,29 +173,55 @@ function ChatterView({ currentUser }) {
     staleTime: 60000,
   });
 
-  const { data: customers = [] } = useQuery({
-    queryKey: ["chatter-customers", email],
-    queryFn: () => base44.entities.Customer.filter({ assigned_chatter: email }),
+  const { data: payouts = [] } = useQuery({
+    queryKey: ["chatterPayouts", email],
+    queryFn: () => base44.entities.ChatterPayout.filter({ chatter_email: email }),
     enabled: !!email,
-    staleTime: 60000,
+    staleTime: 30000,
   });
 
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
   const monthPayments = payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
   const monthRev = monthPayments.reduce((s, p) => s + (p.amount || 0), 0);
-  const totalRev = payments.reduce((s, p) => s + (p.amount || 0), 0);
+  const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
+
+  const greetings = [
+    "Ahoj, doufám že se máš dneska fajn a pořádně to v chatech rozjedeme! 💪",
+    "Vítej zpět! Dneska to bude skvělý den, věřím v tebe! 🔥",
+    "Zdravím tě! Každá platba se počítá — makej a uvidíš výsledky! 🚀",
+    "Ahoj! Připrav se, dneska bereme vše co jde! 💬✨",
+  ];
+  const greeting = greetings[new Date().getDate() % greetings.length];
 
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
-      <PageHeader
-        title={`Ahoj, ${currentUser?.full_name?.split(" ")[0] || ""} 👋`}
-        subtitle="Tvůj přehled v Chatting Space"
-      />
+      {/* Motivační banner */}
+      <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#C9A227] to-[#e8c84a] p-5 flex items-center gap-4 shadow-md">
+        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl flex-shrink-0">
+          👋
+        </div>
+        <div>
+          <p className="text-white font-bold text-base leading-snug">{`Ahoj, ${currentUser?.full_name?.split(" ")[0] || ""}!`}</p>
+          <p className="text-white/85 text-sm mt-0.5">{greeting}</p>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <StatCard title="Tento měsíc" value={`${monthRev.toLocaleString()} Kč`} icon={TrendingUp} />
-        <StatCard title="Celkem vychatováno" value={`${totalRev.toLocaleString()} Kč`} icon={DollarSign} />
-        <StatCard title="Moji zákazníci" value={customers.length} icon={Users} />
+      {/* Stats — jen měsíc + vyplaceno */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 flex flex-col gap-1">
+          <span className="text-xs text-gray-400 font-medium uppercase tracking-wide flex items-center gap-1.5">
+            <TrendingUp className="w-3.5 h-3.5 text-[#C9A227]" /> Tento měsíc
+          </span>
+          <span className="text-2xl font-bold text-gray-900 tabular-nums">{monthRev.toLocaleString()}</span>
+          <span className="text-xs text-gray-400">Kč vychatováno</span>
+        </div>
+        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 flex flex-col gap-1">
+          <span className="text-xs text-gray-400 font-medium uppercase tracking-wide flex items-center gap-1.5">
+            <DollarSign className="w-3.5 h-3.5 text-emerald-500" /> Celkem vyplaceno
+          </span>
+          <span className="text-2xl font-bold text-emerald-600 tabular-nums">{totalPaid.toLocaleString()}</span>
+          <span className="text-xs text-gray-400">Kč</span>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4 mb-6">
@@ -209,7 +235,9 @@ function ChatterView({ currentUser }) {
         <ChatterNotesWidget chatterEmail={email} currentUser={currentUser} />
       </div>
 
-      <DailyBreakdownTable payments={monthPayments} />
+      <div className="mb-6">
+        <DailyBreakdownTable payments={monthPayments} />
+      </div>
 
       {/* Recent Payments */}
       <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
