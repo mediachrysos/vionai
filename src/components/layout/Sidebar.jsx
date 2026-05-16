@@ -103,8 +103,10 @@ export default function Sidebar({ currentPage, user, onLogout }) {
                 <div className="w-7 h-7 rounded-lg bg-white/80 flex items-center justify-center flex-shrink-0 shadow-sm">
                   <img src={customIcons[item.page]} alt="" className="w-5 h-5 object-contain" style={{ filter: isActive ? "none" : "grayscale(40%) opacity(0.6)" }} />
                 </div>
-              ) : (
+              ) : item.icon ? (
                 <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-[#C9A227]" : "text-gray-400")} />
+              ) : (
+                <div className="w-4 h-4 flex-shrink-0" />
               )}
               {!collapsed && <span>{item.name}</span>}
             </Link>
