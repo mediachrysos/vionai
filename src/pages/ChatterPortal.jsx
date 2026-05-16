@@ -300,6 +300,15 @@ function ChatterView({ currentUser }) {
         tiers={tiers}
       />
 
+      {/* Výplata widget — Earned / Paid Out / To Pay */}
+      <ChatterPayWidget
+        chatterEmail={email}
+        hoursWorked={hoursToday}
+        totalChatted={monthRevenue}
+        monthPayments={monthPayments}
+        isAdmin={false}
+      />
+
       {/* Payout simulator */}
       <PayoutSimulator
         todayRevenue={todayRevenue}
