@@ -331,11 +331,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
           tiers={tiers} />
         }
 
-        {/* Coach notes + Recent payments + Today stats */}
+        {/* Notes + Recent payments + Today stats */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <CoachNotes
             notes={notes}
-            isAdmin={false}
             chatterEmail={email}
             onAdd={handleAddNote}
             onDelete={handleDeleteNote} />
