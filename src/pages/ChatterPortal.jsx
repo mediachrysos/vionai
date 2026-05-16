@@ -307,22 +307,20 @@ function ChatterView({ currentUser, isAdminView = false }) {
           tiers={tiers} />
         
 
-        {/* Personal records + Leaderboard side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <PersonalRecords
-            allPayments={payments}
-            tiers={tiers}
-            hoursMap={hoursMap} />
-          
-          {chatters.length > 1 &&
-          <ChatterLeaderboard
-            chatters={chatters}
-            allPayments={allPayments}
-            currentUserEmail={email}
-            tiers={tiers} />
+        {/* Personal records full width */}
+        <PersonalRecords
+          allPayments={payments}
+          tiers={tiers}
+          hoursMap={hoursMap} />
 
-          }
-        </div>
+        {/* Leaderboard */}
+        {chatters.length > 1 &&
+        <ChatterLeaderboard
+          chatters={chatters}
+          allPayments={allPayments}
+          currentUserEmail={email}
+          tiers={tiers} />
+        }
 
         {/* Coach notes + Recent payments + Today stats */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
