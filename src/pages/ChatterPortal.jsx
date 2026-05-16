@@ -324,7 +324,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
         </div>
 
         {/* Coach notes + Recent payments */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <CoachNotes
             notes={notes}
             isAdmin={false}
