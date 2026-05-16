@@ -78,7 +78,7 @@ function AdminChattingSpace({ currentUser }) {
             totalChatted={stats.monthTotal}
             isAdmin={true}
           />
-          <ChatterNotesWidget chatterEmail={selectedChatter.email} />
+          <ChatterNotesWidget chatterEmail={selectedChatter.email} currentUser={selectedChatter} />
         </div>
 
         {/* Payment history */}
@@ -201,7 +201,7 @@ function ChatterView({ currentUser }) {
           totalChatted={monthRev}
           isAdmin={false}
         />
-        <ChatterNotesWidget chatterEmail={email} />
+        <ChatterNotesWidget chatterEmail={email} currentUser={currentUser} />
       </div>
 
       {/* Recent Payments */}
