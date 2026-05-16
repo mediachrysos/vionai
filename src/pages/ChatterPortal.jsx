@@ -7,6 +7,7 @@ import PageHeader from "../components/ui-custom/PageHeader";
 import StatCard from "../components/ui-custom/StatCard";
 import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
 import ChatterNotesWidget from "../components/chatting/ChatterNotesWidget";
+import DailyBreakdownTable from "../components/chatting/DailyBreakdownTable";
 
 /**
  * Výpočet výplaty dle pravidel
@@ -81,6 +82,8 @@ function AdminChattingSpace({ currentUser }) {
           />
           <ChatterNotesWidget chatterEmail={selectedChatter.email} currentUser={selectedChatter} />
         </div>
+
+        <DailyBreakdownTable payments={stats.payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart)} />
 
         {/* Payment history */}
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
@@ -205,6 +208,8 @@ function ChatterView({ currentUser }) {
         />
         <ChatterNotesWidget chatterEmail={email} currentUser={currentUser} />
       </div>
+
+      <DailyBreakdownTable payments={monthPayments} />
 
       {/* Recent Payments */}
       <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
