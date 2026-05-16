@@ -18,6 +18,9 @@ import CoachNotes from "../components/chatter/CoachNotes";
 import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
 import StatsCard from "../components/chatter/StatsCard";
 import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
+import WorkSessionWidget from "../components/chatter/WorkSessionWidget";
+import PayoutHistoryWidget from "../components/chatter/PayoutHistoryWidget";
+import CustomerPayoutList from "../components/chatter/CustomerPayoutList";
 
 // ─── Admin view ────────────────────────────────────────────────────────────
 function AdminChattingSpace({ currentUser }) {
@@ -275,6 +278,12 @@ function ChatterView({ currentUser, isAdminView = false }) {
           </div>
         )}
 
+        {/* Work session + KPI + Payout history */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <WorkSessionWidget email={email} />
+          <PayoutHistoryWidget email={email} isAdminView={isAdminView} />
+        </div>
+
         {/* 4 KPI cards — pulled up over hero */}
         <DailyKpiCards
           todayRevenue={todayRevenue}
@@ -321,13 +330,15 @@ function ChatterView({ currentUser, isAdminView = false }) {
           tiers={tiers} />
         
 
-        {/* Daily breakdown */}
-        <DailyBreakdownCard
-          monthPayments={monthPayments}
-          dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-          dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-          hoursMap={hoursMap}
-          tiers={tiers} />
+        {/* Daily breakdown — collapsed by default */}
+        <div className="hidden">
+          <DailyBreakdownCard
+            monthPayments={monthPayments}
+            dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+            dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
+            hoursMap={hoursMap}
+            tiers={tiers} />
+        </div>
         
 
         {/* Personal records full width */}
@@ -345,7 +356,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
           tiers={tiers} />
         }
 
-        {/* Notes + Recent payments + Today stats */}
+        {/* Notes + Today stats + Recent payments */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <CoachNotes
             notes={notes}
@@ -353,13 +364,16 @@ function ChatterView({ currentUser, isAdminView = false }) {
             onAdd={handleAddNote}
             onDelete={handleDeleteNote} />
           
-          <RecentPaymentsCard payments={payments} />
-          
           <StatsCard
             todayRevenue={todayRevenue}
             hoursWorked={hoursToday}
             nextTierRevenue={5000} />
+          
+          <RecentPaymentsCard payments={payments} />
         </div>
+
+        {/* Customers payout list */}
+        <CustomerPayoutList email={email} />
       </div>
     </div>);
 

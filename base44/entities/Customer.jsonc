@@ -1,0 +1,87 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "description": "Customer full name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Customer email address"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Customer phone number"
+    },
+    "bank_name": {
+      "type": "string",
+      "description": "Bank name"
+    },
+    "bank_account_number": {
+      "type": "string",
+      "description": "Bank account number"
+    },
+    "assigned_models": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of assigned models"
+    },
+    "assigned_chatter": {
+      "type": "string",
+      "description": "Email of assigned chatter"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "vip",
+        "blocked"
+      ],
+      "default": "active",
+      "description": "Customer status"
+    },
+    "total_spent": {
+      "type": "number",
+      "default": 0,
+      "description": "Total amount spent"
+    },
+    "payment_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of payments"
+    },
+    "pay_day_of_month": {
+      "type": "integer",
+      "description": "Day of month when customer pays (1-31)"
+    },
+    "payout_date": {
+      "type": "string",
+      "description": "Date when customer will receive payout (text field for flexibility)"
+    },
+    "invoices": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Uploaded invoices: [{payment_id, file_url, file_name}]"
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}
