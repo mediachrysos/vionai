@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, TrendingUp, DollarSign, CreditCard } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import PageHeader from "../components/ui-custom/PageHeader";
 import NicknameSetupModal from "../components/ui-custom/NicknameSetupModal";
 import { DEFAULT_TIERS } from "../components/chatter/tierUtils";
@@ -50,37 +50,19 @@ function AdminChattingSpace({ currentUser }) {
   }
 
   if (selectedChatter) {
-    const stats = getStats(selectedChatter.email);
     return (
-      <div className="p-4 lg:p-8 max-w-5xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => setSelectedChatter(null)} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">← Zpět</button>
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">{selectedChatter.nickname || selectedChatter.full_name}</h2>
-            <p className="text-xs text-gray-400">{selectedChatter.email}</p>
-          </div>
+      <div>
+        <div className="bg-white border-b border-[#ececec] px-6 py-3 flex items-center gap-3">
+          <button
+            onClick={() => setSelectedChatter(null)}
+            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors font-medium"
+          >
+            ← Zpět na přehled
+          </button>
+          <span className="text-gray-200">|</span>
+          <span className="text-xs text-gray-400">Zobrazuješ dashboard jako: <span className="font-semibold text-[#C9A227]">{selectedChatter.nickname || selectedChatter.full_name}</span></span>
         </div>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-white rounded-2xl border border-[#ececec] p-5 shadow-sm flex flex-col gap-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wide flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5 text-[#C9A227]" /> Tento měsíc</span>
-            <span className="text-2xl font-bold text-gray-900">{stats.monthTotal.toLocaleString()}</span>
-            <span className="text-xs text-gray-400">Kč vychatováno</span>
-          </div>
-          <div className="bg-white rounded-2xl border border-[#ececec] p-5 shadow-sm flex flex-col gap-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wide flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5 text-[#C9A227]" /> Plateb celkem</span>
-            <span className="text-2xl font-bold text-gray-900">{stats.payments.length}</span>
-          </div>
-        </div>
-        <ChatterPayWidget
-          chatterEmail={selectedChatter.email}
-          hoursWorked={0}
-          totalChatted={stats.monthTotal}
-          monthPayments={stats.payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart)}
-          isAdmin={true}
-        />
-        <div className="mt-4">
-          <RecentPaymentsCard payments={stats.payments} />
-        </div>
+        <ChatterView currentUser={selectedChatter} isAdminView={true} />
       </div>
     );
   }
@@ -132,11 +114,11 @@ function AdminChattingSpace({ currentUser }) {
 }
 
 // ─── Chatter's own dashboard ──────────────────────────────────────────────
-function ChatterView({ currentUser }) {
+function ChatterView({ currentUser, isAdminView = false }) {
   const email = currentUser?.email;
   const qc = useQueryClient();
   const [nickname, setNickname] = useState(currentUser?.nickname || "");
-  const [showNicknameModal, setShowNicknameModal] = useState(!currentUser?.nickname);
+  const [showNicknameModal, setShowNicknameModal] = useState(!isAdminView && !currentUser?.nickname);
 
   const today = new Date().toISOString().split("T")[0];
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
