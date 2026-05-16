@@ -1,57 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Plus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function ChatterCustomersList({ chatterEmail, assignedModelIds = [] }) {
-  const [customers, setCustomers] = useState([]);
-  const [models, setModels] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ full_name: "", email: "", model_id: assignedModelIds[0] || "" });
-  const [saving, setSaving] = useState(false);
+  const qc = useQueryClient();
 
-  useEffect(() => {
-    const load = async () => {
-      // Load all models
-      const allModels = await base44.entities.Model.list();
-      const filteredModels = allModels.filter(m => assignedModelIds.includes(m.id));
-      setModels(filteredModels);
+  // Load all models
+  const { data: allModels = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+    staleTime: 120000
+  });
 
-      // Load all customers and filter by assigned models
+  const models = allModels.filter(m => assignedModelIds.includes(m.id));
+
+  // Load all customers filtered by assigned models
+  const { data: customers = [], isLoading } = useQuery({
+    queryKey: ["chatter-customers", assignedModelIds],
+    queryFn: async () => {
       const allCustomers = await base44.entities.Customer.list("-created_date", 5000);
-      const myCustomers = allCustomers.filter(c => 
+      return allCustomers.filter(c => 
         c.assigned_models?.some(mid => assignedModelIds.includes(mid))
       );
-      setCustomers(myCustomers);
-      setLoading(false);
-    };
+    },
+    enabled: assignedModelIds.length > 0,
+    staleTime: 30000
+  });
 
-    if (assignedModelIds.length > 0) {
-      load();
-    } else {
-      setLoading(false);
-    }
-  }, [chatterEmail, assignedModelIds]);
-
-  const handleAddCustomer = async () => {
-    if (!form.full_name || !form.model_id) return;
-    setSaving(true);
-    try {
-      const newCustomer = await base44.entities.Customer.create({
-        full_name: form.full_name,
-        email: form.email,
-        assigned_models: [form.model_id],
-      });
-      setCustomers(prev => [...prev, newCustomer]);
+  const saveMutation = useMutation({
+    mutationFn: async (customerData) => {
+      return base44.entities.Customer.create(customerData);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["chatter-customers", assignedModelIds] });
       setForm({ full_name: "", email: "", model_id: assignedModelIds[0] || "" });
       setShowForm(false);
-    } finally {
-      setSaving(false);
     }
+  });
+
+  const handleAddCustomer = () => {
+    if (!form.full_name || !form.model_id) return;
+    saveMutation.mutate({
+      full_name: form.full_name,
+      email: form.email,
+      assigned_models: [form.model_id],
+    });
   };
 
   if (assignedModelIds.length === 0) {
@@ -115,13 +115,13 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               </Select>
               <div className="flex gap-2">
                 <Button
-                  onClick={handleAddCustomer}
-                  disabled={!form.full_name || !form.model_id || saving}
-                  size="sm"
-                  className="bg-emerald-600 hover:bg-emerald-700 h-8 text-xs flex-1"
-                >
-                  {saving ? "..." : "Přidat"}
-                </Button>
+                    onClick={handleAddCustomer}
+                    disabled={!form.full_name || !form.model_id || saveMutation.isPending}
+                    size="sm"
+                    className="bg-emerald-600 hover:bg-emerald-700 h-8 text-xs flex-1"
+                  >
+                    {saveMutation.isPending ? "..." : "Přidat"}
+                  </Button>
                 <Button
                   onClick={() => setShowForm(false)}
                   variant="outline"
@@ -147,9 +147,9 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
           </div>
         )}
 
-        {loading ? (
-          <p className="text-xs text-gray-400">Načítám...</p>
-        ) : filtered.length === 0 ? (
+        {isLoading ? (
+           <p className="text-xs text-gray-400">Načítám...</p>
+         ) : filtered.length === 0 ? (
           <p className="text-xs text-gray-400 text-center py-4">
             {customers.length === 0 ? "Žádní zákazníci" : "Nenalezeni"}
           </p>
