@@ -12,7 +12,14 @@
         "grafik"
       ],
       "default": "user",
-      "description": "Role u\u017eivatele"
+      "description": "Prim\u00e1rn\u00ed role u\u017eivatele (legacy)"
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "V\u0161echny role u\u017eivatele (m\u016f\u017ee m\u00edt v\u00edce)"
     },
     "account_status": {
       "type": "string",

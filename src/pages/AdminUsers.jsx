@@ -255,16 +255,40 @@ const PAGE_OPTIONS = [
 { page: "CustomerScraper", label: "Customer Scraper" },
 ];
 
+const ALL_ROLES = [
+  { value: "admin", label: "👑 Admin" },
+  { value: "chatter", label: "💬 Chatter" },
+  { value: "lawyer", label: "⚖️ Lawyer" },
+  { value: "grafik", label: "🎨 Designer" },
+  { value: "user", label: "👤 User" },
+];
+
 function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboards }) {
   const [showPerms, setShowPerms] = useState(false);
   const [allowedPages, setAllowedPages] = useState(user.allowed_pages || []);
   const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || []);
+  // Support multi-role: use `roles` array if present, fall back to `role`
+  const [userRoles, setUserRoles] = useState(
+    user.roles?.length > 0 ? user.roles : (user.role ? [user.role] : ["user"])
+  );
   const status = user.account_status || "pending";
-  const role = user.role || "user";
   const statusCfg = statusConfig[status] || statusConfig.pending;
   const StatusIcon = statusCfg.icon;
-  const isAdmin = role === "admin";
-  const isDesigner = role === "grafik";
+  const isAdmin = userRoles.includes("admin");
+  const isDesigner = userRoles.includes("grafik");
+
+  const toggleRole = (roleVal) => {
+    let next;
+    if (userRoles.includes(roleVal)) {
+      next = userRoles.filter(r => r !== roleVal);
+      if (next.length === 0) next = ["user"]; // always at least one role
+    } else {
+      next = [...userRoles, roleVal];
+    }
+    setUserRoles(next);
+    // Keep primary `role` as first in array for backwards compat
+    onUpdate(user.id, { roles: next, role: next[0] });
+  };
 
   const assignedDashboard = dashboards.find(d => d.designer_email === user.email);
 
@@ -318,18 +342,25 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
           <StatusIcon className="w-3 h-3" />
           {statusCfg.label}
         </span>
-        <Select value={role} onValueChange={(val) => onUpdate(user.id, { role: val })}>
-          <SelectTrigger className="w-32 h-8 text-xs border-gray-200">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="admin">👑 Admin</SelectItem>
-            <SelectItem value="chatter">💬 Chatter</SelectItem>
-            <SelectItem value="lawyer">⚖️ Lawyer</SelectItem>
-            <SelectItem value="grafik">🎨 Designer</SelectItem>
-            <SelectItem value="user">👤 User</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Multi-role badges */}
+        <div className="flex flex-wrap gap-1">
+          {ALL_ROLES.map(({ value, label }) => {
+            const active = userRoles.includes(value);
+            return (
+              <button
+                key={value}
+                onClick={() => toggleRole(value)}
+                className={`text-xs px-2 py-1 rounded-full border font-medium transition-all ${
+                  active
+                    ? "bg-violet-100 text-violet-700 border-violet-300"
+                    : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600"
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
         <div className="flex gap-2">
           {status !== "approved" &&
           <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 rounded-lg"

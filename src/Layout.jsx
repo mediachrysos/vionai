@@ -98,10 +98,11 @@ export default function Layout({ children, currentPageName }) {
       setLoading(false);
 
       // Redirect non-admins to their first allowed page if they're on a page they can't access
-      if (me?.role !== "admin") {
+      const meRoles = me?.roles?.length > 0 ? me.roles : (me?.role ? [me.role] : []);
+      if (!meRoles.includes("admin")) {
         const allowedPages = me?.allowed_pages?.length > 0
           ? me.allowed_pages
-          : me?.role === "lawyer"
+          : meRoles.includes("lawyer")
             ? ["Finance"]
             : ["ChatterPortal", "Customers", "Payments"];
 
@@ -186,7 +187,8 @@ export default function Layout({ children, currentPageName }) {
   }
 
   // Pending approval (skip for admins) — new users without account_status set are also pending
-  if ((user?.account_status === "pending" || !user?.account_status) && user?.role !== "admin") {
+  const userRoles = user?.roles?.length > 0 ? user.roles : (user?.role ? [user.role] : []);
+  if ((user?.account_status === "pending" || !user?.account_status) && !userRoles.includes("admin")) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-sm p-8">

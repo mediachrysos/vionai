@@ -229,7 +229,8 @@ function ChatterView({ currentUser }) {
 }
 
 export default function ChatterPortal({ currentUser }) {
-  if (currentUser?.role === "admin") {
+  const roles = currentUser?.roles?.length > 0 ? currentUser.roles : (currentUser?.role ? [currentUser.role] : []);
+  if (roles.includes("admin")) {
     return <AdminChattingSpace currentUser={currentUser} />;
   }
   return <ChatterView currentUser={currentUser} />;

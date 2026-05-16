@@ -39,8 +39,12 @@ export default function Sidebar({ currentPage, user, onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const isAdmin = user?.role === "admin";
-  const isLawyer = user?.role === "lawyer";
+  // Support multi-role: use `roles` array if present, fall back to `role`
+  const userRoles = user?.roles?.length > 0 ? user.roles : (user?.role ? [user.role] : []);
+  const isAdmin = userRoles.includes("admin");
+  const isLawyer = userRoles.includes("lawyer");
+  const isChatter = userRoles.includes("chatter");
+  const isDesigner = userRoles.includes("grafik");
 
   let items;
   if (isAdmin) {
@@ -48,15 +52,19 @@ export default function Sidebar({ currentPage, user, onLogout }) {
   } else if (user?.allowed_pages?.length > 0) {
     // Custom permissions set by admin
     items = allPages.filter(p => user.allowed_pages.includes(p.page));
-  } else if (isLawyer) {
-    items = allPages.filter(p => defaultLawyerPages.includes(p.page));
   } else {
-    // Default chatter nav
-    const chatterPages = ["ChatterPortal", "Customers"];
-    items = [
-      { name: "My Overview", icon: LayoutDashboard, page: "ChatterPortal" },
-      ...allPages.filter(p => chatterPages.includes(p.page) && p.page !== "ChatterPortal"),
-    ];
+    // Build nav from all roles
+    const pageSet = new Set();
+    if (isLawyer) defaultLawyerPages.forEach(p => pageSet.add(p));
+    if (isChatter || isDesigner) {
+      ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
+    }
+    if (isDesigner) pageSet.add("SocialMediaContent");
+    if (pageSet.size === 0) {
+      // fallback: default chatter pages
+      ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
+    }
+    items = allPages.filter(p => pageSet.has(p.page));
   }
 
   const SidebarContent = () => (
