@@ -3,18 +3,18 @@ import { Calendar } from "lucide-react";
 
 export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, monthlyGoalEnabled }) {
   if (!monthlyGoalEnabled || !monthlyGoalAmount) {
-    return (
-      <div className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-5 h-full flex flex-col hidden">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-xl bg-blue-100 flex items-center justify-center">
-            <Calendar className="w-3.5 h-3.5 text-blue-500" />
-          </div>
-          <h3 className="text-sm font-bold text-gray-800">Měsíční target</h3>
-        </div>
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-sm text-gray-400 text-center py-6">Měsíční cíl zatím není nastavený.</p>
-        </div>
-      </div>);
+    return null;
+
+
+
+
+
+
+
+
+
+
+
 
   }
 
