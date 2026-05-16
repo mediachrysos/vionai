@@ -1,0 +1,26 @@
+{
+  "name": "ChatterPayout",
+  "type": "object",
+  "properties": {
+    "chatter_email": {
+      "type": "string",
+      "description": "Email chattera"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Vyplacen\u00e1 \u010d\u00e1stka v K\u010d"
+    },
+    "period": {
+      "type": "string",
+      "description": "Obdob\u00ed ve form\u00e1tu YYYY-MM"
+    },
+    "note": {
+      "type": "string",
+      "description": "Pozn\u00e1mka"
+    }
+  },
+  "required": [
+    "chatter_email",
+    "amount"
+  ]
+}

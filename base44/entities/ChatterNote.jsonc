@@ -1,0 +1,23 @@
+{
+  "name": "ChatterNote",
+  "type": "object",
+  "properties": {
+    "chatter_email": {
+      "type": "string",
+      "description": "Email chattera"
+    },
+    "content": {
+      "type": "string",
+      "description": "Obsah pozn\u00e1mky"
+    },
+    "note_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum pozn\u00e1mky"
+    }
+  },
+  "required": [
+    "chatter_email",
+    "content"
+  ]
+}
