@@ -197,7 +197,7 @@ export default function SocialMediaContent({ currentUser }) {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Social Media Content</h1>
+            <h1 className="text-xl font-bold text-gray-900">Graphic Space</h1>
             <p className="text-sm text-gray-400 mt-0.5">Weekly Designer Schedule</p>
           </div>
           <div className="flex items-center gap-2">
