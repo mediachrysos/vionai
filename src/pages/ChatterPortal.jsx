@@ -85,7 +85,7 @@ function AdminChattingSpace({ currentUser }) {
             ← Zpět
           </button>
           <h2 className="text-lg font-bold text-gray-900">{selectedChatter.nickname || selectedChatter.full_name}</h2>
-          <span className="text-sm text-gray-400 hidden">{selectedChatter.email}</span>
+          
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
