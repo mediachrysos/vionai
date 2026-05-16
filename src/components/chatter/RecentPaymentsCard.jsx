@@ -26,8 +26,8 @@ export default function RecentPaymentsCard({ payments, title = "Poslední platby
       <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
         <CreditCard className="w-4 h-4 text-[#C9A227]" /> {title}
       </h3>
-      <div className="space-y-2">
-        {payments.slice(0, 15).map((p) => {
+      <div className="space-y-2 max-h-64 overflow-y-auto">
+        {payments.slice(0, 3).map((p) => {
           const tag = getPaymentTag(p, payments);
           const dateStr = p.payment_date || p.created_date?.split("T")[0];
           let dateLabel = dateStr || "—";
