@@ -20,6 +20,26 @@ function calcChatterEarned(totalChatted, hoursWorked) {
   return hourlyPart + totalChatted * 0.10;
 }
 
+// Mini stat: celkem vyplaceno pro daného chattera
+function ChatterPayoutStat({ chatterEmail }) {
+  const { data: payouts = [] } = useQuery({
+    queryKey: ["chatterPayouts", chatterEmail],
+    queryFn: () => base44.entities.ChatterPayout.filter({ chatter_email: chatterEmail }),
+    enabled: !!chatterEmail,
+    staleTime: 30000,
+  });
+  const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
+  return (
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 flex flex-col gap-1">
+      <span className="text-xs text-gray-400 font-medium uppercase tracking-wide flex items-center gap-1.5">
+        <DollarSign className="w-3.5 h-3.5 text-emerald-500" /> Celkem vyplaceno
+      </span>
+      <span className="text-2xl font-bold text-emerald-600 tabular-nums">{totalPaid.toLocaleString()}</span>
+      <span className="text-xs text-gray-400">Kč</span>
+    </div>
+  );
+}
+
 // Admin view: all chatters overview
 function AdminChattingSpace({ currentUser }) {
   const [selectedChatter, setSelectedChatter] = useState(null);
@@ -53,6 +73,7 @@ function AdminChattingSpace({ currentUser }) {
 
   if (selectedChatter) {
     const stats = getChatterStats(selectedChatter.email);
+    const monthPaymentsSelected = stats.payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
     return (
       <div className="p-4 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
@@ -66,10 +87,15 @@ function AdminChattingSpace({ currentUser }) {
           <span className="text-sm text-gray-400">{selectedChatter.email}</span>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          <StatCard title="Tento měsíc" value={`${stats.monthTotal.toLocaleString()} Kč`} icon={TrendingUp} />
-          <StatCard title="Celkem vychatováno" value={`${stats.allTotal.toLocaleString()} Kč`} icon={DollarSign} />
-          <StatCard title="Počet plateb" value={stats.payments.length} icon={CreditCard} />
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 flex flex-col gap-1">
+            <span className="text-xs text-gray-400 font-medium uppercase tracking-wide flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-[#C9A227]" /> Tento měsíc
+            </span>
+            <span className="text-2xl font-bold text-gray-900 tabular-nums">{stats.monthTotal.toLocaleString()}</span>
+            <span className="text-xs text-gray-400">Kč vychatováno</span>
+          </div>
+          <ChatterPayoutStat chatterEmail={selectedChatter.email} />
         </div>
 
         <div className="grid lg:grid-cols-2 gap-4 mb-4">
@@ -83,7 +109,7 @@ function AdminChattingSpace({ currentUser }) {
           <ChatterNotesWidget chatterEmail={selectedChatter.email} currentUser={selectedChatter} />
         </div>
 
-        <DailyBreakdownTable payments={stats.payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart)} />
+        <DailyBreakdownTable payments={monthPaymentsSelected} />
 
         {/* Payment history */}
         <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
