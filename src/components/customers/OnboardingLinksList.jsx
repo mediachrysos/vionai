@@ -84,10 +84,16 @@ export default function OnboardingLinksList({ refreshTrigger, models = [] }) {
   const load = async () => {
     setLoading(true);
     const list = await base44.entities.CustomerOnboardingRequest.list("-created_date", 500);
-    // Auto-mark expired ones based on expires_at
+    // Auto-mark expired ones based on expires_at (but don't batch delete to avoid rate limit)
     const now = new Date();
     const toDelete = list.filter(l => l.status === "expired" || (l.status === "pending" && l.expires_at && new Date(l.expires_at) < now));
-    await Promise.all(toDelete.map(l => base44.entities.CustomerOnboardingRequest.delete(l.id)));
+
+    // Delete expired links sequentially with small delay to avoid rate limit
+    for (const l of toDelete) {
+      await base44.entities.CustomerOnboardingRequest.delete(l.id);
+      await new Promise(resolve => setTimeout(resolve, 50)); // 50ms delay between deletes
+    }
+
     const remaining = list.filter(l => !toDelete.find(d => d.id === l.id));
     setLinks(remaining);
     setLoading(false);
