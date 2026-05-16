@@ -267,10 +267,12 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   const [showPerms, setShowPerms] = useState(false);
   const [allowedPages, setAllowedPages] = useState(user.allowed_pages || []);
   const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || []);
-  // Support multi-role: use `roles` array if present, fall back to `role`
   const [userRoles, setUserRoles] = useState(
     user.roles?.length > 0 ? user.roles : (user.role ? [user.role] : ["user"])
   );
+  const [nickname, setNickname] = useState(user.nickname || "");
+  const [editingNickname, setEditingNickname] = useState(false);
+  const [savingNickname, setSavingNickname] = useState(false);
   const status = user.account_status || "pending";
   const statusCfg = statusConfig[status] || statusConfig.pending;
   const StatusIcon = statusCfg.icon;
@@ -354,6 +356,42 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-gray-800">{user.full_name || "—"}</p>
           <p className="text-xs text-gray-400">{user.email}</p>
+          {editingNickname ? (
+            <div className="flex items-center gap-1 mt-1">
+              <input
+                className="text-xs border border-gray-200 rounded px-2 py-0.5 h-6 w-32 focus:outline-none focus:ring-1 focus:ring-amber-300"
+                value={nickname}
+                onChange={e => setNickname(e.target.value)}
+                onKeyDown={async e => {
+                  if (e.key === "Enter") {
+                    setSavingNickname(true);
+                    await onUpdate(user.id, { nickname: nickname.trim() });
+                    setSavingNickname(false);
+                    setEditingNickname(false);
+                  } else if (e.key === "Escape") {
+                    setNickname(user.nickname || "");
+                    setEditingNickname(false);
+                  }
+                }}
+                autoFocus
+                placeholder="Přezdívka..."
+              />
+              <button
+                onClick={async () => {
+                  setSavingNickname(true);
+                  await onUpdate(user.id, { nickname: nickname.trim() });
+                  setSavingNickname(false);
+                  setEditingNickname(false);
+                }}
+                className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded hover:bg-amber-200"
+              >{savingNickname ? "..." : "✓"}</button>
+              <button onClick={() => { setNickname(user.nickname || ""); setEditingNickname(false); }} className="text-[10px] text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+          ) : (
+            <button onClick={() => setEditingNickname(true)} className="text-[10px] text-gray-400 hover:text-amber-600 mt-0.5 flex items-center gap-1 transition-colors">
+              {nickname ? <><span className="font-medium text-amber-600">"{nickname}"</span> <span className="opacity-60">✎</span></> : <span className="opacity-60 hover:opacity-100">+ přezdívka</span>}
+            </button>
+          )}
         </div>
         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusCfg.color}`}>
           <StatusIcon className="w-3 h-3" />
