@@ -232,28 +232,24 @@ function ChatterView({ currentUser, isAdminView = false }) {
       )}
 
       {/* Hero */}
-      <div className="bg-gradient-to-br from-[#1a1207] via-[#2d1f07] to-[#1a1207] px-6 pt-8 pb-16 relative overflow-hidden">
-        {/* Glow orbs */}
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-[#C9A227]/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-[#e8c84a]/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-5xl mx-auto relative">
+      <div className="bg-white border-b border-[#ececec] px-6 pt-8 pb-6">
+        <div className="max-w-5xl mx-auto">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest mb-1">Chatting Space</p>
-              <h1 className="text-white text-2xl font-bold mb-1">Ahoj, {displayName} 👋</h1>
-              <p className="text-white/50 text-sm">{greeting}</p>
+              <h1 className="text-gray-900 text-2xl font-bold mb-1">Ahoj, {displayName} 👋</h1>
+              <p className="text-gray-400 text-sm">{greeting}</p>
             </div>
-            <div className="text-right bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-5 py-3">
-              <p className="text-white/40 text-[10px] uppercase tracking-widest mb-0.5">Revenue dnes</p>
-              <p className="text-white text-2xl font-bold tabular-nums">{todayRevenue.toLocaleString()}</p>
+            <div className="text-right bg-[#faf6e6] border border-[#e8d99a] rounded-2xl px-5 py-3">
+              <p className="text-gray-400 text-[10px] uppercase tracking-widest mb-0.5">Revenue dnes</p>
+              <p className="text-gray-900 text-2xl font-bold tabular-nums">{todayRevenue.toLocaleString()}</p>
               <p className="text-[#C9A227] text-xs font-medium">Kč</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 lg:px-6 -mt-8 pb-12 space-y-4">
+      <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
 
         {/* 4 KPI cards — pulled up over hero */}
         <DailyKpiCards
