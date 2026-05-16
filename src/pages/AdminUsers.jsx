@@ -92,21 +92,23 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   useEffect(() => {
     if (!currentUser) return;
     if (currentUser?.role !== "admin") {setLoading(false);return;}
-    Promise.all([
-    base44.entities.User.list("-created_date", 100),
-    base44.entities.Model.list(),
-    base44.entities.BankAccount.list("-created_date", 100),
-    base44.entities.SocialDashboard.list("order", 50)]
-    ).then(([u, m, a, db]) => {
+    // Small delay to avoid rate limit conflicts with layout-level fetches
+    const timer = setTimeout(async () => {
+      const [u, m, a, db] = await Promise.all([
+        base44.entities.User.list("-created_date", 100),
+        base44.entities.Model.list(),
+        base44.entities.BankAccount.list("-created_date", 100),
+        base44.entities.SocialDashboard.list("order", 50),
+      ]);
       setUsers(u);
       setModels(m);
       setAccounts(a);
       setDashboards(db);
       setLoading(false);
-    });
+    }, 600);
 
     const unsub = base44.entities.User.subscribe(() => loadUsers());
-    return () => unsub();
+    return () => { clearTimeout(timer); unsub(); };
   }, [currentUser]);
 
   const updateUser = async (userId, changes) => {
