@@ -27,7 +27,7 @@ function ChatterPayoutStat({ chatterEmail }) {
     queryKey: ["chatterPayouts", chatterEmail],
     queryFn: () => base44.entities.ChatterPayout.filter({ chatter_email: chatterEmail }),
     enabled: !!chatterEmail,
-    staleTime: 30000,
+    staleTime: 30000
   });
   const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
   return (
@@ -37,8 +37,8 @@ function ChatterPayoutStat({ chatterEmail }) {
       </span>
       <span className="text-2xl font-bold text-emerald-600 tabular-nums">{totalPaid.toLocaleString()}</span>
       <span className="text-xs text-gray-400">Kč</span>
-    </div>
-  );
+    </div>);
+
 }
 
 // Admin view: all chatters overview
@@ -48,25 +48,25 @@ function AdminChattingSpace({ currentUser }) {
   const { data: users = [] } = useQuery({
     queryKey: ["users-chatters"],
     queryFn: () => base44.entities.User.list(),
-    staleTime: 60000,
+    staleTime: 60000
   });
 
   const { data: allPayments = [] } = useQuery({
     queryKey: ["all-payments-chatting"],
     queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-    staleTime: 60000,
+    staleTime: 60000
   });
 
-  const chatters = users.filter(u => {
-    const uRoles = u.roles?.length > 0 ? u.roles : (u.role ? [u.role] : []);
+  const chatters = users.filter((u) => {
+    const uRoles = u.roles?.length > 0 ? u.roles : u.role ? [u.role] : [];
     return uRoles.includes("chatter") || u.allowed_pages?.includes("ChatterPortal");
   });
 
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
 
   function getChatterStats(email) {
-    const payments = allPayments.filter(p => p.chatter_email === email);
-    const monthPayments = payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
+    const payments = allPayments.filter((p) => p.chatter_email === email);
+    const monthPayments = payments.filter((p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
     const monthTotal = monthPayments.reduce((s, p) => s + (p.amount || 0), 0);
     const allTotal = payments.reduce((s, p) => s + (p.amount || 0), 0);
     return { payments, monthTotal, allTotal };
@@ -74,18 +74,18 @@ function AdminChattingSpace({ currentUser }) {
 
   if (selectedChatter) {
     const stats = getChatterStats(selectedChatter.email);
-    const monthPaymentsSelected = stats.payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
+    const monthPaymentsSelected = stats.payments.filter((p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
     return (
       <div className="p-4 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => setSelectedChatter(null)}
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
+            className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+            
             ← Zpět
           </button>
           <h2 className="text-lg font-bold text-gray-900">{selectedChatter.nickname || selectedChatter.full_name}</h2>
-          <span className="text-sm text-gray-400">{selectedChatter.email}</span>
+          <span className="text-sm text-gray-400 hidden">{selectedChatter.email}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
@@ -104,9 +104,9 @@ function AdminChattingSpace({ currentUser }) {
             chatterEmail={selectedChatter.email}
             hoursWorked={0}
             totalChatted={stats.monthTotal}
-            monthPayments={stats.payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart)}
-            isAdmin={true}
-          />
+            monthPayments={stats.payments.filter((p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart)}
+            isAdmin={true} />
+          
           <ChatterNotesWidget chatterEmail={selectedChatter.email} currentUser={selectedChatter} />
         </div>
 
@@ -117,46 +117,46 @@ function AdminChattingSpace({ currentUser }) {
           <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-[#C9A227]" /> Poslední platby
           </h3>
-          {stats.payments.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-6">Zatím žádné platby</p>
-          ) : (
-            <div className="space-y-2">
-              {stats.payments.slice(0, 10).map(p => (
-                <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
+          {stats.payments.length === 0 ?
+          <p className="text-sm text-gray-400 text-center py-6">Zatím žádné platby</p> :
+
+          <div className="space-y-2">
+              {stats.payments.slice(0, 10).map((p) =>
+            <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
                   <div>
                     <p className="text-sm font-medium text-gray-700">{p.customer_name || "Zákazník"}</p>
                     <p className="text-xs text-gray-400">{p.model_name || "—"} · {p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}</p>
                   </div>
                   <span className="text-sm font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
                 </div>
-              ))}
+            )}
             </div>
-          )}
+          }
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
       <PageHeader title="Chatting Space" subtitle="Přehled všech chatterů" />
 
-      {chatters.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+      {chatters.length === 0 ?
+      <div className="text-center py-16 text-gray-400">
           <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
           <p className="text-sm">Zatím žádní chatteři</p>
-        </div>
-      ) : (
-        <div className="grid gap-3">
-          {chatters.map(u => {
-            const stats = getChatterStats(u.email);
-            const earned = Math.round(calcChatterEarned(stats.monthTotal, 0));
-            return (
-              <button
-                key={u.id}
-                onClick={() => setSelectedChatter(u)}
-                className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-4 flex items-center justify-between hover:border-[#e8d99a] hover:shadow-[0_6px_24px_rgba(201,162,39,0.10)] transition-all text-left"
-              >
+        </div> :
+
+      <div className="grid gap-3">
+          {chatters.map((u) => {
+          const stats = getChatterStats(u.email);
+          const earned = Math.round(calcChatterEarned(stats.monthTotal, 0));
+          return (
+            <button
+              key={u.id}
+              onClick={() => setSelectedChatter(u)}
+              className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-4 flex items-center justify-between hover:border-[#e8d99a] hover:shadow-[0_6px_24px_rgba(201,162,39,0.10)] transition-all text-left">
+              
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold">
                     {u.full_name?.charAt(0) || "?"}
@@ -180,13 +180,13 @@ function AdminChattingSpace({ currentUser }) {
                     <p className="text-sm font-bold text-gray-700">{stats.payments.length}</p>
                   </div>
                 </div>
-              </button>
-            );
-          })}
+              </button>);
+
+        })}
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
 
 // Chatter's own view
@@ -199,39 +199,39 @@ function ChatterView({ currentUser }) {
     queryKey: ["chatter-payments", email],
     queryFn: () => base44.entities.Payment.filter({ chatter_email: email }, "-created_date"),
     enabled: !!email,
-    staleTime: 60000,
+    staleTime: 60000
   });
 
   const { data: payouts = [] } = useQuery({
     queryKey: ["chatterPayouts", email],
     queryFn: () => base44.entities.ChatterPayout.filter({ chatter_email: email }),
     enabled: !!email,
-    staleTime: 30000,
+    staleTime: 30000
   });
 
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
-  const monthPayments = payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
+  const monthPayments = payments.filter((p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
   const monthRev = monthPayments.reduce((s, p) => s + (p.amount || 0), 0);
   const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
 
   const greetings = [
-    "Ahoj, doufám že se máš dneska fajn a pořádně to v chatech rozjedeme! 💪",
-    "Vítej zpět! Dneska to bude skvělý den, věřím v tebe! 🔥",
-    "Zdravím tě! Každá platba se počítá — makej a uvidíš výsledky! 🚀",
-    "Ahoj! Připrav se, dneska bereme vše co jde! 💬✨",
-  ];
+  "Ahoj, doufám že se máš dneska fajn a pořádně to v chatech rozjedeme! 💪",
+  "Vítej zpět! Dneska to bude skvělý den, věřím v tebe! 🔥",
+  "Zdravím tě! Každá platba se počítá — makej a uvidíš výsledky! 🚀",
+  "Ahoj! Připrav se, dneska bereme vše co jde! 💬✨"];
+
   const greeting = greetings[new Date().getDate() % greetings.length];
 
   const displayName = nickname || currentUser?.full_name?.split(" ")[0] || "";
 
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
-      {showNicknameModal && (
-        <NicknameSetupModal
-          user={currentUser}
-          onSaved={(n) => { setNickname(n); setShowNicknameModal(false); }}
-        />
-      )}
+      {showNicknameModal &&
+      <NicknameSetupModal
+        user={currentUser}
+        onSaved={(n) => {setNickname(n);setShowNicknameModal(false);}} />
+
+      }
       {/* Motivační banner */}
       <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#C9A227] to-[#e8c84a] p-5 flex items-center gap-4 shadow-md">
         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl flex-shrink-0">
@@ -267,8 +267,8 @@ function ChatterView({ currentUser }) {
           hoursWorked={0}
           totalChatted={monthRev}
           monthPayments={monthPayments}
-          isAdmin={false}
-        />
+          isAdmin={false} />
+        
         <ChatterNotesWidget chatterEmail={email} currentUser={currentUser} />
       </div>
 
@@ -281,28 +281,28 @@ function ChatterView({ currentUser }) {
         <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <CreditCard className="w-4 h-4 text-[#C9A227]" /> Poslední platby
         </h3>
-        {payments.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-6">Zatím žádné platby</p>
-        ) : (
-          <div className="space-y-2">
-            {payments.slice(0, 10).map(p => (
-              <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
+        {payments.length === 0 ?
+        <p className="text-sm text-gray-400 text-center py-6">Zatím žádné platby</p> :
+
+        <div className="space-y-2">
+            {payments.slice(0, 10).map((p) =>
+          <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
                 <div>
                   <p className="text-sm font-medium text-gray-700">{p.customer_name || "Zákazník"}</p>
                   <p className="text-xs text-gray-400">{p.model_name || "—"} · {p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}</p>
                 </div>
                 <span className="text-sm font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
               </div>
-            ))}
+          )}
           </div>
-        )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 export default function ChatterPortal({ currentUser }) {
-  const roles = currentUser?.roles?.length > 0 ? currentUser.roles : (currentUser?.role ? [currentUser.role] : []);
+  const roles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   // Admins vidí všechny chattery, ostatní (vč. chatterů) vidí pouze svou vlastní kartu
   if (roles.includes("admin")) {
     return <AdminChattingSpace currentUser={currentUser} />;
