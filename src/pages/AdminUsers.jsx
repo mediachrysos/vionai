@@ -269,7 +269,7 @@ const ALL_ROLES = [
 function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboards }) {
   const [showPerms, setShowPerms] = useState(false);
   const [allowedPages, setAllowedPages] = useState(user.allowed_pages || []);
-  const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || []);
+  const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || user.assigned_model ? [user.assigned_model] : []);
   const [userRoles, setUserRoles] = useState(
     user.roles?.length > 0 ? user.roles : (user.role ? [user.role] : ["user"])
   );
