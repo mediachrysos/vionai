@@ -269,7 +269,7 @@ const ALL_ROLES = [
 function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboards }) {
   const [showPerms, setShowPerms] = useState(false);
   const [allowedPages, setAllowedPages] = useState(user.allowed_pages || []);
-  const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || user.assigned_model ? [user.assigned_model] : []);
+  const [assignedIds, setAssignedIds] = useState(user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : []));
   const [userRoles, setUserRoles] = useState(
     user.roles?.length > 0 ? user.roles : (user.role ? [user.role] : ["user"])
   );
@@ -334,12 +334,12 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
     setDashboards(updated);
   };
 
-  const toggleModel = (modelId) => {
+  const toggleModel = async (modelId) => {
     const next = assignedIds.includes(modelId) ?
     assignedIds.filter((id) => id !== modelId) :
     [...assignedIds, modelId];
     setAssignedIds(next);
-    onUpdate(user.id, { assigned_model_ids: next });
+    await onUpdate(user.id, { assigned_model_ids: next });
   };
 
   const togglePage = (page) => {
