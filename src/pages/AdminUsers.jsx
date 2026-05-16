@@ -286,8 +286,25 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
       next = [...userRoles, roleVal];
     }
     setUserRoles(next);
+
+    // Auto-manage allowed_pages based on roles
+    let newAllowedPages = [...allowedPages];
+    if (roleVal === "chatter") {
+      if (next.includes("chatter")) {
+        // Add ChatterPortal if not already there
+        if (!newAllowedPages.includes("ChatterPortal")) {
+          newAllowedPages = [...newAllowedPages, "ChatterPortal"];
+          setAllowedPages(newAllowedPages);
+        }
+      } else {
+        // Remove ChatterPortal when chatter role removed
+        newAllowedPages = newAllowedPages.filter(p => p !== "ChatterPortal");
+        setAllowedPages(newAllowedPages);
+      }
+    }
+
     // Keep primary `role` as first in array for backwards compat
-    onUpdate(user.id, { roles: next, role: next[0] });
+    onUpdate(user.id, { roles: next, role: next[0], allowed_pages: newAllowedPages });
   };
 
   const assignedDashboard = dashboards.find(d => d.designer_email === user.email);
