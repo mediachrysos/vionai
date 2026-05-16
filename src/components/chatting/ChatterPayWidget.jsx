@@ -16,6 +16,31 @@ function getCurrentPeriod() {
  * 5000–9999 Kč  = 120 Kč/hod + 5 % z vychatované částky
  * 10000+ Kč     = 120 Kč/hod + 10 % z vychatované částky
  */
+/**
+ * Výpočet výplaty PER DEN:
+ * < 2 000 Kč/den  → 0 Kč
+ * 2 000–4 999 Kč  → 120 Kč/hod (bez hodin = 0)
+ * 5 000–9 999 Kč  → 5 % z denní částky
+ * 10 000+ Kč      → 10 % z denní částky
+ */
+function calcDayEarned(dayTotal) {
+  if (dayTotal < 2000) return 0;
+  if (dayTotal < 5000) return 0; // hodinová složka — počítá se zvlášť mimo widget
+  if (dayTotal < 10000) return dayTotal * 0.05;
+  return dayTotal * 0.10;
+}
+
+// Pro zobrazení celkového earned — počítá každý den zvlášť a sčítá
+function calcMonthlyEarnedPerDay(monthPayments) {
+  const byDay = {};
+  for (const p of monthPayments) {
+    const day = p.payment_date || p.created_date?.split("T")[0];
+    if (!day) continue;
+    byDay[day] = (byDay[day] || 0) + (p.amount || 0);
+  }
+  return Object.values(byDay).reduce((sum, dayTotal) => sum + calcDayEarned(dayTotal), 0);
+}
+
 function calcChatterEarned(totalChatted, hoursWorked) {
   if (totalChatted < 2000) return 0;
   const hourlyPart = hoursWorked * 120;
@@ -31,7 +56,7 @@ function getTierLabel(totalChatted) {
   return { label: "Tier 3 · 120 Kč/h + 10 %", color: "text-emerald-600" };
 }
 
-export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatted, isAdmin }) {
+export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatted, monthPayments, isAdmin }) {
   const qc = useQueryClient();
   const [payoutAmount, setPayoutAmount] = useState("");
   const [payoutNote, setPayoutNote] = useState("");
@@ -46,7 +71,11 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
     staleTime: 30000,
   });
 
-  const earned = Math.round(calcChatterEarned(totalChatted, hoursWorked));
+  const earned = Math.round(
+    monthPayments
+      ? calcMonthlyEarnedPerDay(monthPayments)
+      : calcChatterEarned(totalChatted, hoursWorked)
+  );
   const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
   const remaining = earned - totalPaid;
   const tier = getTierLabel(totalChatted);

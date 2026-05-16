@@ -76,6 +76,7 @@ function AdminChattingSpace({ currentUser }) {
             chatterEmail={selectedChatter.email}
             hoursWorked={0}
             totalChatted={stats.monthTotal}
+            monthPayments={stats.payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart)}
             isAdmin={true}
           />
           <ChatterNotesWidget chatterEmail={selectedChatter.email} currentUser={selectedChatter} />
@@ -199,6 +200,7 @@ function ChatterView({ currentUser }) {
           chatterEmail={email}
           hoursWorked={0}
           totalChatted={monthRev}
+          monthPayments={monthPayments}
           isAdmin={false}
         />
         <ChatterNotesWidget chatterEmail={email} currentUser={currentUser} />
