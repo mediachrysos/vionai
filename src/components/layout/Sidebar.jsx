@@ -27,6 +27,7 @@ const allPages = [
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
   { name: "Graphic Space", icon: null, page: "SocialMediaContent" },
+  { name: "Chatting Space", icon: null, page: "ChatterPortal" },
   { name: "Admin Portal", icon: null, page: "AdminUsers" },
   { name: "Customer Scraper", icon: null, page: "CustomerScraper" },
 ];
