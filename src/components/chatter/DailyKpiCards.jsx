@@ -88,29 +88,29 @@ export default function DailyKpiCards({ todayRevenue, hoursWorked, dailyGoalAmou
   }];
 
 
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 hidden">
-      {cards.map((card, i) => {
-        const Icon = card.icon;
-        return (
-          <div
-            key={i}
-            className={`bg-gradient-to-b ${card.bg} rounded-2xl border ${card.border} shadow-sm p-4 flex flex-col`}>
-            
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">{card.label}</span>
-              <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: `${card.accent}18` }}>
-                <Icon className="w-3.5 h-3.5" style={{ color: card.accent }} />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-gray-900 tabular-nums leading-none">{card.value}</span>
-              {card.unit && <span className="text-sm font-medium text-gray-400">{card.unit}</span>}
-            </div>
-            {card.sub}
-          </div>);
+  return null;
 
-      })}
-    </div>);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
