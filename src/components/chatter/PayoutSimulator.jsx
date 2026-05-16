@@ -22,7 +22,7 @@ export default function PayoutSimulator({ todayRevenue, hoursWorked, monthRevenu
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4">
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4 hidden">
       <h3 className="text-sm font-bold text-gray-800 mb-1 flex items-center gap-2">
         <Sliders className="w-4 h-4 text-[#C9A227]" /> Payout Simulator
       </h3>
@@ -35,10 +35,10 @@ export default function PayoutSimulator({ todayRevenue, hoursWorked, monthRevenu
             type="number"
             min={0}
             value={extraRevenue}
-            onChange={e => setExtraRevenue(e.target.value)}
+            onChange={(e) => setExtraRevenue(e.target.value)}
             className="w-full h-9 border border-gray-200 rounded-xl px-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#C9A227]/30"
-            placeholder="0"
-          />
+            placeholder="0" />
+          
         </div>
         <div>
           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Celkem hodin dnes</label>
@@ -47,10 +47,10 @@ export default function PayoutSimulator({ todayRevenue, hoursWorked, monthRevenu
             min={0}
             step={0.5}
             value={extraHours}
-            onChange={e => setExtraHours(e.target.value)}
+            onChange={(e) => setExtraHours(e.target.value)}
             className="w-full h-9 border border-gray-200 rounded-xl px-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#C9A227]/30"
-            placeholder="0"
-          />
+            placeholder="0" />
+          
         </div>
       </div>
 
@@ -73,14 +73,14 @@ export default function PayoutSimulator({ todayRevenue, hoursWorked, monthRevenu
         </div>
       </div>
 
-      {simNext && (
-        <p className="text-xs text-[#A8841C] mt-3 font-medium">
+      {simNext &&
+      <p className="text-xs text-[#A8841C] mt-3 font-medium">
           → Chybí ještě {Math.max(0, simNext.min - simRevenue).toLocaleString()} Kč do dalšího tieru: <span className="font-bold">{simNext.name}</span>
         </p>
-      )}
-      {!simNext && simRevenue > 0 && (
-        <p className="text-xs text-emerald-600 mt-3 font-medium">✓ Nejvyšší tier odemčen — 10% provize z každé platby</p>
-      )}
-    </div>
-  );
+      }
+      {!simNext && simRevenue > 0 &&
+      <p className="text-xs text-emerald-600 mt-3 font-medium">✓ Nejvyšší tier odemčen — 10% provize z každé platby</p>
+      }
+    </div>);
+
 }
