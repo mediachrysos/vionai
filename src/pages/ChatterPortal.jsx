@@ -35,9 +35,11 @@ function AdminChattingSpace({ currentUser }) {
     staleTime: 60000,
   });
 
-  const chatters = users.filter(u =>
-    u.role !== "admin" && (u.allowed_pages?.includes("ChatterPortal") || u.role === "chatter")
-  );
+  const chatters = users.filter(u => {
+    const uRoles = u.roles?.length > 0 ? u.roles : (u.role ? [u.role] : []);
+    if (uRoles.includes("admin")) return false;
+    return uRoles.includes("chatter") || u.allowed_pages?.includes("ChatterPortal");
+  });
 
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
 
@@ -230,6 +232,7 @@ function ChatterView({ currentUser }) {
 
 export default function ChatterPortal({ currentUser }) {
   const roles = currentUser?.roles?.length > 0 ? currentUser.roles : (currentUser?.role ? [currentUser.role] : []);
+  // Admins vidí všechny chattery, ostatní (vč. chatterů) vidí pouze svou vlastní kartu
   if (roles.includes("admin")) {
     return <AdminChattingSpace currentUser={currentUser} />;
   }
