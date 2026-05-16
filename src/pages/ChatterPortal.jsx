@@ -21,6 +21,7 @@ import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
 import WorkSessionWidget from "../components/chatter/WorkSessionWidget";
 import PayoutHistoryWidget from "../components/chatter/PayoutHistoryWidget";
 import CustomerPayoutList from "../components/chatter/CustomerPayoutList";
+import ChatterCustomersList from "../components/chatter/ChatterCustomersList";
 
 // ─── Admin view ────────────────────────────────────────────────────────────
 function AdminChattingSpace({ currentUser }) {
@@ -274,7 +275,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
         {isAdminView && (
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-2">
             <p className="text-xs text-blue-600 font-semibold mb-3">Přidej nového zákazníka</p>
-            <OnboardingLinkForm models={models.filter(m => m.id === currentUser?.assigned_model)} />
+            <OnboardingLinkForm models={models.filter(m => {
+              const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+              return ids.includes(m.id);
+            })} />
           </div>
         )}
 
@@ -374,6 +378,13 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
         {/* Customers payout list */}
         <CustomerPayoutList email={email} />
+
+        {/* Chatter's customers — only for own dashboard */}
+        {!isAdminView && (
+          <ChatterCustomersList 
+            chatterEmail={email} 
+            assignedModelIds={currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])} />
+        )}
       </div>
     </div>);
 
