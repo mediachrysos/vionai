@@ -32,7 +32,7 @@ export default function AdminPayments() {
 
   const loadPayments = async () => {
     setLoading(true);
-    const data = await base44.entities.Payment.list("-created_date", 500);
+    const data = await base44.entities.Payment.list("-created_date", 5000);
     setPayments(data);
     setLoading(false);
   };
