@@ -37,7 +37,6 @@ function AdminChattingSpace({ currentUser }) {
 
   const chatters = users.filter(u => {
     const uRoles = u.roles?.length > 0 ? u.roles : (u.role ? [u.role] : []);
-    if (uRoles.includes("admin")) return false;
     return uRoles.includes("chatter") || u.allowed_pages?.includes("ChatterPortal");
   });
 
