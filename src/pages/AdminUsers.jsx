@@ -245,18 +245,15 @@ function Section({ label, icon, badge, open, onToggle, children }) {
 }
 
 const PAGE_OPTIONS = [
-{ page: "Dashboard", label: "Přehled" },
-{ page: "ChatterPortal", label: "Můj přehled" },
-{ page: "Customers", label: "Zákazníci" },
-{ page: "Models", label: "Modelky" },
-{ page: "Payments", label: "Platby" },
+{ page: "Dashboard", label: "Dashboard" },
+{ page: "Customers", label: "Customers" },
 { page: "Finance", label: "Finance" },
 { page: "Wallet", label: "Wallet" },
+{ page: "SocialMediaContent", label: "Graphic Space" },
+{ page: "ChatterPortal", label: "Chatting Space" },
+{ page: "AdminUsers", label: "Admin Portal" },
 { page: "CustomerScraper", label: "Customer Scraper" },
-{ page: "SocialMediaContent", label: "Social Media" },
-{ page: "Tasks", label: "Úkoly" },
-{ page: "BusinessTimeline", label: "Timeline" },
-{ page: "Expenses", label: "Výdaje" }];
+];
 
 function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboards }) {
   const [showPerms, setShowPerms] = useState(false);
