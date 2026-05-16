@@ -4,7 +4,7 @@ import { Calendar } from "lucide-react";
 export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, monthlyGoalEnabled }) {
   if (!monthlyGoalEnabled || !monthlyGoalAmount) {
     return (
-      <div className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-5 h-full flex flex-col">
+      <div className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-5 h-full flex flex-col hidden">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-7 h-7 rounded-xl bg-blue-100 flex items-center justify-center">
             <Calendar className="w-3.5 h-3.5 text-blue-500" />
@@ -14,8 +14,8 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
         <div className="flex-1 flex items-center justify-center">
           <p className="text-sm text-gray-400 text-center py-6">Měsíční cíl zatím není nastavený.</p>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   const now = new Date();
@@ -27,7 +27,7 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
   const avgCurrent = dayOfMonth > 0 ? Math.round(monthRevenue / dayOfMonth) : 0;
   const expectedAtPace = avgCurrent * daysInMonth;
   const paceGap = expectedAtPace - monthlyGoalAmount;
-  const pct = Math.min(100, Math.round((monthRevenue / monthlyGoalAmount) * 100));
+  const pct = Math.min(100, Math.round(monthRevenue / monthlyGoalAmount * 100));
   const isAhead = paceGap >= 0;
 
   return (
@@ -40,8 +40,8 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
           <h3 className="text-sm font-bold text-gray-800">Měsíční target</h3>
         </div>
         <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${
-          isAhead ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-500 border-rose-200"
-        }`}>
+        isAhead ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-500 border-rose-200"}`
+        }>
           {isAhead ? `+${Math.abs(Math.round(paceGap)).toLocaleString()} Kč ahead` : `${Math.round(paceGap).toLocaleString()} Kč behind`}
         </span>
       </div>
@@ -58,8 +58,8 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
         <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all"
-            style={{ width: `${pct}%` }}
-          />
+            style={{ width: `${pct}%` }} />
+          
         </div>
       </div>
 
@@ -84,6 +84,6 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
