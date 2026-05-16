@@ -238,13 +238,13 @@ function ChatterView({ currentUser, isAdminView = false }) {
             <div>
               <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest mb-1">Chatting Space</p>
               <h1 className="text-gray-900 text-2xl font-bold mb-1">Ahoj, {displayName} 👋</h1>
-              <p className="text-gray-400 text-sm hidden">{greeting}</p>
+              
             </div>
-            <div className="text-right bg-[#faf6e6] border border-[#e8d99a] rounded-2xl px-5 py-3 hidden">
-              <p className="text-gray-400 text-[10px] uppercase tracking-widest mb-0.5">Revenue dnes</p>
-              <p className="text-gray-900 text-2xl font-bold tabular-nums">{todayRevenue.toLocaleString()}</p>
-              <p className="text-[#C9A227] text-xs font-medium">Kč</p>
-            </div>
+            
+
+
+
+            
           </div>
         </div>
       </div>
