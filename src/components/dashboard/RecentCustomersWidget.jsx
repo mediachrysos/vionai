@@ -22,7 +22,7 @@ export default function RecentCustomersWidget({ customers }) {
   sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
 
   return (
-    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden hidden">
       <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center gap-2">
         <div className="bg-slate-50 rounded-xl w-9 h-9 flex items-center justify-center">
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266700/Chrysos_icon_1_qefgru.png" alt="" className="w-6 h-6 object-contain" />
