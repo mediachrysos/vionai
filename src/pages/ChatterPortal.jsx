@@ -268,10 +268,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
       <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
 
         {/* Onboarding link — only for admin view */}
-        {isAdminView && currentUser?.assigned_model && (
+        {isAdminView && (
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-2">
             <p className="text-xs text-blue-600 font-semibold mb-3">Přidej nového zákazníka</p>
-            <OnboardingLinkForm models={models.filter(m => m.id === currentUser.assigned_model)} />
+            <OnboardingLinkForm models={models.filter(m => m.id === currentUser?.assigned_model)} />
           </div>
         )}
 
