@@ -8,6 +8,7 @@ import StatCard from "../components/ui-custom/StatCard";
 import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
 import ChatterNotesWidget from "../components/chatting/ChatterNotesWidget";
 import DailyBreakdownTable from "../components/chatting/DailyBreakdownTable";
+import NicknameSetupModal from "../components/ui-custom/NicknameSetupModal";
 
 /**
  * Výpočet výplaty dle pravidel
@@ -83,7 +84,7 @@ function AdminChattingSpace({ currentUser }) {
           >
             ← Zpět
           </button>
-          <h2 className="text-lg font-bold text-gray-900">{selectedChatter.full_name}</h2>
+          <h2 className="text-lg font-bold text-gray-900">{selectedChatter.nickname || selectedChatter.full_name}</h2>
           <span className="text-sm text-gray-400">{selectedChatter.email}</span>
         </div>
 
@@ -161,7 +162,7 @@ function AdminChattingSpace({ currentUser }) {
                     {u.full_name?.charAt(0) || "?"}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-800">{u.full_name}</p>
+                    <p className="text-sm font-semibold text-gray-800">{u.nickname || u.full_name}</p>
                     <p className="text-xs text-gray-400">{u.email}</p>
                   </div>
                 </div>
@@ -191,6 +192,8 @@ function AdminChattingSpace({ currentUser }) {
 // Chatter's own view
 function ChatterView({ currentUser }) {
   const email = currentUser?.email;
+  const [nickname, setNickname] = useState(currentUser?.nickname || "");
+  const [showNicknameModal, setShowNicknameModal] = useState(!currentUser?.nickname);
 
   const { data: payments = [] } = useQuery({
     queryKey: ["chatter-payments", email],
@@ -219,15 +222,23 @@ function ChatterView({ currentUser }) {
   ];
   const greeting = greetings[new Date().getDate() % greetings.length];
 
+  const displayName = nickname || currentUser?.full_name?.split(" ")[0] || "";
+
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
+      {showNicknameModal && (
+        <NicknameSetupModal
+          user={currentUser}
+          onSaved={(n) => { setNickname(n); setShowNicknameModal(false); }}
+        />
+      )}
       {/* Motivační banner */}
       <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#C9A227] to-[#e8c84a] p-5 flex items-center gap-4 shadow-md">
         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl flex-shrink-0">
           👋
         </div>
         <div>
-          <p className="text-white font-bold text-base leading-snug">{`Ahoj, ${currentUser?.full_name?.split(" ")[0] || ""}!`}</p>
+          <p className="text-white font-bold text-base leading-snug">{`Ahoj, ${displayName}!`}</p>
           <p className="text-white/85 text-sm mt-0.5">{greeting}</p>
         </div>
       </div>

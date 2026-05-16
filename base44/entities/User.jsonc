@@ -44,6 +44,10 @@
         "type": "string"
       },
       "description": "Povolen\u00e9 str\u00e1nky (pro custom opr\u00e1vn\u011bn\u00ed)"
+    },
+    "nickname": {
+      "type": "string",
+      "description": "P\u0159ezd\u00edvka u\u017eivatele zobrazovan\u00e1 v aplikaci"
     }
   },
   "required": [
