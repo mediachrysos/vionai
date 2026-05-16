@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarWidget } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X, Search, Bot, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import OnboardingLinksList from "../components/customers/OnboardingLinksList";
@@ -423,26 +425,53 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
 }
 
 function AddModelInline({ models, setModels }) {
-  const [form, setForm] = useState({ name: "", status: "active", notes: "" });
+  const [form, setForm] = useState({ name: "", status: "active" });
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
+  const [search, setSearch] = useState("");
+  const [payments, setPayments] = useState([]);
+
+  useEffect(() => {
+    base44.entities.Payment.list("-created_date", 5000).then(setPayments);
+  }, []);
 
   const handleSave = async () => {
+    if (!form.name) return;
     setSaving(true);
     const created = await base44.entities.Model.create(form);
     setModels((prev) => [...prev, created]);
     setSaving(false);
     setDone(true);
-    setForm({ name: "", status: "active", notes: "" });
+    setForm({ name: "", status: "active" });
     setTimeout(() => setDone(false), 2000);
   };
 
+  const handleDelete = async (e, m) => {
+    e.preventDefault();
+    if (!window.confirm(`Opravdu smazat modelku "${m.name}"?`)) return;
+    await base44.entities.Model.delete(m.id);
+    setModels((prev) => prev.filter(x => x.id !== m.id));
+  };
+
+  // Revenue per model
+  const modelRevenue = {};
+  const modelPaymentCount = {};
+  payments.forEach((p) => {
+    if (p.model_id) {
+      modelRevenue[p.model_id] = (modelRevenue[p.model_id] || 0) + (p.amount || 0);
+      modelPaymentCount[p.model_id] = (modelPaymentCount[p.model_id] || 0) + 1;
+    }
+  });
+
+  const filtered = models.filter(m => !search || m.name?.toLowerCase().includes(search.toLowerCase()));
+
   return (
     <div className="space-y-4">
+      {/* Add form */}
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_160px_auto] gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Name *</label>
-          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Model name" className="h-9" />
+          <label className="text-xs font-semibold text-gray-600 block mb-1">Jméno *</label>
+          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" className="h-9" />
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Status</label>
@@ -456,20 +485,55 @@ function AddModelInline({ models, setModels }) {
         </div>
         <div className="flex items-end">
           <Button onClick={handleSave} disabled={!form.name || saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 w-full text-sm font-semibold whitespace-nowrap px-6 text-white">
-            {done ? "✓ Added!" : saving ? "..." : "Add model"}
+            {done ? "✓ Přidáno!" : saving ? "..." : "Přidat modelku"}
           </Button>
         </div>
       </div>
-      {models.length > 0 &&
-      <div className="flex flex-wrap gap-2 pt-1">
-          {models.map((m) =>
-        <span key={m.id} className={`text-xs px-3 py-1.5 rounded-full border font-medium ${m.status === "active" ? "bg-amber-50 text-[#C9A227] border-[#e8d99a]" : "bg-gray-50 text-gray-400 border-gray-200"}`}>
-              {m.name}
-            </span>
-        )}
+
+      {/* Search */}
+      {models.length > 3 && (
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat modelky..." className="pl-10 h-9" />
         </div>
-      }
-    </div>);
+      )}
+
+      {/* Models list */}
+      {filtered.length > 0 && (
+        <div className="space-y-2">
+          {filtered.map((m) => (
+            <Link key={m.id} to={`${createPageUrl("ModelDetail")}?id=${m.id}`} className="group block">
+              <div className="bg-gray-50 rounded-xl border border-gray-100 p-4 hover:border-[#e8d99a] hover:shadow-sm transition-all flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a] flex-shrink-0">
+                  {m.profile_photo
+                    ? <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" />
+                    : <Bot className="w-5 h-5 text-[#C9A227]" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-800">{m.name}</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${m.status === "active" ? "bg-amber-50 text-[#C9A227] border border-[#e8d99a]" : "bg-gray-100 text-gray-400"}`}>
+                    {m.status === "active" ? "Active" : "Inactive"}
+                  </span>
+                </div>
+                <div className="text-right mr-4">
+                  <p className="text-xs text-gray-400">Revenue</p>
+                  <p className="text-sm font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} CZK</p>
+                </div>
+                <div className="text-right mr-4">
+                  <p className="text-xs text-gray-400">Platby</p>
+                  <p className="text-sm font-semibold text-gray-900">{modelPaymentCount[m.id] || 0}</p>
+                </div>
+                <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-[#C9A227] transition-colors flex-shrink-0 mr-2" />
+                <button onClick={(e) => handleDelete(e, m)} className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0">
+                  <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
+                </button>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function AddCustomerInline({ users, onGenerateLink }) {
