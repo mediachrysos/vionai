@@ -241,7 +241,7 @@ function ChatterView({ currentUser }) {
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#f7f7f8]">
       {showNicknameModal && (
         <NicknameSetupModal
           user={currentUser}
@@ -249,113 +249,114 @@ function ChatterView({ currentUser }) {
         />
       )}
 
-      {/* Hero banner */}
-      <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#C9A227] to-[#e8c84a] p-5 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl flex-shrink-0">⚡</div>
-          <div>
-            <p className="text-white font-bold text-base leading-snug">Ahoj, {displayName}!</p>
-            <p className="text-white/85 text-sm mt-0.5">{greeting}</p>
+      {/* Hero */}
+      <div className="bg-gradient-to-br from-[#1a1207] via-[#2d1f07] to-[#1a1207] px-6 pt-8 pb-16 relative overflow-hidden">
+        {/* Glow orbs */}
+        <div className="absolute top-0 left-1/4 w-64 h-64 bg-[#C9A227]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-[#e8c84a]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto relative">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest mb-1">Chatting Space</p>
+              <h1 className="text-white text-2xl font-bold mb-1">Ahoj, {displayName} 👋</h1>
+              <p className="text-white/50 text-sm">{greeting}</p>
+            </div>
+            <div className="text-right bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-5 py-3">
+              <p className="text-white/40 text-[10px] uppercase tracking-widest mb-0.5">Revenue dnes</p>
+              <p className="text-white text-2xl font-bold tabular-nums">{todayRevenue.toLocaleString()}</p>
+              <p className="text-[#C9A227] text-xs font-medium">Kč</p>
+            </div>
           </div>
-        </div>
-        <div className="text-right hidden sm:block">
-          <p className="text-white/70 text-xs">Revenue dnes</p>
-          <p className="text-white font-bold text-xl">{todayRevenue.toLocaleString()} Kč</p>
         </div>
       </div>
 
-      {/* 4 KPI cards */}
-      <DailyKpiCards
-        todayRevenue={todayRevenue}
-        hoursWorked={hoursToday}
-        dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-        dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-        tiers={tiers}
-      />
+      <div className="max-w-5xl mx-auto px-4 lg:px-6 -mt-8 pb-12 space-y-4">
 
-      {/* Daily performance / tier ladder */}
-      <TierLadder
-        todayRevenue={todayRevenue}
-        hoursWorked={hoursToday}
-        dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-        dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-        tiers={tiers}
-      />
-
-      {/* Monthly target / pace */}
-      <MonthlyPaceCard
-        monthRevenue={monthRevenue}
-        monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
-        monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled}
-      />
-
-      {/* Monthly payout overview */}
-      <MonthlyPayoutCard
-        monthPayments={monthPayments}
-        totalPaidOut={totalPaidOut}
-        monthlyBonusEnabled={!!activeRule?.monthly_bonus_enabled}
-        monthlyBonusAmount={activeRule?.monthly_bonus_amount || 0}
-        monthlyBonusConditionRevenue={activeRule?.monthly_bonus_condition_revenue || 0}
-        hoursMap={hoursMap}
-        tiers={tiers}
-      />
-
-      {/* Výplata widget — Earned / Paid Out / To Pay */}
-      <ChatterPayWidget
-        chatterEmail={email}
-        hoursWorked={hoursToday}
-        totalChatted={monthRevenue}
-        monthPayments={monthPayments}
-        isAdmin={false}
-      />
-
-      {/* Payout simulator */}
-      <PayoutSimulator
-        todayRevenue={todayRevenue}
-        hoursWorked={hoursToday}
-        monthRevenue={monthRevenue}
-        monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
-        monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled}
-        tiers={tiers}
-      />
-
-      {/* Daily breakdown */}
-      <DailyBreakdownCard
-        monthPayments={monthPayments}
-        dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-        dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-        hoursMap={hoursMap}
-        tiers={tiers}
-      />
-
-      {/* Personal records */}
-      <PersonalRecords
-        allPayments={payments}
-        tiers={tiers}
-        hoursMap={hoursMap}
-      />
-
-      {/* Leaderboard */}
-      {chatters.length > 1 && (
-        <ChatterLeaderboard
-          chatters={chatters}
-          allPayments={allPayments}
-          currentUserEmail={email}
+        {/* 4 KPI cards — pulled up over hero */}
+        <DailyKpiCards
+          todayRevenue={todayRevenue}
+          hoursWorked={hoursToday}
+          dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+          dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
           tiers={tiers}
         />
-      )}
 
-      {/* Coach notes */}
-      <CoachNotes
-        notes={notes}
-        isAdmin={false}
-        chatterEmail={email}
-        onAdd={handleAddNote}
-        onDelete={handleDeleteNote}
-      />
+        {/* Tier ladder + monthly pace side by side on large screens */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <TierLadder
+            todayRevenue={todayRevenue}
+            hoursWorked={hoursToday}
+            dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+            dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
+            tiers={tiers}
+          />
+          <MonthlyPaceCard
+            monthRevenue={monthRevenue}
+            monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
+            monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled}
+          />
+        </div>
 
-      {/* Recent payments */}
-      <RecentPaymentsCard payments={payments} />
+        {/* Monthly payout full width */}
+        <MonthlyPayoutCard
+          monthPayments={monthPayments}
+          totalPaidOut={totalPaidOut}
+          monthlyBonusEnabled={!!activeRule?.monthly_bonus_enabled}
+          monthlyBonusAmount={activeRule?.monthly_bonus_amount || 0}
+          monthlyBonusConditionRevenue={activeRule?.monthly_bonus_condition_revenue || 0}
+          hoursMap={hoursMap}
+          tiers={tiers}
+        />
+
+        {/* Payout simulator */}
+        <PayoutSimulator
+          todayRevenue={todayRevenue}
+          hoursWorked={hoursToday}
+          monthRevenue={monthRevenue}
+          monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
+          monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled}
+          tiers={tiers}
+        />
+
+        {/* Daily breakdown */}
+        <DailyBreakdownCard
+          monthPayments={monthPayments}
+          dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+          dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
+          hoursMap={hoursMap}
+          tiers={tiers}
+        />
+
+        {/* Personal records + Leaderboard side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <PersonalRecords
+            allPayments={payments}
+            tiers={tiers}
+            hoursMap={hoursMap}
+          />
+          {chatters.length > 1 && (
+            <ChatterLeaderboard
+              chatters={chatters}
+              allPayments={allPayments}
+              currentUserEmail={email}
+              tiers={tiers}
+            />
+          )}
+        </div>
+
+        {/* Coach notes + Recent payments */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <CoachNotes
+            notes={notes}
+            isAdmin={false}
+            chatterEmail={email}
+            onAdd={handleAddNote}
+            onDelete={handleDeleteNote}
+          />
+          <RecentPaymentsCard payments={payments} />
+        </div>
+      </div>
     </div>
   );
 }

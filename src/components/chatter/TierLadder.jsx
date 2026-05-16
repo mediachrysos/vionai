@@ -1,6 +1,6 @@
 import React from "react";
 import { calcDailyPayout, getNextTier, getTierForRevenue } from "./tierUtils";
-import { Clock } from "lucide-react";
+import { Flame } from "lucide-react";
 
 export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount, dailyGoalEnabled, tiers }) {
   const currentTier = getTierForRevenue(todayRevenue, tiers);
@@ -9,86 +9,83 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
   const missingToNext = nextTier ? Math.max(0, nextTier.min - todayRevenue) : 0;
 
   const microcopy = () => {
-    if (currentTier.index === 0) return `Ještě nejsi ve výplatním tieru. Chybí ti ${missingToNext.toLocaleString()} Kč do aktivace hodinovky.`;
-    if (currentTier.index === 1) return `Hodinovka je odemčená 🎉 Chybí ti ${missingToNext.toLocaleString()} Kč do 5% provize.`;
-    if (currentTier.index === 2) return `5% provize je odemčená 🔥 Chybí ti ${missingToNext.toLocaleString()} Kč do 10% provize.`;
-    return "Nejvyšší denní tier odemčen 🏆 Každá další platba dnes jede s 10% provizí.";
+    if (currentTier.index === 0) return `Chybí ${missingToNext.toLocaleString()} Kč do aktivace hodinovky`;
+    if (currentTier.index === 1) return `🎉 Hodinovka odemčena — ${missingToNext.toLocaleString()} Kč do 5% provize`;
+    if (currentTier.index === 2) return `🔥 5% provize aktivní — ${missingToNext.toLocaleString()} Kč do 10%`;
+    return "🏆 Maximální tier — 10% provize z každé platby";
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4">
-      <h3 className="text-sm font-bold text-gray-800 mb-1 flex items-center gap-2">
-        <Clock className="w-4 h-4 text-[#C9A227]" /> Dnešní výkonnost
-      </h3>
-      <p className="text-xs text-[#C9A227] font-medium mb-5">{microcopy()}</p>
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-5 h-full flex flex-col">
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-7 h-7 rounded-xl bg-amber-100 flex items-center justify-center">
+          <Flame className="w-3.5 h-3.5 text-[#C9A227]" />
+        </div>
+        <h3 className="text-sm font-bold text-gray-800">Dnešní výkonnost</h3>
+      </div>
+      <p className="text-xs text-[#C9A227] font-medium mb-4 ml-9">{microcopy()}</p>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="text-center">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Vychatováno</p>
-          <p className="text-lg font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        <div className="bg-gray-50 rounded-xl p-3">
+          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Vychatováno</p>
+          <p className="text-base font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
         </div>
-        <div className="text-center">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Odpracováno</p>
-          <p className="text-lg font-bold text-gray-900">{hoursWorked} h</p>
-        </div>
-        <div className="text-center">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Aktuální tier</p>
-          <p className={`text-sm font-bold ${currentTier.index > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{currentTier.name}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Payout dnes</p>
-          <p className={`text-lg font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
+        <div className="bg-gray-50 rounded-xl p-3">
+          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Payout dnes</p>
+          <p className={`text-base font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
         </div>
       </div>
 
-      {/* Tier ladder */}
-      <div className="flex flex-col sm:flex-row gap-2">
+      {/* Tier steps */}
+      <div className="flex flex-col gap-1.5 flex-1">
         {tiers.map((tier, i) => {
           const isActive = currentTier.index === i;
           const isCompleted = currentTier.index > i;
-          const isNext = nextTier?.index === i;
           return (
             <div
               key={i}
-              className={`flex-1 rounded-xl border p-3 transition-all ${
+              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 border transition-all ${
                 isActive
-                  ? "border-[#C9A227] bg-gradient-to-b from-[#faf6e6] to-[#fdf9ee] shadow-[0_0_0_2px_#C9A22720]"
+                  ? "border-[#C9A227] bg-gradient-to-r from-[#faf6e6] to-[#fffdf5] shadow-[0_0_0_1px_#C9A22720]"
                   : isCompleted
-                  ? "border-emerald-200 bg-emerald-50/50"
+                  ? "border-emerald-200 bg-emerald-50/40"
                   : "border-gray-100 bg-gray-50/50"
               }`}
             >
-              <div className="flex items-center justify-between mb-1">
-                <span className={`text-[10px] font-bold uppercase tracking-wider ${isActive ? "text-[#C9A227]" : isCompleted ? "text-emerald-600" : "text-gray-400"}`}>
-                  {isCompleted ? "✓ Done" : isActive ? "● Aktivní" : isNext ? "Další" : "Locked"}
-                </span>
-                {tier.max !== null && tier.max !== undefined ? (
-                  <span className="text-[9px] text-gray-400">{tier.min.toLocaleString()}–{tier.max.toLocaleString()} Kč</span>
-                ) : (
-                  <span className="text-[9px] text-gray-400">{tier.min.toLocaleString()}+ Kč</span>
-                )}
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0 ${
+                isActive ? "bg-[#C9A227] text-white" : isCompleted ? "bg-emerald-500 text-white" : "bg-gray-200 text-gray-400"
+              }`}>
+                {isCompleted ? "✓" : i + 1}
               </div>
-              <p className={`text-xs font-semibold leading-snug ${isActive ? "text-[#A8841C]" : isCompleted ? "text-emerald-700" : "text-gray-500"}`}>{tier.name}</p>
-              {tier.commission > 0 && (
-                <p className="text-[10px] text-gray-400 mt-0.5">{tier.commission}% provize</p>
-              )}
+              <div className="flex-1 min-w-0">
+                <p className={`text-xs font-semibold ${isActive ? "text-[#A8841C]" : isCompleted ? "text-emerald-700" : "text-gray-400"}`}>{tier.name}</p>
+                <p className="text-[10px] text-gray-400 truncate">
+                  {tier.max !== null && tier.max !== undefined ? `${tier.min.toLocaleString()}–${tier.max.toLocaleString()} Kč` : `${tier.min.toLocaleString()}+ Kč`}
+                  {tier.commission > 0 && ` · ${tier.commission}% provize`}
+                </p>
+              </div>
+              {isActive && <span className="text-[9px] font-bold text-[#C9A227] bg-[#C9A227]/10 px-1.5 py-0.5 rounded-full">AKTIVNÍ</span>}
             </div>
           );
         })}
       </div>
 
       {dailyGoalEnabled && dailyGoalAmount > 0 && (
-        <div className="mt-4">
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Denní cíl: {dailyGoalAmount.toLocaleString()} Kč</span>
-            <span>{Math.min(100, Math.round((todayRevenue / dailyGoalAmount) * 100))}%</span>
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+            <span>Denní cíl</span>
+            <span className="font-semibold">{Math.min(100, Math.round((todayRevenue / dailyGoalAmount) * 100))}%</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all"
               style={{ width: `${Math.min(100, (todayRevenue / dailyGoalAmount) * 100)}%` }}
             />
+          </div>
+          <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+            <span>{todayRevenue.toLocaleString()} Kč</span>
+            <span>{dailyGoalAmount.toLocaleString()} Kč</span>
           </div>
         </div>
       )}
