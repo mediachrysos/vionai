@@ -26,7 +26,7 @@ const allPages = [
   { name: "Customers", icon: Users, page: "Customers" },
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
-  { name: "Social Media", icon: null, page: "SocialMediaContent" },
+  { name: "Graphic Space", icon: null, page: "SocialMediaContent" },
   { name: "Admin Portal", icon: null, page: "AdminUsers" },
   { name: "Customer Scraper", icon: null, page: "CustomerScraper" },
 ];
