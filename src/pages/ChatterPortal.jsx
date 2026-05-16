@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageSquare } from "lucide-react";
 import PageHeader from "../components/ui-custom/PageHeader";
 import NicknameSetupModal from "../components/ui-custom/NicknameSetupModal";
+import OnboardingLinkForm from "../components/customers/OnboardingLinkForm";
 import { DEFAULT_TIERS } from "../components/chatter/tierUtils";
 import DailyKpiCards from "../components/chatter/DailyKpiCards";
 import TierLadder from "../components/chatter/TierLadder";
@@ -26,6 +27,12 @@ function AdminChattingSpace({ currentUser }) {
     queryKey: ["users-chatters"],
     queryFn: () => base44.entities.User.list(),
     staleTime: 60000
+  });
+
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+    staleTime: 120000
   });
 
   const { data: allPayments = [] } = useQuery({
@@ -70,7 +77,9 @@ function AdminChattingSpace({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
-      <PageHeader title="Chatting Space" subtitle="Přehled všech chatterů" />
+      <PageHeader title="Chatting Space" subtitle="Přehled všech chatterů">
+        <OnboardingLinkForm models={models} />
+      </PageHeader>
       {chatters.length === 0 ?
       <div className="text-center py-16 text-gray-400">
           <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
