@@ -15,6 +15,7 @@ import PersonalRecords from "../components/chatter/PersonalRecords";
 import ChatterLeaderboard from "../components/chatter/ChatterLeaderboard";
 import CoachNotes from "../components/chatter/CoachNotes";
 import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
+import StatsCard from "../components/chatter/StatsCard";
 import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
 
 // ─── Admin view ────────────────────────────────────────────────────────────
@@ -323,7 +324,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
           }
         </div>
 
-        {/* Coach notes + Recent payments */}
+        {/* Coach notes + Recent payments + Today stats */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <CoachNotes
             notes={notes}
@@ -333,6 +334,11 @@ function ChatterView({ currentUser, isAdminView = false }) {
             onDelete={handleDeleteNote} />
           
           <RecentPaymentsCard payments={payments} />
+          
+          <StatsCard
+            todayRevenue={todayRevenue}
+            hoursWorked={hoursToday}
+            nextTierRevenue={5000} />
         </div>
       </div>
     </div>);
