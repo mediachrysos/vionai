@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, Bot,
   ChevronLeft, ChevronRight, LogOut,
-  Menu, X, UserCircle, CreditCard
+  Menu, X, UserCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +24,6 @@ const customIcons = {
 const allPages = [
   { name: "Dashboard", icon: null, page: "Dashboard" },
   { name: "Customers", icon: Users, page: "Customers" },
-  { name: "Payments", icon: CreditCard, page: "Payments" },
   { name: "Models", icon: null, page: "Models" },
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
@@ -33,7 +32,7 @@ const allPages = [
   { name: "Customer Scraper", icon: null, page: "CustomerScraper" },
 ];
 
-const defaultChatterPages = ["ChatterPortal", "Customers", "Payments"];
+const defaultChatterPages = ["ChatterPortal", "Customers"];
 const defaultLawyerPages = ["Finance"];
 
 export default function Sidebar({ currentPage, user, onLogout }) {
@@ -53,7 +52,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
     items = allPages.filter(p => defaultLawyerPages.includes(p.page));
   } else {
     // Default chatter nav
-    const chatterPages = ["ChatterPortal", "Customers", "Payments"];
+    const chatterPages = ["ChatterPortal", "Customers"];
     items = [
       { name: "My Overview", icon: LayoutDashboard, page: "ChatterPortal" },
       ...allPages.filter(p => chatterPages.includes(p.page) && p.page !== "ChatterPortal"),
