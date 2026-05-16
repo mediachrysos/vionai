@@ -130,6 +130,12 @@ function ChatterView({ currentUser, isAdminView = false }) {
   const [nickname, setNickname] = useState(currentUser?.nickname || "");
   const [showNicknameModal, setShowNicknameModal] = useState(!isAdminView && !currentUser?.nickname);
 
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+    staleTime: 120000
+  });
+
   const today = new Date().toISOString().split("T")[0];
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
 
@@ -260,6 +266,14 @@ function ChatterView({ currentUser, isAdminView = false }) {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
+
+        {/* Onboarding link — only for admin view */}
+        {isAdminView && (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-2">
+            <p className="text-xs text-blue-600 font-semibold mb-3">Přidej nového zákazníka</p>
+            <OnboardingLinkForm models={models} />
+          </div>
+        )}
 
         {/* 4 KPI cards — pulled up over hero */}
         <DailyKpiCards
