@@ -13,6 +13,7 @@ import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
 import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import OnboardingLinksList from "../components/customers/OnboardingLinksList";
 import AdminPayments from "../components/admin/AdminPayments";
+import ChatterRulesAdmin from "../components/chatting/ChatterRulesAdmin";
 
 function GoalDatePicker({ value, onChange, placeholder }) {
   const [open, setOpen] = useState(false);
@@ -74,7 +75,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   const [onboardingRefresh, setOnboardingRefresh] = useState(0);
   const [dashboards, setDashboards] = useState([]);
 
-  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false, invoices: false });
+  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false, invoices: false, chatterRules: false });
 
   const toggle = (key) => setOpenSections((p) => ({ ...p, [key]: !p[key] }));
 
@@ -221,6 +222,8 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       <Section label="Nastavení faktury" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.invoices} onToggle={() => toggle("invoices")}>
         <InvoiceSettingsInline />
       </Section>
+
+      <ChatterRulesAdmin />
     </div>);
 }
 

@@ -1,0 +1,59 @@
+{
+  "name": "ChatterDailyPerformance",
+  "type": "object",
+  "properties": {
+    "chatter_email": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0
+    },
+    "hours_worked": {
+      "type": "number",
+      "default": 0
+    },
+    "daily_goal_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "daily_goal_completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "reached_tier_name": {
+      "type": "string"
+    },
+    "hourly_rate_applied": {
+      "type": "number",
+      "default": 0
+    },
+    "commission_percentage_applied": {
+      "type": "number",
+      "default": 0
+    },
+    "base_pay": {
+      "type": "number",
+      "default": 0
+    },
+    "commission_pay": {
+      "type": "number",
+      "default": 0
+    },
+    "daily_payout": {
+      "type": "number",
+      "default": 0
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "chatter_email",
+    "date"
+  ]
+}

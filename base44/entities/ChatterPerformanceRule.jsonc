@@ -1,0 +1,56 @@
+{
+  "name": "ChatterPerformanceRule",
+  "type": "object",
+  "properties": {
+    "chatter_email": {
+      "type": "string",
+      "description": "Email chattera"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date"
+    },
+    "valid_to": {
+      "type": "string",
+      "format": "date"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "daily_goal_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "daily_goal_amount": {
+      "type": "number",
+      "default": 5000
+    },
+    "monthly_goal_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "monthly_goal_amount": {
+      "type": "number",
+      "default": 150000
+    },
+    "monthly_bonus_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "monthly_bonus_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "monthly_bonus_condition_revenue": {
+      "type": "number",
+      "default": 0
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "chatter_email"
+  ]
+}
