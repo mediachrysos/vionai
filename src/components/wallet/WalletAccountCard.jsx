@@ -2,7 +2,11 @@ import React from "react";
 import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function WalletAccountCard({ account, onEdit, onDelete }) {
+export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs = [] }) {
+  const accountTxs = walletTxs.filter(t => t.account_id === account.id);
+  const totalIncome = accountTxs.filter(t => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
+  const totalExpense = accountTxs.filter(t => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+
   return (
     <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 flex flex-col gap-3">
       <div className="flex items-start justify-between">
@@ -35,6 +39,22 @@ export default function WalletAccountCard({ account, onEdit, onDelete }) {
           {(account.balance || 0).toLocaleString("cs-CZ")} {account.currency || "Kč"}
         </p>
       </div>
+      {(totalIncome > 0 || totalExpense > 0) && (
+        <div className="flex gap-3 border-t border-gray-100 pt-3">
+          {totalIncome > 0 && (
+            <div className="flex-1">
+              <p className="text-xs text-gray-400 mb-0.5">Příjmy</p>
+              <p className="text-sm font-semibold text-emerald-600">+{totalIncome.toLocaleString("cs-CZ")} Kč</p>
+            </div>
+          )}
+          {totalExpense > 0 && (
+            <div className="flex-1">
+              <p className="text-xs text-gray-400 mb-0.5">Výdaje</p>
+              <p className="text-sm font-semibold text-red-500">-{totalExpense.toLocaleString("cs-CZ")} Kč</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

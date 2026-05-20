@@ -252,6 +252,7 @@ export default function Wallet() {
           <WalletAccountCard
             key={acc.id}
             account={acc}
+            walletTxs={walletTxs}
             onEdit={(a) => {setEditingAccount(a);setShowAccountModal(true);}}
             onDelete={deleteAccountMutation.mutate} />
 
