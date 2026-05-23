@@ -38,11 +38,46 @@ export default function OnboardingLinkForm({ models = [] }) {
     setTimeout(() => setCopied(false), 3000);
   };
 
-  return null;
-
-
-
-
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-4 h-full flex flex-col">
+      <h3 className="font-semibold text-gray-800 mb-4 text-sm flex items-center gap-2">
+        🔗 Onboarding link
+      </h3>
+      <div className="flex flex-col gap-3 flex-1">
+        <Input
+          placeholder="Jméno zákazníka *"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="h-9 text-sm"
+        />
+        {models.length > 0 && (
+          <Select value={assignedModel} onValueChange={setAssignedModel}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue placeholder="Vybrat modelku *" />
+            </SelectTrigger>
+            <SelectContent>
+              {models.map((m) => (
+                <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        <button
+          onClick={handleGenerate}
+          disabled={!canGenerate}
+          className="mt-auto h-9 rounded-lg bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+        >
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : copied ? (
+            <><Check className="w-4 h-4" /> Zkopírováno!</>
+          ) : (
+            "Vygenerovat & zkopírovat"
+          )}
+        </button>
+      </div>
+    </div>
+  );
 
 
 
