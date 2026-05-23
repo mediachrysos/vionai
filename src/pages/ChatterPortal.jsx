@@ -81,9 +81,7 @@ function AdminChattingSpace({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
-      <PageHeader title="Chatting Space" subtitle="Přehled všech chatterů">
-        <OnboardingLinkForm models={models} />
-      </PageHeader>
+      <PageHeader title="Chatting Space" subtitle="Přehled všech chatterů" />
       {chatters.length === 0 ?
       <div className="text-center py-16 text-gray-400">
           <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
