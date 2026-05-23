@@ -14,6 +14,30 @@
       "type": "string",
       "format": "date",
       "description": "Datum pozn\u00e1mky"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Jm\u00e9no klienta"
+    },
+    "amount": {
+      "type": "number",
+      "description": "\u010c\u00e1stka"
+    },
+    "account": {
+      "type": "string",
+      "description": "ID bankovn\u00edho \u00fa\u010dtu"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "N\u00e1zev \u00fa\u010dtu pro zobrazen\u00ed"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "ID modelky"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Jm\u00e9no modelky pro zobrazen\u00ed"
     }
   },
   "required": [

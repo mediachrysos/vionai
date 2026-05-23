@@ -226,11 +226,17 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
   const greeting = greetings[new Date().getDate() % greetings.length];
 
-  const handleAddNote = async (content) => {
+  const handleAddNote = async (content, extra = {}) => {
     await base44.entities.ChatterNote.create({
       chatter_email: email,
       content,
-      note_date: today
+      note_date: extra.note_date || today,
+      customer_name: extra.customer_name || undefined,
+      amount: extra.amount || undefined,
+      account: extra.account || undefined,
+      account_name: extra.account_name || undefined,
+      model_id: extra.model_id || undefined,
+      model_name: extra.model_name || undefined,
     });
     refetchNotes();
   };
