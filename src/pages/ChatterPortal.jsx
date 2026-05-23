@@ -369,12 +369,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
         {/* Customers payout list */}
         <CustomerPayoutList email={email} />
 
-        {/* Chatter's customers — only for own dashboard */}
-        {!isAdminView &&
+        {/* Chatter's customers */}
         <ChatterCustomersList
           chatterEmail={email}
-          assignedModelIds={currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])} />
-        }
+          assignedModelIds={(currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter(id => id != null && id !== "")} />
       </div>
     </div>);
 
