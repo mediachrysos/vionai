@@ -45,10 +45,10 @@ export default function OnboardingLinkForm({ models = [] }) {
         onChange={e => setName(e.target.value)}
         onKeyDown={e => e.key === "Enter" && handleGenerate()}
         placeholder="Jméno zákazníka..."
-        className="h-9 w-44 text-sm"
+        className="h-9 w-44 text-sm bg-white border-yellow-200 focus:border-[#C9A227]"
       />
       <Select value={assignedModel} onValueChange={setAssignedModel}>
-        <SelectTrigger className="h-9 w-40 text-sm">
+        <SelectTrigger className="h-9 w-40 text-sm border-yellow-200">
           <SelectValue placeholder="Modelka..." />
         </SelectTrigger>
         <SelectContent>
