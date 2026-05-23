@@ -48,36 +48,36 @@ export default function OnboardingLinkForm({ models = [] }) {
           placeholder="Jméno zákazníka *"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="h-9 text-sm"
-        />
-        {models.length > 0 && (
-          <Select value={assignedModel} onValueChange={setAssignedModel}>
+          className="h-9 text-sm" />
+        
+        {models.length > 0 &&
+        <Select value={assignedModel} onValueChange={setAssignedModel}>
             <SelectTrigger className="h-9 text-sm">
               <SelectValue placeholder="Vybrat modelku *" />
             </SelectTrigger>
             <SelectContent>
-              {models.map((m) => (
-                <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-              ))}
+              {models.map((m) =>
+            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+            )}
             </SelectContent>
           </Select>
-        )}
+        }
         <button
           onClick={handleGenerate}
           disabled={!canGenerate}
-          className="mt-auto h-9 rounded-lg bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-        >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : copied ? (
-            <><Check className="w-4 h-4" /> Zkopírováno!</>
-          ) : (
-            "Vygenerovat & zkopírovat"
-          )}
+          className="mt-auto h-9 rounded-lg hover:bg-amber-700 disabled:opacity-40 text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors bg-[#c09a24]">
+          
+          {loading ?
+          <Loader2 className="w-4 h-4 animate-spin" /> :
+          copied ?
+          <><Check className="w-4 h-4" /> Zkopírováno!</> :
+
+          "Vygenerovat & zkopírovat"
+          }
         </button>
       </div>
-    </div>
-  );
+    </div>);
+
 
 
 
