@@ -1,11 +1,32 @@
-import React from "react";
-import { Banknote } from "lucide-react";
+import React, { useState } from "react";
+import { Banknote, ChevronLeft, ChevronRight } from "lucide-react";
 import { calcDailyPayout, groupPaymentsByDate } from "./tierUtils";
 
 export default function MonthlyPayoutCard({
-  monthPayments, totalPaidOut, monthlyBonusEnabled, monthlyBonusAmount,
+  allPayments = [], payouts = [], monthlyBonusEnabled, monthlyBonusAmount,
   monthlyBonusConditionRevenue, hoursMap, tiers
 }) {
+  const now = new Date();
+  const [offset, setOffset] = useState(0); // 0 = current month, -1 = last month, etc.
+
+  const targetDate = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  const monthStart = targetDate.toISOString().split("T")[0];
+  const nextMonthStart = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 1).toISOString().split("T")[0];
+  const monthLabel = targetDate.toLocaleDateString("cs-CZ", { month: "long", year: "numeric" });
+
+  const monthPayments = allPayments.filter((p) => {
+    const d = p.payment_date || p.created_date?.split("T")[0];
+    return d >= monthStart && d < nextMonthStart;
+  });
+
+  const totalPaidOut = payouts
+    .filter((p) => {
+      const period = p.period; // format YYYY-MM
+      const targetPeriod = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, "0")}`;
+      return period === targetPeriod;
+    })
+    .reduce((s, p) => s + (p.amount || 0), 0);
+
   const dayGroups = groupPaymentsByDate(monthPayments);
 
   let totalBasePay = 0;
@@ -26,11 +47,22 @@ export default function MonthlyPayoutCard({
 
   return (
     <div className="space-y-4 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center">
-          <Banknote className="w-3.5 h-3.5 text-emerald-600" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center">
+            <Banknote className="w-3.5 h-3.5 text-emerald-600" />
+          </div>
+          <h3 className="text-sm font-bold text-gray-800">Výplata</h3>
         </div>
-        <h3 className="text-sm font-bold text-gray-800">Výplata tento měsíc</h3>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setOffset(o => o - 1)} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors">
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="text-xs font-medium text-gray-600 min-w-[110px] text-center capitalize">{monthLabel}</span>
+          <button onClick={() => setOffset(o => Math.min(0, o + 1))} disabled={offset === 0} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors disabled:opacity-30">
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Top row: Revenue + Base pay + Commission */}

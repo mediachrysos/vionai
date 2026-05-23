@@ -311,8 +311,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
         {/* Výplata */}
         <MonthlyPayoutCard
-          monthPayments={monthPayments}
-          totalPaidOut={totalPaidOut}
+          allPayments={payments}
+          payouts={payouts}
           monthlyBonusEnabled={!!activeRule?.monthly_bonus_enabled}
           monthlyBonusAmount={activeRule?.monthly_bonus_amount || 0}
           monthlyBonusConditionRevenue={activeRule?.monthly_bonus_condition_revenue || 0}
