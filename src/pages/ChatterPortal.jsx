@@ -256,10 +256,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
          <div className="max-w-5xl mx-auto flex items-center justify-between">
            <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest">Chatting Space</p>
            <div className="flex items-center gap-3">
-             <p className="text-gray-900 text-sm font-semibold">{displayName}</p>
              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                {(displayName || "?")[0].toUpperCase()}
              </div>
+             <p className="text-gray-900 text-sm font-semibold">{displayName}</p>
            </div>
          </div>
        </div>
