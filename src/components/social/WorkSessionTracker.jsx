@@ -217,9 +217,9 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center hidden">
-            <Clock className="w-3.5 h-3.5 text-gray-500" />
-          </div>
+          
+
+          
           <span className="text-sm font-semibold text-gray-800">Today's work</span>
         </div>
         <button

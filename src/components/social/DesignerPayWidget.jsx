@@ -143,9 +143,9 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center hidden">
-            <Banknote className="w-3.5 h-3.5 text-amber-600" />
-          </div>
+          
+
+          
           <span className="text-sm font-semibold text-gray-800">Salary</span>
         </div>
 
