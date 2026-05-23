@@ -5,11 +5,11 @@ import { calcDailyPayout, groupPaymentsByDate } from "./tierUtils";
 export default function PersonalRecords({ allPayments, tiers, hoursMap }) {
   if (!allPayments || allPayments.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4">
-        <h3 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
-          <Award className="w-4 h-4 text-[#C9A227]" /> Osobní rekordy
+      <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-3 mb-4">
+        <h3 className="text-xs font-bold text-gray-800 mb-2 flex items-center gap-2">
+          <Award className="w-3.5 h-3.5 text-[#C9A227]" /> Osobní rekordy
         </h3>
-        <p className="text-sm text-gray-400 text-center py-6">Zatím žádná data</p>
+        <p className="text-xs text-gray-400 text-center py-4">Zatím žádná data</p>
       </div>
     );
   }
@@ -43,17 +43,17 @@ export default function PersonalRecords({ allPayments, tiers, hoursMap }) {
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4">
-      <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <Award className="w-4 h-4 text-[#C9A227]" /> Osobní rekordy
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-3 mb-4">
+      <h3 className="text-xs font-bold text-gray-800 mb-2.5 flex items-center gap-2">
+        <Award className="w-3.5 h-3.5 text-[#C9A227]" /> Osobní rekordy
       </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {records.map((r) => (
-          <div key={r.label} className="bg-[#faf6e6] rounded-xl p-4 border border-[#e8d99a] flex flex-col gap-1">
-            <span className="text-xl">{r.icon}</span>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wide leading-tight">{r.label}</p>
-            <p className="text-base font-bold text-gray-900">{r.value}</p>
-            {r.sub && <p className="text-[10px] text-gray-400">{r.sub}</p>}
+          <div key={r.label} className="bg-[#faf6e6] rounded-lg p-2 border border-[#e8d99a] flex flex-col gap-0.5">
+            <span className="text-base">{r.icon}</span>
+            <p className="text-[8px] text-gray-500 uppercase tracking-wide leading-tight">{r.label}</p>
+            <p className="text-sm font-bold text-gray-900">{r.value}</p>
+            {r.sub && <p className="text-[8px] text-gray-400">{r.sub}</p>}
           </div>
         ))}
       </div>

@@ -46,73 +46,73 @@ export default function MonthlyPayoutCard({
   const toPay = Math.max(0, estimatedPayout - (totalPaidOut || 0));
 
   return (
-    <div className="space-y-4 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+    <div className="space-y-2.5 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center">
-            <Banknote className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="w-6 h-6 rounded-lg bg-emerald-100 flex items-center justify-center">
+            <Banknote className="w-3 h-3 text-emerald-600" />
           </div>
-          <h3 className="text-sm font-bold text-gray-800">Výplata</h3>
+          <h3 className="text-xs font-bold text-gray-800">Výplata</h3>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={() => setOffset(o => o - 1)} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors">
-            <ChevronLeft className="w-4 h-4" />
+          <button onClick={() => setOffset(o => o - 1)} className="w-6 h-6 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors">
+            <ChevronLeft className="w-3.5 h-3.5" />
           </button>
-          <span className="text-xs font-medium text-gray-600 min-w-[110px] text-center capitalize">{monthLabel}</span>
-          <button onClick={() => setOffset(o => Math.min(0, o + 1))} disabled={offset === 0} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors disabled:opacity-30">
-            <ChevronRight className="w-4 h-4" />
+          <span className="text-[10px] font-medium text-gray-600 min-w-[90px] text-center capitalize">{monthLabel}</span>
+          <button onClick={() => setOffset(o => Math.min(0, o + 1))} disabled={offset === 0} className="w-6 h-6 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors disabled:opacity-30">
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* Top row: Revenue + Base pay + Commission */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-gradient-to-br from-[#faf6e6] to-[#fffdf5] rounded-2xl p-5 border border-[#e8d99a]">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide">Celková revenue</p>
-          <p className="text-2xl font-bold text-gray-900 mt-2 tabular-nums">{totalRevenue.toLocaleString()}</p>
-          <p className="text-xs text-gray-400 mt-1">Kč</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="bg-gradient-to-br from-[#faf6e6] to-[#fffdf5] rounded-xl p-3 border border-[#e8d99a]">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wide">Celková revenue</p>
+          <p className="text-base font-bold text-gray-900 mt-1 tabular-nums">{totalRevenue.toLocaleString()}</p>
+          <p className="text-[9px] text-gray-400 mt-0.5">Kč</p>
         </div>
-        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-200">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide">Base pay (hodiny)</p>
-          <p className="text-2xl font-bold text-gray-800 mt-2 tabular-nums">{Math.round(totalBasePay).toLocaleString()}</p>
-          <p className="text-xs text-gray-400 mt-1">Kč</p>
+        <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wide">Base pay (hodiny)</p>
+          <p className="text-base font-bold text-gray-800 mt-1 tabular-nums">{Math.round(totalBasePay).toLocaleString()}</p>
+          <p className="text-[9px] text-gray-400 mt-0.5">Kč</p>
         </div>
-        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-200">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide">Provize (denní)</p>
-          <p className="text-2xl font-bold text-gray-800 mt-2 tabular-nums">{Math.round(totalCommissionPay).toLocaleString()}</p>
-          <p className="text-xs text-gray-400 mt-1">Kč</p>
+        <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+          <p className="text-[9px] text-gray-500 uppercase tracking-wide">Provize (denní)</p>
+          <p className="text-base font-bold text-gray-800 mt-1 tabular-nums">{Math.round(totalCommissionPay).toLocaleString()}</p>
+          <p className="text-[9px] text-gray-400 mt-0.5">Kč</p>
         </div>
       </div>
 
       {/* Bonus row */}
       {monthlyBonusEnabled && monthlyBonusAmount > 0 &&
-      <div className={`rounded-2xl p-5 border flex items-center justify-between ${bonusUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-100"}`}>
+      <div className={`rounded-xl p-3 border flex items-center justify-between ${bonusUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-100"}`}>
           <div>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wide font-medium">Měsíční bonus</p>
-            <p className="text-lg font-bold text-gray-800 mt-1">{monthlyBonusAmount.toLocaleString()} Kč</p>
+            <p className="text-[9px] text-gray-500 uppercase tracking-wide font-medium">Měsíční bonus</p>
+            <p className="text-sm font-bold text-gray-800 mt-0.5">{monthlyBonusAmount.toLocaleString()} Kč</p>
           </div>
-          <span className={`text-[10px] font-semibold px-3 py-1.5 rounded-full whitespace-nowrap ${bonusUnlocked ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-500"}`}>
+          <span className={`text-[8px] font-semibold px-2 py-1 rounded-full whitespace-nowrap ${bonusUnlocked ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-500"}`}>
             {bonusUnlocked ? "✓ Odemčeno" : `Chybí ${(monthlyBonusConditionRevenue - totalRevenue).toLocaleString()} Kč`}
           </span>
         </div>
       }
 
       {/* Bottom row: Earned + Paid + To pay */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-2xl p-5 bg-amber-50 border border-[#e8d99a] text-center">
-          <p className="text-[10px] text-amber-700/70 uppercase tracking-wide font-medium">Earned</p>
-          <p className="text-2xl font-bold text-amber-700 mt-2 tabular-nums">{Math.round(estimatedPayout).toLocaleString()}</p>
-          <p className="text-xs text-amber-600/70 mt-1">Kč</p>
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-xl p-3 bg-amber-50 border border-[#e8d99a] text-center">
+          <p className="text-[9px] text-amber-700/70 uppercase tracking-wide font-medium">Earned</p>
+          <p className="text-base font-bold text-amber-700 mt-1 tabular-nums">{Math.round(estimatedPayout).toLocaleString()}</p>
+          <p className="text-[9px] text-amber-600/70 mt-0.5">Kč</p>
         </div>
-        <div className="rounded-2xl p-5 bg-emerald-50 border border-emerald-200 text-center">
-          <p className="text-[10px] text-emerald-700/70 uppercase tracking-wide font-medium">Vyplaceno</p>
-          <p className="text-2xl font-bold text-emerald-700 mt-2 tabular-nums">{(totalPaidOut || 0).toLocaleString()}</p>
-          <p className="text-xs text-emerald-600/70 mt-1">Kč</p>
+        <div className="rounded-xl p-3 bg-emerald-50 border border-emerald-200 text-center">
+          <p className="text-[9px] text-emerald-700/70 uppercase tracking-wide font-medium">Vyplaceno</p>
+          <p className="text-base font-bold text-emerald-700 mt-1 tabular-nums">{(totalPaidOut || 0).toLocaleString()}</p>
+          <p className="text-[9px] text-emerald-600/70 mt-0.5">Kč</p>
         </div>
-        <div className={`rounded-2xl p-5 border text-center ${toPay > 0 ? "bg-rose-50 border-rose-200" : "bg-gray-50 border-gray-100"}`}>
-          <p className={`text-[10px] uppercase tracking-wide font-medium ${toPay > 0 ? "text-rose-700/70" : "text-gray-400"}`}>K výplatě</p>
-          <p className={`text-2xl font-bold mt-2 tabular-nums ${toPay > 0 ? "text-rose-700" : "text-gray-400"}`}>{Math.round(toPay).toLocaleString()}</p>
-          <p className={`text-xs mt-1 ${toPay > 0 ? "text-rose-600/70" : "text-gray-400"}`}>Kč</p>
+        <div className={`rounded-xl p-3 border text-center ${toPay > 0 ? "bg-rose-50 border-rose-200" : "bg-gray-50 border-gray-100"}`}>
+          <p className={`text-[9px] uppercase tracking-wide font-medium ${toPay > 0 ? "text-rose-700/70" : "text-gray-400"}`}>K výplatě</p>
+          <p className={`text-base font-bold mt-1 tabular-nums ${toPay > 0 ? "text-rose-700" : "text-gray-400"}`}>{Math.round(toPay).toLocaleString()}</p>
+          <p className={`text-[9px] mt-0.5 ${toPay > 0 ? "text-rose-600/70" : "text-gray-400"}`}>Kč</p>
         </div>
       </div>
     </div>);

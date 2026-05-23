@@ -17,40 +17,40 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-5 h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="w-7 h-7 rounded-xl bg-amber-100 flex items-center justify-center">
-          <Flame className="w-3.5 h-3.5 text-[#C9A227]" />
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-3 h-full flex flex-col">
+      <div className="flex items-center gap-2 mb-0.5">
+        <div className="w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center">
+          <Flame className="w-3 h-3 text-[#C9A227]" />
         </div>
-        <h3 className="text-sm font-bold text-gray-800">Dnešní výkonnost</h3>
+        <h3 className="text-xs font-bold text-gray-800">Dnešní výkonnost</h3>
       </div>
-      <p className="text-xs text-[#C9A227] font-medium mb-4 ml-9">{microcopy()}</p>
+      <p className="text-[10px] text-[#C9A227] font-medium mb-2.5 ml-8">{microcopy()}</p>
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-2 mb-4">
-        <div className="bg-gray-50 rounded-xl p-3">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Vychatováno</p>
-          <p className="text-base font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
+      <div className="grid grid-cols-3 gap-1.5 mb-2.5">
+        <div className="bg-gray-50 rounded-lg p-2">
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Vychatováno</p>
+          <p className="text-sm font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
         </div>
-        <div className="bg-gray-50 rounded-xl p-3">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Payout dnes</p>
-          <p className={`text-base font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
+        <div className="bg-gray-50 rounded-lg p-2">
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Payout dnes</p>
+          <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
         </div>
-        <div className="bg-gray-50 rounded-xl p-3">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Pracuješ?</p>
+        <div className="bg-gray-50 rounded-lg p-2">
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Pracuješ?</p>
           <WorkSessionWidget email={email} compact />
         </div>
       </div>
 
       {/* Tier steps */}
-      <div className="flex flex-col gap-1.5 flex-1">
+      <div className="flex flex-col gap-1 flex-1">
         {tiers.map((tier, i) => {
           const isActive = currentTier.index === i;
           const isCompleted = currentTier.index > i;
           return (
             <div
               key={i}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 border transition-all ${
+              className={`flex items-center gap-2 rounded-lg px-2 py-1.5 border transition-all ${
                 isActive
                   ? "border-[#C9A227] bg-gradient-to-r from-[#faf6e6] to-[#fffdf5] shadow-[0_0_0_1px_#C9A22720]"
                   : isCompleted
@@ -58,19 +58,19 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
                   : "border-gray-100 bg-gray-50/50"
               }`}
             >
-              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0 ${
+              <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold flex-shrink-0 ${
                 isActive ? "bg-[#C9A227] text-white" : isCompleted ? "bg-emerald-500 text-white" : "bg-gray-200 text-gray-400"
               }`}>
                 {isCompleted ? "✓" : i + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-xs font-semibold ${isActive ? "text-[#A8841C]" : isCompleted ? "text-emerald-700" : "text-gray-400"}`}>{tier.name}</p>
-                <p className="text-[10px] text-gray-400 truncate">
+                <p className={`text-[11px] font-semibold ${isActive ? "text-[#A8841C]" : isCompleted ? "text-emerald-700" : "text-gray-400"}`}>{tier.name}</p>
+                <p className="text-[9px] text-gray-400 truncate">
                   {tier.max !== null && tier.max !== undefined ? `${tier.min.toLocaleString()}–${tier.max.toLocaleString()} Kč` : `${tier.min.toLocaleString()}+ Kč`}
                   {tier.commission > 0 && ` · ${tier.commission}% provize`}
                 </p>
               </div>
-              {isActive && <span className="text-[9px] font-bold text-[#C9A227] bg-[#C9A227]/10 px-1.5 py-0.5 rounded-full">AKTIVNÍ</span>}
+              {isActive && <span className="text-[8px] font-bold text-[#C9A227] bg-[#C9A227]/10 px-1 py-0.5 rounded-full">AKTIVNÍ</span>}
             </div>
           );
         })}
