@@ -271,16 +271,24 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
       <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
 
-        {/* Onboarding link — only for admin view */}
-         {isAdminView && (
-           <div className="bg-white border border-[#ececec] rounded-2xl p-4 mb-2">
-             <p className="text-xs text-[#C9A227] font-semibold mb-3">Přidej nového zákazníka</p>
-             <OnboardingLinkForm models={models.filter(m => {
-               const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-               return ids.includes(m.id);
-             })} />
-           </div>
-         )}
+        {/* Notes + Onboarding link */}
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+           <CoachNotes
+             notes={notes}
+             chatterEmail={email}
+             onAdd={handleAddNote}
+             onDelete={handleDeleteNote} />
+           
+           {isAdminView && (
+             <div className="bg-white border border-[#ececec] rounded-2xl p-4">
+               <p className="text-xs text-[#C9A227] font-semibold mb-3">Přidej nového zákazníka</p>
+               <OnboardingLinkForm models={models.filter(m => {
+                 const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+                 return ids.includes(m.id);
+               })} />
+             </div>
+           )}
+         </div>
 
         {/* Work session + KPI + Payout history */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -360,15 +368,9 @@ function ChatterView({ currentUser, isAdminView = false }) {
           tiers={tiers} />
         }
 
-        {/* Notes + Today stats + Recent payments */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <CoachNotes
-            notes={notes}
-            chatterEmail={email}
-            onAdd={handleAddNote}
-            onDelete={handleDeleteNote} />
-          
-          <StatsCard
+        {/* Today stats + Recent payments */}
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+           <StatsCard
             todayRevenue={todayRevenue}
             hoursWorked={hoursToday}
             nextTierRevenue={5000} />
