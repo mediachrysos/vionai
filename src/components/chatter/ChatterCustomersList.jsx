@@ -26,11 +26,13 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     queryKey: ["chatter-customers", chatterEmail],
     queryFn: async () => {
       const allCustomers = await base44.entities.Customer.list("-created_date", 5000);
+      // Filter out null/undefined from assignedModelIds
+      const validModelIds = assignedModelIds.filter(id => id != null && id !== "");
       return allCustomers.filter(c => {
         // Match by assigned_chatter email
         if (c.assigned_chatter === chatterEmail) return true;
-        // Match by any of chatter's assigned model IDs (if provided)
-        if (assignedModelIds.length > 0 && c.assigned_models?.some(mid => assignedModelIds.includes(mid))) return true;
+        // Match by any of chatter's assigned model IDs
+        if (validModelIds.length > 0 && c.assigned_models?.some(mid => mid != null && validModelIds.includes(mid))) return true;
         return false;
       });
     },
