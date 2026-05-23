@@ -335,11 +335,25 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   };
 
   const toggleModel = async (modelId) => {
-    const next = assignedIds.includes(modelId) ?
-    assignedIds.filter((id) => id !== modelId) :
-    [...assignedIds, modelId];
+    const isAdding = !assignedIds.includes(modelId);
+    const next = isAdding
+      ? [...assignedIds, modelId]
+      : assignedIds.filter((id) => id !== modelId);
     setAssignedIds(next);
     await onUpdate(user.id, { assigned_model_ids: next });
+
+    // Sync assigned_chatter on customers that have this model assigned
+    if (isAdding) {
+      const customers = await base44.entities.Customer.list("-created_date", 5000);
+      const toUpdate = customers.filter((c) =>
+        Array.isArray(c.assigned_models) && c.assigned_models.includes(modelId)
+      );
+      await Promise.all(
+        toUpdate.map((c) =>
+          base44.entities.Customer.update(c.id, { assigned_chatter: user.email })
+        )
+      );
+    }
   };
 
   const togglePage = (page) => {
