@@ -190,7 +190,15 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
     const existing = await base44.entities.WeeklyProgram.filter({ week_start: nextWeekStart, designer_email: designerEmail });
     const data = { week_start: nextWeekStart, designer_email: designerEmail, is_draft: false };
     DAYS.forEach(({ key }) => {
-      data[`${key}_tasks`] = selectedTasks[key] || [];
+      // Reset submission data — keep task structure but clear submission links
+      data[`${key}_tasks`] = (selectedTasks[key] || []).map(t => ({
+        ...t,
+        submitted_link: "",
+        status: "not_started",
+        admin_note: "",
+        submitted_at: "",
+        reviewed_at: ""
+      }));
     });
     if (existing.length > 0) {
       await base44.entities.WeeklyProgram.update(existing[0].id, data);
