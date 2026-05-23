@@ -252,24 +252,17 @@ function ChatterView({ currentUser, isAdminView = false }) {
       }
 
       {/* Hero */}
-       <div className="bg-white border-b border-[#ececec] px-6 pt-8 pb-6">
-         <div className="max-w-5xl mx-auto">
-           <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest mb-6">Chatting Space</p>
-           <div className="flex items-center gap-4">
-             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+       <div className="bg-white border-b border-[#ececec] px-6 pt-6 pb-5">
+         <div className="max-w-5xl mx-auto flex items-center justify-between">
+           <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest">Chatting Space</p>
+           <div className="flex items-center gap-3">
+             <p className="text-gray-900 text-sm font-semibold">{displayName}</p>
+             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                {(displayName || "?")[0].toUpperCase()}
              </div>
-             <div>
-               <h1 className="text-gray-900 text-xl font-bold">{displayName}</h1>
-             </div>
-
-
-
-
-            
-          </div>
-        </div>
-      </div>
+           </div>
+         </div>
+       </div>
 
       <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
 
@@ -323,43 +316,15 @@ function ChatterView({ currentUser, isAdminView = false }) {
           monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
           monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
 
-        {/* Výplata & Celkem vyplaceno */}
-        <div className="bg-white border border-[#ececec] rounded-2xl p-6">
-          <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-widest mb-6">Výplata & Celkem vyplaceno</p>
-          <div className="grid grid-cols-2 gap-8">
-            <div>
-              <MonthlyPayoutCard
-                monthPayments={monthPayments}
-                totalPaidOut={totalPaidOut}
-                monthlyBonusEnabled={!!activeRule?.monthly_bonus_enabled}
-                monthlyBonusAmount={activeRule?.monthly_bonus_amount || 0}
-                monthlyBonusConditionRevenue={activeRule?.monthly_bonus_condition_revenue || 0}
-                hoursMap={hoursMap}
-                tiers={tiers} />
-            </div>
-            <div>
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Celkem vyplaceno</p>
-                <p className="text-3xl font-bold text-gray-900 mb-6">{totalPaidOut.toLocaleString()} Kč</p>
-              </div>
-              <div className="pt-6 border-t border-[#ececec]">
-                <p className="text-xs text-gray-500 mb-3">Výplaty v tomto měsíci</p>
-                <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {payouts.length === 0 ?
-                  <p className="text-xs text-gray-400">Zatím žádné výplaty</p> :
-
-                  payouts.map((p) =>
-                  <div key={p.id} className="flex justify-between text-xs">
-                        <span className="text-gray-600">{p.period}</span>
-                        <span className="font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
-                      </div>
-                  )
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Výplata */}
+        <MonthlyPayoutCard
+          monthPayments={monthPayments}
+          totalPaidOut={totalPaidOut}
+          monthlyBonusEnabled={!!activeRule?.monthly_bonus_enabled}
+          monthlyBonusAmount={activeRule?.monthly_bonus_amount || 0}
+          monthlyBonusConditionRevenue={activeRule?.monthly_bonus_condition_revenue || 0}
+          hoursMap={hoursMap}
+          tiers={tiers} />
         
 
         {/* Payout simulator */}

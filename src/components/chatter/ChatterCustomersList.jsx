@@ -21,16 +21,20 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
 
   const models = allModels.filter(m => assignedModelIds.includes(m.id));
 
-  // Load all customers filtered by assigned models
+  // Load all customers: those assigned to chatter's models OR directly assigned to chatter
   const { data: customers = [], isLoading } = useQuery({
-    queryKey: ["chatter-customers", assignedModelIds],
+    queryKey: ["chatter-customers", chatterEmail, assignedModelIds],
     queryFn: async () => {
       const allCustomers = await base44.entities.Customer.list("-created_date", 5000);
-      return allCustomers.filter(c => 
-        c.assigned_models?.some(mid => assignedModelIds.includes(mid))
-      );
+      return allCustomers.filter(c => {
+        // Match by assigned_chatter email
+        if (c.assigned_chatter === chatterEmail) return true;
+        // Match by any of chatter's assigned model IDs
+        if (assignedModelIds.length > 0 && c.assigned_models?.some(mid => assignedModelIds.includes(mid))) return true;
+        return false;
+      });
     },
-    enabled: assignedModelIds.length > 0,
+    enabled: !!chatterEmail,
     staleTime: 30000
   });
 
@@ -53,14 +57,6 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       assigned_models: [form.model_id],
     });
   };
-
-  if (assignedModelIds.length === 0) {
-    return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
-        <p className="text-sm text-gray-500">Zatím nemáte přiřazeny žádné modelky.</p>
-      </div>
-    );
-  }
 
   const filtered = search
     ? customers.filter(c =>
