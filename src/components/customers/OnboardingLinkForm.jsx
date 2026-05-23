@@ -39,47 +39,56 @@ export default function OnboardingLinkForm({ models = [] }) {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-end gap-2">
-        <div className="flex-1">
-          <label className="text-xs font-medium text-gray-600 block mb-1">Jméno zákazníka *</label>
+    <div className="flex flex-col gap-4">
+      <h3 className="text-sm font-semibold text-gray-900">Vygenerovat onboarding odkaz</h3>
+      
+      <div className="flex flex-col gap-3">
+        <div>
+          <label className="text-xs font-medium text-gray-700 block mb-2">Jméno zákazníka *</label>
           <Input
-            placeholder=""
+            placeholder="Zadej jméno..."
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="h-8 text-sm" />
+            className="h-9 text-sm" />
         </div>
         
-        {models.length > 0 &&
-        <div className="flex-1">
-          <label className="text-xs font-medium text-gray-600 block mb-1">Vybrat modelku *</label>
-          <Select value={assignedModel} onValueChange={setAssignedModel}>
-              <SelectTrigger className="h-8 text-sm">
-                <SelectValue />
+        {models.length > 0 && (
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-2">Vybrat modelku *</label>
+            <Select value={assignedModel} onValueChange={setAssignedModel}>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue placeholder="Vyber modelku..." />
               </SelectTrigger>
               <SelectContent>
-                {models.map((m) =>
-              <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-              )}
+                {models.map((m) => (
+                  <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
-        </div>
-        }
+          </div>
+        )}
+
         <button
           onClick={handleGenerate}
           disabled={!canGenerate}
-          className="h-8 px-4 rounded-lg hover:bg-amber-700 disabled:opacity-40 text-white text-sm font-medium flex items-center justify-center gap-1.5 transition-colors bg-[#c09a24]">
-          
-          {loading ?
-          <Loader2 className="w-3.5 h-3.5 animate-spin" /> :
-          copied ?
-          <><Check className="w-3.5 h-3.5" /> Zkopírováno!</> :
-
-          "Vygenerovat & zkopírovat"
-          }
+          className="h-9 px-4 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#A8841C] hover:shadow-lg disabled:opacity-50 text-white text-sm font-medium flex items-center justify-center gap-2 transition-all">
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Generuji...
+            </>
+          ) : copied ? (
+            <>
+              <Check className="w-4 h-4" />
+              Zkopírováno!
+            </>
+          ) : (
+            "Vygenerovat & zkopírovat"
+          )}
         </button>
       </div>
-    </div>);
+    </div>
+  );
 
 
 
