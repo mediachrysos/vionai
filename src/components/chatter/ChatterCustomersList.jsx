@@ -23,19 +23,19 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
 
   // Load all customers: those assigned to chatter's models OR directly assigned to chatter
   const { data: customers = [], isLoading } = useQuery({
-    queryKey: ["chatter-customers", chatterEmail, [...assignedModelIds].sort().join(",")],
+    queryKey: ["chatter-customers", chatterEmail],
     queryFn: async () => {
       const allCustomers = await base44.entities.Customer.list("-created_date", 5000);
       return allCustomers.filter(c => {
         // Match by assigned_chatter email
         if (c.assigned_chatter === chatterEmail) return true;
-        // Match by any of chatter's assigned model IDs
+        // Match by any of chatter's assigned model IDs (if provided)
         if (assignedModelIds.length > 0 && c.assigned_models?.some(mid => assignedModelIds.includes(mid))) return true;
         return false;
       });
     },
     enabled: !!chatterEmail,
-    staleTime: 30000
+    staleTime: 0
   });
 
   const saveMutation = useMutation({
@@ -69,7 +69,10 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     <div className="space-y-4">
       <div className="bg-white rounded-2xl border border-gray-100 p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-800">Moji zákazníci ({customers.length})</h3>
+          <div>
+            <h3 className="font-semibold text-gray-800">Moji zákazníci ({customers.length})</h3>
+            <p className="text-[10px] text-gray-400 mt-0.5">Email: {chatterEmail} · Modelky: {assignedModelIds.length > 0 ? assignedModelIds.join(", ") : "žádné"}</p>
+          </div>
           <Button
             onClick={() => setShowForm(!showForm)}
             size="sm"
