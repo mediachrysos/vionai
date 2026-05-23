@@ -67,6 +67,7 @@ export default function DashboardManager({ dashboards, designers, onRefresh }) {
 function DashboardRow({ dashboard, designers, onUpdate, onDelete }) {
   const [name, setName] = useState(dashboard.name);
   const [designerEmail, setDesignerEmail] = useState(dashboard.designer_email || "");
+  const [autoDuplicate, setAutoDuplicate] = useState(!!dashboard.auto_duplicate);
   const [dirty, setDirty] = useState(false);
 
   const handleSave = async () => {
@@ -75,35 +76,48 @@ function DashboardRow({ dashboard, designers, onUpdate, onDelete }) {
       name,
       designer_email: designerEmail || null,
       designer_name: designer?.full_name || designerEmail || null,
+      auto_duplicate: autoDuplicate,
     });
     setDirty(false);
   };
 
   return (
-    <div className="flex items-center gap-2 flex-wrap bg-gray-50 rounded-xl px-3 py-2.5">
-      <Input
-        value={name}
-        onChange={e => { setName(e.target.value); setDirty(true); }}
-        className="text-sm h-8 flex-1 min-w-[120px]"
-      />
-      <select
-        value={designerEmail}
-        onChange={e => { setDesignerEmail(e.target.value); setDirty(true); }}
-        className="text-xs h-8 border border-gray-200 rounded-md px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-amber-300 flex-1 min-w-[160px]"
-      >
-        <option value="">— No designer —</option>
-        {designers.map(d => (
-          <option key={d.email} value={d.email}>{d.full_name || d.email}</option>
-        ))}
-      </select>
-      {dirty && (
-        <Button size="sm" onClick={handleSave} className="bg-[#C9A227] hover:bg-[#A8841C] text-white h-8 gap-1">
-          <Save className="w-3 h-3" /> Save
-        </Button>
-      )}
-      <button onClick={() => onDelete(dashboard.id)} className="text-gray-300 hover:text-red-400 transition-colors">
-        <Trash2 className="w-3.5 h-3.5" />
-      </button>
+    <div className="bg-gray-50 rounded-xl px-3 py-2.5 space-y-2">
+      <div className="flex items-center gap-2 flex-wrap">
+        <Input
+          value={name}
+          onChange={e => { setName(e.target.value); setDirty(true); }}
+          className="text-sm h-8 flex-1 min-w-[120px]"
+        />
+        <select
+          value={designerEmail}
+          onChange={e => { setDesignerEmail(e.target.value); setDirty(true); }}
+          className="text-xs h-8 border border-gray-200 rounded-md px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-amber-300 flex-1 min-w-[160px]"
+        >
+          <option value="">— No designer —</option>
+          {designers.map(d => (
+            <option key={d.email} value={d.email}>{d.full_name || d.email}</option>
+          ))}
+        </select>
+        {dirty && (
+          <Button size="sm" onClick={handleSave} className="bg-[#C9A227] hover:bg-[#A8841C] text-white h-8 gap-1">
+            <Save className="w-3 h-3" /> Save
+          </Button>
+        )}
+        <button onClick={() => onDelete(dashboard.id)} className="text-gray-300 hover:text-red-400 transition-colors">
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
+      {/* Auto-duplicate toggle */}
+      <label className="flex items-center gap-2 cursor-pointer w-fit">
+        <div
+          onClick={() => { setAutoDuplicate(v => !v); setDirty(true); }}
+          className={`relative w-8 h-4 rounded-full transition-colors flex-shrink-0 ${autoDuplicate ? "bg-amber-500" : "bg-gray-200"}`}
+        >
+          <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform ${autoDuplicate ? "translate-x-4" : "translate-x-0.5"}`} />
+        </div>
+        <span className="text-xs text-gray-600">Auto-duplikace na příští týden</span>
+      </label>
     </div>
   );
 }

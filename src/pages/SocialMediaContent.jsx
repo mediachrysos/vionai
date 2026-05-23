@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, Settings, Copy } from "lucide-react";
 import DayCard from "../components/social/DayCard";
 import DayDetailModal from "../components/social/DayDetailModal";
 import AdminProgramEditor from "../components/social/AdminProgramEditor";
@@ -183,6 +183,34 @@ export default function SocialMediaContent({ currentUser }) {
     qc.invalidateQueries({ queryKey: ["daySubmissions", weekStart, programQueryKey] });
   };
 
+  // Auto-duplicate: when navigating to a week with no program, copy from previous week if auto_duplicate is on
+  const handleWeekChange = async (newWeekStart, prevWeekStart) => {
+    setWeekStart(newWeekStart);
+    if (!activeDashboard?.auto_duplicate) return;
+    // Only auto-duplicate when going forward
+    if (newWeekStart <= prevWeekStart) return;
+    // Check if next week already has a program
+    const existing = await base44.entities.WeeklyProgram.filter({
+      week_start: newWeekStart,
+      designer_email: effectiveDesignerEmail,
+    });
+    if (existing.length > 0) return; // Already has tasks — don't overwrite
+    // Fetch previous week's program
+    const prevPrograms = await base44.entities.WeeklyProgram.filter({
+      week_start: prevWeekStart,
+      designer_email: effectiveDesignerEmail,
+    });
+    if (prevPrograms.length === 0) return;
+    const prev = prevPrograms[0];
+    const DAYS_KEYS = ["mon","tue","wed","thu","fri","sat","sun"];
+    const data = { week_start: newWeekStart, designer_email: effectiveDesignerEmail };
+    DAYS_KEYS.forEach(key => { data[`${key}_tasks`] = (prev[`${key}_tasks`] || []).map(t => ({ ...t })); });
+    await base44.entities.WeeklyProgram.create(data);
+    setTimeout(() => {
+      qc.invalidateQueries({ queryKey: ["weeklyProgram"] });
+    }, 300);
+  };
+
   // Email to use when saving program/submissions (fallback for dashboards without designer)
   const effectiveDesignerEmail = activeDesignerEmail || `dashboard:${selectedDashboardId}`;
 
@@ -274,8 +302,15 @@ export default function SocialMediaContent({ currentUser }) {
             <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
               <ChevronLeft className="w-4 h-4 text-gray-500" />
             </button>
-            <p className="flex-1 text-center text-sm font-semibold text-gray-700">{formatWeekLabel(weekStart)}</p>
-            <button onClick={() => setWeekStart(w => addWeeks(w, 1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
+            <div className="flex-1 flex flex-col items-center">
+              <p className="text-sm font-semibold text-gray-700">{formatWeekLabel(weekStart)}</p>
+              {activeDashboard?.auto_duplicate && (
+                <span className="text-[10px] text-amber-600 flex items-center gap-1 mt-0.5">
+                  <Copy className="w-2.5 h-2.5" /> auto-duplikace zapnuta
+                </span>
+              )}
+            </div>
+            <button onClick={() => { const next = addWeeks(weekStart, 1); handleWeekChange(next, weekStart); }} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
               <ChevronRight className="w-4 h-4 text-gray-500" />
             </button>
             <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-[#faf6e6]">

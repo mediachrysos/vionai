@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
-import { Save, Plus, Trash2, Link, CloudOff } from "lucide-react";
+import { Save, Plus, Trash2, Link, Copy } from "lucide-react";
 
 const DAYS = [
   { key: "mon", label: "Monday" },
@@ -38,6 +38,8 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [hasUnsaved, setHasUnsaved] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
+  const [duplicated, setDuplicated] = useState(false);
 
   // Use refs for values that doSave needs without causing re-renders / stale closures
   const programIdRef = useRef(program?.id ?? null);
@@ -153,6 +155,30 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
 
   const handleSave = () => doSave(dayTasksRef.current);
 
+  const handleDuplicateToNextWeek = async () => {
+    setDuplicating(true);
+    const nextWeekStart = (() => {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + 7);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    })();
+    // Check if next week already has a program
+    const existing = await base44.entities.WeeklyProgram.filter({ week_start: nextWeekStart, designer_email: designerEmail });
+    const data = { week_start: nextWeekStart, designer_email: designerEmail };
+    DAYS.forEach(({ key }) => {
+      // Copy tasks but reset submission-related state
+      data[`${key}_tasks`] = (dayTasksRef.current[key] || []).map(t => ({ ...t }));
+    });
+    if (existing.length > 0) {
+      await base44.entities.WeeklyProgram.update(existing[0].id, data);
+    } else {
+      await base44.entities.WeeklyProgram.create(data);
+    }
+    setDuplicating(false);
+    setDuplicated(true);
+    setTimeout(() => setDuplicated(false), 3000);
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
       <div className="flex items-center justify-between">
@@ -164,6 +190,10 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
           {hasUnsaved && !saving && (
             <span className="text-xs text-amber-500 font-medium">Unsaved changes...</span>
           )}
+          <Button onClick={handleDuplicateToNextWeek} disabled={duplicating || duplicated} size="sm"
+            className={`gap-1.5 transition-colors ${duplicated ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "bg-violet-100 hover:bg-violet-200 text-violet-700"}`}>
+            <Copy className="w-3.5 h-3.5" /> {duplicating ? "Copying..." : duplicated ? "Copied ✓" : "Duplicate to next week"}
+          </Button>
           <Button onClick={handleSave} disabled={saving} size="sm" className={`text-white gap-1.5 transition-colors ${saved ? "bg-emerald-500 hover:bg-emerald-600" : "bg-[#C9A227] hover:bg-[#A8841C]"}`}>
             <Save className="w-3.5 h-3.5" /> {saving ? "Saving..." : saved ? "Saved ✓" : "Save"}
           </Button>

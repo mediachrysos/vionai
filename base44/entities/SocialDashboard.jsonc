@@ -23,6 +23,11 @@
       "type": "number",
       "default": 35,
       "description": "Hourly rate in MAD (Moroccan Dirhams)"
+    },
+    "auto_duplicate": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically duplicate tasks to next week"
     }
   },
   "required": [
