@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,9 +9,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function ChatterCustomersList({ chatterEmail, assignedModelIds = [] }) {
   const [search, setSearch] = useState("");
-  const [showForm, setShowForm] = useState(false);
   const [sortBy, setSortBy] = useState("last_payment");
-  const [form, setForm] = useState({ full_name: "", email: "", model_id: assignedModelIds[0] || "" });
+  const [form, setForm] = useState({ full_name: "", model_id: assignedModelIds[0] || "" });
   const qc = useQueryClient();
   const navigate = useNavigate();
 
@@ -69,8 +68,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     mutationFn: (data) => base44.entities.Customer.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["chatter-customers"] });
-      setForm({ full_name: "", email: "", model_id: validModelIds[0] || "" });
-      setShowForm(false);
+      setForm({ full_name: "", model_id: validModelIds[0] || "" });
     }
   });
 
@@ -86,7 +84,6 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     const sb = customerStats[b.id] || {};
     if (sortBy === "most_paid") return (sb.total || 0) - (sa.total || 0);
     if (sortBy === "newest") return new Date(b.created_date || 0) - new Date(a.created_date || 0);
-    // last_payment default
     if (!sa.lastDate && !sb.lastDate) return 0;
     if (!sa.lastDate) return 1;
     if (!sb.lastDate) return -1;
@@ -118,55 +115,36 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               <SelectItem value="newest">Nejnovější</SelectItem>
             </SelectContent>
           </Select>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            size="sm"
-            className="bg-amber-600 hover:bg-amber-700 h-8 text-xs px-3"
-          >
-            <Plus className="w-3.5 h-3.5 mr-1" />
-            Přidat
-          </Button>
         </div>
       </div>
 
-      {/* Add form */}
-      {showForm && (
-        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50/50 grid grid-cols-1 sm:grid-cols-4 gap-2 items-end">
-          <Input
-            placeholder="Jméno *"
-            value={form.full_name}
-            onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-            className="h-8 text-xs"
-          />
-          <Input
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="h-8 text-xs"
-          />
-          <Select value={form.model_id} onValueChange={(v) => setForm({ ...form, model_id: v })}>
-            <SelectTrigger className="h-8 text-xs">
-              <SelectValue placeholder="Vybrat modelku *" />
-            </SelectTrigger>
-            <SelectContent>
-              {models.map(m => (
-                <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => saveMutation.mutate({ full_name: form.full_name, email: form.email, assigned_models: [form.model_id] })}
-              disabled={!form.full_name || !form.model_id || saveMutation.isPending}
-              size="sm"
-              className="bg-emerald-600 hover:bg-emerald-700 h-8 text-xs flex-1"
-            >
-              {saveMutation.isPending ? "..." : "Uložit"}
-            </Button>
-            <Button onClick={() => setShowForm(false)} variant="outline" size="sm" className="h-8 text-xs">Zrušit</Button>
-          </div>
-        </div>
-      )}
+      {/* Add form — always visible */}
+      <div className="px-5 py-3 border-b border-gray-100 bg-gray-50/50 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+        <Input
+          placeholder="Jméno *"
+          value={form.full_name}
+          onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+          className="h-8 text-xs"
+        />
+        <Select value={form.model_id} onValueChange={(v) => setForm({ ...form, model_id: v })}>
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue placeholder="Vybrat modelku *" />
+          </SelectTrigger>
+          <SelectContent>
+            {models.map(m => (
+              <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          onClick={() => saveMutation.mutate({ full_name: form.full_name, assigned_models: form.model_id ? [form.model_id] : [], assigned_chatter: chatterEmail })}
+          disabled={!form.full_name || saveMutation.isPending}
+          size="sm"
+          className="bg-emerald-600 hover:bg-emerald-700 h-8 text-xs"
+        >
+          {saveMutation.isPending ? "..." : "Vytvořit odkaz"}
+        </Button>
+      </div>
 
       {/* Table */}
       {isLoading ? (
@@ -174,10 +152,10 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       ) : filtered.length === 0 ? (
         <p className="text-xs text-gray-400 text-center py-8">Zatím žádní zákazníci</p>
       ) : (
-        <div className="overflow-x-auto overflow-y-auto max-h-[500px]">
+        <div className="overflow-x-auto overflow-y-auto max-h-[480px]">
           <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100 bg-gray-50/50">
+            <thead className="sticky top-0 z-10">
+              <tr className="border-b border-gray-100 bg-gray-50/90 backdrop-blur-sm">
                 <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Jméno</th>
                 <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
                 <th className="text-center text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
@@ -186,7 +164,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 10).map((c, i) => {
+              {filtered.map((c) => {
                 const st = customerStats[c.id] || {};
                 const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
                 const isPayday = c.pay_day_of_month === todayDay;
