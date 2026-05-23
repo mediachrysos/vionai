@@ -292,37 +292,36 @@ function ChatterView({ currentUser, isAdminView = false }) {
            )}
          </div>
 
-        {/* Tier ladder + monthly pace side by side on large screens */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden">
-            <TierLadder
-              todayRevenue={todayRevenue}
-              hoursWorked={hoursToday}
-              dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-              dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-              tiers={tiers} />
-            <div className="border-t border-[#ececec] px-4 pb-4 pt-3">
-              <div className="flex items-center justify-between">
-                <div className="flex gap-6">
-                  <div>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Dnešní tržby</p>
-                    <p className="text-lg font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Plateb</p>
-                    <p className="text-lg font-bold text-gray-900">{todayPayments.length}</p>
-                  </div>
+        {/* Dnešní výkonnost — full width */}
+        <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden">
+          <TierLadder
+            todayRevenue={todayRevenue}
+            hoursWorked={hoursToday}
+            dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+            dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
+            tiers={tiers} />
+          <div className="border-t border-[#ececec] px-6 pb-5 pt-4">
+            <div className="flex items-center justify-between">
+              <div className="flex gap-8">
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Dnešní tržby</p>
+                  <p className="text-2xl font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
                 </div>
-                <WorkSessionWidget email={email} />
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Plateb</p>
+                  <p className="text-2xl font-bold text-gray-900">{todayPayments.length}</p>
+                </div>
               </div>
+              <WorkSessionWidget email={email} />
             </div>
           </div>
-
-          <MonthlyPaceCard
-            monthRevenue={monthRevenue}
-            monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
-            monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
         </div>
+
+        {/* Monthly pace */}
+        <MonthlyPaceCard
+          monthRevenue={monthRevenue}
+          monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
+          monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
 
         {/* Výplata & Celkem vyplaceno */}
         <div className="bg-white border border-[#ececec] rounded-2xl p-6">
