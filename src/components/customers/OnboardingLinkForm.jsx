@@ -39,29 +39,31 @@ export default function OnboardingLinkForm({ models = [] }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-yellow-200 shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 flex flex-col h-full">
-      <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-wide mb-4">Přidej nového zákazníka</p>
-      
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 flex flex-col h-full">
+      <h3 className="text-sm font-bold text-gray-800 mb-4">Přidej nového zákazníka</h3>
+
       <div className="flex flex-col gap-3 flex-1">
-        <Input
-          value={name}
-          onChange={e => setName(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && handleGenerate()}
-          placeholder="Jméno zákazníka..."
-          className="h-10 text-sm bg-white border-yellow-200 focus:border-[#C9A227]"
-        />
-        <Select value={assignedModel} onValueChange={setAssignedModel}>
-          <SelectTrigger className="h-10 text-sm border-yellow-200">
-            <SelectValue placeholder="Modelka..." />
-          </SelectTrigger>
-          <SelectContent>
-            {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Input
+            value={name}
+            onChange={e => setName(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleGenerate()}
+            placeholder="Jméno zákazníka..."
+            className="h-9 flex-1 text-sm bg-white border-gray-200 focus:border-[#C9A227]"
+          />
+          <Select value={assignedModel} onValueChange={setAssignedModel}>
+            <SelectTrigger className="h-9 w-40 text-sm border-gray-200">
+              <SelectValue placeholder="Modelka..." />
+            </SelectTrigger>
+            <SelectContent>
+              {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
         <button
           onClick={handleGenerate}
           disabled={!canGenerate}
-          className={`h-10 px-4 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-sm mt-auto
+          className={`h-9 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-1.5 transition-all shadow-sm
             ${copied
               ? "bg-emerald-500 text-white"
               : canGenerate

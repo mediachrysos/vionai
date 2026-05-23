@@ -267,7 +267,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
       <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
 
         {/* Notes + Onboarding link */}
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
            <CoachNotes
             notes={notes}
             chatterEmail={email}
@@ -275,13 +275,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
             onDelete={handleDeleteNote} />
            
            {isAdminView &&
-          <div className="bg-white border border-[#ececec] rounded-2xl p-4">
-               <p className="text-xs text-[#C9A227] font-semibold mb-3">Přidej nového zákazníka</p>
-               <OnboardingLinkForm models={models.filter((m) => {
+           <OnboardingLinkForm models={models.filter((m) => {
               const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
               return ids.includes(m.id);
             })} />
-             </div>
           }
          </div>
 
