@@ -274,12 +274,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
             onAdd={handleAddNote}
             onDelete={handleDeleteNote} />
            
-           {isAdminView &&
            <OnboardingLinkForm models={models.filter((m) => {
               const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-              return ids.includes(m.id);
+              return ids.length === 0 || ids.includes(m.id);
             })} />
-          }
          </div>
 
         {/* Dnešní výkonnost — full width */}
