@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Play, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function WorkSessionWidget({ email }) {
+export default function WorkSessionWidget({ email, compact }) {
   const [isWorking, setIsWorking] = useState(false);
   const [sessionTime, setSessionTime] = useState("00:00");
 
@@ -23,10 +23,26 @@ export default function WorkSessionWidget({ email }) {
 
   const toggleWork = async () => {
     setIsWorking(!isWorking);
-    if (!isWorking) {
-      setSessionTime("00:00");
-    }
+    if (!isWorking) setSessionTime("00:00");
   };
+
+  if (compact) {
+    return (
+      <div className="flex items-center gap-2">
+        <p className="text-base font-bold text-gray-900">{sessionTime}</p>
+        <Button
+          onClick={toggleWork}
+          className={`h-7 w-7 rounded-full flex items-center justify-center transition-all p-0 ${
+            isWorking
+              ? "bg-red-500 hover:bg-red-600 text-white"
+              : "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white"
+          }`}
+        >
+          {isWorking ? <Square className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-3">
@@ -39,7 +55,7 @@ export default function WorkSessionWidget({ email }) {
         className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${
           isWorking
             ? "bg-red-500 hover:bg-red-600 text-white"
-            : "bg-gradient-to-br from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"
+            : "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white"
         }`}
       >
         {isWorking ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}

@@ -1,8 +1,9 @@
 import React from "react";
 import { calcDailyPayout, getNextTier, getTierForRevenue } from "./tierUtils";
 import { Flame } from "lucide-react";
+import WorkSessionWidget from "./WorkSessionWidget";
 
-export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount, dailyGoalEnabled, tiers }) {
+export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount, dailyGoalEnabled, tiers, email }) {
   const currentTier = getTierForRevenue(todayRevenue, tiers);
   const nextTier = getNextTier(todayRevenue, tiers);
   const { payout } = calcDailyPayout(todayRevenue, hoursWorked, tiers);
@@ -26,7 +27,7 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
       <p className="text-xs text-[#C9A227] font-medium mb-4 ml-9">{microcopy()}</p>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 gap-2 mb-4">
+      <div className="grid grid-cols-3 gap-2 mb-4">
         <div className="bg-gray-50 rounded-xl p-3">
           <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Vychatováno</p>
           <p className="text-base font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
@@ -34,6 +35,10 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
         <div className="bg-gray-50 rounded-xl p-3">
           <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Payout dnes</p>
           <p className={`text-base font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
+        </div>
+        <div className="bg-gray-50 rounded-xl p-3">
+          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Pracuješ?</p>
+          <WorkSessionWidget email={email} compact />
         </div>
       </div>
 

@@ -299,11 +299,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
             hoursWorked={hoursToday}
             dailyGoalAmount={activeRule?.daily_goal_amount || 0}
             dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-            tiers={tiers} />
-          <div className="border-t border-[#ececec] px-6 pb-5 pt-4">
+            tiers={tiers}
+            email={email} />
+          <div className="hidden">
             <div className="flex items-center justify-between">
-              
-
 
 
 
@@ -316,6 +315,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
             </div>
           </div>
         </div>
+        
 
         {/* Monthly pace */}
         <MonthlyPaceCard
