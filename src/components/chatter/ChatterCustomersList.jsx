@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 export default function ChatterCustomersList({ chatterEmail, assignedModelIds = [] }) {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [sortBy, setSortBy] = useState("last_payment");
   const [form, setForm] = useState({ full_name: "", email: "", model_id: assignedModelIds[0] || "" });
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -73,14 +74,24 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     }
   });
 
+  const today = new Date();
+  const todayDay = today.getDate();
+
   const filtered = customers.filter(c =>
     !search ||
     c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
     c.email?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const today = new Date();
-  const todayDay = today.getDate();
+  ).sort((a, b) => {
+    const sa = customerStats[a.id] || {};
+    const sb = customerStats[b.id] || {};
+    if (sortBy === "most_paid") return (sb.total || 0) - (sa.total || 0);
+    if (sortBy === "newest") return new Date(b.created_date || 0) - new Date(a.created_date || 0);
+    // last_payment default
+    if (!sa.lastDate && !sb.lastDate) return 0;
+    if (!sa.lastDate) return 1;
+    if (!sb.lastDate) return -1;
+    return sb.lastDate > sa.lastDate ? 1 : -1;
+  });
 
   return (
     <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
@@ -97,6 +108,16 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               className="pl-9 h-8 text-xs w-44"
             />
           </div>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="h-8 text-xs w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="last_payment">Poslední platba</SelectItem>
+              <SelectItem value="most_paid">Nejvíc zaplatil</SelectItem>
+              <SelectItem value="newest">Nejnovější</SelectItem>
+            </SelectContent>
+          </Select>
           <Button
             onClick={() => setShowForm(!showForm)}
             size="sm"
@@ -153,7 +174,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       ) : filtered.length === 0 ? (
         <p className="text-xs text-gray-400 text-center py-8">Zatím žádní zákazníci</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-auto max-h-[500px]">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
@@ -165,7 +186,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c, i) => {
+              {filtered.slice(0, 10).map((c, i) => {
                 const st = customerStats[c.id] || {};
                 const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
                 const isPayday = c.pay_day_of_month === todayDay;
