@@ -302,16 +302,16 @@ function ChatterView({ currentUser, isAdminView = false }) {
             tiers={tiers} />
           <div className="border-t border-[#ececec] px-6 pb-5 pt-4">
             <div className="flex items-center justify-between">
-              <div className="flex gap-8 hidden">
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Dnešní tržby</p>
-                  <p className="text-2xl font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Plateb</p>
-                  <p className="text-2xl font-bold text-gray-900">{todayPayments.length}</p>
-                </div>
-              </div>
+              
+
+
+
+
+
+
+
+
+              
               <WorkSessionWidget email={email} />
             </div>
           </div>
