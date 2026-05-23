@@ -366,9 +366,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
           <RecentPaymentsCard payments={payments} />
         </div>
 
-        {/* Customers payout list */}
-        <CustomerPayoutList email={email} />
-
         {/* Chatter's customers */}
         <ChatterCustomersList
           chatterEmail={email}
