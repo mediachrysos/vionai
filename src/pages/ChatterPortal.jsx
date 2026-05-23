@@ -273,7 +273,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
         {/* Onboarding link — only for admin view */}
          {isAdminView && (
-           <div className="bg-[#faf6e6] border border-[#e8d99a] rounded-2xl p-4 mb-2">
+           <div className="bg-white border border-[#ececec] rounded-2xl p-4 mb-2">
              <p className="text-xs text-[#C9A227] font-semibold mb-3">Přidej nového zákazníka</p>
              <OnboardingLinkForm models={models.filter(m => {
                const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
