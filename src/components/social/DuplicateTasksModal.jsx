@@ -69,9 +69,15 @@ export default function DuplicateTasksModal({ dayTasks, onDuplicate, onClose }) 
       type: t.type || "Reels",
       customType: t.customType || "",
       desc: t.desc || "",
-      inspiration_link: "", // Always clear links
+      inspiration_link: "",
       model_id: t.model_id || "",
       priority: t.priority || "normal",
+      // Explicitly ensure no submission data
+      submitted_link: "",
+      status: "not_started",
+      admin_note: "",
+      submitted_at: "",
+      reviewed_at: ""
     }));
   };
 
