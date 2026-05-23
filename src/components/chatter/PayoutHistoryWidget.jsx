@@ -49,10 +49,11 @@ export default function PayoutHistoryWidget({ email, isAdminView = false }) {
   const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] p-5">
+    <div className="bg-white rounded-2xl border border-[#ececec] p-5 relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#C9A227] to-[#A8841C]" />
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-xs text-gray-400 font-semibold mb-1">CELKEM VYPLACENO</p>
+          <p className="text-xs text-[#C9A227] font-semibold mb-1">CELKEM VYPLACENO</p>
           <p className="text-2xl font-bold text-gray-900">{totalPaid.toLocaleString()} Kč</p>
         </div>
         {isAdminView && (
@@ -124,7 +125,7 @@ export default function PayoutHistoryWidget({ email, isAdminView = false }) {
       {payouts.length > 0 ? (
         <div className="space-y-2">
           {payouts.map((p) => (
-            <div key={p.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+            <div key={p.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-yellow-50 border border-yellow-100 hover:bg-yellow-100 transition-colors">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-800">{p.amount?.toLocaleString()} Kč</p>
                 <p className="text-xs text-gray-400">{p.period} {p.note && `· ${p.note}`}</p>
