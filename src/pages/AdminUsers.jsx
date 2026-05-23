@@ -350,11 +350,19 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
       const toUpdate = customers.filter((c) =>
         Array.isArray(c.assigned_models) && c.assigned_models.includes(modelId)
       );
-      await Promise.all(
-        toUpdate.map((c) =>
-          base44.entities.Customer.update(c.id, { assigned_chatter: user.email })
-        )
-      );
+      // Batch updates in groups of 5 to avoid rate limit
+      const batchSize = 5;
+      for (let i = 0; i < toUpdate.length; i += batchSize) {
+        const batch = toUpdate.slice(i, i + batchSize);
+        await Promise.all(
+          batch.map((c) =>
+            base44.entities.Customer.update(c.id, { assigned_chatter: user.email })
+          )
+        );
+        if (i + batchSize < toUpdate.length) {
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+      }
     }
   };
 
