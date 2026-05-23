@@ -25,7 +25,7 @@ export default function MonthlyPayoutCard({
   const toPay = Math.max(0, estimatedPayout - (totalPaidOut || 0));
 
   return (
-    <div className="space-y-4 bg-[hsl(var(--background))] rounded-2xl overflow-hidden">
+    <div className="space-y-4 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
       <div className="flex items-center gap-2">
         <div className="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center">
           <Banknote className="w-3.5 h-3.5 text-emerald-600" />
