@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageSquare } from "lucide-react";
 import PageHeader from "../components/ui-custom/PageHeader";
 import NicknameSetupModal from "../components/ui-custom/NicknameSetupModal";
-import OnboardingLinkForm from "../components/customers/OnboardingLinkForm";
 import { DEFAULT_TIERS } from "../components/chatter/tierUtils";
 import DailyKpiCards from "../components/chatter/DailyKpiCards";
 import TierLadder from "../components/chatter/TierLadder";
@@ -270,19 +269,12 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
       <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
 
-        {/* Notes + Onboarding link */}
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
-           <CoachNotes
-            notes={notes}
-            chatterEmail={email}
-            onAdd={handleAddNote}
-            onDelete={handleDeleteNote} />
-           
-           <OnboardingLinkForm models={models.filter((m) => {
-              const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-              return ids.length === 0 || ids.includes(m.id);
-            })} />
-         </div>
+        {/* Notes */}
+         <CoachNotes
+          notes={notes}
+          chatterEmail={email}
+          onAdd={handleAddNote}
+          onDelete={handleDeleteNote} />
 
         {/* Dnešní výkonnost — full width */}
         <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden">
