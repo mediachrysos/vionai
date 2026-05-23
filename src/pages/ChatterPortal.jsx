@@ -392,8 +392,5 @@ export default function ChatterPortal({ currentUser }) {
   const roles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   // Pure admin (no chatter role) sees admin overview
   // If user has chatter role (even alongside admin), show chatter dashboard
-  const isChatter = roles.includes("chatter");
-  const isAdminOnly = roles.includes("admin") && !isChatter;
-  if (isAdminOnly) return <AdminChattingSpace currentUser={currentUser} />;
   return <ChatterView currentUser={currentUser} />;
 }
