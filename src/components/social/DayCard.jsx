@@ -21,7 +21,7 @@ const priorityDot = {
 };
 
 
-export default function DayCard({ dayName, tasks = [], submission, onClick, isToday }) {
+export default function DayCard({ dayName, tasks = [], submission, onClick, isToday, isDraft }) {
   const taskSubMap = {};
   (submission?.task_submissions || []).forEach(ts => { taskSubMap[ts.task_idx] = ts; });
 
@@ -42,9 +42,14 @@ export default function DayCard({ dayName, tasks = [], submission, onClick, isTo
         hasAny && "border-amber-200"
       )}
     >
-      <p className={cn("text-xs font-semibold uppercase tracking-wide mb-3", isToday ? "text-[#C9A227]" : "text-gray-400")}>
-        {isToday ? "Today · " : ""}{dayName}
-      </p>
+      <div className="flex items-center justify-between mb-3">
+        <p className={cn("text-xs font-semibold uppercase tracking-wide", isToday ? "text-[#C9A227]" : "text-gray-400")}>
+          {isToday ? "Today · " : ""}{dayName}
+        </p>
+        {isDraft && tasks.length > 0 && (
+          <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-600 border border-amber-200">NÁVRH</span>
+        )}
+      </div>
 
       {tasks.length === 0 ? (
         <p className="text-xs text-gray-300 italic">No tasks</p>

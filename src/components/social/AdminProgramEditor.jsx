@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
-import { Save, Plus, Trash2, Link, Copy } from "lucide-react";
+import { Save, Plus, Trash2, Link, Copy, CheckCircle, XCircle } from "lucide-react";
 
 const DAYS = [
   { key: "mon", label: "Monday" },
@@ -33,7 +33,7 @@ function emptyTask() {
   return { type: "Reels", customType: "", desc: "", inspiration_link: "", model_id: "", priority: "normal" };
 }
 
-export default function AdminProgramEditor({ weekStart, program, models = [], designerEmail, designerName, onSaved }) {
+export default function AdminProgramEditor({ weekStart, program, models = [], designerEmail, designerName, onSaved, isDraft }) {
   const [dayTasks, setDayTasks] = useState({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -155,6 +155,24 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
 
   const handleSave = () => doSave(dayTasksRef.current);
 
+  const handleConfirmDraft = async () => {
+    if (!programIdRef.current) return;
+    await base44.entities.WeeklyProgram.update(programIdRef.current, { is_draft: false });
+    onSaved();
+  };
+
+  const handleRejectDraft = async () => {
+    if (!programIdRef.current) return;
+    await base44.entities.WeeklyProgram.delete(programIdRef.current);
+    programIdRef.current = null;
+    // Clear all tasks
+    const empty = {};
+    DAYS.forEach(({ key }) => { empty[key] = []; });
+    dayTasksRef.current = empty;
+    setDayTasks(empty);
+    onSaved();
+  };
+
   const handleDuplicateToNextWeek = async () => {
     setDuplicating(true);
     const nextWeekStart = (() => {
@@ -181,6 +199,26 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+      {isDraft && (
+        <div className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Copy className="w-4 h-4 text-amber-500 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-amber-800">Návrh z minulého týdne</p>
+              <p className="text-xs text-amber-600">Tasky byly automaticky zkopírovány. Potvrď, uprav nebo zamítni.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button onClick={handleRejectDraft} size="sm" variant="outline" className="gap-1.5 border-red-200 text-red-600 hover:bg-red-50">
+              <XCircle className="w-3.5 h-3.5" /> Zamítnout
+            </Button>
+            <Button onClick={handleConfirmDraft} size="sm" className="gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white">
+              <CheckCircle className="w-3.5 h-3.5" /> Potvrdit
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-gray-800">Edit Weekly Program</h3>

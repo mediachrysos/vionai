@@ -10,6 +10,11 @@
       "type": "string",
       "description": "Email of the designer this program belongs to"
     },
+    "is_draft": {
+      "type": "boolean",
+      "default": false,
+      "description": "True = auto-copied from previous week, pending admin confirmation"
+    },
     "mon_tasks": {
       "type": "array",
       "items": {

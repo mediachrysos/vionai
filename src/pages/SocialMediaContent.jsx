@@ -183,27 +183,28 @@ export default function SocialMediaContent({ currentUser }) {
     qc.invalidateQueries({ queryKey: ["daySubmissions", weekStart, programQueryKey] });
   };
 
-  // Auto-duplicate: when navigating to a week with no program, copy from previous week if auto_duplicate is on
+  // Auto-duplicate: when navigating forward to a week with no program, copy as draft
   const handleWeekChange = async (newWeekStart, prevWeekStart) => {
     setWeekStart(newWeekStart);
-    if (!activeDashboard?.auto_duplicate) return;
     // Only auto-duplicate when going forward
     if (newWeekStart <= prevWeekStart) return;
+    if (!activeDashboard) return;
+    const email = effectiveDesignerEmail;
     // Check if next week already has a program
     const existing = await base44.entities.WeeklyProgram.filter({
       week_start: newWeekStart,
-      designer_email: effectiveDesignerEmail,
+      designer_email: email,
     });
     if (existing.length > 0) return; // Already has tasks — don't overwrite
     // Fetch previous week's program
     const prevPrograms = await base44.entities.WeeklyProgram.filter({
       week_start: prevWeekStart,
-      designer_email: effectiveDesignerEmail,
+      designer_email: email,
     });
     if (prevPrograms.length === 0) return;
     const prev = prevPrograms[0];
     const DAYS_KEYS = ["mon","tue","wed","thu","fri","sat","sun"];
-    const data = { week_start: newWeekStart, designer_email: effectiveDesignerEmail };
+    const data = { week_start: newWeekStart, designer_email: email, is_draft: true };
     DAYS_KEYS.forEach(key => { data[`${key}_tasks`] = (prev[`${key}_tasks`] || []).map(t => ({ ...t })); });
     await base44.entities.WeeklyProgram.create(data);
     setTimeout(() => {
@@ -304,9 +305,9 @@ export default function SocialMediaContent({ currentUser }) {
             </button>
             <div className="flex-1 flex flex-col items-center">
               <p className="text-sm font-semibold text-gray-700">{formatWeekLabel(weekStart)}</p>
-              {activeDashboard?.auto_duplicate && (
+              {program?.is_draft && (
                 <span className="text-[10px] text-amber-600 flex items-center gap-1 mt-0.5">
-                  <Copy className="w-2.5 h-2.5" /> auto-duplikace zapnuta
+                  <Copy className="w-2.5 h-2.5" /> návrh z minulého týdne
                 </span>
               )}
             </div>
@@ -327,6 +328,7 @@ export default function SocialMediaContent({ currentUser }) {
             models={models}
             designerEmail={effectiveDesignerEmail}
             designerName={activeDashboard?.designer_name || activeDashboard?.name}
+            isDraft={!!program?.is_draft}
             onSaved={() => { refresh(); }}
           />
         )}
@@ -358,6 +360,7 @@ export default function SocialMediaContent({ currentUser }) {
                 tasks={program?.[`${key}_tasks`] || []}
                 submission={submissionMap[key]}
                 isToday={todayDayKey === key}
+                isDraft={!!program?.is_draft}
                 onClick={() => setSelectedDay(key)}
               />
             ))}
