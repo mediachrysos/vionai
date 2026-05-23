@@ -25,7 +25,7 @@ export default function MonthlyPayoutCard({
   const toPay = Math.max(0, estimatedPayout - (totalPaidOut || 0));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-[hsl(var(--background))]">
       <div className="flex items-center gap-2">
         <div className="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center">
           <Banknote className="w-3.5 h-3.5 text-emerald-600" />
@@ -53,8 +53,8 @@ export default function MonthlyPayoutCard({
       </div>
 
       {/* Bonus row */}
-      {monthlyBonusEnabled && monthlyBonusAmount > 0 && (
-        <div className={`rounded-2xl p-5 border flex items-center justify-between ${bonusUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-100"}`}>
+      {monthlyBonusEnabled && monthlyBonusAmount > 0 &&
+      <div className={`rounded-2xl p-5 border flex items-center justify-between ${bonusUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-100"}`}>
           <div>
             <p className="text-[10px] text-gray-500 uppercase tracking-wide font-medium">Měsíční bonus</p>
             <p className="text-lg font-bold text-gray-800 mt-1">{monthlyBonusAmount.toLocaleString()} Kč</p>
@@ -63,7 +63,7 @@ export default function MonthlyPayoutCard({
             {bonusUnlocked ? "✓ Odemčeno" : `Chybí ${(monthlyBonusConditionRevenue - totalRevenue).toLocaleString()} Kč`}
           </span>
         </div>
-      )}
+      }
 
       {/* Bottom row: Earned + Paid + To pay */}
       <div className="grid grid-cols-3 gap-3">
@@ -83,6 +83,6 @@ export default function MonthlyPayoutCard({
           <p className={`text-xs mt-1 ${toPay > 0 ? "text-rose-600/70" : "text-gray-400"}`}>Kč</p>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
