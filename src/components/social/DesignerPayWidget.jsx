@@ -5,7 +5,7 @@ import { Banknote, Plus, ChevronDown, ChevronUp, Edit2, Check, Gift, X, SlidersH
 import { Input } from "@/components/ui/input";
 
 function minutesToHours(mins) {
-  return Math.round((mins / 60) * 100) / 100;
+  return Math.round(mins / 60 * 100) / 100;
 }
 
 function getCurrentPeriod() {
@@ -34,20 +34,20 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
     queryKey: ["allWorkSessions", designerEmail, dashboard?.id],
     queryFn: () => base44.entities.DesignerWorkSession.filter({
       designer_email: designerEmail,
-      dashboard_id: dashboard?.id,
+      dashboard_id: dashboard?.id
     }),
     enabled: !!designerEmail && !!dashboard?.id,
-    staleTime: 30000,
+    staleTime: 30000
   });
 
   const { data: payouts = [] } = useQuery({
     queryKey: ["designerPayouts", designerEmail, dashboard?.id],
     queryFn: () => base44.entities.DesignerPayout.filter({
       designer_email: designerEmail,
-      dashboard_id: dashboard?.id,
+      dashboard_id: dashboard?.id
     }),
     enabled: !!designerEmail && !!dashboard?.id,
-    staleTime: 30000,
+    staleTime: 30000
   });
 
   const totalMinutes = sessions.reduce((sum, s) => sum + (s.minutes_worked || 0), 0);
@@ -65,7 +65,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
       dashboard_id: dashboard?.id,
       amount,
       period: getCurrentPeriod(),
-      note: payoutNote,
+      note: payoutNote
     });
     setPayoutAmount("");
     setPayoutNote("");
@@ -78,7 +78,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
     if (isNaN(amount) || amount <= 0) return;
     setAddingBonus(true);
     // Convert MAD amount to minutes based on hourly rate, so it shows up in "Earned"
-    const minutes = Math.round((amount / hourlyRate) * 60);
+    const minutes = Math.round(amount / hourlyRate * 60);
     const today = new Date().toISOString().split("T")[0];
     await base44.entities.DesignerWorkSession.create({
       designer_email: designerEmail,
@@ -88,7 +88,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
       ended_at: new Date().toISOString(),
       is_active: false,
       minutes_worked: minutes,
-      note: bonusNote || "Manual bonus",
+      note: bonusNote || "Manual bonus"
     });
     setBonusAmount("");
     setBonusNote("");
@@ -104,13 +104,13 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
     const diff = targetMinutes - totalMinutes;
     const today = new Date().toISOString().split("T")[0];
     // Find or create an adjustment session
-    const adjustSessions = sessions.filter(s => s.note === "__balance_adjust__");
+    const adjustSessions = sessions.filter((s) => s.note === "__balance_adjust__");
     if (adjustSessions.length > 0) {
       // Update the existing adjustment session
       const existing = adjustSessions[0];
       const newMins = (existing.minutes_worked || 0) + diff;
       await base44.entities.DesignerWorkSession.update(existing.id, {
-        minutes_worked: newMins,
+        minutes_worked: newMins
       });
     } else {
       // Create a new adjustment session
@@ -122,7 +122,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
         ended_at: new Date().toISOString(),
         is_active: false,
         minutes_worked: diff,
-        note: "__balance_adjust__",
+        note: "__balance_adjust__"
       });
     }
     setEditingBalance(false);
@@ -143,65 +143,65 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center hidden">
             <Banknote className="w-3.5 h-3.5 text-amber-600" />
           </div>
           <span className="text-sm font-semibold text-gray-800">Salary</span>
         </div>
 
         {/* Rate */}
-        {editingRate && isAdmin ? (
-          <div className="flex items-center gap-1.5">
+        {editingRate && isAdmin ?
+        <div className="flex items-center gap-1.5">
             <Input
-              value={rateValue}
-              onChange={e => setRateValue(e.target.value)}
-              className="h-7 text-xs w-16 px-2"
-              type="number"
-              min="0"
-            />
+            value={rateValue}
+            onChange={(e) => setRateValue(e.target.value)}
+            className="h-7 text-xs w-16 px-2"
+            type="number"
+            min="0" />
+          
             <span className="text-xs text-gray-400">MAD/h</span>
             <button onClick={handleRateSave} className="text-emerald-600 hover:text-emerald-800">
               <Check className="w-3.5 h-3.5" />
             </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5">
+          </div> :
+
+        <div className="flex items-center gap-1.5">
             <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">
               {hourlyRate} MAD/h
             </span>
-            {isAdmin && (
-              <button
-                onClick={() => { setEditingRate(true); setRateValue(String(hourlyRate)); }}
-                className="text-gray-300 hover:text-amber-500 transition-colors"
-              >
+            {isAdmin &&
+          <button
+            onClick={() => {setEditingRate(true);setRateValue(String(hourlyRate));}}
+            className="text-gray-300 hover:text-amber-500 transition-colors">
+            
                 <Edit2 className="w-3.5 h-3.5" />
               </button>
-            )}
+          }
           </div>
-        )}
+        }
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2">
         <div className="flex flex-col items-center bg-amber-50 rounded-xl px-2 py-3 gap-0.5 relative">
           <span className="text-[10px] text-amber-700/70 font-medium uppercase tracking-wide">Earned</span>
-          {editingBalance ? (
-            <div className="flex items-center gap-1 mt-0.5">
+          {editingBalance ?
+          <div className="flex items-center gap-1 mt-0.5">
               <Input
-                value={balanceMinutes}
-                onChange={e => setBalanceMinutes(e.target.value)}
-                className="h-6 text-xs w-16 px-1.5 text-center"
-                type="number"
-                min="0"
-                placeholder={String(totalMinutes)}
-                autoFocus
-              />
-            </div>
-          ) : (
-            <span className="text-base font-bold text-amber-700 tabular-nums">{totalEarned.toLocaleString()}</span>
-          )}
-          {editingBalance ? (
-            <div className="flex items-center gap-1.5 mt-0.5">
+              value={balanceMinutes}
+              onChange={(e) => setBalanceMinutes(e.target.value)}
+              className="h-6 text-xs w-16 px-1.5 text-center"
+              type="number"
+              min="0"
+              placeholder={String(totalMinutes)}
+              autoFocus />
+            
+            </div> :
+
+          <span className="text-base font-bold text-amber-700 tabular-nums">{totalEarned.toLocaleString()}</span>
+          }
+          {editingBalance ?
+          <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-[9px] text-amber-600/60">min total</span>
               <button onClick={handleBalanceSave} className="text-emerald-600 hover:text-emerald-800">
                 <Check className="w-3 h-3" />
@@ -209,18 +209,18 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
               <button onClick={() => setEditingBalance(false)} className="text-gray-300 hover:text-gray-500">
                 <X className="w-3 h-3" />
               </button>
-            </div>
-          ) : (
-            <span className="text-[10px] text-amber-600/60">{totalHours}h worked</span>
-          )}
-          {isAdmin && !editingBalance && (
-            <button
-              onClick={() => { setEditingBalance(true); setBalanceMinutes(String(totalMinutes)); }}
-              className="absolute top-1.5 right-1.5 text-amber-300 hover:text-amber-600 transition-colors"
-            >
+            </div> :
+
+          <span className="text-[10px] text-amber-600/60">{totalHours}h worked</span>
+          }
+          {isAdmin && !editingBalance &&
+          <button
+            onClick={() => {setEditingBalance(true);setBalanceMinutes(String(totalMinutes));}}
+            className="absolute top-1.5 right-1.5 text-amber-300 hover:text-amber-600 transition-colors">
+            
               <SlidersHorizontal className="w-3 h-3" />
             </button>
-          )}
+          }
         </div>
         <div className="flex flex-col items-center bg-emerald-50 rounded-xl px-2 py-3 gap-0.5">
           <span className="text-[10px] text-emerald-700/70 font-medium uppercase tracking-wide">Paid out</span>
@@ -237,103 +237,103 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
       </div>
 
       {/* Admin: add payout */}
-      {isAdmin && (
-        <div className="flex gap-2 items-center border-t border-gray-100 pt-3">
+      {isAdmin &&
+      <div className="flex gap-2 items-center border-t border-gray-100 pt-3">
           <Input
-            value={payoutAmount}
-            onChange={e => setPayoutAmount(e.target.value)}
-            placeholder="Amount (MAD)"
-            type="number"
-            min="0"
-            className="h-8 text-xs w-28 flex-shrink-0"
-          />
+          value={payoutAmount}
+          onChange={(e) => setPayoutAmount(e.target.value)}
+          placeholder="Amount (MAD)"
+          type="number"
+          min="0"
+          className="h-8 text-xs w-28 flex-shrink-0" />
+        
           <Input
-            value={payoutNote}
-            onChange={e => setPayoutNote(e.target.value)}
-            placeholder="Note (optional)"
-            className="h-8 text-xs flex-1 min-w-0"
-          />
+          value={payoutNote}
+          onChange={(e) => setPayoutNote(e.target.value)}
+          placeholder="Note (optional)"
+          className="h-8 text-xs flex-1 min-w-0" />
+        
           <button
-            onClick={handleAddPayout}
-            disabled={addingPayout || !payoutAmount}
-            className="flex items-center gap-1 text-xs font-semibold bg-[#C9A227] hover:bg-[#A8841C] disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors"
-          >
+          onClick={handleAddPayout}
+          disabled={addingPayout || !payoutAmount}
+          className="flex items-center gap-1 text-xs font-semibold bg-[#C9A227] hover:bg-[#A8841C] disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors">
+          
             <Plus className="w-3.5 h-3.5" /> Pay
           </button>
         </div>
-      )}
+      }
 
       {/* Admin: add bonus to earned */}
-      {isAdmin && (
-        <div className="border-t border-gray-100 pt-3">
+      {isAdmin &&
+      <div className="border-t border-gray-100 pt-3">
           <button
-            onClick={() => setShowBonusForm(v => !v)}
-            className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-800 font-medium transition-colors"
-          >
+          onClick={() => setShowBonusForm((v) => !v)}
+          className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-800 font-medium transition-colors">
+          
             <Gift className="w-3.5 h-3.5" /> Add bonus to earned
           </button>
-          {showBonusForm && (
-            <div className="flex gap-2 items-center mt-2">
+          {showBonusForm &&
+        <div className="flex gap-2 items-center mt-2">
               <Input
-                value={bonusAmount}
-                onChange={e => setBonusAmount(e.target.value)}
-                placeholder="Amount (MAD)"
-                type="number"
-                min="0"
-                className="h-8 text-xs w-28 flex-shrink-0"
-              />
+            value={bonusAmount}
+            onChange={(e) => setBonusAmount(e.target.value)}
+            placeholder="Amount (MAD)"
+            type="number"
+            min="0"
+            className="h-8 text-xs w-28 flex-shrink-0" />
+          
               <Input
-                value={bonusNote}
-                onChange={e => setBonusNote(e.target.value)}
-                placeholder="Note (optional)"
-                className="h-8 text-xs flex-1 min-w-0"
-              />
+            value={bonusNote}
+            onChange={(e) => setBonusNote(e.target.value)}
+            placeholder="Note (optional)"
+            className="h-8 text-xs flex-1 min-w-0" />
+          
               <button
-                onClick={handleAddBonus}
-                disabled={addingBonus || !bonusAmount}
-                className="flex items-center gap-1 text-xs font-semibold bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors"
-              >
+            onClick={handleAddBonus}
+            disabled={addingBonus || !bonusAmount}
+            className="flex items-center gap-1 text-xs font-semibold bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors">
+            
                 <Plus className="w-3.5 h-3.5" /> Add
               </button>
             </div>
-          )}
+        }
         </div>
-      )}
+      }
 
       {/* Payout history */}
-      {payouts.length > 0 && (
-        <div>
+      {payouts.length > 0 &&
+      <div>
           <button
-            onClick={() => setShowPayouts(v => !v)}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
+          onClick={() => setShowPayouts((v) => !v)}
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+          
             {showPayouts ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             Payout history ({payouts.length})
           </button>
-          {showPayouts && (
-            <div className="mt-2 space-y-1">
-              {[...payouts].reverse().map(p => (
-                <div key={p.id} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2 gap-2">
+          {showPayouts &&
+        <div className="mt-2 space-y-1">
+              {[...payouts].reverse().map((p) =>
+          <div key={p.id} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2 gap-2">
                   <span className="text-gray-400 flex-shrink-0">{p.created_date?.split("T")[0] || p.period}</span>
                   {p.note && <span className="text-gray-400 truncate flex-1">{p.note}</span>}
                   <span className="font-semibold text-emerald-700">+{p.amount} MAD</span>
-                  {isAdmin && (
-                    <button
-                      onClick={async () => {
-                        await base44.entities.DesignerPayout.delete(p.id);
-                        qc.invalidateQueries({ queryKey: ["designerPayouts", designerEmail, dashboard?.id] });
-                      }}
-                      className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
-                    >
+                  {isAdmin &&
+            <button
+              onClick={async () => {
+                await base44.entities.DesignerPayout.delete(p.id);
+                qc.invalidateQueries({ queryKey: ["designerPayouts", designerEmail, dashboard?.id] });
+              }}
+              className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0">
+              
                       <X className="w-3 h-3" />
                     </button>
-                  )}
+            }
                 </div>
-              ))}
-            </div>
           )}
+            </div>
+        }
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
