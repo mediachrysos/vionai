@@ -285,26 +285,26 @@ export default function Customers({ currentUser }) {
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
       <div className="mb-6 lg:mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Customers</h1>
-        <p className="text-sm text-gray-500 mb-4">{customers.length} customers total</p>
-        <div className="flex gap-2 flex-wrap items-end">
-          <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
-          </Button>
-          {duplicateNames.size > 0 && (
-            <Button
-              onClick={handleMergeDuplicates}
-              disabled={merging}
-              variant="outline"
-              className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 h-9"
-            >
-              {merging ? "Merging..." : `👥 Merge duplicates (${duplicateNames.size / 2 | 0}+)`}
+        <div className="flex items-center justify-between mb-1">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Customers</h1>
+          <div className="flex gap-2 flex-wrap items-end">
+            <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
+              <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
             </Button>
-          )}
-          <div className="flex-1 flex gap-2 items-end">
+            {duplicateNames.size > 0 && (
+              <Button
+                onClick={handleMergeDuplicates}
+                disabled={merging}
+                variant="outline"
+                className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 h-9"
+              >
+                {merging ? "Merging..." : `👥 Merge duplicates (${duplicateNames.size / 2 | 0}+)`}
+              </Button>
+            )}
             <OnboardingLinkForm models={models} />
           </div>
         </div>
+        <p className="text-sm text-gray-500">{customers.length} customers total</p>
       </div>
 
       {/* Filters */}
