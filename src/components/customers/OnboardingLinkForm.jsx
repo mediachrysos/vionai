@@ -39,38 +39,41 @@ export default function OnboardingLinkForm({ models = [] }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 h-full flex flex-col">
-      <h3 className="font-semibold text-gray-800 mb-4 text-sm flex items-center gap-2">
-        🔗 Onboarding link
-      </h3>
-      <div className="flex flex-col gap-3 flex-1">
-        <Input
-          placeholder="Jméno zákazníka *"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="h-9 text-sm" />
+    <div className="flex flex-col gap-2">
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <label className="text-xs font-medium text-gray-600 block mb-1">Jméno zákazníka *</label>
+          <Input
+            placeholder=""
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="h-8 text-sm" />
+        </div>
         
         {models.length > 0 &&
-        <Select value={assignedModel} onValueChange={setAssignedModel}>
-            <SelectTrigger className="h-9 text-sm">
-              <SelectValue placeholder="Vybrat modelku *" />
-            </SelectTrigger>
-            <SelectContent>
-              {models.map((m) =>
-            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-            )}
-            </SelectContent>
-          </Select>
+        <div className="flex-1">
+          <label className="text-xs font-medium text-gray-600 block mb-1">Vybrat modelku *</label>
+          <Select value={assignedModel} onValueChange={setAssignedModel}>
+              <SelectTrigger className="h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {models.map((m) =>
+              <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+              )}
+              </SelectContent>
+            </Select>
+        </div>
         }
         <button
           onClick={handleGenerate}
           disabled={!canGenerate}
-          className="mt-auto h-9 rounded-lg hover:bg-amber-700 disabled:opacity-40 text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors bg-[#c09a24]">
+          className="h-8 px-4 rounded-lg hover:bg-amber-700 disabled:opacity-40 text-white text-sm font-medium flex items-center justify-center gap-1.5 transition-colors bg-[#c09a24]">
           
           {loading ?
-          <Loader2 className="w-4 h-4 animate-spin" /> :
+          <Loader2 className="w-3.5 h-3.5 animate-spin" /> :
           copied ?
-          <><Check className="w-4 h-4" /> Zkopírováno!</> :
+          <><Check className="w-3.5 h-3.5" /> Zkopírováno!</> :
 
           "Vygenerovat & zkopírovat"
           }
