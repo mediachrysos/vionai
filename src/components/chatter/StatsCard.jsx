@@ -2,10 +2,10 @@ import React from "react";
 import { TrendingUp } from "lucide-react";
 
 export default function StatsCard({ todayRevenue, hoursWorked, nextTierRevenue }) {
-  const progressPercent = nextTierRevenue > 0 ? Math.min((todayRevenue / nextTierRevenue) * 100, 100) : 0;
+  const progressPercent = nextTierRevenue > 0 ? Math.min(todayRevenue / nextTierRevenue * 100, 100) : 0;
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4">
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4 hidden">
       <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
         <TrendingUp className="w-4 h-4 text-[#C9A227]" /> Dnes
       </h3>
@@ -23,6 +23,6 @@ export default function StatsCard({ todayRevenue, hoursWorked, nextTierRevenue }
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
