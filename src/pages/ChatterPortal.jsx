@@ -292,13 +292,28 @@ function ChatterView({ currentUser, isAdminView = false }) {
            )}
          </div>
 
-        {/* Work session + KPI + Payout history */}
+        {/* Dnešní výkonnost + Pracuješ */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <WorkSessionWidget email={email} />
-          <PayoutHistoryWidget email={email} isAdminView={isAdminView} />
+          <div className="bg-white border border-[#ececec] rounded-2xl p-6">
+            <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-widest mb-4">Dnešní výkonnost</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Tržby</p>
+                <p className="text-2xl font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Počet plateb</p>
+                <p className="text-2xl font-bold text-gray-900">{todayPayments.length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-[#ececec] rounded-2xl p-6">
+            <WorkSessionWidget email={email} minimal={true} />
+          </div>
         </div>
 
-        {/* 4 KPI cards — pulled up over hero */}
+        {/* 4 KPI cards */}
         <DailyKpiCards
           todayRevenue={todayRevenue}
           hoursWorked={hoursToday}
@@ -323,15 +338,40 @@ function ChatterView({ currentUser, isAdminView = false }) {
           
         </div>
 
-        {/* Monthly payout full width */}
-        <MonthlyPayoutCard
-          monthPayments={monthPayments}
-          totalPaidOut={totalPaidOut}
-          monthlyBonusEnabled={!!activeRule?.monthly_bonus_enabled}
-          monthlyBonusAmount={activeRule?.monthly_bonus_amount || 0}
-          monthlyBonusConditionRevenue={activeRule?.monthly_bonus_condition_revenue || 0}
-          hoursMap={hoursMap}
-          tiers={tiers} />
+        {/* Výplata sekce */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <MonthlyPayoutCard
+            monthPayments={monthPayments}
+            totalPaidOut={totalPaidOut}
+            monthlyBonusEnabled={!!activeRule?.monthly_bonus_enabled}
+            monthlyBonusAmount={activeRule?.monthly_bonus_amount || 0}
+            monthlyBonusConditionRevenue={activeRule?.monthly_bonus_condition_revenue || 0}
+            hoursMap={hoursMap}
+            tiers={tiers} />
+
+          <div className="bg-white border border-[#ececec] rounded-2xl p-6">
+            <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-widest mb-6">Celkem vyplaceno</p>
+            <div>
+              <p className="text-sm text-gray-600 mb-2">Všechny výplaty</p>
+              <p className="text-4xl font-bold text-gray-900">{totalPaidOut.toLocaleString()} Kč</p>
+            </div>
+            <div className="mt-6 pt-6 border-t border-[#ececec]">
+              <p className="text-xs text-gray-500 mb-3">Výplaty v tomto měsíci</p>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {payouts.length === 0 ? (
+                  <p className="text-xs text-gray-400">Zatím žádné výplaty</p>
+                ) : (
+                  payouts.map((p) => (
+                    <div key={p.id} className="flex justify-between text-xs">
+                      <span className="text-gray-600">{p.period}</span>
+                      <span className="font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
         
 
         {/* Payout simulator */}
