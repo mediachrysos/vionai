@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { Save, Plus, Trash2, Link, Copy, CheckCircle, XCircle } from "lucide-react";
+import DuplicateTasksModal from "./DuplicateTasksModal";
 
 const DAYS = [
   { key: "mon", label: "Monday" },
@@ -40,6 +41,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
   const [hasUnsaved, setHasUnsaved] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
   const [duplicated, setDuplicated] = useState(false);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
   // Use refs for values that doSave needs without causing re-renders / stale closures
   const programIdRef = useRef(program?.id ?? null);
@@ -173,7 +175,11 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
     onSaved();
   };
 
-  const handleDuplicateToNextWeek = async () => {
+  const handleDuplicateToNextWeek = () => {
+    setShowDuplicateModal(true);
+  };
+
+  const handleConfirmDuplicate = async (selectedTasks) => {
     setDuplicating(true);
     const nextWeekStart = (() => {
       const d = new Date(weekStart);
@@ -182,22 +188,23 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
     })();
     // Check if next week already has a program
     const existing = await base44.entities.WeeklyProgram.filter({ week_start: nextWeekStart, designer_email: designerEmail });
-    const data = { week_start: nextWeekStart, designer_email: designerEmail };
+    const data = { week_start: nextWeekStart, designer_email: designerEmail, is_draft: false };
     DAYS.forEach(({ key }) => {
-      // Copy tasks but reset submission-related state
-      data[`${key}_tasks`] = (dayTasksRef.current[key] || []).map(t => ({ ...t }));
+      data[`${key}_tasks`] = selectedTasks[key] || [];
     });
     if (existing.length > 0) {
       await base44.entities.WeeklyProgram.update(existing[0].id, data);
     } else {
       await base44.entities.WeeklyProgram.create(data);
     }
+    setShowDuplicateModal(false);
     setDuplicating(false);
     setDuplicated(true);
     setTimeout(() => setDuplicated(false), 3000);
   };
 
   return (
+    <>
     <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
       {isDraft && (
         <div className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
@@ -358,5 +365,14 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
         })}
       </div>
     </div>
+
+    {showDuplicateModal && (
+      <DuplicateTasksModal
+        dayTasks={dayTasks}
+        onDuplicate={handleConfirmDuplicate}
+        onClose={() => setShowDuplicateModal(false)}
+      />
+    )}
+    </>
   );
 }
