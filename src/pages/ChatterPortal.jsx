@@ -276,20 +276,20 @@ function ChatterView({ currentUser, isAdminView = false }) {
         {/* Notes + Onboarding link */}
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
            <CoachNotes
-             notes={notes}
-             chatterEmail={email}
-             onAdd={handleAddNote}
-             onDelete={handleDeleteNote} />
+            notes={notes}
+            chatterEmail={email}
+            onAdd={handleAddNote}
+            onDelete={handleDeleteNote} />
            
-           {isAdminView && (
-             <div className="bg-white border border-[#ececec] rounded-2xl p-4">
+           {isAdminView &&
+          <div className="bg-white border border-[#ececec] rounded-2xl p-4">
                <p className="text-xs text-[#C9A227] font-semibold mb-3">Přidej nového zákazníka</p>
-               <OnboardingLinkForm models={models.filter(m => {
-                 const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-                 return ids.includes(m.id);
-               })} />
+               <OnboardingLinkForm models={models.filter((m) => {
+              const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+              return ids.includes(m.id);
+            })} />
              </div>
-           )}
+          }
          </div>
 
         {/* Dnešní výkonnost — full width */}
@@ -302,7 +302,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
             tiers={tiers} />
           <div className="border-t border-[#ececec] px-6 pb-5 pt-4">
             <div className="flex items-center justify-between">
-              <div className="flex gap-8">
+              <div className="flex gap-8 hidden">
                 <div>
                   <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Dnešní tržby</p>
                   <p className="text-2xl font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
@@ -345,16 +345,16 @@ function ChatterView({ currentUser, isAdminView = false }) {
               <div className="pt-6 border-t border-[#ececec]">
                 <p className="text-xs text-gray-500 mb-3">Výplaty v tomto měsíci</p>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {payouts.length === 0 ? (
-                    <p className="text-xs text-gray-400">Zatím žádné výplaty</p>
-                  ) : (
-                    payouts.map((p) => (
-                      <div key={p.id} className="flex justify-between text-xs">
+                  {payouts.length === 0 ?
+                  <p className="text-xs text-gray-400">Zatím žádné výplaty</p> :
+
+                  payouts.map((p) =>
+                  <div key={p.id} className="flex justify-between text-xs">
                         <span className="text-gray-600">{p.period}</span>
                         <span className="font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
                       </div>
-                    ))
-                  )}
+                  )
+                  }
                 </div>
               </div>
             </div>
@@ -412,11 +412,11 @@ function ChatterView({ currentUser, isAdminView = false }) {
         <CustomerPayoutList email={email} />
 
         {/* Chatter's customers — only for own dashboard */}
-        {!isAdminView && (
-          <ChatterCustomersList 
-            chatterEmail={email} 
-            assignedModelIds={currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])} />
-        )}
+        {!isAdminView &&
+        <ChatterCustomersList
+          chatterEmail={email}
+          assignedModelIds={currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])} />
+        }
       </div>
     </div>);
 
