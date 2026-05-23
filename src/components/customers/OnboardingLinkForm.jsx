@@ -39,43 +39,47 @@ export default function OnboardingLinkForm({ models = [] }) {
   };
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <Input
-        value={name}
-        onChange={e => setName(e.target.value)}
-        onKeyDown={e => e.key === "Enter" && handleGenerate()}
-        placeholder="Jméno zákazníka..."
-        className="h-9 w-44 text-sm bg-white border-yellow-200 focus:border-[#C9A227]"
-      />
-      <Select value={assignedModel} onValueChange={setAssignedModel}>
-        <SelectTrigger className="h-9 w-40 text-sm border-yellow-200">
-          <SelectValue placeholder="Modelka..." />
-        </SelectTrigger>
-        <SelectContent>
-          {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
-        </SelectContent>
-      </Select>
-      <button
-        onClick={handleGenerate}
-        disabled={!canGenerate}
-        className={`h-9 px-4 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all shadow-sm
-          ${copied
-            ? "bg-emerald-500 text-white"
-            : canGenerate
-              ? "bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white hover:from-[#A8841C] hover:to-[#8a6c16]"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
-      >
-        {loading
-          ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          : copied
-            ? <><Check className="w-3.5 h-3.5" /> Zkopírováno!</>
-            : <>
-                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 object-contain" />
-                Onboarding link
-              </>
-        }
-      </button>
+    <div className="bg-white rounded-2xl border border-yellow-200 shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 flex flex-col h-full">
+      <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-wide mb-4">Přidej nového zákazníka</p>
+      
+      <div className="flex flex-col gap-3 flex-1">
+        <Input
+          value={name}
+          onChange={e => setName(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleGenerate()}
+          placeholder="Jméno zákazníka..."
+          className="h-10 text-sm bg-white border-yellow-200 focus:border-[#C9A227]"
+        />
+        <Select value={assignedModel} onValueChange={setAssignedModel}>
+          <SelectTrigger className="h-10 text-sm border-yellow-200">
+            <SelectValue placeholder="Modelka..." />
+          </SelectTrigger>
+          <SelectContent>
+            {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <button
+          onClick={handleGenerate}
+          disabled={!canGenerate}
+          className={`h-10 px-4 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-sm mt-auto
+            ${copied
+              ? "bg-emerald-500 text-white"
+              : canGenerate
+                ? "bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white hover:from-[#A8841C] hover:to-[#8a6c16]"
+                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
+        >
+          {loading
+            ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            : copied
+              ? <><Check className="w-3.5 h-3.5" /> Zkopírováno!</>
+              : <>
+                  <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_18_ifllg3.png" alt="" className="w-4 h-4 object-contain" />
+                  Onboarding link
+                </>
+          }
+        </button>
+      </div>
     </div>
   );
 }
