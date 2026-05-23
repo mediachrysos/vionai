@@ -302,8 +302,19 @@ function ChatterView({ currentUser, isAdminView = false }) {
               dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
               tiers={tiers} />
             <div className="border-t border-[#ececec] px-4 pb-4 pt-3">
-              <p className="text-xs text-gray-400 mb-3">Dnešní tržby: <span className="font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</span> · Plateb: <span className="font-bold text-gray-900">{todayPayments.length}</span></p>
-              <WorkSessionWidget email={email} minimal={true} />
+              <div className="flex items-center justify-between">
+                <div className="flex gap-6">
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Dnešní tržby</p>
+                    <p className="text-lg font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Plateb</p>
+                    <p className="text-lg font-bold text-gray-900">{todayPayments.length}</p>
+                  </div>
+                </div>
+                <WorkSessionWidget email={email} />
+              </div>
             </div>
           </div>
 

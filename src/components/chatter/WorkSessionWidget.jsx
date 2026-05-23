@@ -29,20 +29,20 @@ export default function WorkSessionWidget({ email }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] p-4 flex items-center justify-between">
+    <div className="flex items-center gap-3">
       <div>
-        <p className="text-xs text-gray-400 font-semibold mb-1">PRACUJEŠ?</p>
-        <p className="text-2xl font-bold text-gray-900">{sessionTime}</p>
+        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Pracuješ?</p>
+        <p className="text-lg font-bold text-gray-900">{sessionTime}</p>
       </div>
       <Button
         onClick={toggleWork}
-        className={`h-12 w-12 rounded-full flex items-center justify-center transition-all ${
+        className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${
           isWorking
             ? "bg-red-500 hover:bg-red-600 text-white"
             : "bg-gradient-to-br from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"
         }`}
       >
-        {isWorking ? <Square className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+        {isWorking ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}
       </Button>
     </div>
   );
