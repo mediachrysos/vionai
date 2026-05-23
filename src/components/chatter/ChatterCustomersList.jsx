@@ -23,7 +23,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
 
   // Load all customers: those assigned to chatter's models OR directly assigned to chatter
   const { data: customers = [], isLoading } = useQuery({
-    queryKey: ["chatter-customers", chatterEmail, assignedModelIds],
+    queryKey: ["chatter-customers", chatterEmail, [...assignedModelIds].sort().join(",")],
     queryFn: async () => {
       const allCustomers = await base44.entities.Customer.list("-created_date", 5000);
       return allCustomers.filter(c => {
