@@ -292,47 +292,25 @@ function ChatterView({ currentUser, isAdminView = false }) {
            )}
          </div>
 
-        {/* Dnešní výkonnost + Pracuješ */}
-        <div className="bg-white border border-[#ececec] rounded-2xl p-6">
-          <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-widest mb-6">Dnešní výkonnost & Pracuješ</p>
-          <div className="grid grid-cols-3 gap-6">
-            <div>
-              <p className="text-xs text-gray-500 mb-2">Tržby</p>
-              <p className="text-2xl font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-2">Počet plateb</p>
-              <p className="text-2xl font-bold text-gray-900">{todayPayments.length}</p>
-            </div>
-            <div>
+        {/* Tier ladder + monthly pace side by side on large screens */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden">
+            <TierLadder
+              todayRevenue={todayRevenue}
+              hoursWorked={hoursToday}
+              dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+              dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
+              tiers={tiers} />
+            <div className="border-t border-[#ececec] px-4 pb-4 pt-3">
+              <p className="text-xs text-gray-400 mb-3">Dnešní tržby: <span className="font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</span> · Plateb: <span className="font-bold text-gray-900">{todayPayments.length}</span></p>
               <WorkSessionWidget email={email} minimal={true} />
             </div>
           </div>
-        </div>
 
-        {/* 4 KPI cards */}
-        <DailyKpiCards
-          todayRevenue={todayRevenue}
-          hoursWorked={hoursToday}
-          dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-          dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-          tiers={tiers} />
-        
-
-        {/* Tier ladder + monthly pace side by side on large screens */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <TierLadder
-            todayRevenue={todayRevenue}
-            hoursWorked={hoursToday}
-            dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-            dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-            tiers={tiers} />
-          
           <MonthlyPaceCard
             monthRevenue={monthRevenue}
             monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
             monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
-          
         </div>
 
         {/* Výplata & Celkem vyplaceno */}
