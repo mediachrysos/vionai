@@ -252,15 +252,17 @@ function ChatterView({ currentUser, isAdminView = false }) {
       }
 
       {/* Hero */}
-      <div className="bg-white border-b border-[#ececec] px-6 pt-8 pb-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest mb-1">Chatting Space</p>
-              <h1 className="text-gray-900 text-2xl font-bold mb-1">Ahoj, {displayName} 👋</h1>
-              
-            </div>
-            
+       <div className="bg-white border-b border-[#ececec] px-6 pt-8 pb-6">
+         <div className="max-w-5xl mx-auto">
+           <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest mb-6">Chatting Space</p>
+           <div className="flex items-center gap-4">
+             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+               {(displayName || "?")[0].toUpperCase()}
+             </div>
+             <div>
+               <h1 className="text-gray-900 text-xl font-bold">{displayName}</h1>
+             </div>
+
 
 
 
