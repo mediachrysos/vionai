@@ -293,23 +293,20 @@ function ChatterView({ currentUser, isAdminView = false }) {
          </div>
 
         {/* Dnešní výkonnost + Pracuješ */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#ececec] rounded-2xl p-6">
-            <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-widest mb-4">Dnešní výkonnost</p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Tržby</p>
-                <p className="text-2xl font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Počet plateb</p>
-                <p className="text-2xl font-bold text-gray-900">{todayPayments.length}</p>
-              </div>
+        <div className="bg-white border border-[#ececec] rounded-2xl p-6">
+          <p className="text-xs text-[#C9A227] font-semibold uppercase tracking-widest mb-6">Dnešní výkonnost & Pracuješ</p>
+          <div className="grid grid-cols-3 gap-6">
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Tržby</p>
+              <p className="text-2xl font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
             </div>
-          </div>
-
-          <div className="bg-white border border-[#ececec] rounded-2xl p-6">
-            <WorkSessionWidget email={email} minimal={true} />
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Počet plateb</p>
+              <p className="text-2xl font-bold text-gray-900">{todayPayments.length}</p>
+            </div>
+            <div>
+              <WorkSessionWidget email={email} minimal={true} />
+            </div>
           </div>
         </div>
 
