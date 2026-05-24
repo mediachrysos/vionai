@@ -4,56 +4,37 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Banknote, Plus, ChevronDown, ChevronUp, X, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import WorkSessionWidget from "../chatter/WorkSessionWidget";
+import { calcDailyPayout, DEFAULT_TIERS } from "../chatter/tierUtils";
 
 function getCurrentPeriod() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
-/**
- * Výpočet výplaty dle pravidel:
- * 0–1999 Kč     = 0 Kč
- * 2000–4999 Kč  = 120 Kč/hod
- * 5000–9999 Kč  = 120 Kč/hod + 5 % z vychatované částky
- * 10000+ Kč     = 120 Kč/hod + 10 % z vychatované částky
- */
-/**
- * Výpočet výplaty PER DEN:
- * < 2 000 Kč/den  → 0 Kč
- * 2 000–4 999 Kč  → 120 Kč/hod (bez hodin = 0)
- * 5 000–9 999 Kč  → 5 % z denní částky
- * 10 000+ Kč      → 10 % z denní částky
- */
-function calcDayEarned(dayTotal) {
-  if (dayTotal < 2000) return 0;
-  if (dayTotal < 5000) return 0; // hodinová složka — počítá se zvlášť mimo widget
-  if (dayTotal < 10000) return dayTotal * 0.05;
-  return dayTotal * 0.10;
-}
-
-// Pro zobrazení celkového earned — počítá každý den zvlášť a sčítá
-function calcMonthlyEarnedPerDay(monthPayments) {
+// Počítá earned správně per-den včetně hodinové složky
+// Protože nemáme hodiny per-den, hodinovou složku pro minulé dny ignorujeme (neznáme hours)
+// Pro dnešek se bere hoursWorked z props
+function calcMonthlyEarned(monthPayments, hoursWorked) {
+  const today = new Date().toISOString().split("T")[0];
   const byDay = {};
   for (const p of monthPayments) {
     const day = p.payment_date || p.created_date?.split("T")[0];
     if (!day) continue;
     byDay[day] = (byDay[day] || 0) + (p.amount || 0);
   }
-  return Object.values(byDay).reduce((sum, dayTotal) => sum + calcDayEarned(dayTotal), 0);
+  let total = 0;
+  for (const [day, revenue] of Object.entries(byDay)) {
+    const hours = day === today ? (hoursWorked || 0) : 0;
+    const { payout } = calcDailyPayout(revenue, hours, DEFAULT_TIERS);
+    total += payout;
+  }
+  return total;
 }
 
-function calcChatterEarned(totalChatted, hoursWorked) {
-  if (totalChatted < 2000) return 0;
-  const hourlyPart = hoursWorked * 120;
-  if (totalChatted < 5000) return hourlyPart;
-  if (totalChatted < 10000) return hourlyPart + totalChatted * 0.05;
-  return hourlyPart + totalChatted * 0.10;
-}
-
-function getTierLabel(totalChatted) {
-  if (totalChatted < 2000) return { label: "Pod minimem (< 2 000 Kč)", color: "text-gray-400" };
-  if (totalChatted < 5000) return { label: "Tier 1 · 120 Kč/h", color: "text-blue-500" };
-  if (totalChatted < 10000) return { label: "Tier 2 · 120 Kč/h + 5 %", color: "text-amber-500" };
+function getTierLabel(todayRevenue) {
+  if (todayRevenue < 2000) return { label: "Pod minimem (< 2 000 Kč)", color: "text-gray-400" };
+  if (todayRevenue < 5000) return { label: "Tier 1 · 120 Kč/h", color: "text-blue-500" };
+  if (todayRevenue < 10000) return { label: "Tier 2 · 120 Kč/h + 5 %", color: "text-amber-500" };
   return { label: "Tier 3 · 120 Kč/h + 10 %", color: "text-emerald-600" };
 }
 
@@ -74,8 +55,8 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
 
   const earned = Math.round(
     monthPayments
-      ? calcMonthlyEarnedPerDay(monthPayments)
-      : calcChatterEarned(totalChatted, hoursWorked)
+      ? calcMonthlyEarned(monthPayments, hoursWorked)
+      : calcDailyPayout(totalChatted, hoursWorked, DEFAULT_TIERS).payout
   );
   const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
   const remaining = earned - totalPaid;

@@ -207,7 +207,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                       {daysSinceLast !== null ? (
                         <div>
                           <p className="text-xs font-medium text-gray-600">{st.lastAmount?.toLocaleString()} Kč</p>
-                          <p className="text-xs text-gray-400">{daysSinceLast} days ago</p>
+                          <p className="text-xs text-gray-400">před {daysSinceLast} dny</p>
                         </div>
                       ) : <span className="text-xs text-gray-300">—</span>}
                     </td>
