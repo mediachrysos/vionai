@@ -9,6 +9,7 @@ import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 import DesignerPayoutAlert from "../components/dashboard/DesignerPayoutAlert";
+import ShiftOverviewWidget from "../components/dashboard/ShiftOverviewWidget";
 
 export default function Dashboard({ currentUser }) {
   const { showAll, toggle } = useChatterFilter();
@@ -82,6 +83,13 @@ export default function Dashboard({ currentUser }) {
         <TodayPaymentsWidget payments={filteredPayments} />
         <RecentCustomersWidget customers={filteredCustomers} />
       </div>
+
+      {/* Shift overview — admin only */}
+      {isAdmin && (
+        <div className="mt-4">
+          <ShiftOverviewWidget users={users} />
+        </div>
+      )}
     </div>
   );
 }
