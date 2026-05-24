@@ -100,11 +100,24 @@ export default function Layout({ children, currentPageName }) {
       // Redirect non-admins to their first allowed page if they're on a page they can't access
       const meRoles = me?.roles?.length > 0 ? me.roles : (me?.role ? [me.role] : []);
       if (!meRoles.includes("admin")) {
-        const allowedPages = me?.allowed_pages?.length > 0
-          ? me.allowed_pages
-          : meRoles.includes("lawyer")
-            ? ["Finance"]
-            : ["ChatterPortal", "Customers", "Payments"];
+        let allowedPages;
+        if (me?.allowed_pages?.length > 0) {
+          allowedPages = me.allowed_pages;
+        } else {
+          // Mirror the same role-based logic as Sidebar
+          const pageSet = new Set();
+          if (meRoles.includes("lawyer")) pageSet.add("Finance");
+          if (meRoles.includes("chatter") || meRoles.includes("grafik")) {
+            pageSet.add("ChatterPortal");
+            pageSet.add("Customers");
+          }
+          if (meRoles.includes("grafik")) pageSet.add("SocialMediaContent");
+          if (pageSet.size === 0) {
+            pageSet.add("ChatterPortal");
+            pageSet.add("Customers");
+          }
+          allowedPages = Array.from(pageSet);
+        }
 
         const currentPath = window.location.pathname.replace("/", "") || "Dashboard";
         if (!allowedPages.includes(currentPath)) {
