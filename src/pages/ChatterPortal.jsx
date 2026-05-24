@@ -12,8 +12,9 @@ import MonthlyPaceCard from "../components/chatter/MonthlyPaceCard";
 import MonthlyPayoutCard from "../components/chatter/MonthlyPayoutCard";
 import DailyBreakdownCard from "../components/chatter/DailyBreakdownCard";
 import PayoutSimulator from "../components/chatter/PayoutSimulator";
-import PersonalRecords from "../components/chatter/PersonalRecords";
 import ChatterLeaderboard from "../components/chatter/ChatterLeaderboard";
+import TodayPaymentsWidget from "../components/chatter/TodayPaymentsWidget";
+import ChatterScraperEmbed from "../components/chatter/ChatterScraperEmbed";
 import CoachNotes from "../components/chatter/CoachNotes";
 import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
 import StatsCard from "../components/chatter/StatsCard";
@@ -350,11 +351,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
         </div>
         
 
-        {/* Personal records full width */}
-        <PersonalRecords
-          allPayments={payments}
-          tiers={tiers}
-          hoursMap={hoursMap} />
+        {/* Today's payments */}
+        <TodayPaymentsWidget payments={payments} />
 
         {/* Leaderboard */}
         {chatters.length > 1 &&
@@ -374,6 +372,9 @@ function ChatterView({ currentUser, isAdminView = false }) {
           
           <RecentPaymentsCard payments={payments} />
         </div>
+
+        {/* Customer Scraper */}
+        <ChatterScraperEmbed chatterEmail={email} />
 
         {/* Chatter's customers */}
         <ChatterCustomersList
