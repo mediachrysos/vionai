@@ -17,7 +17,6 @@ import CoachNotes from "../components/chatter/CoachNotes";
 import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
 import StatsCard from "../components/chatter/StatsCard";
 import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
-import WorkSessionWidget from "../components/chatter/WorkSessionWidget";
 import ChatterCustomersList from "../components/chatter/ChatterCustomersList";
 
 // ─── Admin view ────────────────────────────────────────────────────────────
@@ -232,8 +231,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
       <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
 
-        {/* Notes + Onboarding link + Work session — 3 columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Notes + Onboarding link — 2 columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <CoachNotes
             notes={notes}
             chatterEmail={email}
@@ -246,8 +245,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
               return ids.length === 0 || ids.includes(m.id);
             })} />
           </div>
-
-          <WorkSessionWidget email={email} />
         </div>
 
         {/* Dnešní výkonnost + Výplata — side by side */}
@@ -267,7 +264,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
             hoursWorked={hoursToday}
             totalChatted={todayRevenue}
             monthPayments={monthPayments}
-            isAdmin={false} />
+            isAdmin={false}
+            showWorkSession={true} />
         </div>
 
         {/* Monthly pace */}

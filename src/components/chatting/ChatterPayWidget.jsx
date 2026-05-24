@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Banknote, Plus, ChevronDown, ChevronUp, X, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import WorkSessionWidget from "../chatter/WorkSessionWidget";
 
 function getCurrentPeriod() {
   const now = new Date();
@@ -56,7 +57,7 @@ function getTierLabel(totalChatted) {
   return { label: "Tier 3 · 120 Kč/h + 10 %", color: "text-emerald-600" };
 }
 
-export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatted, monthPayments, isAdmin }) {
+export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatted, monthPayments, isAdmin, showWorkSession = false }) {
   const qc = useQueryClient();
   const [payoutAmount, setPayoutAmount] = useState("");
   const [payoutNote, setPayoutNote] = useState("");
@@ -106,7 +107,8 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
           </div>
           <span className="text-sm font-semibold text-gray-800">Výplata</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {showWorkSession && <WorkSessionWidget email={chatterEmail} compact />}
           <span className={`text-xs font-medium ${tier.color}`}>{tier.label}</span>
           <button onClick={() => setShowInfo(v => !v)} className="text-gray-300 hover:text-gray-500">
             <Info className="w-3.5 h-3.5" />
