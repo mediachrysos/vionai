@@ -36,10 +36,10 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
           <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Payout dnes</p>
           <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
         </div>
-        <div className="bg-gray-50 rounded-lg p-2 hidden">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Pracuješ?</p>
-          <WorkSessionWidget email={email} compact />
-        </div>
+        
+
+
+        
       </div>
 
       {/* Tier steps */}
