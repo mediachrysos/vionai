@@ -107,8 +107,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
           </div>
           <span className="text-sm font-semibold text-gray-800">Výplata</span>
         </div>
-        <div className="flex items-center gap-3">
-          {showWorkSession && <WorkSessionWidget email={chatterEmail} compact />}
+        <div className="flex items-center gap-2">
           <span className={`text-xs font-medium ${tier.color}`}>{tier.label}</span>
           <button onClick={() => setShowInfo(v => !v)} className="text-gray-300 hover:text-gray-500">
             <Info className="w-3.5 h-3.5" />
@@ -147,6 +146,13 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
           <span className={`text-[10px] ${remaining > 0 ? "text-rose-500/60" : "text-gray-400/60"}`}>Kč</span>
         </div>
       </div>
+
+      {/* Work session timer */}
+      {showWorkSession && (
+        <div className="flex flex-col items-center justify-center py-3 border-t border-gray-100">
+          <WorkSessionWidget email={chatterEmail} />
+        </div>
+      )}
 
       {/* Admin: add payout */}
       {isAdmin && (
