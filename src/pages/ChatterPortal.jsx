@@ -12,8 +12,8 @@ import MonthlyPaceCard from "../components/chatter/MonthlyPaceCard";
 import MonthlyPayoutCard from "../components/chatter/MonthlyPayoutCard";
 import DailyBreakdownCard from "../components/chatter/DailyBreakdownCard";
 import PayoutSimulator from "../components/chatter/PayoutSimulator";
-import ChatterLeaderboard from "../components/chatter/ChatterLeaderboard";
 import TodayPaymentsWidget from "../components/chatter/TodayPaymentsWidget";
+import { ChatterShiftPicker, AdminShiftCalendar } from "../components/chatter/ShiftCalendar";
 import ChatterScraperEmbed from "../components/chatter/ChatterScraperEmbed";
 import CoachNotes from "../components/chatter/CoachNotes";
 import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
@@ -81,8 +81,12 @@ function AdminChattingSpace({ currentUser }) {
   }
 
   return (
-    <div className="p-4 lg:p-8 max-w-5xl mx-auto">
+    <div className="p-4 lg:p-8 max-w-5xl mx-auto space-y-6">
       <PageHeader title="Chatting Space" subtitle="Přehled všech chatterů" />
+
+      {/* Admin shift calendar */}
+      {chatters.length > 0 && <AdminShiftCalendar chatters={chatters} />}
+
       {chatters.length === 0 ?
       <div className="text-center py-16 text-gray-400">
           <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
@@ -174,18 +178,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
     staleTime: 30000
   });
 
-  // All users for leaderboard
-  const { data: allUsers = [] } = useQuery({
-    queryKey: ["users-chatters"],
-    queryFn: () => base44.entities.User.list(),
-    staleTime: 60000
-  });
 
-  const { data: allPayments = [] } = useQuery({
-    queryKey: ["all-payments-chatting"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-    staleTime: 60000
-  });
 
   // Notes
   const { data: notes = [], refetch: refetchNotes } = useQuery({
@@ -210,12 +203,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
   const monthRevenue = monthPayments.reduce((s, p) => s + (p.amount || 0), 0);
   const hoursToday = hoursMap[today] || 0;
   const totalPaidOut = payouts.reduce((s, p) => s + (p.amount || 0), 0);
-
-  // Chatters for leaderboard
-  const chatters = allUsers.filter((u) => {
-    const uRoles = u.roles?.length > 0 ? u.roles : u.role ? [u.role] : [];
-    return uRoles.includes("chatter") || u.allowed_pages?.includes("ChatterPortal");
-  });
 
   const displayName = nickname || currentUser?.full_name?.split(" ")[0] || "";
 
@@ -354,14 +341,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
         {/* Today's payments */}
         <TodayPaymentsWidget payments={payments} />
 
-        {/* Leaderboard */}
-        {chatters.length > 1 &&
-        <ChatterLeaderboard
-          chatters={chatters}
-          allPayments={allPayments}
-          currentUserEmail={email}
-          tiers={tiers} />
-        }
+        {/* Shift calendar */}
+        <ChatterShiftPicker email={email} name={displayName} />
 
         {/* Today stats + Recent payments */}
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

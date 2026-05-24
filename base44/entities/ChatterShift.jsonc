@@ -1,0 +1,27 @@
+{
+  "name": "ChatterShift",
+  "type": "object",
+  "properties": {
+    "chatter_email": {
+      "type": "string",
+      "description": "Email of the chatter"
+    },
+    "chatter_name": {
+      "type": "string",
+      "description": "Display name"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the shift (YYYY-MM-DD)"
+    },
+    "note": {
+      "type": "string",
+      "description": "Note for this shift"
+    }
+  },
+  "required": [
+    "chatter_email",
+    "date"
+  ]
+}
