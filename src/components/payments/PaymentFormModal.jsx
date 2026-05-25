@@ -63,12 +63,12 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     }
   }, [open, currentUser, existingPayment]);
 
-  const filteredCustomers = customers.filter((c) =>
-  customerSearch && (
-  c.full_name?.toLowerCase().includes(customerSearch.toLowerCase()) ||
-  c.email?.toLowerCase().includes(customerSearch.toLowerCase()))
-
-  );
+  const filteredCustomers = customerSearch
+    ? customers.filter((c) =>
+        c.full_name?.toLowerCase().includes(customerSearch.toLowerCase()) ||
+        c.email?.toLowerCase().includes(customerSearch.toLowerCase())
+      )
+    : customers;
 
   const selectCustomer = (c) => {
     const modelMatch = models.find((m) => m.id === c.assigned_model);
@@ -143,11 +143,11 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 ref={searchRef}
                 value={customerSearch}
                 onChange={(e) => {setCustomerSearch(e.target.value);setShowCustomerDropdown(true);}}
-                onFocus={() => customerSearch && setShowCustomerDropdown(true)}
+                onFocus={() => setShowCustomerDropdown(true)}
                 placeholder="Hledat zákazníka podle jména nebo emailu..."
                 className="pl-10" />
             </div>
-            {showCustomerDropdown && customerSearch &&
+            {showCustomerDropdown &&
             <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                 {filteredCustomers.map((c) =>
               <button
