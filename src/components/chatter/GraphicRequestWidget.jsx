@@ -1,33 +1,35 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Video, Camera, ChevronDown, ChevronUp, ExternalLink, X, Plus } from "lucide-react";
+import { Video, Camera, ChevronDown, ChevronUp, ExternalLink, X, Plus, Trash2, CalendarDays } from "lucide-react";
 
-// Designer routing: video → Ishaq, photo → Soufiane
 const DESIGNER_MAP = {
-  video: { email: "mythzee2002@gmail.com", name: "Ishaq", label: "Video" },
-  photo: { email: "soufiane00souissi@gmail.com", name: "Soufiane", label: "Fotografie" },
+  video: { email: "mythzee2002@gmail.com", name: "Ishaq" },
+  photo: { email: "soufiane00souissi@gmail.com", name: "Soufiane" },
 };
 
 const PRIORITY_CONFIG = {
-  low:    { label: "Nízká",    bg: "bg-gray-100",   text: "text-gray-500" },
-  normal: { label: "Normální", bg: "bg-blue-50",    text: "text-blue-600" },
-  high:   { label: "Vysoká",   bg: "bg-amber-50",   text: "text-[#C9A227]" },
-  urgent: { label: "Urgentní", bg: "bg-red-50",     text: "text-red-600" },
+  low:    { label: "Nízká",    bg: "bg-gray-100",  text: "text-gray-500" },
+  normal: { label: "Normální", bg: "bg-blue-50",   text: "text-blue-600" },
+  high:   { label: "Vysoká",   bg: "bg-amber-50",  text: "text-[#C9A227]" },
+  urgent: { label: "Urgentní", bg: "bg-red-50",    text: "text-red-600" },
 };
 
 const STATUS_CONFIG = {
-  pending:     { label: "Čeká",           bg: "bg-amber-50",   text: "text-amber-600" },
-  in_progress: { label: "Zpracovává se",  bg: "bg-blue-50",    text: "text-blue-600" },
-  done:        { label: "Hotovo ✓",       bg: "bg-green-50",   text: "text-green-600" },
-  rejected:    { label: "Zamítnuto",      bg: "bg-red-50",     text: "text-red-500" },
+  pending:     { label: "Čeká",          bg: "bg-amber-50",  text: "text-amber-600" },
+  in_progress: { label: "Zpracovává se", bg: "bg-blue-50",   text: "text-blue-600" },
+  done:        { label: "Hotovo ✓",      bg: "bg-green-50",  text: "text-green-600" },
+  rejected:    { label: "Zamítnuto",     bg: "bg-red-50",    text: "text-red-500" },
 };
+
+const today = () => new Date().toISOString().split("T")[0];
 
 export default function GraphicRequestWidget({ chatterEmail, chatterName, models = [] }) {
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [form, setForm] = useState({
     content_type: "",
     title: "",
@@ -35,6 +37,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
     model_id: "",
     priority: "normal",
     reference_url: "",
+    request_date: today(),
   });
 
   const { data: requests = [] } = useQuery({
@@ -59,8 +62,18 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["graphic-requests", chatterEmail] });
-      setForm({ content_type: "", title: "", description: "", model_id: "", priority: "normal", reference_url: "" });
+      qc.invalidateQueries({ queryKey: ["graphic-requests-designer"] });
+      setForm({ content_type: "", title: "", description: "", model_id: "", priority: "normal", reference_url: "", request_date: today() });
       setShowForm(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.GraphicRequest.delete(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["graphic-requests", chatterEmail] });
+      qc.invalidateQueries({ queryKey: ["graphic-requests-designer"] });
+      setDeletingId(null);
     },
   });
 
@@ -84,11 +97,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
       >
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#faf6e6] to-[#fdf3c8] flex items-center justify-center border border-[#e8d99a]">
-            <img
-              src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png"
-              alt=""
-              className="w-5 h-5 object-contain"
-            />
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png" alt="" className="w-5 h-5 object-contain" />
           </div>
           <span className="text-sm font-semibold text-gray-800">Requesty pro grafika</span>
           {pendingCount > 0 && (
@@ -104,9 +113,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
           >
             <Plus className="w-3 h-3" /> Přidat
           </button>
-          {expanded
-            ? <ChevronUp className="w-4 h-4 text-gray-400" />
-            : <ChevronDown className="w-4 h-4 text-gray-400" />}
+          {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
         </div>
       </button>
 
@@ -123,7 +130,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                 </button>
               </div>
 
-              {/* Content type toggle */}
+              {/* Content type */}
               <div>
                 <label className="text-xs font-semibold text-gray-600 block mb-2">Typ obsahu *</label>
                 <div className="grid grid-cols-2 gap-2">
@@ -206,22 +213,33 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                 </div>
               </div>
 
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Reference URL</label>
-                <input
-                  value={form.reference_url}
-                  onChange={(e) => setForm((p) => ({ ...p, reference_url: e.target.value }))}
-                  placeholder="https://..."
-                  className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
-                />
+              {/* Date + reference */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">
+                    <CalendarDays className="w-3 h-3 inline mr-1 opacity-60" />
+                    Datum požadavku
+                  </label>
+                  <input
+                    type="date"
+                    value={form.request_date}
+                    onChange={(e) => setForm((p) => ({ ...p, request_date: e.target.value }))}
+                    className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 block mb-1">Reference URL</label>
+                  <input
+                    value={form.reference_url}
+                    onChange={(e) => setForm((p) => ({ ...p, reference_url: e.target.value }))}
+                    placeholder="https://..."
+                    className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="text-xs text-gray-400 hover:text-gray-600 px-3 py-1.5 rounded-lg"
-                >
+                <button type="button" onClick={() => setShowForm(false)} className="text-xs text-gray-400 hover:text-gray-600 px-3 py-1.5 rounded-lg">
                   Zrušit
                 </button>
                 <button
@@ -239,11 +257,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
           {requests.length === 0 ? (
             <div className="px-5 py-8 text-center text-gray-400">
               <div className="w-10 h-10 rounded-full bg-[#faf6e6] flex items-center justify-center mx-auto mb-2">
-                <img
-                  src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png"
-                  alt=""
-                  className="w-5 h-5 object-contain opacity-40"
-                />
+                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png" alt="" className="w-5 h-5 object-contain opacity-40" />
               </div>
               <p className="text-xs">Zatím žádné requesty</p>
             </div>
@@ -254,10 +268,10 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                 const sCfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
                 const isVideo = r.content_type === "video";
                 const TypeIcon = isVideo ? Video : Camera;
+                const isDeleting = deletingId === r.id;
 
                 return (
                   <div key={r.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-gray-50/50 transition-colors">
-                    {/* Type icon */}
                     <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
                       isVideo ? "bg-[#faf6e6] border border-[#e8d99a]" : "bg-blue-50 border border-blue-100"
                     }`}>
@@ -268,14 +282,10 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-semibold text-gray-800">{r.title}</p>
                         {r.assigned_designer_name && (
-                          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">
-                            → {r.assigned_designer_name}
-                          </span>
+                          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
                         )}
                         {r.model_name && (
-                          <span className="text-[10px] text-[#C9A227] bg-[#faf6e6] border border-[#e8d99a] px-1.5 py-0.5 rounded-full">
-                            {r.model_name}
-                          </span>
+                          <span className="text-[10px] text-[#C9A227] bg-[#faf6e6] border border-[#e8d99a] px-1.5 py-0.5 rounded-full">{r.model_name}</span>
                         )}
                       </div>
 
@@ -284,43 +294,55 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                       )}
 
                       <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${pCfg.bg} ${pCfg.text}`}>
-                          {pCfg.label}
-                        </span>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sCfg.bg} ${sCfg.text}`}>
-                          {sCfg.label}
-                        </span>
+                        {r.request_date && (
+                          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                            <CalendarDays className="w-2.5 h-2.5" />
+                            {new Date(r.request_date + "T12:00:00").toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" })}
+                          </span>
+                        )}
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${pCfg.bg} ${pCfg.text}`}>{pCfg.label}</span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sCfg.bg} ${sCfg.text}`}>{sCfg.label}</span>
                         {r.admin_note && (
                           <span className="text-[10px] text-gray-500 italic">💬 {r.admin_note}</span>
                         )}
                         {r.result_url && (
-                          <a
-                            href={r.result_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[10px] text-[#C9A227] hover:underline flex items-center gap-0.5 font-medium"
-                          >
+                          <a href={r.result_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#C9A227] hover:underline flex items-center gap-0.5 font-medium">
                             <ExternalLink className="w-2.5 h-2.5" /> Výsledek
                           </a>
                         )}
                         {r.reference_url && (
-                          <a
-                            href={r.reference_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5"
-                          >
+                          <a href={r.reference_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5">
                             <ExternalLink className="w-2.5 h-2.5" /> Reference
                           </a>
                         )}
                       </div>
                     </div>
 
-                    <p className="text-[10px] text-gray-300 flex-shrink-0 mt-0.5 whitespace-nowrap">
-                      {r.created_date
-                        ? new Date(r.created_date).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" })
-                        : ""}
-                    </p>
+                    {/* Delete button — only for pending requests */}
+                    {r.status === "pending" && (
+                      isDeleting ? (
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <button
+                            onClick={() => deleteMutation.mutate(r.id)}
+                            disabled={deleteMutation.isPending}
+                            className="text-[10px] text-white bg-red-500 hover:bg-red-600 px-2 py-0.5 rounded-full font-semibold transition-colors disabled:opacity-50"
+                          >
+                            Smazat
+                          </button>
+                          <button onClick={() => setDeletingId(null)} className="text-[10px] text-gray-400 hover:text-gray-600 px-1">
+                            Zpět
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setDeletingId(r.id)}
+                          className="flex-shrink-0 mt-0.5 text-gray-300 hover:text-red-400 transition-colors"
+                          title="Smazat request"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )
+                    )}
                   </div>
                 );
               })}

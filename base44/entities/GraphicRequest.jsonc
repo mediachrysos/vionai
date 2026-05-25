@@ -3,44 +3,35 @@
   "type": "object",
   "properties": {
     "chatter_email": {
-      "type": "string",
-      "description": "Email chattera, kter\u00fd zadal request"
+      "type": "string"
     },
     "chatter_name": {
-      "type": "string",
-      "description": "Jm\u00e9no chattera"
+      "type": "string"
     },
     "title": {
-      "type": "string",
-      "description": "N\u00e1zev / stru\u010dn\u00fd popis requestu"
+      "type": "string"
     },
     "description": {
-      "type": "string",
-      "description": "Podrobn\u00fd popis po\u017eadavku"
+      "type": "string"
     },
     "content_type": {
       "type": "string",
       "enum": [
         "video",
         "photo"
-      ],
-      "description": "Typ obsahu: video \u2192 Ishaq, fotografie \u2192 Soufiane"
+      ]
     },
     "assigned_designer_email": {
-      "type": "string",
-      "description": "Email grafika p\u0159i\u0159azen\u00e9ho k requestu"
+      "type": "string"
     },
     "assigned_designer_name": {
-      "type": "string",
-      "description": "Jm\u00e9no grafika pro zobrazen\u00ed"
+      "type": "string"
     },
     "model_id": {
-      "type": "string",
-      "description": "ID modelky (voliteln\u00e9)"
+      "type": "string"
     },
     "model_name": {
-      "type": "string",
-      "description": "Jm\u00e9no modelky pro zobrazen\u00ed"
+      "type": "string"
     },
     "priority": {
       "type": "string",
@@ -50,8 +41,7 @@
         "high",
         "urgent"
       ],
-      "default": "normal",
-      "description": "Priorita po\u017eadavku"
+      "default": "normal"
     },
     "status": {
       "type": "string",
@@ -61,24 +51,24 @@
         "done",
         "rejected"
       ],
-      "default": "pending",
-      "description": "Stav requestu"
+      "default": "pending"
+    },
+    "request_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum, na kter\u00e9 chatter chce obsah dodat"
     },
     "reference_url": {
-      "type": "string",
-      "description": "Odkaz na referenci nebo p\u0159\u00edklad"
+      "type": "string"
     },
     "file_url": {
-      "type": "string",
-      "description": "P\u0159ilo\u017een\u00fd soubor"
+      "type": "string"
     },
     "admin_note": {
-      "type": "string",
-      "description": "Pozn\u00e1mka grafika / admina"
+      "type": "string"
     },
     "result_url": {
-      "type": "string",
-      "description": "Odkaz na hotov\u00fd v\u00fdstup"
+      "type": "string"
     }
   },
   "required": [
