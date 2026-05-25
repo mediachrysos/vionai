@@ -18,6 +18,7 @@ import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
 import StatsCard from "../components/chatter/StatsCard";
 import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
 import ChatterCustomersList from "../components/chatter/ChatterCustomersList";
+import GraphicRequestWidget from "../components/chatter/GraphicRequestWidget";
 
 // ─── Admin view ────────────────────────────────────────────────────────────
 function AdminChattingSpace({ currentUser }) {
@@ -288,6 +289,12 @@ function ChatterView({ currentUser, isAdminView = false }) {
             nextTierRevenue={5000} />
           <RecentPaymentsCard payments={payments} />
         </div>
+
+        {/* Graphic Requests */}
+        <GraphicRequestWidget
+          chatterEmail={email}
+          chatterName={displayName}
+          models={models} />
 
         {/* Customer Scraper */}
         <ChatterScraperEmbed chatterEmail={email} />

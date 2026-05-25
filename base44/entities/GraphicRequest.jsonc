@@ -1,0 +1,72 @@
+{
+  "name": "GraphicRequest",
+  "type": "object",
+  "properties": {
+    "chatter_email": {
+      "type": "string",
+      "description": "Email chattera, kter\u00fd zadal request"
+    },
+    "chatter_name": {
+      "type": "string",
+      "description": "Jm\u00e9no chattera"
+    },
+    "title": {
+      "type": "string",
+      "description": "N\u00e1zev / stru\u010dn\u00fd popis requestu"
+    },
+    "description": {
+      "type": "string",
+      "description": "Podrobn\u00fd popis po\u017eadavku"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "ID modelky (voliteln\u00e9)"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Jm\u00e9no modelky pro zobrazen\u00ed"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ],
+      "default": "normal",
+      "description": "Priorita po\u017eadavku"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "done",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Stav requestu"
+    },
+    "reference_url": {
+      "type": "string",
+      "description": "Odkaz na referenci nebo p\u0159\u00edklad"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "P\u0159ilo\u017een\u00fd soubor"
+    },
+    "admin_note": {
+      "type": "string",
+      "description": "Pozn\u00e1mka grafika / admina"
+    },
+    "result_url": {
+      "type": "string",
+      "description": "Odkaz na hotov\u00fd v\u00fdstup"
+    }
+  },
+  "required": [
+    "chatter_email",
+    "title"
+  ]
+}
