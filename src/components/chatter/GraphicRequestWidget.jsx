@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Video, Camera, ChevronDown, ChevronUp, ExternalLink, X, Plus, Trash2, CalendarDays } from "lucide-react";
@@ -22,7 +22,41 @@ const STATUS_CONFIG = {
   rejected:    { label: "Zamítnuto",     bg: "bg-red-50",    text: "text-red-500" },
 };
 
-const today = () => new Date().toISOString().split("T")[0];
+const DAY_NAMES = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
+
+function todayStr() {
+  return new Date().toISOString().split("T")[0];
+}
+
+// Generate next N days starting from today
+function getNextDays(n = 14) {
+  const days = [];
+  const base = new Date();
+  base.setHours(12, 0, 0, 0);
+  for (let i = 0; i < n; i++) {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    const iso = d.toISOString().split("T")[0];
+    days.push({
+      iso,
+      dayName: DAY_NAMES[d.getDay()],
+      dayNum: d.getDate(),
+      isToday: i === 0,
+      isTomorrow: i === 1,
+    });
+  }
+  return days;
+}
+
+function formatDateLabel(dateStr) {
+  if (!dateStr) return "Bez data";
+  const today = todayStr();
+  const tomorrow = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split("T")[0]; })();
+  if (dateStr === today) return "Dnes";
+  if (dateStr === tomorrow) return "Zítra";
+  const d = new Date(dateStr + "T12:00:00");
+  return d.toLocaleDateString("cs-CZ", { weekday: "long", day: "numeric", month: "numeric" });
+}
 
 export default function GraphicRequestWidget({ chatterEmail, chatterName, models = [] }) {
   const qc = useQueryClient();
@@ -37,8 +71,10 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
     model_id: "",
     priority: "normal",
     reference_url: "",
-    request_date: today(),
+    request_date: todayStr(),
   });
+
+  const days = useMemo(() => getNextDays(14), []);
 
   const { data: requests = [] } = useQuery({
     queryKey: ["graphic-requests", chatterEmail],
@@ -63,7 +99,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["graphic-requests", chatterEmail] });
       qc.invalidateQueries({ queryKey: ["graphic-requests-designer"] });
-      setForm({ content_type: "", title: "", description: "", model_id: "", priority: "normal", reference_url: "", request_date: today() });
+      setForm({ content_type: "", title: "", description: "", model_id: "", priority: "normal", reference_url: "", request_date: todayStr() });
       setShowForm(false);
     },
   });
@@ -84,6 +120,24 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
     await createMutation.mutateAsync(form);
     setSaving(false);
   };
+
+  // Group requests by date
+  const grouped = useMemo(() => {
+    return requests.reduce((acc, r) => {
+      const key = r.request_date || "__no_date__";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(r);
+      return acc;
+    }, {});
+  }, [requests]);
+
+  const sortedKeys = useMemo(() => {
+    return Object.keys(grouped).sort((a, b) => {
+      if (a === "__no_date__") return 1;
+      if (b === "__no_date__") return -1;
+      return a.localeCompare(b);
+    });
+  }, [grouped]);
 
   const pendingCount = requests.filter((r) => r.status === "pending").length;
 
@@ -162,6 +216,38 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                 </div>
               </div>
 
+              {/* Day picker */}
+              <div>
+                <label className="text-xs font-semibold text-gray-600 block mb-2">
+                  <CalendarDays className="w-3 h-3 inline mr-1 opacity-60" />
+                  Datum požadavku *
+                </label>
+                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  {days.map((d) => {
+                    const selected = form.request_date === d.iso;
+                    return (
+                      <button
+                        key={d.iso}
+                        type="button"
+                        onClick={() => setForm((p) => ({ ...p, request_date: d.iso }))}
+                        className={`flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-xl border-2 transition-all ${
+                          selected
+                            ? "border-[#C9A227] bg-[#C9A227] text-white shadow-sm"
+                            : "border-gray-200 bg-white hover:border-[#e8d99a] text-gray-600"
+                        }`}
+                      >
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide ${selected ? "text-white/80" : "text-gray-400"}`}>
+                          {d.isToday ? "Dnes" : d.isTomorrow ? "Zítra" : d.dayName}
+                        </span>
+                        <span className={`text-sm font-bold leading-tight ${selected ? "text-white" : "text-gray-800"}`}>
+                          {d.dayNum}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div>
                 <label className="text-xs font-semibold text-gray-600 block mb-1">Název *</label>
                 <input
@@ -179,7 +265,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                   value={form.description}
                   onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                   placeholder="Detailní popis, formát, délka..."
-                  rows={3}
+                  rows={2}
                   className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white resize-none"
                 />
               </div>
@@ -213,29 +299,14 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                 </div>
               </div>
 
-              {/* Date + reference */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">
-                    <CalendarDays className="w-3 h-3 inline mr-1 opacity-60" />
-                    Datum požadavku
-                  </label>
-                  <input
-                    type="date"
-                    value={form.request_date}
-                    onChange={(e) => setForm((p) => ({ ...p, request_date: e.target.value }))}
-                    className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">Reference URL</label>
-                  <input
-                    value={form.reference_url}
-                    onChange={(e) => setForm((p) => ({ ...p, reference_url: e.target.value }))}
-                    placeholder="https://..."
-                    className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
-                  />
-                </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-600 block mb-1">Reference URL</label>
+                <input
+                  value={form.reference_url}
+                  onChange={(e) => setForm((p) => ({ ...p, reference_url: e.target.value }))}
+                  placeholder="https://..."
+                  className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
+                />
               </div>
 
               <div className="flex justify-end gap-2 pt-1">
@@ -253,7 +324,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
             </form>
           )}
 
-          {/* ── List ── */}
+          {/* ── List grouped by date ── */}
           {requests.length === 0 ? (
             <div className="px-5 py-8 text-center text-gray-400">
               <div className="w-10 h-10 rounded-full bg-[#faf6e6] flex items-center justify-center mx-auto mb-2">
@@ -262,90 +333,101 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               <p className="text-xs">Zatím žádné requesty</p>
             </div>
           ) : (
-            <div className="divide-y divide-[#f5f5f5]">
-              {requests.map((r) => {
-                const pCfg = PRIORITY_CONFIG[r.priority] || PRIORITY_CONFIG.normal;
-                const sCfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
-                const isVideo = r.content_type === "video";
-                const TypeIcon = isVideo ? Video : Camera;
-                const isDeleting = deletingId === r.id;
-
-                return (
-                  <div key={r.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-gray-50/50 transition-colors">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isVideo ? "bg-[#faf6e6] border border-[#e8d99a]" : "bg-blue-50 border border-blue-100"
-                    }`}>
-                      <TypeIcon className={`w-4 h-4 ${isVideo ? "text-[#C9A227]" : "text-blue-400"}`} />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-gray-800">{r.title}</p>
-                        {r.assigned_designer_name && (
-                          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
-                        )}
-                        {r.model_name && (
-                          <span className="text-[10px] text-[#C9A227] bg-[#faf6e6] border border-[#e8d99a] px-1.5 py-0.5 rounded-full">{r.model_name}</span>
-                        )}
-                      </div>
-
-                      {r.description && (
-                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{r.description}</p>
-                      )}
-
-                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        {r.request_date && (
-                          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                            <CalendarDays className="w-2.5 h-2.5" />
-                            {new Date(r.request_date + "T12:00:00").toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" })}
-                          </span>
-                        )}
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${pCfg.bg} ${pCfg.text}`}>{pCfg.label}</span>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sCfg.bg} ${sCfg.text}`}>{sCfg.label}</span>
-                        {r.admin_note && (
-                          <span className="text-[10px] text-gray-500 italic">💬 {r.admin_note}</span>
-                        )}
-                        {r.result_url && (
-                          <a href={r.result_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#C9A227] hover:underline flex items-center gap-0.5 font-medium">
-                            <ExternalLink className="w-2.5 h-2.5" /> Výsledek
-                          </a>
-                        )}
-                        {r.reference_url && (
-                          <a href={r.reference_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5">
-                            <ExternalLink className="w-2.5 h-2.5" /> Reference
-                          </a>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Delete button — only for pending requests */}
-                    {r.status === "pending" && (
-                      isDeleting ? (
-                        <div className="flex items-center gap-1 flex-shrink-0">
-                          <button
-                            onClick={() => deleteMutation.mutate(r.id)}
-                            disabled={deleteMutation.isPending}
-                            className="text-[10px] text-white bg-red-500 hover:bg-red-600 px-2 py-0.5 rounded-full font-semibold transition-colors disabled:opacity-50"
-                          >
-                            Smazat
-                          </button>
-                          <button onClick={() => setDeletingId(null)} className="text-[10px] text-gray-400 hover:text-gray-600 px-1">
-                            Zpět
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => setDeletingId(r.id)}
-                          className="flex-shrink-0 mt-0.5 text-gray-300 hover:text-red-400 transition-colors"
-                          title="Smazat request"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )
-                    )}
+            <div>
+              {sortedKeys.map((dateKey) => (
+                <div key={dateKey}>
+                  {/* Date group header */}
+                  <div className="px-5 py-2 bg-gray-50/60 border-y border-[#f0f0f0] flex items-center gap-2">
+                    <CalendarDays className="w-3.5 h-3.5 text-[#C9A227]" />
+                    <span className="text-xs font-semibold text-gray-600">
+                      {dateKey === "__no_date__" ? "Bez data" : formatDateLabel(dateKey)}
+                    </span>
+                    <span className="ml-auto text-[10px] text-gray-400">
+                      {grouped[dateKey].length} {grouped[dateKey].length === 1 ? "request" : "requesty"}
+                    </span>
                   </div>
-                );
-              })}
+
+                  <div className="divide-y divide-[#f5f5f5]">
+                    {grouped[dateKey].map((r) => {
+                      const pCfg = PRIORITY_CONFIG[r.priority] || PRIORITY_CONFIG.normal;
+                      const sCfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
+                      const isVideo = r.content_type === "video";
+                      const TypeIcon = isVideo ? Video : Camera;
+                      const isDeleting = deletingId === r.id;
+
+                      return (
+                        <div key={r.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-gray-50/50 transition-colors">
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                            isVideo ? "bg-[#faf6e6] border border-[#e8d99a]" : "bg-blue-50 border border-blue-100"
+                          }`}>
+                            <TypeIcon className={`w-4 h-4 ${isVideo ? "text-[#C9A227]" : "text-blue-400"}`} />
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="text-sm font-semibold text-gray-800">{r.title}</p>
+                              {r.assigned_designer_name && (
+                                <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
+                              )}
+                              {r.model_name && (
+                                <span className="text-[10px] text-[#C9A227] bg-[#faf6e6] border border-[#e8d99a] px-1.5 py-0.5 rounded-full">{r.model_name}</span>
+                              )}
+                            </div>
+
+                            {r.description && (
+                              <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{r.description}</p>
+                            )}
+
+                            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${pCfg.bg} ${pCfg.text}`}>{pCfg.label}</span>
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sCfg.bg} ${sCfg.text}`}>{sCfg.label}</span>
+                              {r.admin_note && (
+                                <span className="text-[10px] text-gray-500 italic">💬 {r.admin_note}</span>
+                              )}
+                              {r.result_url && (
+                                <a href={r.result_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#C9A227] hover:underline flex items-center gap-0.5 font-medium">
+                                  <ExternalLink className="w-2.5 h-2.5" /> Výsledek
+                                </a>
+                              )}
+                              {r.reference_url && (
+                                <a href={r.reference_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5">
+                                  <ExternalLink className="w-2.5 h-2.5" /> Reference
+                                </a>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Delete — only pending */}
+                          {r.status === "pending" && (
+                            isDeleting ? (
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                <button
+                                  onClick={() => deleteMutation.mutate(r.id)}
+                                  disabled={deleteMutation.isPending}
+                                  className="text-[10px] text-white bg-red-500 hover:bg-red-600 px-2 py-0.5 rounded-full font-semibold transition-colors disabled:opacity-50"
+                                >
+                                  Smazat
+                                </button>
+                                <button onClick={() => setDeletingId(null)} className="text-[10px] text-gray-400 hover:text-gray-600 px-1">
+                                  Zpět
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => setDeletingId(r.id)}
+                                className="flex-shrink-0 mt-0.5 text-gray-300 hover:text-red-400 transition-colors"
+                                title="Smazat request"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
