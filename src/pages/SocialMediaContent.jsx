@@ -181,13 +181,16 @@ export default function SocialMediaContent({ currentUser }) {
     staleTime: 30000,
   });
 
-  // Map day key → ISO date for the current week
+  // Map day key → ISO date for the current week (local dates, no UTC shift)
   const dayDateMap = useMemo(() => {
     const map = {};
     DAYS.forEach(({ key }, idx) => {
       const d = new Date(weekStart + "T12:00:00");
       d.setDate(d.getDate() + idx);
-      map[key] = d.toISOString().split("T")[0];
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      map[key] = `${yyyy}-${mm}-${dd}`;
     });
     return map;
   }, [weekStart]);
