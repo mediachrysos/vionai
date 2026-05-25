@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Video, Camera, ExternalLink, ChevronDown, ChevronUp, CalendarDays } from "lucide-react";
+import { Video, Camera, ExternalLink, ChevronDown, ChevronUp, CalendarDays, CheckCircle, XCircle, Edit2 } from "lucide-react";
 
 const STATUS_OPTIONS = [
   { value: "pending",     label: "Čeká" },
@@ -213,12 +213,37 @@ export default function GraphicRequestsPanel({ designerEmail, isAdmin }) {
                                     <p className="text-xs text-gray-500 italic mt-1">💬 {r.admin_note}</p>
                                   )}
                                 </div>
-                                <button
-                                  onClick={() => isEditing ? setEditingId(null) : openEdit(r)}
-                                  className="flex-shrink-0 text-[10px] text-[#A8841C] hover:text-[#8a6c16] bg-[#faf6e6] hover:bg-[#fdf3c8] border border-[#e8d99a] px-2 py-0.5 rounded-full font-medium transition-colors"
-                                >
-                                  {isEditing ? "Zrušit" : "Upravit"}
-                                </button>
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                  {/* Approve / Edit / Reject for done status */}
+                                  {!isEditing && r.status === "done" && isAdmin && (
+                                    <>
+                                      <button
+                                        onClick={() => updateMutation.mutate({ id: r.id, data: { status: "done", admin_note: "✓ Schváleno" } })}
+                                        className="flex items-center gap-0.5 text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold hover:bg-emerald-100 transition-colors"
+                                      >
+                                        <CheckCircle className="w-2.5 h-2.5" /> Schválit
+                                      </button>
+                                      <button
+                                        onClick={() => openEdit(r)}
+                                        className="flex items-center gap-0.5 text-[10px] text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full font-semibold hover:bg-orange-100 transition-colors"
+                                      >
+                                        <Edit2 className="w-2.5 h-2.5" /> Edit
+                                      </button>
+                                      <button
+                                        onClick={() => updateMutation.mutate({ id: r.id, data: { status: "rejected" } })}
+                                        className="flex items-center gap-0.5 text-[10px] text-red-500 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full font-semibold hover:bg-red-100 transition-colors"
+                                      >
+                                        <XCircle className="w-2.5 h-2.5" /> Zamítnout
+                                      </button>
+                                    </>
+                                  )}
+                                  <button
+                                    onClick={() => isEditing ? setEditingId(null) : openEdit(r)}
+                                    className="flex-shrink-0 text-[10px] text-[#A8841C] hover:text-[#8a6c16] bg-[#faf6e6] hover:bg-[#fdf3c8] border border-[#e8d99a] px-2 py-0.5 rounded-full font-medium transition-colors"
+                                  >
+                                    {isEditing ? "Zrušit" : "Upravit"}
+                                  </button>
+                                </div>
                               </div>
 
                               {/* Edit form */}
