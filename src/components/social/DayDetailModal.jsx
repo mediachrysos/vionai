@@ -165,6 +165,26 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
   );
 }
 
+const DAY_KEYS = ["mon","tue","wed","thu","fri","sat","sun"];
+
+function getDayDate(weekStart, dayKey) {
+  const idx = DAY_KEYS.indexOf(dayKey);
+  if (idx < 0) return null;
+  const d = new Date(weekStart + "T12:00:00");
+  d.setDate(d.getDate() + idx);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+const graphicStatusConfig = {
+  pending:     { label: "Čeká", color: "bg-amber-100 text-amber-700" },
+  in_progress: { label: "Probíhá", color: "bg-blue-100 text-blue-700" },
+  done:        { label: "Hotovo", color: "bg-emerald-100 text-emerald-700" },
+  rejected:    { label: "Odmítnuto", color: "bg-red-100 text-red-600" },
+};
+
 export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission: submissionProp, weekStart, dayKey, designerEmail, designerName, isAdmin, onRefresh, models = [] }) {
   const qc = useQueryClient();
 
@@ -254,6 +274,19 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
   const taskSubMap = {};
   (submission?.task_submissions || []).forEach(ts => { taskSubMap[ts.task_idx] = ts; });
 
+  // Fetch graphic requests for this day
+  const dayDate = getDayDate(weekStart, dayKey);
+  const { data: dayGraphicRequests = [] } = useQuery({
+    queryKey: ["graphic-requests-day", dayDate, designerEmail, isAdmin],
+    queryFn: () => {
+      if (!dayDate) return [];
+      if (isAdmin) return base44.entities.GraphicRequest.filter({ request_date: dayDate }, "-created_date", 50);
+      return base44.entities.GraphicRequest.filter({ request_date: dayDate, assigned_designer_email: designerEmail }, "-created_date", 50);
+    },
+    enabled: open && !!dayDate,
+    staleTime: 0,
+  });
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
@@ -277,6 +310,31 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
                 models={models}
               />
             ))
+          )}
+
+          {/* Graphic requests for this day */}
+          {dayGraphicRequests.length > 0 && (
+            <div className="border-t border-dashed border-gray-200 pt-3 space-y-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase">Requesty od chatterů</p>
+              {dayGraphicRequests.map(r => {
+                const st = graphicStatusConfig[r.status] || graphicStatusConfig.pending;
+                return (
+                  <div key={r.id} className="border border-gray-200 rounded-xl px-4 py-3 space-y-1 bg-gray-50">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${r.content_type === "video" ? "bg-[#faf6e6] text-[#A8841C] border border-[#e8d99a]" : "bg-blue-50 text-blue-600 border border-blue-100"}`}>
+                          {r.content_type === "video" ? "🎬 Video" : "📷 Foto"}
+                        </span>
+                        <span className="text-xs font-semibold text-gray-700">{r.title}</span>
+                      </div>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${st.color}`}>{st.label}</span>
+                    </div>
+                    {r.description && <p className="text-xs text-gray-500">{r.description}</p>}
+                    <p className="text-[10px] text-gray-400">od {r.chatter_name || r.chatter_email}</p>
+                  </div>
+                );
+              })}
+            </div>
           )}
 
           {/* Admin link section */}
