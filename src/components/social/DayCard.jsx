@@ -21,7 +21,7 @@ const priorityDot = {
 };
 
 
-export default function DayCard({ dayName, tasks = [], submission, onClick, isToday, isDraft }) {
+export default function DayCard({ dayName, tasks = [], submission, onClick, isToday, isDraft, graphicRequests = [] }) {
   const taskSubMap = {};
   (submission?.task_submissions || []).forEach(ts => { taskSubMap[ts.task_idx] = ts; });
 
@@ -78,6 +78,22 @@ export default function DayCard({ dayName, tasks = [], submission, onClick, isTo
                 </span>
               )}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Graphic requests badge */}
+      {graphicRequests.length > 0 && (
+        <div className={cn("mt-2 flex gap-1 flex-wrap", tasks.length === 0 && "mt-0")}>
+          {graphicRequests.filter(r => r.content_type === "video").length > 0 && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#faf6e6] text-[#A8841C] border border-[#e8d99a]">
+              🎬 {graphicRequests.filter(r => r.content_type === "video").length} video
+            </span>
+          )}
+          {graphicRequests.filter(r => r.content_type === "photo").length > 0 && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+              📷 {graphicRequests.filter(r => r.content_type === "photo").length} foto
+            </span>
           )}
         </div>
       )}

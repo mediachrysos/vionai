@@ -170,6 +170,39 @@ export default function SocialMediaContent({ currentUser }) {
     return m;
   }, [submissions]);
 
+  // Graphic requests for the active designer — to show on day cards
+  const { data: graphicRequests = [] } = useQuery({
+    queryKey: ["graphic-requests-designer", activeDesignerEmail, isAdmin],
+    queryFn: () => {
+      if (isAdmin) return base44.entities.GraphicRequest.list("-created_date", 200);
+      return base44.entities.GraphicRequest.filter({ assigned_designer_email: activeDesignerEmail }, "-created_date", 200);
+    },
+    enabled: !!activeDesignerEmail || isAdmin,
+    staleTime: 30000,
+  });
+
+  // Map day key → ISO date for the current week
+  const dayDateMap = useMemo(() => {
+    const map = {};
+    DAYS.forEach(({ key }, idx) => {
+      const d = new Date(weekStart + "T12:00:00");
+      d.setDate(d.getDate() + idx);
+      map[key] = d.toISOString().split("T")[0];
+    });
+    return map;
+  }, [weekStart]);
+
+  // Group graphic requests by request_date
+  const requestsByDate = useMemo(() => {
+    const map = {};
+    graphicRequests.forEach(r => {
+      if (!r.request_date) return;
+      if (!map[r.request_date]) map[r.request_date] = [];
+      map[r.request_date].push(r);
+    });
+    return map;
+  }, [graphicRequests]);
+
   const todayDayKey = useMemo(() => {
     const todayDate = new Date();
     const todayWeekStart = getMondayOf(todayDate);
@@ -371,6 +404,7 @@ export default function SocialMediaContent({ currentUser }) {
                 isToday={todayDayKey === key}
                 isDraft={!!program?.is_draft}
                 onClick={() => setSelectedDay(key)}
+                graphicRequests={requestsByDate[dayDateMap[key]] || []}
               />
             ))}
           </div>
