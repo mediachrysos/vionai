@@ -185,6 +185,126 @@ const graphicStatusConfig = {
   rejected:    { label: "Odmítnuto", color: "bg-red-100 text-red-600" },
 };
 
+const graphicPriorityConfig = {
+  urgent: { label: "🔴 Urgent", color: "bg-red-100 text-red-700 border border-red-200" },
+  high:   { label: "🟠 High",   color: "bg-orange-100 text-orange-700 border border-orange-200" },
+  low:    { label: "⚪ Low",    color: "bg-gray-100 text-gray-500 border border-gray-200" },
+};
+
+function GraphicRequestRow({ request: r, isAdmin, onRefresh }) {
+  const [link, setLink] = useState(r.result_url || "");
+  const [saving, setSaving] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+
+  const st = graphicStatusConfig[r.status] || graphicStatusConfig.pending;
+  const typeColor = r.content_type === "video"
+    ? "bg-[#faf6e6] text-[#A8841C] border border-[#e8d99a]"
+    : "bg-blue-50 text-blue-600 border border-blue-100";
+  const typeLabel = r.content_type === "video" ? "🎬 Video" : "📷 Foto";
+
+  const handleSubmit = async () => {
+    if (!link) return;
+    setSaving(true);
+    await base44.entities.GraphicRequest.update(r.id, {
+      result_url: link,
+      status: "done",
+    });
+    setSaving(false);
+    onRefresh();
+  };
+
+  const handleAdminReject = async () => {
+    setSaving(true);
+    await base44.entities.GraphicRequest.update(r.id, { status: "rejected" });
+    setSaving(false);
+    onRefresh();
+  };
+
+  const handleSetInProgress = async () => {
+    setSaving(true);
+    await base44.entities.GraphicRequest.update(r.id, { status: "in_progress" });
+    setSaving(false);
+    onRefresh();
+  };
+
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden">
+      <button
+        onClick={() => setExpanded(e => !e)}
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+      >
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${typeColor}`}>{typeLabel}</span>
+          <span className="text-xs text-gray-400">📸 {r.model_name || "—"}</span>
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${st.color}`}>{st.label}</span>
+          {r.priority && r.priority !== "normal" && graphicPriorityConfig[r.priority] && (
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${graphicPriorityConfig[r.priority].color}`}>
+              {graphicPriorityConfig[r.priority].label}
+            </span>
+          )}
+        </div>
+        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />}
+      </button>
+
+      {expanded && (
+        <div className="p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-gray-700">{r.title}</p>
+            <span className="text-[10px] text-gray-400">od {r.chatter_name || r.chatter_email}</span>
+          </div>
+          {r.description && <p className="text-sm text-gray-600">{r.description}</p>}
+          {r.reference_url && (
+            <a href={r.reference_url} target="_blank" rel="noreferrer"
+              className="flex items-center gap-1.5 text-xs text-blue-500 hover:underline">
+              <Link className="w-3 h-3" /> Reference
+            </a>
+          )}
+
+          {/* Submitted result link display */}
+          {r.result_url && (
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-3">
+              <p className="text-xs text-gray-600 truncate flex-1">{r.result_url}</p>
+              <a href={r.result_url} target="_blank" rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C9A227] hover:bg-[#A8841C] text-white text-xs font-medium rounded-lg flex-shrink-0 transition-colors">
+                <ExternalLink className="w-3 h-3" /> Open
+              </a>
+            </div>
+          )}
+
+          {/* Designer: submit result */}
+          {(r.status === "pending" || r.status === "in_progress") && (
+            <div className="flex gap-2">
+              {r.status === "pending" && (
+                <Button size="sm" variant="outline" onClick={handleSetInProgress} disabled={saving} className="flex-shrink-0">
+                  In progress
+                </Button>
+              )}
+              <Input
+                placeholder="https://..."
+                value={link}
+                onChange={e => setLink(e.target.value)}
+                className="text-sm"
+              />
+              <Button size="sm" onClick={handleSubmit} disabled={!link || saving}
+                className="bg-[#C9A227] hover:bg-[#A8841C] text-white gap-1 flex-shrink-0">
+                <Send className="w-3 h-3" /> {r.result_url ? "Resubmit" : "Submit"}
+              </Button>
+            </div>
+          )}
+
+          {/* Admin: reject */}
+          {isAdmin && r.status !== "rejected" && r.status !== "done" && (
+            <Button size="sm" variant="outline" onClick={handleAdminReject} disabled={saving}
+              className="text-red-500 border-red-200 hover:bg-red-50 text-xs">
+              <XCircle className="w-3 h-3 mr-1" /> Odmítnout
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function DayDetailModal({ open, onClose, dayName, tasks = [], submission: submissionProp, weekStart, dayKey, designerEmail, designerName, isAdmin, onRefresh, models = [] }) {
   const qc = useQueryClient();
 
@@ -315,25 +435,10 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
           {/* Graphic requests for this day */}
           {dayGraphicRequests.length > 0 && (
             <div className="border-t border-dashed border-gray-200 pt-3 space-y-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase">Requesty od chatterů</p>
-              {dayGraphicRequests.map(r => {
-                const st = graphicStatusConfig[r.status] || graphicStatusConfig.pending;
-                return (
-                  <div key={r.id} className="border border-gray-200 rounded-xl px-4 py-3 space-y-1 bg-gray-50">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${r.content_type === "video" ? "bg-[#faf6e6] text-[#A8841C] border border-[#e8d99a]" : "bg-blue-50 text-blue-600 border border-blue-100"}`}>
-                          {r.content_type === "video" ? "🎬 Video" : "📷 Foto"}
-                        </span>
-                        <span className="text-xs font-semibold text-gray-700">{r.title}</span>
-                      </div>
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${st.color}`}>{st.label}</span>
-                    </div>
-                    {r.description && <p className="text-xs text-gray-500">{r.description}</p>}
-                    <p className="text-[10px] text-gray-400">od {r.chatter_name || r.chatter_email}</p>
-                  </div>
-                );
-              })}
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Requesty od chatterů</p>
+              {dayGraphicRequests.map(r => (
+                <GraphicRequestRow key={r.id} request={r} isAdmin={isAdmin} onRefresh={refetch} />
+              ))}
             </div>
           )}
 
