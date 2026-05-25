@@ -8,6 +8,7 @@ import AdminProgramEditor from "../components/social/AdminProgramEditor";
 import DashboardManager from "../components/social/DashboardManager";
 import WorkSessionTracker from "../components/social/WorkSessionTracker";
 import DesignerPayWidget from "../components/social/DesignerPayWidget";
+import GraphicRequestsPanel from "../components/social/GraphicRequestsPanel";
 
 const DAYS = [
   { key: "mon", label: "Monday" },
@@ -348,6 +349,14 @@ export default function SocialMediaContent({ currentUser }) {
               onRateChange={refetchDashboards}
             />
           </div>
+        )}
+
+        {/* Graphic requests panel — visible to designers and admins */}
+        {(activeDesignerEmail || isAdmin) && (
+          <GraphicRequestsPanel
+            designerEmail={activeDesignerEmail}
+            isAdmin={isAdmin}
+          />
         )}
 
         {/* Weekly grid */}

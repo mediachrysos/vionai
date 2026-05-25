@@ -18,6 +18,22 @@
       "type": "string",
       "description": "Podrobn\u00fd popis po\u017eadavku"
     },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "video",
+        "photo"
+      ],
+      "description": "Typ obsahu: video \u2192 Ishaq, fotografie \u2192 Soufiane"
+    },
+    "assigned_designer_email": {
+      "type": "string",
+      "description": "Email grafika p\u0159i\u0159azen\u00e9ho k requestu"
+    },
+    "assigned_designer_name": {
+      "type": "string",
+      "description": "Jm\u00e9no grafika pro zobrazen\u00ed"
+    },
     "model_id": {
       "type": "string",
       "description": "ID modelky (voliteln\u00e9)"
@@ -67,6 +83,7 @@
   },
   "required": [
     "chatter_email",
-    "title"
+    "title",
+    "content_type"
   ]
 }
