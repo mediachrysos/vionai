@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 
 function getMonday(date) {
@@ -30,6 +30,8 @@ const DAY_NAMES = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
 
 export default function ShiftOverviewWidget({ users = [] }) {
   const [weekStart, setWeekStart] = useState(getMonday(new Date()));
+  const [toggling, setToggling] = useState(null); // "email|date"
+  const qc = useQueryClient();
 
   const chatters = users.filter(u => {
     const roles = u.roles?.length > 0 ? u.roles : u.role ? [u.role] : [];
@@ -44,6 +46,24 @@ export default function ShiftOverviewWidget({ users = [] }) {
     queryFn: () => base44.entities.ChatterShift.list("-date", 2000),
     staleTime: 15000,
   });
+
+  const handleToggle = async (chatter, date) => {
+    const key = `${chatter.email}|${date}`;
+    if (toggling === key) return;
+    setToggling(key);
+    const existing = allShifts.find(s => s.chatter_email === chatter.email && s.date === date);
+    if (existing) {
+      await base44.entities.ChatterShift.delete(existing.id);
+    } else {
+      await base44.entities.ChatterShift.create({
+        chatter_email: chatter.email,
+        chatter_name: chatter.nickname || chatter.full_name || chatter.email,
+        date,
+      });
+    }
+    qc.invalidateQueries({ queryKey: ["all-chatter-shifts"] });
+    setToggling(null);
+  };
 
   // map: email -> Set of dates
   const shiftMap = {};
@@ -119,24 +139,33 @@ export default function ShiftOverviewWidget({ users = [] }) {
                 {days.map(date => {
                   const hasShift = !!shiftMap[chatter.email]?.[date];
                   const note = noteMap[chatter.email]?.[date];
+                  const key = `${chatter.email}|${date}`;
+                  const isToggling = toggling === key;
                   return (
                     <td key={date} className="px-1 py-2 text-center">
-                      {hasShift ? (
-                        <div className="flex flex-col items-center gap-0.5">
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center mx-auto ${
-                            date === today
-                              ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm"
-                              : "bg-emerald-100 text-emerald-600"
-                          }`}>
-                            <span className="text-[11px] font-bold">✓</span>
+                      <button
+                        onClick={() => handleToggle(chatter, date)}
+                        disabled={!!toggling}
+                        className="mx-auto block"
+                        title={hasShift ? "Odebrat směnu" : "Přidat směnu"}
+                      >
+                        {hasShift ? (
+                          <div className="flex flex-col items-center gap-0.5">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-opacity ${isToggling ? "opacity-40" : "hover:opacity-80"} ${
+                              date === today
+                                ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm"
+                                : "bg-emerald-100 text-emerald-600"
+                            }`}>
+                              <span className="text-[11px] font-bold">✓</span>
+                            </div>
+                            {note && (
+                              <span className="text-[9px] text-gray-400 truncate max-w-[56px]" title={note}>{note.slice(0, 8)}{note.length > 8 ? "…" : ""}</span>
+                            )}
                           </div>
-                          {note && (
-                            <span className="text-[9px] text-gray-400 truncate max-w-[56px]" title={note}>{note.slice(0, 8)}{note.length > 8 ? "…" : ""}</span>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 mx-auto" />
-                      )}
+                        ) : (
+                          <div className={`w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 hover:bg-emerald-50 hover:border-emerald-200 transition-colors ${isToggling ? "opacity-40" : ""}`} />
+                        )}
+                      </button>
                     </td>
                   );
                 })}
