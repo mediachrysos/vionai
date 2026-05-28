@@ -1,0 +1,27 @@
+{
+  "name": "LookAlikeAudience",
+  "type": "object",
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "description": "K\u0159estn\u00ed jm\u00e9no"
+    },
+    "last_name": {
+      "type": "string",
+      "description": "P\u0159\u00edjmen\u00ed"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Telefonn\u00ed \u010d\u00edslo ve form\u00e1tu +420xxxxxxxxx"
+    },
+    "total_czk": {
+      "type": "number",
+      "default": 0,
+      "description": "Celkov\u00e1 \u00fatrata v CZK (z p\u016fvodn\u00edho souboru)"
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name"
+  ]
+}
