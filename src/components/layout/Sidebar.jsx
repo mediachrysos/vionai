@@ -24,6 +24,7 @@ const customIcons = {
 const allPages = [
   { name: "Dashboard", icon: null, page: "Dashboard" },
   { name: "Customers", icon: Users, page: "Customers" },
+  { name: "Look-alike Audience", icon: null, page: "LookAlikeAudience" },
   { name: "Finance", icon: null, page: "Finance" },
   { name: "Wallet", icon: null, page: "Wallet" },
   { name: "Graphic Space", icon: null, page: "SocialMediaContent" },

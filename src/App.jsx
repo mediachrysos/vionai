@@ -9,6 +9,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CustomerOnboarding from './pages/CustomerOnboarding';
 import CustomerScraper from './pages/CustomerScraper';
 import SocialMediaContent from './pages/SocialMediaContent';
+import LookAlikeAudience from './pages/LookAlikeAudience';
 import CustomerDetail from './pages/CustomerDetail';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -80,6 +81,7 @@ function App() {
             <Route path="/CustomerScraper" element={<LayoutWrapper currentPageName="CustomerScraper"><CustomerScraper /></LayoutWrapper>} />
             <Route path="/CustomerDetail" element={<LayoutWrapper currentPageName="CustomerDetail"><CustomerDetail /></LayoutWrapper>} />
             <Route path="/SocialMediaContent" element={<LayoutWrapper currentPageName="SocialMediaContent"><SocialMediaContent /></LayoutWrapper>} />
+            <Route path="/LookAlikeAudience" element={<LayoutWrapper currentPageName="LookAlikeAudience"><LookAlikeAudience /></LayoutWrapper>} />
             {/* Všechny ostatní stránky vyžadují auth */}
             <Route path="*" element={<AuthenticatedApp />} />
           </Routes>
