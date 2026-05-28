@@ -1,12 +1,28 @@
 import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Download } from "lucide-react";
+import { Search, Download, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LookAlikeAudience() {
   const [search, setSearch] = useState("");
+  const [syncing, setSyncing] = useState(false);
+  const qc = useQueryClient();
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await base44.functions.invoke("syncLookAlikeAudience", {});
+      toast.success(res.data?.message || "Synchronizováno");
+      qc.invalidateQueries({ queryKey: ["look-alike-audience"] });
+    } catch (e) {
+      toast.error("Chyba při synchronizaci");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const { data: audience = [], isLoading } = useQuery({
     queryKey: ["look-alike-audience"],
@@ -73,14 +89,25 @@ export default function LookAlikeAudience() {
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Look-alike Audience</h1>
           <p className="text-sm text-gray-500 mt-1">{audience.length} kontaktů</p>
         </div>
-        <Button
-          variant="outline"
-          onClick={downloadXlsx}
-          className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 gap-2"
-        >
-          <Download className="w-4 h-4" />
-          Export .csv
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleSync}
+            disabled={syncing}
+            className="border-blue-200 text-blue-700 hover:bg-blue-50 gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+            Synchronizovat
+          </Button>
+          <Button
+            variant="outline"
+            onClick={downloadXlsx}
+            className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 gap-2"
+          >
+            <Download className="w-4 h-4" />
+            Export .csv
+          </Button>
+        </div>
       </div>
 
       <div className="relative mb-5">
