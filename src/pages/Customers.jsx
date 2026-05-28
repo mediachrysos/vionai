@@ -213,10 +213,12 @@ export default function Customers({ currentUser }) {
   const downloadXlsx = () => {
     const rows = [
     ["Name", "Email", "Phone", "Bank", "Account Number", "Pay Day", "Total", "Payment Count"],
-    ...customers.map((c) => {
-      const st = customerStats[c.id] || {};
-      return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter((p) => p.customer_id === c.id).length];
-    })];
+    ...customers
+      .filter((c) => (customerStats[c.id]?.total || 0) > 0)
+      .map((c) => {
+        const st = customerStats[c.id] || {};
+        return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter((p) => p.customer_id === c.id).length];
+      })];
 
     const csv = rows.map((r) => r.map((v) => `"${v ?? ""}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
