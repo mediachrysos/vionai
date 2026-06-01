@@ -79,11 +79,11 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
     queryFn: () => base44.entities.CompanyReserve.list(),
   });
   const { data: allLukyPayouts = [] } = useQuery({
-    queryKey: ["ownerPayouts", "luky", "all"],
+    queryKey: ["ownerPayouts", "luky"],
     queryFn: () => base44.entities.OwnerPayout.filter({ owner: "luky" }),
   });
   const { data: allMatyPayouts = [] } = useQuery({
-    queryKey: ["ownerPayouts", "maty", "all"],
+    queryKey: ["ownerPayouts", "maty"],
     queryFn: () => base44.entities.OwnerPayout.filter({ owner: "maty" }),
   });
 
