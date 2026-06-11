@@ -98,6 +98,7 @@ export default function Finance({ currentUser }) {
     return (
       <div className="p-4 lg:p-8 max-w-2xl mx-auto">
         <PageHeader title="Finance" subtitle="Your payout overview" />
+
         <div className="mt-6">
           <LawyerPayoutCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
         </div>

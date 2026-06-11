@@ -64,7 +64,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
       <DialogContent className="w-[calc(100vw-2rem)] max-w-lg p-0 overflow-hidden flex flex-col" style={{ maxHeight: "min(90vh, 700px)" }}>
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-3 flex-shrink-0">
           <DialogTitle className="text-white text-base font-semibold">
-            {customer ? "Upravit zákazníka" : "Přidat zákazníka"}
+            {customer ? "Edit customer" : "Add customer"}
           </DialogTitle>
         </div>
 
@@ -73,39 +73,39 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
             <Alert className="border-amber-700/30 bg-amber-950/30 mb-3">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
               <AlertDescription className="text-xs">
-                Podobný zákazník již existuje: <strong>{duplicate.full_name}</strong> ({duplicate.email || duplicate.bank_account_number}).
+                Similar customer already exists: <strong>{duplicate.full_name}</strong> ({duplicate.email || duplicate.bank_account_number}).
               </AlertDescription>
             </Alert>
           )}
 
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
-              <Label className="text-xs text-slate-400">Celé jméno *</Label>
-              <Input value={form.full_name} onChange={e => handleChange("full_name", e.target.value)} placeholder="Jan Novák" className="mt-1 h-8 text-sm" />
+              <Label className="text-xs text-slate-400">Full name *</Label>
+              <Input value={form.full_name} onChange={e => handleChange("full_name", e.target.value)} placeholder="John Doe" className="mt-1 h-8 text-sm" />
             </div>
             <div>
               <Label className="text-xs text-slate-400">Email</Label>
               <Input type="email" value={form.email || ""} onChange={e => handleChange("email", e.target.value)} placeholder="jan@example.com" className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-slate-400">Telefon</Label>
-              <Input type="tel" value={form.phone || ""} onChange={e => handleChange("phone", e.target.value)} placeholder="+420 123 456 789" className="mt-1 h-8 text-sm" />
+              <Label className="text-xs text-slate-400">Phone</Label>
+              <Input type="tel" value={form.phone || ""} onChange={e => handleChange("phone", e.target.value)} placeholder="+1 (555) 123-4567" className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-slate-400">Název banky</Label>
+              <Label className="text-xs text-slate-400">Bank name</Label>
               <Input value={form.bank_name || ""} onChange={e => handleChange("bank_name", e.target.value)} className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-slate-400">Číslo účtu</Label>
+              <Label className="text-xs text-slate-400">Account number</Label>
               <Input value={form.bank_account_number || ""} onChange={e => handleChange("bank_account_number", e.target.value)} className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-slate-400">Den výplaty (1–31)</Label>
+              <Label className="text-xs text-slate-400">Pay day (1–31)</Label>
               <Input
                 type="number" min={1} max={31}
                 value={form.pay_day_of_month || ""}
                 onChange={e => handleChange("pay_day_of_month", e.target.value ? parseInt(e.target.value) : "")}
-                placeholder="např. 15"
+                placeholder="e.g. 15"
                 className="mt-1 h-8 text-sm"
               />
             </div>
@@ -114,15 +114,15 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
               <Select value={form.status} onValueChange={v => handleChange("status", v)}>
                 <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Aktivní</SelectItem>
-                  <SelectItem value="inactive">Neaktivní</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
                   <SelectItem value="vip">VIP</SelectItem>
-                  <SelectItem value="blocked">Blokovaný</SelectItem>
+                  <SelectItem value="blocked">Blocked</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="col-span-2">
-              <Label className="text-xs text-slate-400">Přiřazené modelky</Label>
+              <Label className="text-xs text-slate-400">Assigned models</Label>
               <div className="mt-1 flex flex-wrap gap-1.5 p-2 border border-white/10 rounded-md min-h-[34px]">
                 {(form.assigned_models || []).map(id => {
                   const m = models?.find(x => x.id === id);
@@ -136,7 +136,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
                 })}
                 <Select onValueChange={toggleModel} value="">
                   <SelectTrigger className="h-6 text-xs border-0 shadow-none p-0 pl-1 w-auto min-w-[120px]">
-                    <SelectValue placeholder="+ Přidat modelku" />
+                    <SelectValue placeholder="+ Add model" />
                   </SelectTrigger>
                   <SelectContent>
                     {models?.filter(m => !(form.assigned_models || []).includes(m.id)).map(m => (
@@ -147,21 +147,21 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
               </div>
             </div>
             <div className="col-span-2">
-              <Label className="text-xs text-slate-400">Poznámky</Label>
+              <Label className="text-xs text-slate-400">Notes</Label>
               <Textarea value={form.notes || ""} onChange={e => handleChange("notes", e.target.value)} rows={2} className="mt-1 text-sm resize-none" />
             </div>
           </div>
         </div>
 
         <div className="flex justify-end gap-2 px-5 py-3 border-t border-white/10 flex-shrink-0">
-          <Button variant="outline" size="sm" onClick={onClose}>Zrušit</Button>
+          <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
           <Button
             size="sm"
             onClick={handleSubmit}
             disabled={!form.full_name || saving}
             className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"
           >
-            {saving ? "Ukládám..." : customer ? "Uložit" : "Vytvořit"}
+            {saving ? "Saving..." : customer ? "Save" : "Create"}
           </Button>
         </div>
       </DialogContent>

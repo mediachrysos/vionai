@@ -164,10 +164,10 @@ export default function Customers({ currentUser }) {
     setSyncing(true);
     try {
       const res = await base44.functions.invoke("syncLookAlikeAudience", {});
-      toast.success(res.data?.message || "Synchronizováno");
+      toast.success(res.data?.message || "Synced");
       qc.invalidateQueries({ queryKey: ["look-alike-audience"] });
     } catch (e) {
-      toast.error("Chyba při synchronizaci");
+      toast.error("Sync error");
     } finally {
       setSyncing(false);
     }
@@ -175,7 +175,7 @@ export default function Customers({ currentUser }) {
 
   const downloadAudienceCsv = () => {
     const rows = [
-      ["Číslo", "Křestní jméno", "Příjmení", "Telefon", "Celkem (CZK)"],
+      ["No.", "First name", "Last name", "Phone", "Total (CZK)"],
       ...filteredAudience.map((a, i) => [i + 1, a.first_name || "", a.last_name || "", a.phone || "", getAudienceTotal(a)]),
     ];
     const csv = rows.map((r) => r.map((v) => `"${v ?? ""}"`).join(",")).join("\n");
@@ -275,7 +275,7 @@ export default function Customers({ currentUser }) {
 
   const downloadXlsx = () => {
     const rows = [
-    ["Name", "Email", "Phone", "Bank", "Account Number", "Pay Day", "Total", "Payment Count"],
+    ["Name", "Email", "Phone", "Bank", "Account Number", "Pay Day", "Total", "Payments"],
     ...customers
       .filter((c) => (customerStats[c.id]?.total || 0) > 0)
       .map((c) => {
@@ -369,10 +369,10 @@ export default function Customers({ currentUser }) {
       {activeTab === "lookalike" && (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-slate-500">{audience.length} kontaktů</p>
+            <p className="text-sm text-slate-500">{audience.length} contacts</p>
             <div className="flex gap-2">
               <Button variant="outline" onClick={handleSync} disabled={syncing} className="border-white/10 text-slate-300 hover:bg-white/5 gap-2">
-                <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} /> Synchronizovat
+                <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} /> Sync
               </Button>
               <Button variant="outline" onClick={downloadAudienceCsv} className="border-white/10 text-slate-300 hover:bg-white/5 gap-2">
                 <Download className="w-4 h-4" /> Export .csv
@@ -381,7 +381,7 @@ export default function Customers({ currentUser }) {
           </div>
           <div className="relative mb-5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-            <Input value={laSearch} onChange={(e) => setLaSearch(e.target.value)} placeholder="Hledat jméno nebo telefon..." className="pl-10" />
+            <Input value={laSearch} onChange={(e) => setLaSearch(e.target.value)} placeholder="Search name or phone..." className="pl-10" />
           </div>
           <div className="bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden">
             <div className="overflow-x-auto">
@@ -389,17 +389,17 @@ export default function Customers({ currentUser }) {
                 <thead>
                   <tr className="border-b border-white/10 bg-white/5">
                     <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 w-12">#</th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Křestní jméno</th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Příjmení</th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Telefon</th>
-                    <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Celkem (CZK)</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">First name</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Last name</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Phone</th>
+                    <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Total (CZK)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {laLoading ? (
                     <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Načítám...</td></tr>
                   ) : filteredAudience.length === 0 ? (
-                    <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Žádné záznamy</td></tr>
+                    <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">No records</td></tr>
                   ) : filteredAudience.map((a, i) => {
                     const total = getAudienceTotal(a);
                     const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
@@ -413,7 +413,7 @@ export default function Customers({ currentUser }) {
                         <td className="px-5 py-3.5 text-sm text-slate-400 font-mono">{a.phone || "—"}</td>
                         <td className="px-5 py-3.5 text-right">
                           <span className={`text-sm font-semibold ${isFromDB ? "text-emerald-400" : "text-slate-300"}`}>
-                            {total > 0 ? `${total.toLocaleString()} Kč` : "—"}
+                            {total > 0 ? `${total.toLocaleString()} CZK` : "—"}
                           </span>
                           {isFromDB && <span className="ml-1.5 text-[10px] text-emerald-400 bg-emerald-950/50 border border-emerald-700/30 rounded px-1 py-0.5">live</span>}
                         </td>
@@ -433,7 +433,7 @@ export default function Customers({ currentUser }) {
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-100">Customers</h1>
           <div className="flex gap-2 flex-wrap items-end">
             <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
-              <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
+              <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export
             </Button>
             {duplicateNames.size > 0 && (
               <Button
@@ -553,13 +553,13 @@ export default function Customers({ currentUser }) {
                       })()}
                       </td>
                       <td className="px-5 py-3.5 text-right">
-                        <p className="text-sm font-semibold text-slate-200">{displayTotal.toLocaleString()} Kč</p>
+                        <p className="text-sm font-semibold text-slate-200">{displayTotal.toLocaleString()} CZK</p>
                         <p className="text-xs text-slate-500">{displayCount}× payments</p>
                       </td>
                       <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                         {daysSinceLast !== null ?
-                      <div>
-                            <p className="text-xs font-medium text-slate-300">{rawSt.lastAmount?.toLocaleString()} Kč</p>
+                        <div>
+                             <p className="text-xs font-medium text-slate-300">{rawSt.lastAmount?.toLocaleString()} CZK</p>
                             <p className="text-xs text-slate-500">{daysSinceLast} days ago</p>
                           </div> :
                       <span className="text-xs text-slate-600">—</span>}
@@ -592,12 +592,13 @@ export default function Customers({ currentUser }) {
                     {merged && isExpanded && (
                       <tr className="bg-indigo-950/20 border-b border-indigo-700/20">
                         <td colSpan={6} className="px-8 py-3">
-                          <p className="text-xs font-semibold text-indigo-300 mb-2">Payments by model (merged {merged.allIds.length} records with the same name):</p>
+                          <p className="text-xs font-semibold text-indigo-300 mb-2">Payments by model (merged {merged.allIds.length} duplicate records):</p>
                           <div className="flex flex-wrap gap-3">
                             {Object.entries(merged.byModel).map(([modelName, data]) => (
                               <div key={modelName} className="flex items-center gap-2 bg-[#1e1e1e] border border-white/10 rounded-lg px-3 py-1.5">
                                 <span className="text-xs font-medium text-amber-300 bg-amber-900/30 border border-amber-700/30 rounded px-1.5 py-0.5">{modelName}</span>
-                                <span className="text-sm font-bold text-slate-200">{data.total.toLocaleString()} Kč</span>
+                                <span className="text-sm font-bold text-slate-200">{data.total.toLocaleString()} CZK
+</span>
                                 <span className="text-xs text-slate-500">{data.count}× payments</span>
                               </div>
                             ))}

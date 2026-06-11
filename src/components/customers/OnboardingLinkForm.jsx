@@ -42,9 +42,9 @@ export default function OnboardingLinkForm({ models = [] }) {
   return (
     <div className="flex items-end gap-2 flex-wrap">
       <div className="min-w-48">
-        <label className="text-xs font-semibold text-gray-600 block mb-1.5">Jméno *</label>
-        <Input
-          placeholder="Jméno zákazníka..."
+        <label className="text-xs font-semibold text-gray-600 block mb-1.5">Name *</label>
+         <Input
+           placeholder="Customer name..."
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="h-9 text-sm"
@@ -53,10 +53,10 @@ export default function OnboardingLinkForm({ models = [] }) {
 
       {models.length > 0 && (
         <div className="min-w-48">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Modelka *</label>
-          <Select value={assignedModel} onValueChange={setAssignedModel}>
-            <SelectTrigger className="h-9 text-sm">
-              <SelectValue placeholder="Vyber modelku..." />
+          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Model *</label>
+           <Select value={assignedModel} onValueChange={setAssignedModel}>
+             <SelectTrigger className="h-9 text-sm">
+               <SelectValue placeholder="Select model..." />
             </SelectTrigger>
             <SelectContent>
               {models.map((m) => (
@@ -74,15 +74,15 @@ export default function OnboardingLinkForm({ models = [] }) {
         {loading ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
-            Generuji...
+            Generating...
           </>
         ) : copied ? (
           <>
             <Check className="w-4 h-4" />
-            Zkopírováno!
+            Copied!
           </>
         ) : (
-          "Vygenerovat & kopírovat"
+          "Generate & copy"
         )}
       </Button>
     </div>
