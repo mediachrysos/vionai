@@ -112,8 +112,8 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               <CreditCard className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">{existingPayment ? "Upravit platbu" : "Přidat platbu"}</h2>
-              <p className="text-amber-100 text-xs">{existingPayment ? "Upravte údaje platby" : "Zaznamenejte novou příchozí platbu"}</p>
+              <h2 className="text-lg font-bold text-white">{existingPayment ? "Edit payment" : "Add payment"}</h2>
+               <p className="text-amber-100 text-xs">{existingPayment ? "Edit payment details" : "Record new incoming payment"}</p>
             </div>
           </div>
         </div>
@@ -124,13 +124,13 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             onClick={() => setMode("payment")}
             className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payment" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-slate-400 hover:text-slate-200"}`}
           >
-            <CreditCard className="w-4 h-4" /> Příjem
+            <CreditCard className="w-4 h-4" /> Income
           </button>
           <button
             onClick={() => setMode("payout")}
             className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payout" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-slate-400 hover:text-slate-200"}`}
           >
-            <Wallet className="w-4 h-4" /> Výplata
+            <Wallet className="w-4 h-4" /> Payout
           </button>
         </div>
 
@@ -138,12 +138,12 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           {/* Customer Search — only for payment mode */}
           {mode === "payout" && (
             <div className="bg-amber-950/30 border border-amber-700/30 rounded-lg px-4 py-3 text-sm text-amber-300">
-              Výplata bude zapsána do historie transakcí, ale nebude se počítat jako příjem ani výdaj.
+              Payout will be recorded in transaction history but won't count as income or expense.
             </div>
           )}
           {mode === "payment" && (
           <div className="relative">
-            <Label>Zákazník *</Label>
+            <Label>Customer *</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
@@ -151,7 +151,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 value={customerSearch}
                 onChange={(e) => {setCustomerSearch(e.target.value);setShowCustomerDropdown(true);}}
                 onFocus={() => setShowCustomerDropdown(true)}
-                placeholder="Hledat zákazníka podle jména nebo emailu..."
+                placeholder="Search customer by name or email..."
                 className="pl-10" />
             </div>
             {showCustomerDropdown &&
@@ -166,7 +166,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                     </div>
                     <div>
                       <p className="font-medium text-slate-200">{c.full_name}</p>
-                      <p className="text-xs text-slate-500">{c.email || "Bez emailu"}</p>
+                      <p className="text-xs text-slate-500">{c.email || "No email"}</p>
                     </div>
                   </button>
               )}
@@ -178,7 +178,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                        <UserPlus className="w-3.5 h-3.5 text-[#C9A227]" />
                     </div>
                     <div>
-                      <p className="font-medium">Přidat nového zákazníka</p>
+                      <p className="font-medium">Add new customer</p>
                       <p className="text-xs text-amber-400">"{customerSearch}"</p>
                     </div>
                   </button>
@@ -191,11 +191,11 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           {/* Payout note */}
           {mode === "payout" && (
             <div>
-              <Label>Popis výplaty</Label>
+              <Label>Payout description</Label>
               <Input
                 value={form.note}
                 onChange={(e) => setForm((prev) => ({ ...prev, note: e.target.value }))}
-                placeholder="např. Výplata Luky – duben 2026"
+                placeholder="e.g. Payout Luky – April 2026"
                 className="mt-1"
               />
             </div>
@@ -203,7 +203,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
           {/* Quick Amount */}
           <div>
-            <Label>Částka *</Label>
+            <Label>Amount *</Label>
             <div className="flex flex-wrap gap-2 mb-2">
               {quickAmounts.map((a) =>
               <button
@@ -216,7 +216,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                   "bg-[#2a2a2a] text-slate-300 border-white/10 hover:border-[#C9A227]"
                 )}>
                 
-                  {a.toLocaleString()} Kč
+                  {a.toLocaleString()}
                 </button>
               )}
             </div>
@@ -225,9 +225,9 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 type="number"
                 value={form.amount}
                 onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
-                placeholder="Vlastní částka" />
+                placeholder="Custom amount" />
               <Select value={form.model_id} onValueChange={handleModelChange}>
-                <SelectTrigger><SelectValue placeholder="Vybrat modelku" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select model" /></SelectTrigger>
                 <SelectContent>
                   {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
                 </SelectContent>
@@ -237,12 +237,12 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Cílový účet</Label>
+              <Label>Target account</Label>
             <Select value={form.bank_account_id} onValueChange={(v) => {
               const acc = bankAccounts.find((a) => a.id === v);
               setForm((prev) => ({ ...prev, bank_account_id: v, account_name: acc?.name || "" }));
             }}>
-              <SelectTrigger><SelectValue placeholder="Vybrat účet" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Select account" /></SelectTrigger>
               <SelectContent>
                 {bankAccounts.map((a) =>
                   <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
@@ -251,19 +251,19 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             </Select>
             </div>
             <div>
-              <Label>Datum platby</Label>
+              <Label>Payment date</Label>
               <DatePicker value={form.payment_date} onChange={(v) => setForm((prev) => ({ ...prev, payment_date: v }))} />
             </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
-            <Button variant="outline" onClick={onClose} disabled={saving}>Zrušit</Button>
+            <Button variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
             <Button
               onClick={handleSubmit}
               disabled={saving || (mode === "payment" && !form.customer_id) || !form.amount}
               className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white hover:from-[#A8841C] hover:to-[#8a6c16]"
             >
-              {saving ? "Ukládám..." : existingPayment ? "Uložit změny" : "Přidat platbu"}
+              {saving ? "Saving..." : existingPayment ? "Save changes" : "Add payment"}
             </Button>
           </div>
         </div>

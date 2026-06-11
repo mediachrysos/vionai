@@ -36,21 +36,21 @@ export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs
       <div>
         <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Zůstatek</p>
         <p className={`text-2xl font-bold ${account.balance >= 0 ? "text-slate-100" : "text-red-500"}`}>
-          {(account.balance || 0).toLocaleString("cs-CZ")} {account.currency || "Kč"}
+          {(account.balance || 0).toLocaleString()} {account.currency}
         </p>
       </div>
       {(totalIncome > 0 || totalExpense > 0) && (
         <div className="flex gap-3 border-t border-white/10 pt-3">
           {totalIncome > 0 && (
             <div className="flex-1">
-              <p className="text-xs text-slate-500 mb-0.5">Příjmy</p>
-              <p className="text-sm font-semibold text-emerald-600">+{totalIncome.toLocaleString("cs-CZ")} Kč</p>
+              <p className="text-xs text-slate-500 mb-0.5">Income</p>
+              <p className="text-sm font-semibold text-emerald-600">+{totalIncome.toLocaleString()}</p>
             </div>
           )}
           {totalExpense > 0 && (
             <div className="flex-1">
-              <p className="text-xs text-slate-500 mb-0.5">Výdaje</p>
-              <p className="text-sm font-semibold text-red-500">-{totalExpense.toLocaleString("cs-CZ")} Kč</p>
+              <p className="text-xs text-slate-500 mb-0.5">Expenses</p>
+              <p className="text-sm font-semibold text-red-500">-{totalExpense.toLocaleString()}</p>
             </div>
           )}
         </div>

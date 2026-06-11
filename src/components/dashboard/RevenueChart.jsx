@@ -27,7 +27,7 @@ function buildChartData(payments, from, to) {
 
 export default function RevenueChart({ payments }) {
   const [range, setRange] = useState(getDefaultRange());
-  const [activePreset, setActivePreset] = useState("Posledních 7 dní");
+  const [activePreset, setActivePreset] = useState("Last 7 days");
 
   const handlePreset = (preset) => {
     setRange(preset.getValue());
@@ -44,7 +44,7 @@ export default function RevenueChart({ payments }) {
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-5">
       <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-        <h3 className="text-sm font-semibold text-slate-200">Tržby</h3>
+        <h3 className="text-sm font-semibold text-slate-200">Revenue</h3>
 
         <div className="flex items-center gap-2">
           <RangePicker range={range} activePreset={activePreset} onPreset={handlePreset} onDateChange={handleDateChange} />
@@ -67,10 +67,10 @@ export default function RevenueChart({ payments }) {
             </defs>
             <CartesianGrid strokeDasharray="4 4" stroke="#2a2a2a" vertical={false} />
             <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={v => `${v.toLocaleString()} Kč`} />
+            <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={v => `${v.toLocaleString()}`} />
             <Tooltip
               contentStyle={{ borderRadius: 12, border: "1px solid #333", background: "#1e1e1e", color: "#e2e8f0", boxShadow: "0 8px 24px rgba(0,0,0,0.4)", fontSize: 12, padding: "8px 12px" }}
-              formatter={(v) => [`${v.toLocaleString()} Kč`, "Tržby"]}
+              formatter={(v) => [`${v.toLocaleString()}`, "Revenue"]}
               labelStyle={{ color: "#C9A227", fontWeight: 600 }}
             />
             <Area type="monotone" dataKey="revenue" stroke="url(#lineGrad)" strokeWidth={3} fill="url(#revGrad)" dot={false} activeDot={{ r: 5, fill: "#C9A227", strokeWidth: 2, stroke: "#fff" }} />

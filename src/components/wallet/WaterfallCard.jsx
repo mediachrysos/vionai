@@ -6,8 +6,8 @@ import OwnerPayoutRow from "./OwnerPayoutRow";
 import CompanyReserveRow from "./CompanyReserveRow";
 
 const MONTH_NAMES = [
-"Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
-"Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
+"January", "February", "March", "April", "May", "June",
+"July", "August", "September", "October", "November", "December"];
 
 
 function Row({ label, value, sublabel, icon: Icon, color = "text-slate-200", bgColor = "bg-white/5", prefix = "" }) {
@@ -22,7 +22,7 @@ function Row({ label, value, sublabel, icon: Icon, color = "text-slate-200", bgC
           {sublabel && <p className="text-xs text-slate-500">{sublabel}</p>}
         </div>
       </div>
-      <p className={`text-base font-bold ${color}`}>{prefix}{value.toLocaleString("cs-CZ")} Kč</p>
+      <p className={`text-base font-bold ${color}`}>{prefix}{value.toLocaleString()}</p>
     </div>);
 
 }
@@ -163,7 +163,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
       {/* Header with month switcher */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-slate-200">Výpočet výplat</h3>
+        <h3 className="text-sm font-semibold text-slate-200">Payout calculation</h3>
         <div className="flex items-center gap-1">
           <button onClick={prevMonth} className="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center">
             <ChevronLeft className="w-4 h-4 text-slate-400" />
@@ -184,11 +184,11 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
             
             <div>
-              <p className="text-sm font-medium text-slate-200">Celkové příjmy</p>
-              <p className="text-xs text-slate-500">Platby + manuální příjmy</p>
+              <p className="text-sm font-medium text-slate-200">Total income</p>
+              <p className="text-xs text-slate-500">Payments + manual income</p>
             </div>
           </div>
-          <p className="text-base font-bold text-emerald-700">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
+          <p className="text-base font-bold text-emerald-700">{totalIncome.toLocaleString()}</p>
         </div>
 
         <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-950/40">
@@ -197,11 +197,11 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
             
             <div>
-              <p className="text-sm font-medium text-slate-200">Celkové výdaje</p>
-              <p className="text-xs text-slate-500">Výdaje + manuální výdaje</p>
+              <p className="text-sm font-medium text-slate-200">Total expenses</p>
+              <p className="text-xs text-slate-500">Expenses + manual expenses</p>
             </div>
           </div>
-          <p className="text-base font-bold text-red-600">- {totalExpenses.toLocaleString("cs-CZ")} Kč</p>
+          <p className="text-base font-bold text-red-600">- {totalExpenses.toLocaleString()}</p>
         </div>
 
         <div className="border-t border-dashed border-white/10 my-1" />
@@ -211,22 +211,22 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
             
 
             
-            <p className="text-sm font-semibold text-slate-200">Hrubý zisk</p>
+            <p className="text-sm font-semibold text-slate-200">Gross profit</p>
           </div>
           <p className={`text-base font-bold ${grossProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>
-            {grossProfit.toLocaleString("cs-CZ")} Kč
+            {grossProfit.toLocaleString()}
           </p>
         </div>
 
         <div className="border-t border-dashed border-white/10 my-1" />
 
-        <Row label="Výplata PD" sublabel="10 % z hrubého zisku" color="text-slate-300" bgColor="bg-white/5" prefix="- " value={lawyerFee} />
+        <Row label="Lawyer payout" sublabel="10% of gross profit" color="text-slate-300" bgColor="bg-white/5" prefix="- " value={lawyerFee} />
 
         <div className="border-t border-dashed border-white/10 my-1" />
 
         <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-950/30">
-          <p className="text-sm font-semibold text-slate-200">Čistý zisk</p>
-          <p className={`text-base font-bold ${netProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>{netProfit.toLocaleString("cs-CZ")} Kč</p>
+          <p className="text-sm font-semibold text-slate-200">Net profit</p>
+          <p className={`text-base font-bold ${netProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>{netProfit.toLocaleString()}</p>
         </div>
 
         <div className="border-t border-dashed border-white/10 my-1" />

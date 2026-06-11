@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const MONTH_NAMES = [
-  "Leden","Únor","Březen","Duben","Květen","Červen",
-  "Červenec","Srpen","Září","Říjen","Listopad","Prosinec"
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
 ];
 
 function getDaysInMonth(year, month) {
@@ -21,8 +21,8 @@ function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
     <div className="absolute z-50 top-full left-0 mt-1 bg-[#1e1e1e] rounded-xl shadow-xl border border-white/10 p-3 w-56">
       <div className="text-xs font-semibold text-slate-400 mb-2 text-center">{MONTH_NAMES[month]} {year}</div>
       <div className="grid grid-cols-7 gap-0.5 text-center">
-        {["Po","Út","St","Čt","Pá","So","Ne"].map(d => (
-          <div key={d} className="text-[10px] text-gray-400 font-medium pb-1">{d}</div>
+        {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d => (
+         <div key={d} className="text-[10px] text-gray-400 font-medium pb-1">{d}</div>
         ))}
         {Array.from({ length: offset }).map((_, i) => <div key={`e${i}`} />)}
         {Array.from({ length: days }, (_, i) => i + 1).map(d => (
@@ -41,7 +41,7 @@ function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
       </div>
       {selectedDay && (
         <button onClick={() => { onSelectDay(null); onClose(); }} className="mt-2 w-full text-xs text-slate-500 hover:text-red-400 text-center">
-          Zrušit filtr dne
+          Clear day filter
         </button>
       )}
     </div>
@@ -132,7 +132,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
 
         {/* Type filter */}
         <div className="flex gap-0.5 bg-white/5 rounded-lg p-0.5 border border-white/10 ml-auto">
-          {[["all", "Vše"], ["income", "Příjmy"], ["expense", "Výdaje"]].map(([val, label]) => (
+          {[["all", "All"], ["income", "Income"], ["expense", "Expenses"]].map(([val, label]) => (
             <button key={val} onClick={() => onTypeFilterChange(val)}
               className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all ${typeFilter === val ? "bg-white/10 shadow-sm text-slate-200 border border-white/10" : "text-slate-500 hover:text-slate-300"}`}>
               {label}
@@ -145,10 +145,10 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger className="h-7 text-xs w-36 border-gray-200">
               <Filter className="w-3 h-3 mr-1 text-gray-400" />
-              <SelectValue placeholder="Kategorie" />
+              <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Všechny kategorie</SelectItem>
+              <SelectItem value="all">All categories</SelectItem>
               {categories.map(cat => (
                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
               ))}
@@ -160,7 +160,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
       {/* List */}
       <div className="space-y-2 max-h-[520px] overflow-y-auto">
         {filtered.length === 0 ? (
-          <div className="text-center py-10 text-sm text-slate-500">Žádné transakce v tomto měsíci</div>
+          <div className="text-center py-10 text-sm text-slate-500">No transactions this month</div>
         ) : filtered.map((tx, i) => {
           const isIncome = tx.type === "income";
           const isDeletable = !!onDelete;
@@ -180,7 +180,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
                   <div className="flex items-center gap-1.5">
                     <p className="text-sm font-medium text-slate-200 truncate">{tx.title}</p>
                      {tx.invoice_url && (
-                       <a href={tx.invoice_url} target="_blank" rel="noreferrer" title="Zobrazit fakturu" onClick={e => e.stopPropagation()}>
+                       <a href={tx.invoice_url} target="_blank" rel="noreferrer" title="View invoice" onClick={e => e.stopPropagation()}>
                          <FileText className="w-3.5 h-3.5 text-blue-400 hover:text-blue-300 flex-shrink-0" />
                       </a>
                     )}
@@ -201,13 +201,13 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
               </div>
               <div className="flex items-center gap-2 flex-shrink-0 ml-3">
                 <p className={`text-base font-bold ${isIncome ? "text-emerald-400" : "text-red-400"}`}>
-                   {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString("cs-CZ")} Kč
+                   {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString()}
                  </p>
                  {isDeletable && (
                    <button
                      onClick={(e) => { e.stopPropagation(); onDelete(tx); }}
                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-950/30 text-slate-500 hover:text-red-400"
-                    title="Smazat transakci"
+                    title="Delete transaction"
                   >
                     <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
                   </button>
