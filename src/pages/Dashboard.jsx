@@ -10,6 +10,7 @@ import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 import DesignerPayoutAlert from "../components/dashboard/DesignerPayoutAlert";
 import ShiftOverviewWidget from "../components/dashboard/ShiftOverviewWidget";
+import AnalyticsChart from "../components/dashboard/AnalyticsChart";
 
 export default function Dashboard({ currentUser }) {
   const { showAll, toggle } = useChatterFilter();
@@ -64,6 +65,11 @@ export default function Dashboard({ currentUser }) {
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
       {isAdmin && <DesignerPayoutAlert />}
+
+      {/* Analytics chart */}
+      <div className="mt-4">
+        <AnalyticsChart payments={filteredPayments} />
+      </div>
 
       {/* Filter toggle — visible only for non-admins */}
       {!isAdmin && (
