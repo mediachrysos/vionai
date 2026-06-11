@@ -35,17 +35,14 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
   };
 
   return (
-    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] h-full overflow-hidden flex flex-col">
-      <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0">
+    <div className="bg-[#131929] rounded-xl border border-slate-700/50 shadow-[0_4px_16px_rgba(0,0,0,0.3)] h-full overflow-hidden flex flex-col">
+      <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 border-b border-slate-700/50">
         <div className="flex items-center gap-2">
-          <div className="bg-white rounded-xl w-9 h-9 flex items-center justify-center shadow-sm">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_4_lyfexm.png" alt="" className="w-6 h-6 object-contain" />
-          </div>
-          <h3 className="text-sm font-semibold text-white">Výkony chatterů</h3>
+          <h3 className="text-sm font-semibold text-slate-200">Výkony chatterů</h3>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={prevDay} className="w-7 h-7 rounded-lg hover:bg-white/20 transition-colors flex items-center justify-center">
-            <ChevronLeft className="w-4 h-4 text-white" />
+          <button onClick={prevDay} className="w-7 h-7 rounded-lg hover:bg-slate-700 transition-colors flex items-center justify-center">
+            <ChevronLeft className="w-4 h-4 text-slate-400" />
           </button>
           <div className="w-36">
             <DatePicker
@@ -54,8 +51,8 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
               max={todayStr}
               variant="ghost" />
           </div>
-          <button onClick={nextDay} disabled={isToday} className="w-7 h-7 rounded-lg hover:bg-white/20 transition-colors flex items-center justify-center disabled:opacity-30">
-            <ChevronRight className="w-4 h-4 text-white" />
+          <button onClick={nextDay} disabled={isToday} className="w-7 h-7 rounded-lg hover:bg-slate-700 transition-colors flex items-center justify-center disabled:opacity-30">
+            <ChevronRight className="w-4 h-4 text-slate-400" />
           </button>
         </div>
       </div>
@@ -63,10 +60,10 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
 
       {chatters.length === 0 ?
         <div className="flex flex-col items-center justify-center py-8 text-center">
-          <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mb-3">
-            <TrendingUp className="w-5 h-5 text-gray-300" />
+          <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mb-3">
+            <TrendingUp className="w-5 h-5 text-slate-600" />
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-500">
             {isToday ? "Dnes zatím žádné platby" : `Pro ${format(new Date(selectedDate), "d. M. yyyy")} nejsou žádné platby`}
           </p>
         </div> :
@@ -78,22 +75,22 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
               return (
                 <div key={c.key} className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center text-[10px] font-bold text-[#C9A227] flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-amber-900/40 flex items-center justify-center text-[10px] font-bold text-[#C9A227] flex-shrink-0">
                       {c.modelName[0]?.toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <span className="text-xs font-medium text-gray-800 truncate block max-w-[140px]">
+                      <span className="text-xs font-medium text-slate-200 truncate block max-w-[140px]">
                         {c.modelName}
                       </span>
                       {chatterNames && (
-                        <span className="text-[10px] text-gray-400 truncate block max-w-[140px]">
+                        <span className="text-[10px] text-slate-500 truncate block max-w-[140px]">
                           ({chatterNames})
                         </span>
                       )}
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <span className="text-xs font-bold text-gray-900">
+                    <span className="text-xs font-bold text-slate-200">
                       {c.total.toLocaleString()} Kč
                     </span>
                   </div>
@@ -101,8 +98,8 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
               );
             })}
           </div>
-          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-            <span className="text-xs text-gray-500">Celkem {isToday ? "dnes" : format(new Date(selectedDate), "d. M. yyyy")}</span>
+          <div className="pt-3 border-t border-slate-700/50 flex items-center justify-between">
+            <span className="text-xs text-slate-500">Celkem {isToday ? "dnes" : format(new Date(selectedDate), "d. M. yyyy")}</span>
             <span className="text-sm font-bold text-[#C9A227]">
               {totalDay.toLocaleString()} Kč
             </span>

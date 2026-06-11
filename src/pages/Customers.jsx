@@ -341,17 +341,17 @@ export default function Customers({ currentUser }) {
       {filtered.length === 0 && !isLoading ?
       <EmptyState icon={UserCircle} title="No customers" description="Add your first customer to get started" actionLabel="Add customer" onAction={() => setShowForm(true)} /> :
 
-      <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-[#131929] rounded-xl border border-slate-700/50 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Name</th>
-                  <th className="text-center text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
-                  <th className="text-center text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Models</th>
-                  <th className="text-center text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Total / Payments</th>
-                  <th className="text-center text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Last payment</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 w-20"></th>
+                <tr className="border-b border-slate-700/50 bg-slate-800/30">
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Name</th>
+                  <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
+                  <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Models</th>
+                  <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Total / Payments</th>
+                  <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Last payment</th>
+                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 w-20"></th>
                 </tr>
               </thead>
               <tbody>
@@ -370,7 +370,7 @@ export default function Customers({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-50 to-yellow-50/30 border-amber-100 hover:from-amber-100/70 hover:to-yellow-50/50" : "border-gray-50 hover:bg-gray-50/60"}`}
+                    className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/10 border-amber-800/30 hover:from-amber-900/30" : "border-slate-700/30 hover:bg-slate-800/50"}`}
                     onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
                     
                       <td className="px-5 py-3.5">
@@ -382,7 +382,7 @@ export default function Customers({ currentUser }) {
                             {c.full_name?.[0]?.toUpperCase() || "?"}
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-900 font-semibold" : "text-gray-800"}`}>{c.full_name}</span>
+                            <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-300 font-semibold" : "text-slate-200"}`}>{c.full_name}</span>
                             {c.pay_day_of_month === todayDay && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 payday</span>
                             )}
@@ -396,8 +396,8 @@ export default function Customers({ currentUser }) {
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden md:table-cell">
                         {c.pay_day_of_month ?
-                      <span className="text-sm font-medium text-gray-700">Day {c.pay_day_of_month}</span> :
-                      <span className="text-gray-300">—</span>}
+                      <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> :
+                      <span className="text-slate-600">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden lg:table-cell">
                         {(() => {
@@ -405,22 +405,22 @@ export default function Customers({ currentUser }) {
                         const names = mids.map((mid) => modelMap[mid]).filter(Boolean);
                         return names.length > 0 ?
                         <div className="flex flex-wrap gap-1">
-                              {names.map((n) => <span key={n} className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded-md px-1.5 py-0.5">{n}</span>)}
+                              {names.map((n) => <span key={n} className="text-xs bg-amber-900/30 text-amber-400 border border-amber-800/30 rounded-md px-1.5 py-0.5">{n}</span>)}
                             </div> :
-                        <span className="text-gray-300">—</span>;
+                        <span className="text-slate-600">—</span>;
                       })()}
                       </td>
                       <td className="px-5 py-3.5 text-right">
-                        <p className="text-sm font-semibold text-gray-800">{displayTotal.toLocaleString()} Kč</p>
-                        <p className="text-xs text-gray-400">{displayCount}× payments</p>
+                        <p className="text-sm font-semibold text-slate-200">{displayTotal.toLocaleString()} Kč</p>
+                        <p className="text-xs text-slate-500">{displayCount}× payments</p>
                       </td>
                       <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                         {daysSinceLast !== null ?
                       <div>
-                            <p className="text-xs font-medium text-gray-600">{rawSt.lastAmount?.toLocaleString()} Kč</p>
-                            <p className="text-xs text-gray-400">{daysSinceLast} days ago</p>
+                            <p className="text-xs font-medium text-slate-300">{rawSt.lastAmount?.toLocaleString()} Kč</p>
+                            <p className="text-xs text-slate-500">{daysSinceLast} days ago</p>
                           </div> :
-                      <span className="text-xs text-gray-300">—</span>}
+                      <span className="text-xs text-slate-600">—</span>}
                       </td>
                       <td className="px-4 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -434,14 +434,14 @@ export default function Customers({ currentUser }) {
                             </button>
                           )}
                           <button
-                            onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                            className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-amber-100 transition-colors flex items-center justify-center">
+                           onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
+                           className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-amber-900/40 transition-colors flex items-center justify-center">
                             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-4 h-4 object-contain" />
                           </button>
                           <button
-                            onClick={(e) => handleDelete(e, c)}
-                            className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-red-100 transition-colors flex items-center justify-center">
-                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
+                           onClick={(e) => handleDelete(e, c)}
+                           className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-red-900/40 transition-colors flex items-center justify-center">
+                           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
                           </button>
                         </div>
                       </td>

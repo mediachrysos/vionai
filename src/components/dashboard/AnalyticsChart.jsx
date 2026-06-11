@@ -105,11 +105,11 @@ const CustomTooltip = ({ active, payload, label, mode }) => {
   if (!active || !payload?.length) return null;
   const val = mode === "net" ? payload.find(p => p.dataKey === "net") : payload.find(p => p.dataKey === "gross");
   return (
-    <div className="bg-white border border-gray-100 rounded-xl shadow-xl px-4 py-3 text-sm">
-      <p className="text-gray-500 font-medium mb-1">{label}</p>
-      <p className="font-bold text-gray-900">{fmt(val?.value || 0)}</p>
+    <div className="bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl px-4 py-3 text-sm">
+      <p className="text-slate-400 font-medium mb-1">{label}</p>
+      <p className="font-bold text-white">{fmt(val?.value || 0)}</p>
       {payload.find(p => p.dataKey === "gross") && payload.find(p => p.dataKey === "net") && (
-        <div className="mt-1 space-y-0.5 text-xs text-gray-400">
+        <div className="mt-1 space-y-0.5 text-xs text-slate-500">
           <p>Gross: {fmt(payload.find(p => p.dataKey === "gross")?.value || 0)}</p>
           <p>Net: {fmt(payload.find(p => p.dataKey === "net")?.value || 0)}</p>
         </div>
@@ -193,26 +193,26 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
   const thisMonthLabel = new Date().toLocaleDateString("cs", { month: "long", year: "numeric" });
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+    <div className="bg-[#131929] rounded-2xl border border-slate-700/50 shadow-[0_4px_16px_rgba(0,0,0,0.3)] p-5">
       {/* Top controls */}
       <div className="flex items-center gap-2 mb-5 flex-wrap">
         {/* Period preset */}
         <div className="relative">
           <button
             onClick={() => { setShowPresetMenu(v => !v); setShowDateMenu(false); setShowModelMenu(false); }}
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-slate-300 bg-slate-700/60 hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors"
           >
             {activePresetLabel}
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           {showPresetMenu && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 bg-white border border-gray-100 rounded-xl shadow-xl p-2 min-w-[190px]">
+            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl p-2 min-w-[190px]">
               {PRESETS.map(p => (
                 <button
                   key={p.days}
                   onClick={() => { setSelectedDays(p.days); setUseCustom(false); setShowPresetMenu(false); }}
                   className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${
-                    !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-gray-700 hover:bg-gray-50"
+                    !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"
                   }`}
                 >
                   {p.label}
@@ -226,20 +226,20 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         <div className="relative">
           <button
             onClick={() => { setShowDateMenu(v => !v); setShowPresetMenu(false); setShowModelMenu(false); }}
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-slate-300 bg-slate-700/60 hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors"
           >
             <Calendar className="w-3.5 h-3.5" />
             {dateRangeLabel}
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           {showDateMenu && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 bg-white border border-gray-100 rounded-xl shadow-xl p-3 min-w-[240px]">
-              <p className="text-xs text-gray-400 font-medium mb-2">Vlastní datum</p>
+            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl p-3 min-w-[240px]">
+              <p className="text-xs text-slate-400 font-medium mb-2">Vlastní datum</p>
               <div className="flex gap-2 mb-2">
                 <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
-                  className="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
+                  className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
                 <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
-                  className="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
+                  className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
               </div>
               <button
                 onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowDateMenu(false); } }}
@@ -257,16 +257,16 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           <div className="relative">
             <button
               onClick={() => { setShowModelMenu(v => !v); setShowPresetMenu(false); setShowDateMenu(false); }}
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium text-slate-300 bg-slate-700/60 hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors"
             >
               {selectedModel ? selectedModel.name : "Všechny modely"}
               <ChevronDown className="w-3.5 h-3.5" />
             </button>
             {showModelMenu && (
-              <div className="absolute left-0 top-full mt-1.5 z-50 bg-white border border-gray-100 rounded-xl shadow-xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
+              <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
                 <button
                   onClick={() => { setSelectedModelId("all"); setShowModelMenu(false); }}
-                  className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === "all" ? "bg-[#C9A227] text-white font-medium" : "text-gray-700 hover:bg-gray-50"}`}
+                  className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === "all" ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}
                 >
                   Všechny modely
                 </button>
@@ -274,7 +274,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                   <button
                     key={m.id}
                     onClick={() => { setSelectedModelId(m.id); setShowModelMenu(false); }}
-                    className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === m.id ? "bg-[#C9A227] text-white font-medium" : "text-gray-700 hover:bg-gray-50"}`}
+                    className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === m.id ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}
                   >
                     {m.name}
                   </button>
@@ -288,25 +288,25 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
       {/* Two summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {/* Earnings card */}
-        <div className="bg-gray-50 rounded-xl p-4">
-          <p className="text-sm text-gray-500 font-medium mb-1">Earnings</p>
-          <p className="text-2xl font-bold text-gray-900">{fmt(totalGross)}</p>
-          <p className="text-xs text-gray-400 mb-3">{dateRangeLabel}</p>
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/40">
+          <p className="text-sm text-slate-400 font-medium mb-1">Earnings</p>
+          <p className="text-2xl font-bold text-white">{fmt(totalGross)}</p>
+          <p className="text-xs text-slate-500 mb-3">{dateRangeLabel}</p>
           <MiniSparkline data={data} dataKey="gross" color="#C9A227" />
         </div>
 
         {/* This month card */}
-        <div className="bg-gray-50 rounded-xl p-4">
-          <p className="text-sm text-gray-500 font-medium mb-1">This month</p>
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/40">
+          <p className="text-sm text-slate-400 font-medium mb-1">This month</p>
           <div className="flex items-start gap-2">
-            <p className="text-2xl font-bold text-gray-900">{fmt(thisMonthGross)}</p>
+            <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)}</p>
             {monthDiff !== 0 && (
-              <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md ${monthDiff < 0 ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
+              <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md ${monthDiff < 0 ? "bg-red-900/50 text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
                 {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString("cs-CZ")} Kč
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-400 mb-3">{thisMonthLabel}</p>
+          <p className="text-xs text-slate-500 mb-3">{thisMonthLabel}</p>
           <MiniSparkline data={thisMonthData} dataKey="gross" color="#C9A227" />
         </div>
       </div>
@@ -314,17 +314,17 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
       {/* Earnings over time */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <p className="text-sm font-semibold text-gray-800">Earnings over time</p>
-          <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+          <p className="text-sm font-semibold text-slate-200">Earnings over time</p>
+          <div className="flex items-center gap-1 bg-slate-800 rounded-full p-1">
             <button
               onClick={() => setChartMode("net")}
-              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "net" ? "bg-[#C9A227] text-white shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "net" ? "bg-[#C9A227] text-white shadow-sm" : "text-slate-400 hover:text-slate-200"}`}
             >
               Net
             </button>
             <button
               onClick={() => setChartMode("gross")}
-              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "gross" ? "bg-[#C9A227] text-white shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "gross" ? "bg-[#C9A227] text-white shadow-sm" : "text-slate-400 hover:text-slate-200"}`}
             >
               Gross
             </button>
@@ -336,14 +336,14 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
             <AreaChart data={data} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
               <defs>
                 <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#C9A227" stopOpacity={0.18} />
+                  <stop offset="0%" stopColor="#C9A227" stopOpacity={0.22} />
                   <stop offset="100%" stopColor="#C9A227" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-              <YAxis tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} tickFormatter={fmtShort} width={44} />
-              <Tooltip content={<CustomTooltip mode={chartMode} />} cursor={{ stroke: "#e5e7eb", strokeWidth: 1 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e2d45" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={fmtShort} width={44} />
+              <Tooltip content={<CustomTooltip mode={chartMode} />} cursor={{ stroke: "#334155", strokeWidth: 1 }} />
               <Area
                 type="monotone"
                 dataKey={chartMode}
@@ -351,20 +351,20 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                 strokeWidth={2}
                 fill="url(#chartGrad)"
                 dot={false}
-                activeDot={{ r: 4, fill: "#C9A227", strokeWidth: 2, stroke: "#fff" }}
+                activeDot={{ r: 4, fill: "#C9A227", strokeWidth: 2, stroke: "#0F172A" }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
         {/* Net / Gross summary */}
-        <div className="flex gap-4 mt-3 pt-3 border-t border-gray-100">
+        <div className="flex gap-4 mt-3 pt-3 border-t border-slate-700/50">
           <div>
-            <p className="text-xs text-gray-400">Gross (celkem)</p>
-            <p className="text-sm font-bold text-gray-800">{fmt(totalGross)}</p>
+            <p className="text-xs text-slate-500">Gross (celkem)</p>
+            <p className="text-sm font-bold text-slate-200">{fmt(totalGross)}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Net (po ad spend)</p>
+            <p className="text-xs text-slate-500">Net (po ad spend)</p>
             <p className="text-sm font-bold text-[#C9A227]">{fmt(totalNet)}</p>
           </div>
         </div>
