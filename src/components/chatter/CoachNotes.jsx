@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import DatePicker from "@/components/ui-custom/DatePicker";
 
 const SLIDES = ["customer", "datetime_amount", "account", "model"];
-const slideLabel = { customer: "Klient", datetime_amount: "Datum & Částka", account: "Účet", model: "Modelka" };
+const slideLabel = { customer: "Client", datetime_amount: "Date & Amount", account: "Account", model: "Model" };
 
 const emptyForm = () => ({
   customer_name: "",
@@ -87,7 +87,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
           <div className="bg-slate-50 rounded-xl w-9 h-9 flex items-center justify-center">
             <MessageSquare className="w-5 h-5 text-[#C9A227]" />
           </div>
-          <h3 className="text-sm font-semibold text-white">Moje poznámky</h3>
+          <h3 className="text-sm font-semibold text-white">My notes</h3>
         </div>
         <button
           onClick={() => { setShowForm(v => !v); setForm(emptyForm()); setCustomerSearch(""); setSlideIdx(0); }}
@@ -105,7 +105,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
             <Textarea
               value={form.content}
               onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
-              placeholder="Napište poznámku..."
+              placeholder="Write a note..."
               rows={2}
               autoFocus
               className="text-sm resize-none"
@@ -136,7 +136,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                       onChange={e => { setCustomerSearch(e.target.value); setForm(p => ({ ...p, customer_name: e.target.value })); setShowCustomerDropdown(true); }}
                       onFocus={() => setShowCustomerDropdown(true)}
                       onBlur={() => setTimeout(() => setShowCustomerDropdown(false), 150)}
-                      placeholder="Jméno klienta..." className="h-8 text-sm" />
+                      placeholder="Client name..." className="h-8 text-sm" />
                     {showCustomerDropdown && filteredCustomers.length > 0 && (
                       <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-36 overflow-y-auto">
                         {filteredCustomers.map(c => (
@@ -153,29 +153,29 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                   <div className="grid grid-cols-2 gap-2">
                     <DatePicker value={form.note_date} onChange={v => setForm(p => ({ ...p, note_date: v }))} />
                     <Input type="number" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
-                      placeholder="Částka (Kč)" className="h-8 text-sm" />
+                      placeholder="Amount" className="h-8 text-sm" />
                   </div>
                 )}
 
                 {currentSlide === "account" && (
                   <div className="space-y-1.5">
                     <Select value={form.account || "__manual__"} onValueChange={handleAccountChange}>
-                      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Vyberte účet" /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select account" /></SelectTrigger>
                       <SelectContent>
                         {bankAccounts.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
-                        <SelectItem value="__manual__">— Zadat ručně —</SelectItem>
+                        <SelectItem value="__manual__">— Manual entry —</SelectItem>
                       </SelectContent>
                     </Select>
                     {form.account === "" && (
                       <Input value={form.account_name} onChange={e => setForm(p => ({ ...p, account_name: e.target.value }))}
-                        placeholder="č. účtu nebo název" className="h-8 text-sm" />
+                        placeholder="account number or name" className="h-8 text-sm" />
                     )}
                   </div>
                 )}
 
                 {currentSlide === "model" && (
                   <Select value={form.model_id} onValueChange={handleModelChange}>
-                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Vyberte modelku" /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select model" /></SelectTrigger>
                     <SelectContent>
                       {models.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
                     </SelectContent>
@@ -191,10 +191,10 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
 
             <div className="flex justify-end gap-2 pt-1">
               <button onClick={() => { setShowForm(false); setForm(emptyForm()); setCustomerSearch(""); }}
-                className="h-8 px-3 text-xs rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">Zrušit</button>
-              <button onClick={handleAdd} disabled={!form.content.trim() || saving}
-                className="h-8 px-4 text-xs rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold transition-colors disabled:opacity-50">
-                {saving ? "Ukládám..." : "Přidat"}
+                className="h-8 px-3 text-xs rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">Cancel</button>
+                <button onClick={handleAdd} disabled={!form.content.trim() || saving}
+                 className="h-8 px-4 text-xs rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold transition-colors disabled:opacity-50">
+                 {saving ? "Saving..." : "Add"}
               </button>
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
           /* Notes carousel */
           <div className="flex-1 flex flex-col min-h-0">
             {notes.length === 0 ? (
-              <p className="text-xs text-gray-400 text-center py-6">Zatím žádné poznámky</p>
+              <p className="text-xs text-gray-400 text-center py-6">No notes yet</p>
             ) : (
               <div className="flex flex-col gap-2 flex-1">
                 {notes.length > 1 && (
@@ -231,11 +231,11 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                           </div>
                           {currentNote.customer_name
                             ? <span className={`text-sm font-bold truncate ${isToday ? "text-amber-900" : "text-gray-800"}`}>{currentNote.customer_name}</span>
-                            : <span className="text-xs text-gray-400 italic">Bez klienta</span>}
+                            : <span className="text-xs text-gray-400 italic">No client</span>}
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {isToday
-                            ? <span className="text-[10px] font-bold tracking-wide text-white bg-amber-500 rounded-full px-2.5 py-0.5">DNES</span>
+                            ? <span className="text-[10px] font-bold tracking-wide text-white bg-amber-500 rounded-full px-2.5 py-0.5">TODAY</span>
                             : currentNote.note_date
                               ? <span className="text-[11px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">{format(new Date(currentNote.note_date), "d. MMM yyyy", { locale: cs })}</span>
                               : null}
@@ -250,7 +250,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                         <div className="flex flex-wrap gap-1.5 mb-2.5">
                           {currentNote.amount && (
                             <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                              {Number(currentNote.amount).toLocaleString("cs-CZ")} Kč
+                              {Number(currentNote.amount).toLocaleString()}
                             </span>
                           )}
                           {accountLabel && (

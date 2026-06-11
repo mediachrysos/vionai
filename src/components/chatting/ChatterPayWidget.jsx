@@ -32,10 +32,10 @@ function calcMonthlyEarned(monthPayments, hoursWorked) {
 }
 
 function getTierLabel(todayRevenue) {
-  if (todayRevenue < 2000) return { label: "Pod minimem (< 2 000 Kč)", color: "text-gray-400" };
-  if (todayRevenue < 5000) return { label: "Tier 1 · 120 Kč/h", color: "text-blue-500" };
-  if (todayRevenue < 10000) return { label: "Tier 2 · 120 Kč/h + 5 %", color: "text-amber-500" };
-  return { label: "Tier 3 · 120 Kč/h + 10 %", color: "text-emerald-600" };
+  if (todayRevenue < 2000) return { label: "Below minimum (< 2000)", color: "text-gray-400" };
+  if (todayRevenue < 5000) return { label: "Tier 1 · 120/h", color: "text-blue-500" };
+  if (todayRevenue < 10000) return { label: "Tier 2 · 120/h + 5%", color: "text-amber-500" };
+  return { label: "Tier 3 · 120/h + 10%", color: "text-emerald-600" };
 }
 
 export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatted, monthPayments, isAdmin, showWorkSession = false }) {
@@ -86,7 +86,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
           <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
             <Banknote className="w-3.5 h-3.5 text-amber-600" />
           </div>
-          <span className="text-sm font-semibold text-gray-800">Výplata</span>
+          <span className="text-sm font-semibold text-gray-800">Payout</span>
         </div>
         <div className="flex items-center gap-2">
           <span className={`text-xs font-medium ${tier.color}`}>{tier.label}</span>
@@ -99,11 +99,11 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
       {/* Info box */}
       {showInfo && (
         <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-500 space-y-1 border border-gray-100">
-          <p className="font-semibold text-gray-700 mb-1">Výpočet výplaty:</p>
-          <p>0 – 1 999 Kč → 0 Kč</p>
-          <p>2 000 – 4 999 Kč → 120 Kč/hod</p>
-          <p>5 000 – 9 999 Kč → 120 Kč/hod + 5 % z vychatovaného</p>
-          <p>10 000+ Kč → 120 Kč/hod + 10 % z vychatovaného</p>
+          <p className="font-semibold text-gray-700 mb-1">Payout calculation:</p>
+          <p>0 – 1,999 → 0</p>
+          <p>2,000 – 4,999 → 120/hour</p>
+          <p>5,000 – 9,999 → 120/hour + 5% commission</p>
+          <p>10,000+ → 120/hour + 10% commission</p>
         </div>
       )}
 
@@ -112,19 +112,19 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
         <div className="flex flex-col items-center bg-amber-50 rounded-xl px-2 py-3 gap-0.5">
           <span className="text-[10px] text-amber-700/70 font-medium uppercase tracking-wide">Earned</span>
           <span className="text-base font-bold text-amber-700 tabular-nums">{earned.toLocaleString()}</span>
-          <span className="text-[10px] text-amber-600/60">Kč</span>
+          <span className="text-[10px] text-amber-600/60"></span>
         </div>
         <div className="flex flex-col items-center bg-emerald-50 rounded-xl px-2 py-3 gap-0.5">
           <span className="text-[10px] text-emerald-700/70 font-medium uppercase tracking-wide">Paid out</span>
           <span className="text-base font-bold text-emerald-700 tabular-nums">{totalPaid.toLocaleString()}</span>
-          <span className="text-[10px] text-emerald-600/60">{payouts.length} výplat</span>
+          <span className="text-[10px] text-emerald-600/60">{payouts.length} payouts</span>
         </div>
         <div className={`flex flex-col items-center rounded-xl px-2 py-3 gap-0.5 ${remaining > 0 ? "bg-rose-50" : "bg-gray-50"}`}>
           <span className={`text-[10px] font-medium uppercase tracking-wide ${remaining > 0 ? "text-rose-600/70" : "text-gray-500/70"}`}>To pay</span>
           <span className={`text-base font-bold tabular-nums ${remaining > 0 ? "text-rose-600" : "text-gray-400"}`}>
             {remaining.toLocaleString()}
           </span>
-          <span className={`text-[10px] ${remaining > 0 ? "text-rose-500/60" : "text-gray-400/60"}`}>Kč</span>
+          <span className={`text-[10px] ${remaining > 0 ? "text-rose-500/60" : "text-gray-400/60"}`}></span>
         </div>
       </div>
 
@@ -141,7 +141,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
           <Input
             value={payoutAmount}
             onChange={e => setPayoutAmount(e.target.value)}
-            placeholder="Částka (Kč)"
+            placeholder="Amount"
             type="number"
             min="0"
             className="h-8 text-xs w-28 flex-shrink-0"
@@ -149,7 +149,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
           <Input
             value={payoutNote}
             onChange={e => setPayoutNote(e.target.value)}
-            placeholder="Poznámka (volitelné)"
+            placeholder="Note (optional)"
             className="h-8 text-xs flex-1 min-w-0"
           />
           <button
@@ -170,7 +170,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
             className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
           >
             {showPayouts ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-            Historie výplat ({payouts.length})
+            Payout history ({payouts.length})
           </button>
           {showPayouts && (
             <div className="mt-2 space-y-1">
@@ -178,7 +178,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
                 <div key={p.id} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2 gap-2">
                   <span className="text-gray-400 flex-shrink-0">{p.created_date?.split("T")[0] || p.period}</span>
                   {p.note && <span className="text-gray-400 truncate flex-1">{p.note}</span>}
-                  <span className="font-semibold text-emerald-700">+{p.amount.toLocaleString()} Kč</span>
+                  <span className="font-semibold text-emerald-700">+{p.amount.toLocaleString()}</span>
                   {isAdmin && (
                     <button
                       onClick={async () => {

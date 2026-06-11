@@ -28,7 +28,7 @@ function formatWeekLabel(weekStart) {
   return `${start.getDate()}. ${start.toLocaleString("cs-CZ", { month: "long" })} – ${end.getDate()}. ${end.toLocaleString("cs-CZ", { month: "long", year: "numeric" })}`;
 }
 
-const DAY_NAMES = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
+const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 // ─── Chatter's own shift picker (can only edit their own) ─────────────────
 export function ChatterShiftPicker({ email, name }) {
@@ -87,7 +87,7 @@ export function ChatterShiftPicker({ email, name }) {
         <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
           <CalendarDays className="w-3.5 h-3.5 text-blue-600" />
         </div>
-        <h3 className="text-xs font-bold text-gray-800">Moje směny</h3>
+        <h3 className="text-xs font-bold text-gray-800">My shifts</h3>
         <div className="ml-auto flex items-center gap-1">
           <button onClick={prevWeek} className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
             <ChevronLeft className="w-4 h-4" />
@@ -124,9 +124,9 @@ export function ChatterShiftPicker({ email, name }) {
                   <button
                     onClick={() => setEditingNote({ date, value: shift.note || "" })}
                     className="text-[9px] text-blue-400 hover:text-blue-600 truncate max-w-full px-0.5"
-                    title={shift.note || "Přidat poznámku"}
+                    title={shift.note || "Add note"}
                   >
-                    {shift.note ? shift.note.slice(0, 8) + (shift.note.length > 8 ? "…" : "") : "+ pozn."}
+                    {shift.note ? shift.note.slice(0, 8) + (shift.note.length > 8 ? "…" : "") : "+ note"}
                   </button>
                 )}
               </div>
@@ -137,17 +137,17 @@ export function ChatterShiftPicker({ email, name }) {
         {/* Note editor */}
         {editingNote && (
           <div className="mt-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Poznámka pro {new Date(editingNote.date).toLocaleDateString("cs-CZ")}</p>
+            <p className="text-xs text-gray-500 mb-2">Note for {new Date(editingNote.date).toLocaleDateString()}</p>
             <input
               className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#C9A227]"
               value={editingNote.value}
               onChange={e => setEditingNote(prev => ({ ...prev, value: e.target.value }))}
-              placeholder="Např. ranní směna, 8-16h..."
+              placeholder="E.g. morning shift, 8-16..."
               autoFocus
             />
             <div className="flex gap-2 mt-2">
-              <button onClick={() => saveNote(editingNote.date, editingNote.value)} className="text-xs bg-[#C9A227] text-white px-3 py-1.5 rounded-lg hover:bg-[#A8841C] transition-colors">Uložit</button>
-              <button onClick={() => setEditingNote(null)} className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1.5">Zrušit</button>
+              <button onClick={() => saveNote(editingNote.date, editingNote.value)} className="text-xs bg-[#C9A227] text-white px-3 py-1.5 rounded-lg hover:bg-[#A8841C] transition-colors">Save</button>
+              <button onClick={() => setEditingNote(null)} className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1.5">Cancel</button>
             </div>
           </div>
         )}
@@ -205,7 +205,7 @@ export function AdminShiftCalendar({ chatters }) {
         <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
           <CalendarDays className="w-3.5 h-3.5 text-blue-600" />
         </div>
-        <h3 className="text-sm font-bold text-gray-800">Kalendář směn</h3>
+        <h3 className="text-sm font-bold text-gray-800">Shift calendar</h3>
         <div className="ml-auto flex items-center gap-1">
           <button onClick={() => { const d = new Date(weekStart); d.setDate(d.getDate()-7); setWeekStart(d.toISOString().split("T")[0]); }} className="p-1 rounded hover:bg-gray-100 text-gray-400">
             <ChevronLeft className="w-4 h-4" />
@@ -261,7 +261,7 @@ export function AdminShiftCalendar({ chatters }) {
                           onClick={() => setEditingShift({ id: shift.id, date, chatterName: chatter.nickname || chatter.full_name, note: shift.note || "" })}
                           className="text-[9px] text-blue-400 hover:text-blue-600 mt-0.5 block mx-auto truncate max-w-[64px]"
                         >
-                          {shift.note ? shift.note.slice(0, 8) + (shift.note.length > 8 ? "…" : "") : "+ pozn."}
+                          {shift.note ? shift.note.slice(0, 8) + (shift.note.length > 8 ? "…" : "") : "+ note"}
                         </button>
                       )}
                     </td>
@@ -277,17 +277,17 @@ export function AdminShiftCalendar({ chatters }) {
       {editingShift && (
         <div className="px-4 pb-4">
           <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Poznámka: {editingShift.chatterName} · {new Date(editingShift.date).toLocaleDateString("cs-CZ")}</p>
+            <p className="text-xs text-gray-500 mb-2">Note: {editingShift.chatterName} · {new Date(editingShift.date).toLocaleDateString()}</p>
             <input
               className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#C9A227]"
               value={editingShift.note}
               onChange={e => setEditingShift(prev => ({ ...prev, note: e.target.value }))}
-              placeholder="Např. ranní směna, 8-16h..."
+              placeholder="E.g. morning shift, 8-16..."
               autoFocus
             />
             <div className="flex gap-2 mt-2">
-              <button onClick={() => saveNote(editingShift.id, editingShift.note)} className="text-xs bg-[#C9A227] text-white px-3 py-1.5 rounded-lg hover:bg-[#A8841C]">Uložit</button>
-              <button onClick={() => setEditingShift(null)} className="text-xs text-gray-400 px-2 py-1.5">Zrušit</button>
+              <button onClick={() => saveNote(editingShift.id, editingShift.note)} className="text-xs bg-[#C9A227] text-white px-3 py-1.5 rounded-lg hover:bg-[#A8841C]">Save</button>
+              <button onClick={() => setEditingShift(null)} className="text-xs text-gray-400 px-2 py-1.5">Cancel</button>
             </div>
           </div>
         </div>

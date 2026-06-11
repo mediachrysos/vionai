@@ -37,12 +37,12 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
           <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
             <Calendar className="w-3 h-3 text-blue-500" />
           </div>
-          <h3 className="text-xs font-bold text-gray-800">Měsíční target</h3>
+          <h3 className="text-xs font-bold text-gray-800">Monthly target</h3>
         </div>
         <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border ${
         isAhead ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-rose-50 text-rose-500 border-rose-200"}`
         }>
-          {isAhead ? `+${Math.abs(Math.round(paceGap)).toLocaleString()} Kč ahead` : `${Math.round(paceGap).toLocaleString()} Kč behind`}
+          {isAhead ? `+${Math.abs(Math.round(paceGap)).toLocaleString()} ahead` : `${Math.round(paceGap).toLocaleString()} behind`}
         </span>
       </div>
 
@@ -51,7 +51,7 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
         <div className="flex items-end justify-between mb-1.5">
           <div>
             <p className="text-lg font-bold text-gray-900 tabular-nums">{monthRevenue.toLocaleString()}</p>
-            <p className="text-[10px] text-gray-400">z {monthlyGoalAmount.toLocaleString()} Kč cíle</p>
+            <p className="text-[10px] text-gray-400">of {monthlyGoalAmount.toLocaleString()} goal</p>
           </div>
           <p className="text-2xl font-bold text-[#C9A227]">{pct}%</p>
         </div>
@@ -66,21 +66,21 @@ export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, month
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-1.5 flex-1">
         <div className="bg-gray-50 rounded-lg p-2">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Zbývá do cíle</p>
-          <p className="text-[11px] font-bold text-gray-800 mt-0.5">{remaining.toLocaleString()} Kč</p>
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Remaining to goal</p>
+          <p className="text-[11px] font-bold text-gray-800 mt-0.5">{remaining.toLocaleString()}</p>
         </div>
         <div className="bg-gray-50 rounded-lg p-2">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Zbývá dní</p>
-          <p className="text-[11px] font-bold text-gray-800 mt-0.5">{daysLeft} dní</p>
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Days left</p>
+          <p className="text-[11px] font-bold text-gray-800 mt-0.5">{daysLeft} days</p>
         </div>
         <div className="bg-gray-50 rounded-lg p-2">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Potřebuješ/den</p>
-          <p className="text-[11px] font-bold text-[#C9A227] mt-0.5">{avgNeeded.toLocaleString()} Kč</p>
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Needed/day</p>
+          <p className="text-[11px] font-bold text-[#C9A227] mt-0.5">{avgNeeded.toLocaleString()}</p>
         </div>
         <div className="bg-gray-50 rounded-lg p-2">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Aktuální průměr</p>
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide">Current average</p>
           <p className={`text-[11px] font-bold mt-0.5 ${avgCurrent >= avgNeeded ? "text-emerald-600" : "text-rose-500"}`}>
-            {avgCurrent.toLocaleString()} Kč
+            {avgCurrent.toLocaleString()}
           </p>
         </div>
       </div>

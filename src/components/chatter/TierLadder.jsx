@@ -9,10 +9,10 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
   const missingToNext = nextTier ? Math.max(0, nextTier.min - todayRevenue) : 0;
 
   const microcopy = () => {
-    if (currentTier.index === 0) return `Chybí ${missingToNext.toLocaleString()} Kč do aktivace hodinovky`;
-    if (currentTier.index === 1) return `🎉 Hodinovka odemčena — ${missingToNext.toLocaleString()} Kč do 5% provize`;
-    if (currentTier.index === 2) return `🔥 5% provize aktivní — ${missingToNext.toLocaleString()} Kč do 10%`;
-    return "🏆 Maximální tier — 10% provize z každé platby";
+    if (currentTier.index === 0) return `Missing ${missingToNext.toLocaleString()} to unlock hourly rate`;
+    if (currentTier.index === 1) return `🎉 Hourly rate unlocked — ${missingToNext.toLocaleString()} to 5% commission`;
+    if (currentTier.index === 2) return `🔥 5% commission active — ${missingToNext.toLocaleString()} to 10%`;
+    return "🏆 Max tier — 10% commission on all payments";
   };
 
   return (
@@ -21,19 +21,19 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
         <div className="w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center">
           <Flame className="w-3 h-3 text-[#C9A227]" />
         </div>
-        <h3 className="text-xs font-bold text-gray-800">Dnešní výkonnost</h3>
+        <h3 className="text-xs font-bold text-gray-800">Today's performance</h3>
       </div>
       <p className="text-[10px] text-[#C9A227] font-medium mb-2.5 ml-8">{microcopy()}</p>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 gap-1.5 mb-2.5">
         <div className="bg-gray-50 rounded-lg p-2">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Vychatováno</p>
-          <p className="text-sm font-bold text-gray-900">{todayRevenue.toLocaleString()} Kč</p>
+          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Chatted</p>
+          <p className="text-sm font-bold text-gray-900">{todayRevenue.toLocaleString()}</p>
         </div>
         <div className="bg-gray-50 rounded-lg p-2">
           <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Payout dnes</p>
-          <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
+          <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()}</p>
         </div>
       </div>
 
@@ -62,12 +62,12 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
                 <p className={`text-[11px] font-semibold ${isActive ? "text-[#A8841C]" : isCompleted ? "text-emerald-700" : "text-gray-400"}`}>{tier.name}</p>
                 <p className="text-[9px] text-gray-400 truncate">
                   {tier.max !== null && tier.max !== undefined
-                    ? `${tier.min.toLocaleString()}–${tier.max.toLocaleString()} Kč`
-                    : `${tier.min.toLocaleString()}+ Kč`}
-                  {tier.commission > 0 && ` · ${tier.commission}% provize`}
+                    ? `${tier.min.toLocaleString()}–${tier.max.toLocaleString()}`
+                    : `${tier.min.toLocaleString()}+`}
+                  {tier.commission > 0 && ` · ${tier.commission}% commission`}
                 </p>
               </div>
-              {isActive && <span className="text-[8px] font-bold text-[#C9A227] bg-[#C9A227]/10 px-1 py-0.5 rounded-full">AKTIVNÍ</span>}
+              {isActive && <span className="text-[8px] font-bold text-[#C9A227] bg-[#C9A227]/10 px-1 py-0.5 rounded-full">ACTIVE</span>}
             </div>
           );
         })}
@@ -76,7 +76,7 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
       {dailyGoalEnabled && dailyGoalAmount > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-100">
           <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-            <span>Denní cíl</span>
+             <span>Daily goal</span>
             <span className="font-semibold">{Math.min(100, Math.round(todayRevenue / dailyGoalAmount * 100))}%</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -86,8 +86,8 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
             />
           </div>
           <div className="flex justify-between text-[10px] text-gray-400 mt-1">
-            <span>{todayRevenue.toLocaleString()} Kč</span>
-            <span>{dailyGoalAmount.toLocaleString()} Kč</span>
+            <span>{todayRevenue.toLocaleString()}</span>
+            <span>{dailyGoalAmount.toLocaleString()}</span>
           </div>
         </div>
       )}
