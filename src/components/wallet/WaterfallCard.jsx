@@ -10,7 +10,7 @@ const MONTH_NAMES = [
 "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
 
 
-function Row({ label, value, sublabel, icon: Icon, color = "text-gray-900", bgColor = "bg-gray-50", prefix = "" }) {
+function Row({ label, value, sublabel, icon: Icon, color = "text-slate-200", bgColor = "bg-white/5", prefix = "" }) {
   return (
     <div className={`flex items-center justify-between px-4 py-3 rounded-xl ${bgColor}`}>
       <div className="flex items-center gap-3">
@@ -18,8 +18,8 @@ function Row({ label, value, sublabel, icon: Icon, color = "text-gray-900", bgCo
 
         
         <div>
-          <p className="text-sm font-medium text-gray-800">{label}</p>
-          {sublabel && <p className="text-xs text-gray-400">{sublabel}</p>}
+          <p className="text-sm font-medium text-slate-200">{label}</p>
+          {sublabel && <p className="text-xs text-slate-500">{sublabel}</p>}
         </div>
       </div>
       <p className={`text-base font-bold ${color}`}>{prefix}{value.toLocaleString("cs-CZ")} Kč</p>
@@ -160,76 +160,76 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
   }, 0);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
       {/* Header with month switcher */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-800">Výpočet výplat</h3>
+        <h3 className="text-sm font-semibold text-slate-200">Výpočet výplat</h3>
         <div className="flex items-center gap-1">
-          <button onClick={prevMonth} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-            <ChevronLeft className="w-4 h-4 text-gray-500" />
+          <button onClick={prevMonth} className="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center">
+            <ChevronLeft className="w-4 h-4 text-slate-400" />
           </button>
-          <span className="text-xs font-semibold text-gray-700 min-w-[110px] text-center">
+          <span className="text-xs font-semibold text-slate-300 min-w-[110px] text-center">
             {MONTH_NAMES[viewMonth]} {viewYear}
           </span>
-          <button onClick={nextMonth} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-            <ChevronRight className="w-4 h-4 text-gray-500" />
+          <button onClick={nextMonth} className="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center">
+            <ChevronRight className="w-4 h-4 text-slate-400" />
           </button>
         </div>
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-emerald-50">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-emerald-950/40">
           <div className="flex items-center gap-3">
             
 
             
             <div>
-              <p className="text-sm font-medium text-gray-800">Celkové příjmy</p>
-              <p className="text-xs text-gray-400">Platby + manuální příjmy</p>
+              <p className="text-sm font-medium text-slate-200">Celkové příjmy</p>
+              <p className="text-xs text-slate-500">Platby + manuální příjmy</p>
             </div>
           </div>
           <p className="text-base font-bold text-emerald-700">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-50">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-950/40">
           <div className="flex items-center gap-3">
             
 
             
             <div>
-              <p className="text-sm font-medium text-gray-800">Celkové výdaje</p>
-              <p className="text-xs text-gray-400">Výdaje + manuální výdaje</p>
+              <p className="text-sm font-medium text-slate-200">Celkové výdaje</p>
+              <p className="text-xs text-slate-500">Výdaje + manuální výdaje</p>
             </div>
           </div>
           <p className="text-base font-bold text-red-600">- {totalExpenses.toLocaleString("cs-CZ")} Kč</p>
         </div>
 
-        <div className="border-t border-dashed border-gray-200 my-1" />
+        <div className="border-t border-dashed border-white/10 my-1" />
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-50">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-950/30">
           <div className="flex items-center gap-3">
             
 
             
-            <p className="text-sm font-semibold text-gray-800">Hrubý zisk</p>
+            <p className="text-sm font-semibold text-slate-200">Hrubý zisk</p>
           </div>
           <p className={`text-base font-bold ${grossProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>
             {grossProfit.toLocaleString("cs-CZ")} Kč
           </p>
         </div>
 
-        <div className="border-t border-dashed border-gray-200 my-1" />
+        <div className="border-t border-dashed border-white/10 my-1" />
 
-        <Row label="Výplata PD" sublabel="10 % z hrubého zisku" color="text-gray-700" bgColor="bg-gray-50" prefix="- " value={lawyerFee} />
+        <Row label="Výplata PD" sublabel="10 % z hrubého zisku" color="text-slate-300" bgColor="bg-white/5" prefix="- " value={lawyerFee} />
 
-        <div className="border-t border-dashed border-gray-200 my-1" />
+        <div className="border-t border-dashed border-white/10 my-1" />
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-50">
-          <p className="text-sm font-semibold text-gray-800">Čistý zisk</p>
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-950/30">
+          <p className="text-sm font-semibold text-slate-200">Čistý zisk</p>
           <p className={`text-base font-bold ${netProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>{netProfit.toLocaleString("cs-CZ")} Kč</p>
         </div>
 
-        <div className="border-t border-dashed border-gray-200 my-1" />
+        <div className="border-t border-dashed border-white/10 my-1" />
 
         <CompanyReserveRow monthStr={monthStr} totalAllocated={companyReserve} carryOver={reserveCarryOver} />
         <OwnerPayoutRow owner="luky" label="Luky" monthStr={monthStr} totalDue={ownerPayout} carryOver={lukyCarryOver} />

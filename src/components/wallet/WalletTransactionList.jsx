@@ -18,8 +18,8 @@ function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
   const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
   const offset = firstDow === 0 ? 6 : firstDow - 1; // Mon-first
   return (
-    <div className="absolute z-50 top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-200 p-3 w-56">
-      <div className="text-xs font-semibold text-gray-600 mb-2 text-center">{MONTH_NAMES[month]} {year}</div>
+    <div className="absolute z-50 top-full left-0 mt-1 bg-[#1e1e1e] rounded-xl shadow-xl border border-white/10 p-3 w-56">
+      <div className="text-xs font-semibold text-slate-400 mb-2 text-center">{MONTH_NAMES[month]} {year}</div>
       <div className="grid grid-cols-7 gap-0.5 text-center">
         {["Po","Út","St","Čt","Pá","So","Ne"].map(d => (
           <div key={d} className="text-[10px] text-gray-400 font-medium pb-1">{d}</div>
@@ -32,7 +32,7 @@ function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
             className={`text-xs w-7 h-7 rounded-lg font-medium transition-colors ${
               selectedDay === d
                 ? "bg-[#C9A227] text-white"
-                : "hover:bg-amber-50 text-gray-700"
+                : "hover:bg-white/10 text-slate-300"
             }`}
           >
             {d}
@@ -40,7 +40,7 @@ function MonthDayPicker({ year, month, selectedDay, onSelectDay, onClose }) {
         ))}
       </div>
       {selectedDay && (
-        <button onClick={() => { onSelectDay(null); onClose(); }} className="mt-2 w-full text-xs text-gray-400 hover:text-red-500 text-center">
+        <button onClick={() => { onSelectDay(null); onClose(); }} className="mt-2 w-full text-xs text-slate-500 hover:text-red-400 text-center">
           Zrušit filtr dne
         </button>
       )}
@@ -102,17 +102,17 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
       {/* Month switcher + filters */}
       <div className="flex flex-wrap items-center gap-2 mb-3">
         <div className="flex items-center gap-1 relative" ref={pickerRef}>
-          <button onClick={prevMonth} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center">
-            <ChevronLeft className="w-3.5 h-3.5 text-gray-500" />
+          <button onClick={prevMonth} className="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center">
+            <ChevronLeft className="w-3.5 h-3.5 text-slate-400" />
           </button>
           <button
             onClick={() => setShowDayPicker(v => !v)}
-            className={`text-xs font-semibold px-2 py-1 rounded-lg transition-colors min-w-[120px] text-center ${selectedDay ? "bg-amber-50 text-[#C9A227] border border-[#e8d99a]" : "text-gray-700 hover:bg-gray-100"}`}
+            className={`text-xs font-semibold px-2 py-1 rounded-lg transition-colors min-w-[120px] text-center ${selectedDay ? "bg-amber-900/30 text-[#C9A227] border border-[#C9A227]/30" : "text-slate-300 hover:bg-white/10"}`}
           >
             {selectedDay ? `${selectedDay}. ${MONTH_NAMES[viewMonth]} ${viewYear}` : `${MONTH_NAMES[viewMonth]} ${viewYear}`}
           </button>
-          <button onClick={nextMonth} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center">
-            <ChevronRight className="w-3.5 h-3.5 text-gray-500" />
+          <button onClick={nextMonth} className="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center">
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
           </button>
           {selectedDay && (
             <button onClick={() => setSelectedDay(null)} className="w-5 h-5 rounded hover:bg-red-50 flex items-center justify-center">
@@ -131,10 +131,10 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
         </div>
 
         {/* Type filter */}
-        <div className="flex gap-0.5 bg-gray-50 rounded-lg p-0.5 border border-gray-200 ml-auto">
+        <div className="flex gap-0.5 bg-white/5 rounded-lg p-0.5 border border-white/10 ml-auto">
           {[["all", "Vše"], ["income", "Příjmy"], ["expense", "Výdaje"]].map(([val, label]) => (
             <button key={val} onClick={() => onTypeFilterChange(val)}
-              className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all ${typeFilter === val ? "bg-white shadow-sm text-gray-800 border border-gray-200" : "text-gray-400 hover:text-gray-600"}`}>
+              className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all ${typeFilter === val ? "bg-white/10 shadow-sm text-slate-200 border border-white/10" : "text-slate-500 hover:text-slate-300"}`}>
               {label}
             </button>
           ))}
@@ -160,12 +160,12 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
       {/* List */}
       <div className="space-y-2 max-h-[520px] overflow-y-auto">
         {filtered.length === 0 ? (
-          <div className="text-center py-10 text-sm text-gray-400">Žádné transakce v tomto měsíci</div>
+          <div className="text-center py-10 text-sm text-slate-500">Žádné transakce v tomto měsíci</div>
         ) : filtered.map((tx, i) => {
           const isIncome = tx.type === "income";
           const isDeletable = !!onDelete;
           return (
-            <div key={tx.id || i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white border border-[#ececec] hover:border-[#e8d99a] transition-colors group">
+            <div key={tx.id || i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-[#C9A227]/30 transition-colors group">
               <div
                 className={`flex items-center gap-3 min-w-0 flex-1 ${onSelect ? "cursor-pointer" : ""}`}
                 onClick={() => onSelect?.(tx)}

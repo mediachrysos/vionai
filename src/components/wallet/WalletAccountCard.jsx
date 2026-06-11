@@ -8,7 +8,7 @@ export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs
   const totalExpense = accountTxs.filter(t => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 flex flex-col gap-3">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5 flex flex-col gap-3">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
@@ -18,8 +18,8 @@ export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs
             }
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">{account.name}</p>
-            <p className="text-xs text-gray-400">
+            <p className="text-sm font-semibold text-slate-100">{account.name}</p>
+            <p className="text-xs text-slate-500">
               {account.account_number}{account.bank_name ? ` · ${account.bank_name}` : ""}
             </p>
           </div>
@@ -34,22 +34,22 @@ export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs
         </div>
       </div>
       <div>
-        <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Zůstatek</p>
-        <p className={`text-2xl font-bold ${account.balance >= 0 ? "text-gray-900" : "text-red-600"}`}>
+        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Zůstatek</p>
+        <p className={`text-2xl font-bold ${account.balance >= 0 ? "text-slate-100" : "text-red-500"}`}>
           {(account.balance || 0).toLocaleString("cs-CZ")} {account.currency || "Kč"}
         </p>
       </div>
       {(totalIncome > 0 || totalExpense > 0) && (
-        <div className="flex gap-3 border-t border-gray-100 pt-3">
+        <div className="flex gap-3 border-t border-white/10 pt-3">
           {totalIncome > 0 && (
             <div className="flex-1">
-              <p className="text-xs text-gray-400 mb-0.5">Příjmy</p>
+              <p className="text-xs text-slate-500 mb-0.5">Příjmy</p>
               <p className="text-sm font-semibold text-emerald-600">+{totalIncome.toLocaleString("cs-CZ")} Kč</p>
             </div>
           )}
           {totalExpense > 0 && (
             <div className="flex-1">
-              <p className="text-xs text-gray-400 mb-0.5">Výdaje</p>
+              <p className="text-xs text-slate-500 mb-0.5">Výdaje</p>
               <p className="text-sm font-semibold text-red-500">-{totalExpense.toLocaleString("cs-CZ")} Kč</p>
             </div>
           )}
