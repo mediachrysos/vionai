@@ -93,8 +93,8 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               className={cn(
                 "relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "bg-slate-700/80 text-white"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  ? "bg-white/10 text-white"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/5",
                 collapsed && "justify-center px-2"
               )}
             >
@@ -110,7 +110,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       </nav>
 
       {/* User */}
-      <div className={cn("px-3 py-3 border-t border-slate-700/50", collapsed && "px-2")}>
+      <div className={cn("px-3 py-3 border-t border-white/10", collapsed && "px-2")}>
         <div className={cn(
           "flex items-center gap-3",
           collapsed && "justify-center"
@@ -138,7 +138,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="hidden lg:flex items-center justify-center h-8 border-t border-slate-700/50 text-slate-600 hover:text-slate-400 transition-colors hover:bg-slate-800/50"
+        className="hidden lg:flex items-center justify-center h-8 border-t border-white/10 text-slate-600 hover:text-slate-400 transition-colors hover:bg-white/5"
       >
         {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
       </button>
@@ -176,7 +176,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ type: "spring", damping: 28, stiffness: 320 }}
-            className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] bg-[#0F172A] border-r border-slate-700/50 z-50 shadow-2xl relative"
+            className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] bg-[#161616] border-r border-white/10 z-50 shadow-2xl relative"
           >
             <button
               onClick={() => setMobileOpen(false)}
@@ -191,7 +191,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
 
       {/* Desktop sidebar */}
       <aside className={cn(
-        "hidden lg:flex flex-col bg-[#0F172A] border-r border-slate-700/50 h-screen sticky top-0 transition-all duration-300 ease-out relative",
+        "hidden lg:flex flex-col bg-[#161616] border-r border-white/10 h-screen sticky top-0 transition-all duration-300 ease-out relative",
         collapsed ? "w-[60px]" : "w-[220px]"
       )}>
         <SidebarContent />

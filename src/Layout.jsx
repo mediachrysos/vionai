@@ -217,7 +217,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#272727]">
+    <div className="flex min-h-screen bg-[#1a1a1a]">
       <Sidebar currentPage={currentPageName} user={user} onLogout={handleLogout} />
       <main className="flex-1 min-w-0">
         <div className="page-transition">
