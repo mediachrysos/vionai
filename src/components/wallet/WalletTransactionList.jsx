@@ -178,35 +178,35 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-sm font-medium text-gray-800 truncate">{tx.title}</p>
-                    {tx.invoice_url && (
-                      <a href={tx.invoice_url} target="_blank" rel="noreferrer" title="Zobrazit fakturu" onClick={e => e.stopPropagation()}>
-                        <FileText className="w-3.5 h-3.5 text-blue-400 hover:text-blue-600 flex-shrink-0" />
+                    <p className="text-sm font-medium text-slate-200 truncate">{tx.title}</p>
+                     {tx.invoice_url && (
+                       <a href={tx.invoice_url} target="_blank" rel="noreferrer" title="Zobrazit fakturu" onClick={e => e.stopPropagation()}>
+                         <FileText className="w-3.5 h-3.5 text-blue-400 hover:text-blue-300 flex-shrink-0" />
                       </a>
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                    <p className="text-xs text-gray-400">
-                      {tx.transaction_date
-                        ? format(new Date(tx.transaction_date), "d. M. yyyy")
-                        : tx.created_date
-                          ? format(new Date(tx.created_date), "d. M. yyyy")
-                          : "—"}
-                    </p>
-                    {tx.category && <Badge variant="outline" className="text-[10px] h-4 px-1.5 py-0">{tx.category}</Badge>}
-                    {tx.account_name && <Badge variant="outline" className="text-[10px] h-4 px-1.5 py-0 bg-amber-50 border-amber-200 text-amber-700">{tx.account_name}</Badge>}
-                    {tx.source && <Badge variant="outline" className="text-[10px] h-4 px-1.5 py-0 bg-blue-50 border-blue-200 text-blue-700">{tx.source}</Badge>}
+                    <p className="text-xs text-slate-500">
+                       {tx.transaction_date
+                         ? format(new Date(tx.transaction_date), "d. M. yyyy")
+                         : tx.created_date
+                           ? format(new Date(tx.created_date), "d. M. yyyy")
+                           : "—"}
+                     </p>
+                     {tx.category && <Badge variant="outline" className="text-[10px] h-4 px-1.5 py-0 bg-white/5 border-white/10 text-slate-300">{tx.category}</Badge>}
+                     {tx.account_name && <Badge variant="outline" className="text-[10px] h-4 px-1.5 py-0 bg-amber-950/30 border-amber-700/30 text-amber-300">{tx.account_name}</Badge>}
+                     {tx.source && <Badge variant="outline" className="text-[10px] h-4 px-1.5 py-0 bg-blue-950/30 border-blue-700/30 text-blue-300">{tx.source}</Badge>}
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-                <p className={`text-base font-bold ${isIncome ? "text-emerald-700" : "text-red-600"}`}>
-                  {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString("cs-CZ")} Kč
-                </p>
-                {isDeletable && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onDelete(tx); }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500"
+                <p className={`text-base font-bold ${isIncome ? "text-emerald-400" : "text-red-400"}`}>
+                   {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString("cs-CZ")} Kč
+                 </p>
+                 {isDeletable && (
+                   <button
+                     onClick={(e) => { e.stopPropagation(); onDelete(tx); }}
+                     className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-950/30 text-slate-500 hover:text-red-400"
                     title="Smazat transakci"
                   >
                     <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />

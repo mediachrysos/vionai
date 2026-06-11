@@ -145,45 +145,45 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
             /* View mode */
             <>
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 mb-1">Typ</p>
-                  <Badge className={isIncome ? "bg-emerald-100 text-emerald-700 border-emerald-200" : "bg-red-100 text-red-700 border-red-200"}>
-                    {isIncome ? "Příjem" : "Výdaj"}
-                  </Badge>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 mb-1">Kategorie</p>
-                  <p className="text-sm font-medium text-gray-800">{form.category || "—"}</p>
-                </div>
+                <div className="bg-[#1e1e1e] rounded-xl p-3 border border-white/10">
+                    <p className="text-xs text-slate-500 mb-1">Typ</p>
+                    <Badge className={isIncome ? "bg-emerald-950/50 text-emerald-400 border-emerald-700/30" : "bg-red-950/50 text-red-400 border-red-700/30"}>
+                      {isIncome ? "Příjem" : "Výdaj"}
+                    </Badge>
+                  </div>
+                  <div className="bg-[#1e1e1e] rounded-xl p-3 border border-white/10">
+                    <p className="text-xs text-slate-500 mb-1">Kategorie</p>
+                    <p className="text-sm font-medium text-slate-200">{form.category || "—"}</p>
+                  </div>
               </div>
 
               {form.account_name && (
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 mb-1">Účet</p>
-                  <p className="text-sm font-medium text-gray-800">{form.account_name}</p>
+                <div className="bg-[#1e1e1e] rounded-xl p-3 border border-white/10">
+                  <p className="text-xs text-slate-500 mb-1">Účet</p>
+                  <p className="text-sm font-medium text-slate-200">{form.account_name}</p>
                 </div>
               )}
 
               {form.note && (
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 mb-1">Poznámka</p>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{form.note}</p>
+                <div className="bg-[#1e1e1e] rounded-xl p-3 border border-white/10">
+                  <p className="text-xs text-slate-500 mb-1">Poznámka</p>
+                  <p className="text-sm text-slate-300 whitespace-pre-wrap">{form.note}</p>
                 </div>
               )}
 
               {/* Invoice section */}
               <div>
-                <p className="text-xs text-gray-400 mb-2">Faktura</p>
+                <p className="text-xs text-slate-500 mb-2">Faktura</p>
                 {form.invoice_url ? (
-                  <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-xl border border-blue-200">
-                    <FileText className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                    <span className="text-sm text-blue-700 flex-1 truncate">{form.invoice_name || "Faktura"}</span>
+                  <div className="flex items-center gap-2 p-3 bg-blue-950/30 rounded-xl border border-blue-700/30">
+                    <FileText className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                    <span className="text-sm text-blue-300 flex-1 truncate">{form.invoice_name || "Faktura"}</span>
                     <a
                       href={form.invoice_url}
                       download={form.invoice_name || "faktura"}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded-lg hover:bg-blue-100 transition-colors"
+                      className="flex items-center gap-1 text-xs text-blue-300 hover:text-blue-200 font-medium px-2 py-1 rounded-lg hover:bg-blue-900/50 transition-colors"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Stáhnout
@@ -191,40 +191,40 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
                     {isEditable && (
                       <button
                         onClick={() => setForm(p => ({ ...p, invoice_url: "", invoice_name: "" }))}
-                        className="text-gray-400 hover:text-red-500"
+                        className="text-slate-500 hover:text-red-400"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
                     )}
-                  </div>
-                ) : isEditable ? (
-                  <label className="flex items-center gap-2 px-3 py-3 rounded-xl border border-dashed border-gray-300 hover:border-[#C9A227] cursor-pointer transition-colors">
-                    <Upload className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm text-gray-400">{uploading ? "Nahrávám..." : "Nahrát fakturu"}</span>
+                    </div>
+                    ) : isEditable ? (
+                    <label className="flex items-center gap-2 px-3 py-3 rounded-xl border border-dashed border-white/10 hover:border-[#C9A227] cursor-pointer transition-colors">
+                    <Upload className="w-4 h-4 text-slate-500" />
+                    <span className="text-sm text-slate-500">{uploading ? "Nahrávám..." : "Nahrát fakturu"}</span>
                     <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" onChange={handleInvoiceUpload} disabled={uploading} />
                   </label>
                 ) : (
-                  <p className="text-sm text-gray-400">Žádná faktura</p>
+                  <p className="text-sm text-slate-500">Žádná faktura</p>
                 )}
-              </div>
-
-              {form.source && (
-                <div className="pt-1">
-                  <Badge variant="outline" className="text-xs text-gray-400 border-gray-200">Zdroj: {form.source}</Badge>
                 </div>
-              )}
+
+                {form.source && (
+                <div className="pt-1">
+                  <Badge variant="outline" className="text-xs text-slate-500 border-white/10">Zdroj: {form.source}</Badge>
+                </div>
+                )}
             </>
           ) : (
             /* Edit mode */
             <div className="space-y-3">
               <div>
-                <Label className="text-xs text-gray-500">Popis *</Label>
+                <Label className="text-xs text-slate-500">Popis *</Label>
                 <Input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} className="mt-1 h-8 text-sm" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-xs text-gray-500">Typ</Label>
+                  <Label className="text-xs text-slate-500">Typ</Label>
                   <Select value={form.type} onValueChange={v => setForm(p => ({ ...p, type: v }))}>
                     <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -234,20 +234,20 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500">Částka (Kč)</Label>
+                  <Label className="text-xs text-slate-500">Částka (Kč)</Label>
                   <Input type="number" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} className="mt-1 h-8 text-sm" />
                 </div>
               </div>
 
               <div>
-                <Label className="text-xs text-gray-500">Datum</Label>
+                <Label className="text-xs text-slate-500">Datum</Label>
                 <div className="mt-1">
                   <DatePicker value={form.transaction_date} onChange={v => setForm(p => ({ ...p, transaction_date: v }))} />
                 </div>
               </div>
 
               <div>
-                <Label className="text-xs text-gray-500">Kategorie</Label>
+                <Label className="text-xs text-slate-500">Kategorie</Label>
                 <Input value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className="mt-1 h-8 text-sm" list="cats" />
                 <datalist id="cats">
                   {PRESET_CATEGORIES.map(c => <option key={c} value={c} />)}
@@ -256,7 +256,7 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
 
               {accounts?.length > 0 && (
                 <div>
-                  <Label className="text-xs text-gray-500">Účet</Label>
+                  <Label className="text-xs text-slate-500">Účet</Label>
                   <Select value={form.account_id || ""} onValueChange={handleAccountChange}>
                     <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Vyberte účet" /></SelectTrigger>
                     <SelectContent>
@@ -267,22 +267,22 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
               )}
 
               <div>
-                <Label className="text-xs text-gray-500">Faktura</Label>
+                <Label className="text-xs text-slate-500">Faktura</Label>
                 {form.invoice_url ? (
-                  <div className="mt-1 flex items-center gap-2 p-2 bg-blue-50 rounded-lg border border-blue-200">
-                    <FileText className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                    <span className="text-xs text-blue-600 flex-1 truncate">{form.invoice_name || "Faktura"}</span>
+                  <div className="mt-1 flex items-center gap-2 p-2 bg-blue-950/30 rounded-lg border border-blue-700/30">
+                    <FileText className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                    <span className="text-xs text-blue-300 flex-1 truncate">{form.invoice_name || "Faktura"}</span>
                     <a href={form.invoice_url} download={form.invoice_name || "faktura"} target="_blank" rel="noreferrer">
-                      <Download className="w-3.5 h-3.5 text-blue-500 hover:text-blue-700" />
+                      <Download className="w-3.5 h-3.5 text-blue-400 hover:text-blue-300" />
                     </a>
-                    <button onClick={() => setForm(p => ({ ...p, invoice_url: "", invoice_name: "" }))} className="text-gray-400 hover:text-red-500">
+                    <button onClick={() => setForm(p => ({ ...p, invoice_url: "", invoice_name: "" }))} className="text-slate-500 hover:text-red-400">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ) : (
-                  <label className="mt-1 flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-300 hover:border-[#C9A227] cursor-pointer transition-colors">
-                    <Upload className="w-4 h-4 text-gray-400" />
-                    <span className="text-xs text-gray-400">{uploading ? "Nahrávám..." : "Nahrát fakturu"}</span>
+                  <label className="mt-1 flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-white/10 hover:border-[#C9A227] cursor-pointer transition-colors">
+                    <Upload className="w-4 h-4 text-slate-500" />
+                    <span className="text-xs text-slate-500">{uploading ? "Nahrávám..." : "Nahrát fakturu"}</span>
                     <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" onChange={handleInvoiceUpload} disabled={uploading} />
                   </label>
                 )}
@@ -290,7 +290,7 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
 
               {isExpense && models.length > 0 && (
                 <div>
-                  <Label className="text-xs text-gray-500">Modelka</Label>
+                  <Label className="text-xs text-slate-500">Modelka</Label>
                   <Select value={form.model_id || ""} onValueChange={v => {
                     const m = models.find(x => x.id === v);
                     setForm(p => ({ ...p, model_id: v, model_name: m?.name || "" }));
@@ -304,7 +304,7 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
               )}
 
               <div>
-                <Label className="text-xs text-gray-500">Poznámka</Label>
+                <Label className="text-xs text-slate-500">Poznámka</Label>
                 <Textarea value={form.note || ""} onChange={e => setForm(p => ({ ...p, note: e.target.value }))} rows={3} className="mt-1 text-sm resize-none" />
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between gap-2 px-5 py-3 border-t border-gray-100">
+        <div className="flex justify-between gap-2 px-5 py-3 border-t border-white/10">
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={onClose}>Zavřít</Button>
             {isEditable && !editing && (
