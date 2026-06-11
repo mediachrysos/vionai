@@ -99,7 +99,9 @@ export default function Sidebar({ currentPage, user, onLogout }) {
                 (expanded || forMobile) ? "px-3" : "px-0 justify-center"
               )}
             >
-              <Icon className={cn("flex-shrink-0 w-5 h-5", isActive ? "text-[#C9A227]" : "text-slate-500")} />
+              <span className="flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0">
+                <Icon className={cn("w-5 h-5", isActive ? "text-[#C9A227]" : "text-slate-500")} />
+              </span>
               <span className={cn(
                 "whitespace-nowrap transition-all duration-200",
                 (expanded || forMobile) ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
