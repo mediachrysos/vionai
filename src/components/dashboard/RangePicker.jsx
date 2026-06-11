@@ -5,11 +5,11 @@ import { format } from "date-fns";
 import { cs } from "date-fns/locale";
 
 const PRESETS = [
-  { label: "Včera", getValue: () => { const d = new Date(); d.setDate(d.getDate() - 1); const s = d.toISOString().split("T")[0]; return { from: s, to: s }; } },
-  { label: "Posledních 7 dní", getValue: () => { const to = new Date().toISOString().split("T")[0]; const from = new Date(Date.now() - 6 * 86400000).toISOString().split("T")[0]; return { from, to }; } },
-  { label: "Tento měsíc", getValue: () => { const now = new Date(); const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0]; const to = now.toISOString().split("T")[0]; return { from, to }; } },
-  { label: "Minulý měsíc", getValue: () => { const now = new Date(); const from = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split("T")[0]; const to = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split("T")[0]; return { from, to }; } },
-  { label: "Posledních 30 dní", getValue: () => { const to = new Date().toISOString().split("T")[0]; const from = new Date(Date.now() - 29 * 86400000).toISOString().split("T")[0]; return { from, to }; } },
+  { label: "Yesterday", getValue: () => { const d = new Date(); d.setDate(d.getDate() - 1); const s = d.toISOString().split("T")[0]; return { from: s, to: s }; } },
+  { label: "Last 7 days", getValue: () => { const to = new Date().toISOString().split("T")[0]; const from = new Date(Date.now() - 6 * 86400000).toISOString().split("T")[0]; return { from, to }; } },
+  { label: "This month", getValue: () => { const now = new Date(); const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0]; const to = now.toISOString().split("T")[0]; return { from, to }; } },
+  { label: "Last month", getValue: () => { const now = new Date(); const from = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split("T")[0]; const to = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split("T")[0]; return { from, to }; } },
+  { label: "Last 30 days", getValue: () => { const to = new Date().toISOString().split("T")[0]; const from = new Date(Date.now() - 29 * 86400000).toISOString().split("T")[0]; return { from, to }; } },
 ];
 
 export { PRESETS };
@@ -61,10 +61,10 @@ export default function RangePicker({ range, activePreset, onPreset, onDateChang
           </div>
 
           <div className="border-t border-gray-100 pt-3">
-            <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Vlastní rozsah</p>
+            <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Custom range</p>
             <div className="flex flex-col gap-2">
-              <DatePicker value={range.from} onChange={v => { onDateChange("from", v); }} placeholder="Od" />
-              <DatePicker value={range.to} onChange={v => { onDateChange("to", v); }} placeholder="Do" />
+              <DatePicker value={range.from} onChange={v => { onDateChange("from", v); }} placeholder="From" />
+              <DatePicker value={range.to} onChange={v => { onDateChange("to", v); }} placeholder="To" />
             </div>
           </div>
         </div>

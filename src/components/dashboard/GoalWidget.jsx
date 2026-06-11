@@ -12,13 +12,13 @@ export default function GoalWidget({ monthlyRevenue, goal = 50000 }) {
         <div className="w-7 h-7 rounded-lg bg-violet-950/50 flex items-center justify-center">
           <Target className="w-3.5 h-3.5 text-violet-400" />
         </div>
-        <h3 className="text-sm font-semibold text-slate-200">Měsíční cíl</h3>
+        <h3 className="text-sm font-semibold text-slate-200">Monthly goal</h3>
         <span className="ml-auto text-xs font-semibold bg-violet-950/50 text-violet-300 border border-violet-700/30 px-2 py-0.5 rounded-full">{pct}%</span>
       </div>
       <div className="space-y-3">
         <div>
           <p className="text-2xl font-semibold text-slate-100 tracking-tight">${monthlyRevenue.toLocaleString()}</p>
-          <p className="text-xs text-slate-500 mt-0.5">z ${goal.toLocaleString()} měsíčního cíle</p>
+          <p className="text-xs text-slate-500 mt-0.5">of ${goal.toLocaleString()} monthly goal</p>
         </div>
         <div className="h-2 bg-white/10 rounded-full overflow-hidden">
           <div
@@ -27,11 +27,11 @@ export default function GoalWidget({ monthlyRevenue, goal = 50000 }) {
           />
         </div>
         {remaining > 0 && (
-          <p className="text-xs text-slate-500">Zbývá <span className="text-violet-400 font-medium">${remaining.toLocaleString()}</span></p>
-        )}
-        {remaining === 0 && (
-          <p className="text-xs text-emerald-400 font-medium">Cíl splněn! 🎉</p>
-        )}
+           <p className="text-xs text-slate-500">Remaining <span className="text-violet-400 font-medium">${remaining.toLocaleString()}</span></p>
+         )}
+         {remaining === 0 && (
+           <p className="text-xs text-emerald-400 font-medium">Goal reached! 🎉</p>
+         )}
       </div>
     </div>
   );
