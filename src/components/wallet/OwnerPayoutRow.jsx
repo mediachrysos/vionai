@@ -39,11 +39,11 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
   };
 
   return (
-    <div className="px-4 py-3 rounded-xl bg-emerald-50 space-y-2">
+    <div className="px-4 py-3 rounded-xl bg-emerald-950/30 border border-emerald-900/30 space-y-2">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-gray-800">Výplata – {label}</p>
-          <p className="text-xs text-gray-400">40 % ze zbytku po rezervě</p>
+          <p className="text-sm font-semibold text-slate-200">Výplata – {label}</p>
+          <p className="text-xs text-slate-500">40 % ze zbytku po rezervě</p>
         </div>
         <div className="text-right">
           <p className="text-base font-bold text-emerald-600">{totalDue.toLocaleString("cs-CZ")} Kč</p>
@@ -57,13 +57,13 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
       {payouts.length > 0 && (
         <div className="space-y-1">
           {payouts.map((p) => (
-            <div key={p.id} className="flex items-center justify-between bg-white rounded-lg px-3 py-1.5">
-              <span className="text-xs text-gray-500">Vyplaceno</span>
+            <div key={p.id} className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-1.5">
+              <span className="text-xs text-slate-400">Vyplaceno</span>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-gray-700">- {p.amount.toLocaleString("cs-CZ")} Kč</span>
+                <span className="text-xs font-semibold text-slate-300">- {p.amount.toLocaleString("cs-CZ")} Kč</span>
                 <button
                   onClick={() => deleteMutation.mutate(p.id)}
-                  className="text-gray-300 hover:text-red-400 transition-colors"
+                  className="text-slate-600 hover:text-red-400 transition-colors"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -74,8 +74,8 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
       )}
 
       {/* Remaining */}
-      <div className="flex items-center justify-between bg-white/70 rounded-lg px-3 py-1.5">
-        <span className="text-xs font-medium text-gray-600">Zbývá vyplatit</span>
+      <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-1.5">
+        <span className="text-xs font-medium text-slate-400">Zbývá vyplatit</span>
         <span className={`text-xs font-bold ${remaining > 0 ? "text-orange-500" : "text-emerald-600"}`}>
           {remaining.toLocaleString("cs-CZ")} Kč
         </span>
@@ -89,7 +89,7 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
             placeholder="Částka..."
-            className="flex-1 text-xs border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-300"
+            className="flex-1 text-xs bg-white/10 border border-white/20 text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             autoFocus
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
@@ -102,7 +102,7 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
           </button>
           <button
             onClick={() => { setAdding(false); setInputVal(""); }}
-            className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200"
+            className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-slate-400 hover:bg-white/20"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -110,7 +110,7 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
       ) : (
         <button
           onClick={() => setAdding(true)}
-          className="flex items-center gap-1.5 text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+          className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-medium"
         >
           <Plus className="w-3.5 h-3.5" />
           Přidat výplatu

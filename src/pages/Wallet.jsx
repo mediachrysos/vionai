@@ -197,12 +197,12 @@ export default function Wallet() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="bg-slate-50 rounded-xl w-10 h-10 from-[#C9A227] to-[#A8841C] flex items-center justify-center shadow-sm shadow-amber-200">
+          <div className="bg-white/10 rounded-xl w-10 h-10 flex items-center justify-center">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_16_gtkobz.png" alt="" className="w-7 h-7 object-contain" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Wallet</h1>
-            <p className="text-sm text-gray-400">Přehled financí a výplat</p>
+            <h1 className="text-2xl font-bold text-slate-100">Wallet</h1>
+            <p className="text-sm text-slate-500">Přehled financí a výplat</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -218,24 +218,21 @@ export default function Wallet() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
           <div className="flex items-center gap-2 mb-1">
-            
-            <p className="text-xs text-gray-400 uppercase tracking-wider">Celkové příjmy</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Celkové příjmy</p>
           </div>
-          <p className="text-2xl font-bold text-emerald-700">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
+          <p className="text-2xl font-bold text-emerald-400">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
         </div>
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
           <div className="flex items-center gap-2 mb-1">
-            
-            <p className="text-xs text-gray-400 uppercase tracking-wider">Celkové výdaje</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Celkové výdaje</p>
           </div>
-          <p className="text-2xl font-bold text-red-600">{totalExpenses.toLocaleString("cs-CZ")} Kč</p>
+          <p className="text-2xl font-bold text-red-400">{totalExpenses.toLocaleString("cs-CZ")} Kč</p>
         </div>
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
           <div className="flex items-center gap-2 mb-1">
-            
-            <p className="text-xs text-gray-400 uppercase tracking-wider">Čistý zisk</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Čistý zisk</p>
           </div>
           <p className={`text-2xl font-bold ${totalIncome - totalExpenses >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>
             {(totalIncome - totalExpenses).toLocaleString("cs-CZ")} Kč
@@ -246,7 +243,7 @@ export default function Wallet() {
       {/* Accounts */}
       {accounts.length > 0 &&
       <div className="mb-6">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Firemní účty</h2>
+          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Firemní účty</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {accounts.map((acc) =>
           <WalletAccountCard
@@ -270,8 +267,8 @@ export default function Wallet() {
         <SubscriptionsSection accounts={accounts} />
 
         {/* Transactions - full width */}
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <h3 className="text-sm font-semibold text-gray-800 mb-3">Historie transakcí</h3>
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
+          <h3 className="text-sm font-semibold text-slate-200 mb-3">Historie transakcí</h3>
           <WalletTransactionList
             transactions={allTransactions}
             typeFilter={txFilter}

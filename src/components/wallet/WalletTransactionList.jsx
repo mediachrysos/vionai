@@ -170,7 +170,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
                 className={`flex items-center gap-3 min-w-0 flex-1 ${onSelect ? "cursor-pointer" : ""}`}
                 onClick={() => onSelect?.(tx)}
               >
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${isIncome ? "bg-emerald-50" : "bg-red-50"}`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${isIncome ? "bg-emerald-950/50" : "bg-red-950/50"}`}>
                   {isIncome
                     ? <ArrowUpCircle className="w-4 h-4 text-emerald-600" />
                     : <ArrowDownCircle className="w-4 h-4 text-red-500" />

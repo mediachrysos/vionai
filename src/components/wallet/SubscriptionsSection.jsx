@@ -250,15 +250,15 @@ export default function SubscriptionsSection({ accounts }) {
   const totalMonthly = subscriptions.filter((s) => s.is_active).reduce((s, sub) => s + (sub.amount || 0), 0);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
             
             Předplatné (Subscriptions)
           </h3>
           {subscriptions.length > 0 &&
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
               Celkem měsíčně: <span className="font-semibold text-red-600">{totalMonthly.toLocaleString("cs-CZ")} Kč</span>
             </p>
           }
@@ -270,34 +270,34 @@ export default function SubscriptionsSection({ accounts }) {
       </div>
 
       {subscriptions.length === 0 ?
-      <p className="text-sm text-gray-400 text-center py-6">Žádné předplatné. Klikni na Přidat.</p> :
+      <p className="text-sm text-slate-500 text-center py-6">Žádné předplatné. Klikni na Přidat.</p> :
 
       <div className="space-y-2">
           {subscriptions.map((sub) =>
         <div
           key={sub.id}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-opacity ${sub.is_active ? "border-gray-100 bg-gray-50/50" : "border-gray-100 bg-gray-50/20 opacity-50"}`}>
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-opacity ${sub.is_active ? "border-white/10 bg-white/5" : "border-white/5 bg-white/5 opacity-50"}`}>
           
               {/* Logo or placeholder */}
               {sub.logo_url ?
-          <img src={sub.logo_url} alt={sub.name} className="w-8 h-8 rounded-lg object-cover border border-gray-100 flex-shrink-0" /> :
+          <img src={sub.logo_url} alt={sub.name} className="w-8 h-8 rounded-lg object-cover border border-white/10 flex-shrink-0" /> :
 
-          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                   <RefreshCw className="w-3.5 h-3.5 text-gray-300" />
                 </div>
           }
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">{sub.name}</p>
+                <p className="text-sm font-medium text-slate-200 truncate">{sub.name}</p>
                 <div className="flex items-center gap-3 mt-0.5">
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                  <span className="text-xs text-slate-500 flex items-center gap-1">
                      {sub.billing_day}. každý měsíc
                   </span>
                   {sub.account_name &&
-              <span className="text-xs text-gray-400">· {sub.account_name}</span>
+              <span className="text-xs text-slate-500">· {sub.account_name}</span>
               }
                   {sub.note &&
-              <span className="text-xs text-gray-400 truncate">· {sub.note}</span>
+              <span className="text-xs text-slate-500 truncate">· {sub.note}</span>
               }
                 </div>
               </div>
@@ -311,7 +311,7 @@ export default function SubscriptionsSection({ accounts }) {
                 <button
                   onClick={() => window.confirm(`Odečíst ${(sub.amount || 0).toLocaleString()} Kč za "${sub.name}" nyní?`) && deductNowMutation.mutate(sub)}
                   title="Odečíst za tento měsíc"
-                  className="text-xs text-amber-600 hover:text-amber-800 border border-amber-200 rounded-lg px-2 py-0.5 flex-shrink-0 font-medium hover:bg-amber-50 transition-colors">
+                  className="text-xs text-amber-400 hover:text-amber-300 border border-amber-700/50 rounded-lg px-2 py-0.5 flex-shrink-0 font-medium hover:bg-amber-900/30 transition-colors">
                   Odečíst
                 </button>
               )}
