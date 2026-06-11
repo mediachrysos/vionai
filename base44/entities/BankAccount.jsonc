@@ -1,0 +1,36 @@
+{
+  "name": "BankAccount",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "N\u00e1zev \u00fa\u010dtu / popis"
+    },
+    "account_number": {
+      "type": "string",
+      "description": "\u010c\u00edslo \u00fa\u010dtu"
+    },
+    "bank_name": {
+      "type": "string",
+      "description": "N\u00e1zev banky"
+    },
+    "balance": {
+      "type": "number",
+      "default": 0,
+      "description": "Aktu\u00e1ln\u00ed z\u016fstatek \u00fa\u010dtu"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Zda je \u00fa\u010det aktivn\u00ed"
+    },
+    "profile_photo": {
+      "type": "string",
+      "description": "URL profilov\u00e9 fotky \u00fa\u010dtu"
+    }
+  },
+  "required": [
+    "name",
+    "account_number"
+  ]
+}

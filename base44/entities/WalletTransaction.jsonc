@@ -1,0 +1,56 @@
+{
+  "name": "WalletTransaction",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "N\u00e1zev / popis transakce"
+    },
+    "amount": {
+      "type": "number",
+      "description": "\u010c\u00e1stka transakce"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "income",
+        "expense"
+      ],
+      "description": "Typ transakce: p\u0159\u00edjem nebo v\u00fddaj"
+    },
+    "category": {
+      "type": "string",
+      "description": "Kategorie transakce (voln\u00fd text)"
+    },
+    "account_id": {
+      "type": "string",
+      "description": "ID propojen\u00e9ho BankAccount"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "N\u00e1zev \u00fa\u010dtu pro zobrazen\u00ed"
+    },
+    "transaction_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum transakce"
+    },
+    "note": {
+      "type": "string",
+      "description": "Intern\u00ed pozn\u00e1mka"
+    },
+    "invoice_url": {
+      "type": "string",
+      "description": "URL nahrat\u00e9 faktury"
+    },
+    "invoice_name": {
+      "type": "string",
+      "description": "N\u00e1zev souboru faktury"
+    }
+  },
+  "required": [
+    "title",
+    "amount",
+    "type"
+  ]
+}

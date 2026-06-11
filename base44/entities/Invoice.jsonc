@@ -1,0 +1,121 @@
+{
+  "name": "Invoice",
+  "type": "object",
+  "properties": {
+    "invoice_number": {
+      "type": "string",
+      "description": "Invoice number (e.g., 20260001)"
+    },
+    "related_payment_id": {
+      "type": "string",
+      "description": "ID of related Payment record"
+    },
+    "related_customer_id": {
+      "type": "string",
+      "description": "ID of related Customer record"
+    },
+    "supplier_company_name": {
+      "type": "string",
+      "description": "Our company name"
+    },
+    "supplier_address": {
+      "type": "string",
+      "description": "Our company address"
+    },
+    "supplier_ico": {
+      "type": "string",
+      "description": "Our company ICO (ID number)"
+    },
+    "supplier_dic": {
+      "type": "string",
+      "description": "Our company DIC (VAT number)"
+    },
+    "supplier_email": {
+      "type": "string",
+      "description": "Our company email"
+    },
+    "supplier_phone": {
+      "type": "string",
+      "description": "Our company phone"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Customer full name"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Customer email"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Invoice issue date"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Invoice due date"
+    },
+    "taxable_supply_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of service/product delivery"
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Payment method (e.g., bank transfer, cash)"
+    },
+    "currency": {
+      "type": "string",
+      "default": "CZK",
+      "description": "Currency code"
+    },
+    "item_name": {
+      "type": "string",
+      "description": "Product/service name"
+    },
+    "item_description": {
+      "type": "string",
+      "description": "Product/service description"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1,
+      "description": "Item quantity"
+    },
+    "unit_price": {
+      "type": "number",
+      "description": "Unit price"
+    },
+    "total_amount": {
+      "type": "number",
+      "description": "Total invoice amount"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "issued",
+        "paid",
+        "cancelled"
+      ],
+      "default": "draft",
+      "description": "Invoice status"
+    },
+    "pdf_url": {
+      "type": "string",
+      "description": "URL to generated PDF file"
+    },
+    "note": {
+      "type": "string",
+      "description": "Internal note"
+    }
+  },
+  "required": [
+    "invoice_number",
+    "related_payment_id",
+    "customer_name",
+    "item_name",
+    "total_amount"
+  ]
+}

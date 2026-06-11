@@ -1,0 +1,70 @@
+{
+  "name": "Payment",
+  "type": "object",
+  "properties": {
+    "customer_id": {
+      "type": "string",
+      "description": "ID of the customer"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Customer name for display"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Payment amount"
+    },
+    "service_type": {
+      "type": "string",
+      "description": "Service type or reason"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "ID of assigned model"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Model name for display"
+    },
+    "chatter_email": {
+      "type": "string",
+      "description": "Email of chatter who logged it"
+    },
+    "chatter_name": {
+      "type": "string",
+      "description": "Chatter name for display"
+    },
+    "destination_account": {
+      "type": "string",
+      "description": "Destination bank account number"
+    },
+    "bank_account_id": {
+      "type": "string",
+      "description": "ID of linked BankAccount entity"
+    },
+    "payment_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of payment"
+    },
+    "note": {
+      "type": "string",
+      "description": "Internal note"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "pending",
+        "failed",
+        "refunded"
+      ],
+      "default": "completed",
+      "description": "Payment status"
+    }
+  },
+  "required": [
+    "customer_id",
+    "amount"
+  ]
+}

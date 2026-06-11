@@ -1,0 +1,29 @@
+{
+  "name": "GoalSettings",
+  "type": "object",
+  "properties": {
+    "monthly_goal": {
+      "type": "number",
+      "description": "Revenue goal in K\u010d",
+      "default": 100000
+    },
+    "label": {
+      "type": "string",
+      "description": "Label/identifier for this setting",
+      "default": "default"
+    },
+    "goal_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start date of the goal period (YYYY-MM-DD)"
+    },
+    "goal_end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "End date of the goal period (YYYY-MM-DD)"
+    }
+  },
+  "required": [
+    "monthly_goal"
+  ]
+}

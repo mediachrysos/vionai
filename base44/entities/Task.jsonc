@@ -1,0 +1,59 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Task description"
+    },
+    "assignee": {
+      "type": "string",
+      "description": "Email of assigned user"
+    },
+    "assignee_name": {
+      "type": "string",
+      "description": "Name of assigned user"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "todo",
+        "in_progress",
+        "done"
+      ],
+      "default": "todo",
+      "description": "Task status"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Due date"
+    },
+    "related_customer_id": {
+      "type": "string",
+      "description": "Related customer ID"
+    },
+    "related_model_id": {
+      "type": "string",
+      "description": "Related model ID"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

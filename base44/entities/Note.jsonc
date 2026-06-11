@@ -1,0 +1,46 @@
+{
+  "name": "Note",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "description": "Obsah pozn\u00e1mky"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Jm\u00e9no klienta"
+    },
+    "note_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum pozn\u00e1mky"
+    },
+    "amount": {
+      "type": "number",
+      "description": "\u010c\u00e1stka"
+    },
+    "account": {
+      "type": "string",
+      "description": "\u00da\u010det"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "ID modelky"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Jm\u00e9no modelky"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Email autora"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Jm\u00e9no autora"
+    }
+  },
+  "required": [
+    "content"
+  ]
+}

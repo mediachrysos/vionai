@@ -1,0 +1,44 @@
+{
+  "name": "CustomerOnboardingRequest",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "description": "Customer full name (pre-filled)"
+    },
+    "token": {
+      "type": "string",
+      "description": "Unique token for the onboarding link"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "expired"
+      ],
+      "default": "pending",
+      "description": "Status of the onboarding request"
+    },
+    "assigned_model": {
+      "type": "string",
+      "description": "ID of assigned model"
+    },
+    "assigned_chatter": {
+      "type": "string",
+      "description": "Email of assigned chatter"
+    },
+    "created_customer_id": {
+      "type": "string",
+      "description": "ID of customer created after completion"
+    },
+    "expires_at": {
+      "type": "string",
+      "description": "ISO timestamp when the link expires"
+    }
+  },
+  "required": [
+    "full_name",
+    "token"
+  ]
+}

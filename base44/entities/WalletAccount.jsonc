@@ -1,0 +1,32 @@
+{
+  "name": "WalletAccount",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "N\u00e1zev \u00fa\u010dtu (nap\u0159. Firemn\u00ed \u00fa\u010det, Pokladna)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Popis \u00fa\u010dtu"
+    },
+    "balance": {
+      "type": "number",
+      "default": 0,
+      "description": "Aktu\u00e1ln\u00ed z\u016fstatek \u00fa\u010dtu"
+    },
+    "currency": {
+      "type": "string",
+      "default": "CZK",
+      "description": "M\u011bna \u00fa\u010dtu"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Zda je \u00fa\u010det aktivn\u00ed"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

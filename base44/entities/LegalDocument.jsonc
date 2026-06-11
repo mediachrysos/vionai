@@ -1,0 +1,27 @@
+{
+  "name": "LegalDocument",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "enum": [
+        "gdpr",
+        "terms"
+      ],
+      "description": "Typ dokumentu: gdpr nebo terms"
+    },
+    "title": {
+      "type": "string",
+      "description": "N\u00e1zev dokumentu"
+    },
+    "content": {
+      "type": "string",
+      "description": "Obsah dokumentu (plain text)"
+    }
+  },
+  "required": [
+    "key",
+    "title",
+    "content"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "InvoiceSettings",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "company_address": {
+      "type": "string",
+      "description": "Company address"
+    },
+    "ico": {
+      "type": "string",
+      "description": "Company ICO (ID number)"
+    },
+    "dic": {
+      "type": "string",
+      "description": "Company DIC (VAT number)"
+    },
+    "email": {
+      "type": "string",
+      "description": "Company email"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Company phone"
+    },
+    "last_invoice_number": {
+      "type": "integer",
+      "default": 0,
+      "description": "Last generated invoice number (without year)"
+    }
+  },
+  "required": [
+    "company_name"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "Model",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Model name"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ],
+      "default": "active",
+      "description": "Model status"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    },
+    "story": {
+      "type": "string",
+      "description": "Model story / background info"
+    },
+    "profile_photo": {
+      "type": "string",
+      "description": "URL of profile photo"
+    },
+    "assigned_chatters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of assigned chatters"
+    },
+    "total_revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Total revenue generated"
+    },
+    "payment_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of payments"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

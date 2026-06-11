@@ -13,11 +13,18 @@ import { useQuery } from "@tanstack/react-query";
 
 const quickAmounts = [100, 200, 300, 500, 700];
 
-export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers, models, users, currentUser, existingPayment }) {
+export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers: customersProp = [], models, users, currentUser, existingPayment }) {
   const { data: bankAccounts = [] } = useQuery({
     queryKey: ["bankAccounts"],
     queryFn: () => base44.entities.BankAccount.filter({ is_active: true })
   });
+  const { data: fetchedCustomers = [] } = useQuery({
+    queryKey: ["customers"],
+    queryFn: () => base44.entities.Customer.list("-created_date", 9999),
+    enabled: open,
+    staleTime: 30000,
+  });
+  const customers = fetchedCustomers.length > 0 ? fetchedCustomers : customersProp;
   const [form, setForm] = useState({
     customer_id: "", customer_name: "", amount: "", service_type: "",
     model_id: "", model_name: "", chatter_email: "", chatter_name: "",
