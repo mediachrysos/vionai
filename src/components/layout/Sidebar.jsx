@@ -64,13 +64,13 @@ export default function Sidebar({ currentPage, user, onLogout }) {
       "flex items-center h-16 overflow-hidden transition-all duration-300",
       expanded || forMobile ? "px-5 gap-3" : "px-0 justify-center"
     )}>
-        <img
-        src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274783/Chrysos_Media_Logo_gmfbds.png"
-        alt="Chrysos Media"
-        className={cn(
-          "object-contain brightness-200 transition-all duration-300 hidden",
-          expanded || forMobile ? "h-8 w-auto" : "h-7 w-7"
-        )} />
+        
+
+
+
+
+
+      
       
       </div>
 
