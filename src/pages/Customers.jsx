@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
-import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2, Link2 } from "lucide-react";
+import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2, Link2, RefreshCw, ScanSearch } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 import OnboardingLinkForm from "../components/customers/OnboardingLinkForm";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
@@ -20,6 +21,7 @@ function createPageUrl(page) {
 }
 
 export default function Customers({ currentUser }) {
+  const [activeTab, setActiveTab] = useState("customers");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
@@ -123,6 +125,67 @@ export default function Customers({ currentUser }) {
     mutationFn: (id) => base44.entities.Customer.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["customers"] })
   });
+
+  // --- Look-alike Audience state & logic ---
+  const [laSearch, setLaSearch] = useState("");
+  const [syncing, setSyncing] = useState(false);
+
+  const { data: audience = [], isLoading: laLoading } = useQuery({
+    queryKey: ["look-alike-audience"],
+    queryFn: () => base44.entities.LookAlikeAudience.list("-total_czk", 5000),
+  });
+
+  const paymentTotals = useMemo(() => {
+    const map = {};
+    allPayments.forEach((p) => {
+      if (!p.customer_name) return;
+      const key = p.customer_name.trim().toLowerCase();
+      map[key] = (map[key] || 0) + (p.amount || 0);
+    });
+    return map;
+  }, [allPayments]);
+
+  const filteredAudience = useMemo(() => {
+    const q = laSearch.toLowerCase();
+    return audience.filter((a) => {
+      const fullName = `${a.first_name || ""} ${a.last_name || ""}`.toLowerCase();
+      return !q || fullName.includes(q) || (a.phone || "").includes(q);
+    });
+  }, [audience, laSearch]);
+
+  const getAudienceTotal = (a) => {
+    const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
+    const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+    const fromPayments = paymentTotals[key] || paymentTotals[keyRev] || 0;
+    return fromPayments > 0 ? fromPayments : (a.total_czk || 0);
+  };
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await base44.functions.invoke("syncLookAlikeAudience", {});
+      toast.success(res.data?.message || "Synchronizováno");
+      qc.invalidateQueries({ queryKey: ["look-alike-audience"] });
+    } catch (e) {
+      toast.error("Chyba při synchronizaci");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const downloadAudienceCsv = () => {
+    const rows = [
+      ["Číslo", "Křestní jméno", "Příjmení", "Telefon", "Celkem (CZK)"],
+      ...filteredAudience.map((a, i) => [i + 1, a.first_name || "", a.last_name || "", a.phone || "", getAudienceTotal(a)]),
+    ];
+    const csv = rows.map((r) => r.map((v) => `"${v ?? ""}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "look-alike-audience.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
+  // --- end Look-alike ---
 
   const [merging, setMerging] = useState(false);
 
@@ -286,6 +349,85 @@ export default function Customers({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
+
+      {/* Tabs */}
+      <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1 w-fit border border-white/10">
+        <button
+          onClick={() => setActiveTab("customers")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "customers" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}
+        >
+          <UserCircle className="w-4 h-4" /> Customers
+        </button>
+        <button
+          onClick={() => setActiveTab("lookalike")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "lookalike" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}
+        >
+          <ScanSearch className="w-4 h-4" /> Look-alike Audience
+        </button>
+      </div>
+
+      {activeTab === "lookalike" && (
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-slate-500">{audience.length} kontaktů</p>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleSync} disabled={syncing} className="border-white/10 text-slate-300 hover:bg-white/5 gap-2">
+                <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} /> Synchronizovat
+              </Button>
+              <Button variant="outline" onClick={downloadAudienceCsv} className="border-white/10 text-slate-300 hover:bg-white/5 gap-2">
+                <Download className="w-4 h-4" /> Export .csv
+              </Button>
+            </div>
+          </div>
+          <div className="relative mb-5">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Input value={laSearch} onChange={(e) => setLaSearch(e.target.value)} placeholder="Hledat jméno nebo telefon..." className="pl-10" />
+          </div>
+          <div className="bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10 bg-white/5">
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 w-12">#</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Křestní jméno</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Příjmení</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Telefon</th>
+                    <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Celkem (CZK)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {laLoading ? (
+                    <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Načítám...</td></tr>
+                  ) : filteredAudience.length === 0 ? (
+                    <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Žádné záznamy</td></tr>
+                  ) : filteredAudience.map((a, i) => {
+                    const total = getAudienceTotal(a);
+                    const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
+                    const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+                    const isFromDB = (paymentTotals[key] || paymentTotals[keyRev] || 0) > 0;
+                    return (
+                      <tr key={a.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td className="px-5 py-3.5 text-sm text-slate-500">{i + 1}</td>
+                        <td className="px-5 py-3.5 text-sm font-medium text-slate-200">{a.first_name}</td>
+                        <td className="px-5 py-3.5 text-sm font-medium text-slate-200">{a.last_name}</td>
+                        <td className="px-5 py-3.5 text-sm text-slate-400 font-mono">{a.phone || "—"}</td>
+                        <td className="px-5 py-3.5 text-right">
+                          <span className={`text-sm font-semibold ${isFromDB ? "text-emerald-400" : "text-slate-300"}`}>
+                            {total > 0 ? `${total.toLocaleString()} Kč` : "—"}
+                          </span>
+                          {isFromDB && <span className="ml-1.5 text-[10px] text-emerald-400 bg-emerald-950/50 border border-emerald-700/30 rounded px-1 py-0.5">live</span>}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "customers" && <>
       <div className="mb-6 lg:mb-8">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-100">Customers</h1>
@@ -480,10 +622,8 @@ export default function Customers({ currentUser }) {
         models={models}
         users={users}
         allCustomers={customers} />
-      
-
-
-      
+      </>}
     </div>);
+
 
 }

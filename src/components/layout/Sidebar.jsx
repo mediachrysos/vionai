@@ -5,14 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
   MessageSquare, Settings, Search, LogOut, ChevronLeft,
-  ChevronRight, Menu, X, ScanSearch
+  ChevronRight, Menu, X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const allPages = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
   { name: "Customers", icon: Users, page: "Customers" },
-  { name: "Look-alike Audience", icon: ScanSearch, page: "LookAlikeAudience" },
   { name: "Finance", icon: TrendingUp, page: "Finance" },
   { name: "Wallet", icon: CreditCard, page: "Wallet" },
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
