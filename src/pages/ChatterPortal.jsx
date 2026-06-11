@@ -210,7 +210,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#272727]">
+    <div className="min-h-screen bg-[#1a1a1a]">
       {showNicknameModal && (
         <NicknameSetupModal
           user={currentUser}

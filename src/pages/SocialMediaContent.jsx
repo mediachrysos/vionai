@@ -257,7 +257,7 @@ export default function SocialMediaContent({ currentUser }) {
   if (!isAdmin && !myEmail) return null;
 
   return (
-    <div className="min-h-screen bg-[#272727] p-6">
+    <div className="min-h-screen bg-[#1a1a1a] p-6">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Header */}

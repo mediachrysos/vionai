@@ -210,12 +210,12 @@ const interval = setInterval(() => {
   return (
     <div className="p-6 lg:p-10 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">Customer Matcher</h1>
-        <p className="text-sm text-gray-400">Vlož jména z Messengeru (každé jméno na nový řádek) a najdeme shody s vašimi zákazníky.</p>
+        <h1 className="text-2xl font-bold text-slate-100 mb-1">Customer Matcher</h1>
+        <p className="text-sm text-slate-500">Vlož jména z Messengeru (každé jméno na nový řádek) a najdeme shody s vašimi zákazníky.</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-6 mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Jména z Messengeru</label>
+      <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] p-6 mb-6">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Jména z Messengeru</label>
         <Textarea
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -243,16 +243,16 @@ const interval = setInterval(() => {
       {results && (
         <div className="space-y-6">
           {/* Matched */}
-          <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+          <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-white/10 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span className="font-semibold text-gray-800 text-sm">Nalezené shody</span>
-              <span className="ml-auto text-xs text-gray-400">{results.matched.length} zákazníků</span>
+              <span className="font-semibold text-slate-200 text-sm">Nalezené shody</span>
+              <span className="ml-auto text-xs text-slate-500">{results.matched.length} zákazníků</span>
             </div>
             {results.matched.length === 0 ? (
-              <p className="text-sm text-gray-400 px-5 py-4">Žádné shody nenalezeny.</p>
+              <p className="text-sm text-slate-500 px-5 py-4">Žádné shody nenalezeny.</p>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-white/5">
                 {results.matched.map((r, i) => {
                   const assignedModelNames = (r.customer.assigned_models || []).map(id => modelMap[id]).filter(Boolean);
                   const lastDate = lastPaymentDate[r.customer.id];
@@ -263,38 +263,38 @@ const interval = setInterval(() => {
                   return (
                     <div
                       key={r.customer.id}
-                      className="px-5 py-3.5 flex items-start gap-3 hover:bg-gray-50/60 cursor-pointer transition-colors"
+                      className="px-5 py-3.5 flex items-start gap-3 hover:bg-white/5 cursor-pointer transition-colors"
                       onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}
                     >
-                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-xs font-semibold text-amber-700 flex-shrink-0 mt-0.5">
+                      <div className="w-8 h-8 rounded-full bg-amber-900/30 flex items-center justify-center text-xs font-semibold text-amber-300 flex-shrink-0 mt-0.5">
                         {r.customer.full_name?.[0]?.toUpperCase() || "?"}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-sm font-medium text-gray-800">{r.customer.full_name}</p>
+                          <p className="text-sm font-medium text-slate-200">{r.customer.full_name}</p>
                           {showOriginal && (
-                            <span className="text-xs text-gray-400 italic">
+                            <span className="text-xs text-slate-500 italic">
                               (scraped: {r.inputNames.join(", ")})
                             </span>
                           )}
                         </div>
                         <div className="flex flex-wrap gap-2 mt-0.5">
-                          <span className="text-xs text-gray-500">
-                            💰 <span className="font-semibold text-gray-700">{(r.customer.total_spent || 0).toLocaleString()} Kč</span>
+                          <span className="text-xs text-slate-400">
+                            💰 <span className="font-semibold text-slate-300">{(r.customer.total_spent || 0).toLocaleString()} Kč</span>
                           </span>
                           {assignedModelNames.length > 0 && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-slate-400">
                               🎭 {assignedModelNames.join(", ")}
                             </span>
                           )}
                           {lastDate && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-slate-500">
                               🕐 poslední platba {formatDate(lastDate)}
                             </span>
                           )}
                         </div>
                       </div>
-                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 flex-shrink-0">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-950/50 text-emerald-400 border border-emerald-700/30 flex-shrink-0">
                         Přesná shoda
                       </span>
                     </div>
@@ -306,32 +306,32 @@ const interval = setInterval(() => {
 
           {/* Historical / Ghost matches */}
           {results.matchedHistorical.length > 0 && (
-            <div className="bg-white rounded-xl border border-purple-100 shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-purple-50 flex items-center gap-2 bg-purple-50/50">
+            <div className="bg-[#1e1e1e] rounded-xl border border-purple-700/20 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-purple-700/20 flex items-center gap-2 bg-purple-950/20">
                 <Ghost className="w-4 h-4 text-purple-400" />
-                <span className="font-semibold text-gray-800 text-sm">Duchové — historičtí zákazníci</span>
-                <span className="ml-auto text-xs text-gray-400">{results.matchedHistorical.length} shod</span>
+                <span className="font-semibold text-slate-200 text-sm">Duchové — historičtí zákazníci</span>
+                <span className="ml-auto text-xs text-slate-500">{results.matchedHistorical.length} shod</span>
               </div>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-white/5">
                 {results.matchedHistorical.map((r, i) => {
                   const showOriginal = normalize(r.inputName) !== normalize(r.historical.full_name);
                   return (
                     <div key={i} className="px-5 py-3.5 flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-xs font-semibold text-purple-600 flex-shrink-0 mt-0.5">
+                      <div className="w-8 h-8 rounded-full bg-purple-950/50 flex items-center justify-center text-xs font-semibold text-purple-400 flex-shrink-0 mt-0.5">
                         <Ghost className="w-4 h-4" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-sm font-medium text-gray-700">{r.historical.full_name}</p>
+                          <p className="text-sm font-medium text-slate-300">{r.historical.full_name}</p>
                           {showOriginal && (
-                            <span className="text-xs text-gray-400 italic">(scraped: {r.inputName})</span>
+                            <span className="text-xs text-slate-500 italic">(scraped: {r.inputName})</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          💰 historická útrata: <span className="font-semibold text-gray-700">{(r.historical.total_spent || 0).toLocaleString()} Kč</span>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          💰 historická útrata: <span className="font-semibold text-slate-300">{(r.historical.total_spent || 0).toLocaleString()} Kč</span>
                         </p>
                       </div>
-                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 flex-shrink-0">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-950/50 text-purple-400 border border-purple-700/30 flex-shrink-0">
                         👻 Duch
                       </span>
                     </div>
@@ -342,22 +342,22 @@ const interval = setInterval(() => {
           )}
 
           {/* Unmatched */}
-          <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
-              <XCircle className="w-4 h-4 text-gray-400" />
-              <span className="font-semibold text-gray-800 text-sm">Bez shody</span>
-              <span className="ml-auto text-xs text-gray-400">{results.unmatched.length} jmen</span>
+          <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-white/10 flex items-center gap-2">
+              <XCircle className="w-4 h-4 text-slate-500" />
+              <span className="font-semibold text-slate-200 text-sm">Bez shody</span>
+              <span className="ml-auto text-xs text-slate-500">{results.unmatched.length} jmen</span>
             </div>
             {results.unmatched.length === 0 ? (
-              <p className="text-sm text-gray-400 px-5 py-4">Všechna jména byla nalezena.</p>
+              <p className="text-sm text-slate-500 px-5 py-4">Všechna jména byla nalezena.</p>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-white/5">
                 {results.unmatched.map((name, i) => (
                   <div key={i} className="px-5 py-3 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                      <UserCircle className="w-4 h-4 text-gray-400" />
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0">
+                      <UserCircle className="w-4 h-4 text-slate-500" />
                     </div>
-                    <p className="text-sm text-gray-500 italic">{name}</p>
+                    <p className="text-sm text-slate-500 italic">{name}</p>
                   </div>
                 ))}
               </div>

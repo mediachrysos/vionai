@@ -312,9 +312,9 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
         <table className="w-full text-xs">
           <thead>
             {/* Group headers */}
-            <tr className="bg-[#131929] border-b border-white/10 sticky top-0 z-20">
-              <th className="sticky left-0 bg-[#131929] z-10 px-3 py-2" rowSpan={2}></th>
-              <th colSpan={3} className="text-center px-3 py-2 font-semibold text-slate-400 border-b border-white/10 bg-[#131929]">
+            <tr className="bg-[#252525] border-b border-white/10 sticky top-0 z-20">
+              <th className="sticky left-0 bg-[#252525] z-10 px-3 py-2" rowSpan={2}></th>
+              <th colSpan={3} className="text-center px-3 py-2 font-semibold text-slate-400 border-b border-white/10 bg-[#252525]">
                 Celkové
               </th>
               <th className="bg-slate-700 w-px px-0" rowSpan={2}></th>
@@ -324,7 +324,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                 </th>
               ))}
             </tr>
-            <tr className="bg-[#131929] border-b border-white/10 sticky top-[36px] z-20">
+            <tr className="bg-[#252525] border-b border-white/10 sticky top-[36px] z-20">
               <th className="text-right px-3 py-2 font-medium text-slate-400 bg-indigo-950/20 min-w-[90px]">Příjmy</th>
               <th className="text-right px-3 py-2 font-medium text-rose-400 bg-rose-950/20 min-w-[90px]">Ad Spend</th>
               <th className="text-right px-3 py-2 font-medium text-emerald-400 bg-emerald-950/20 min-w-[90px]">Profit</th>
