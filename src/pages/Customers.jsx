@@ -288,7 +288,7 @@ export default function Customers({ currentUser }) {
       <MonthlyGoalBar />
       <div className="mb-6 lg:mb-8">
         <div className="flex items-center justify-between mb-1">
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Customers</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-100">Customers</h1>
           <div className="flex gap-2 flex-wrap items-end">
             <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
               <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export .xlsx
@@ -306,7 +306,7 @@ export default function Customers({ currentUser }) {
             <OnboardingLinkForm models={models} />
           </div>
         </div>
-        <p className="text-sm text-gray-500">{customers.length} customers total</p>
+        <p className="text-sm text-slate-500">{customers.length} customers total</p>
       </div>
 
       {/* Filters */}
@@ -378,16 +378,16 @@ export default function Customers({ currentUser }) {
                           {c.pay_day_of_month === todayDay && (
                             <div className="w-1 h-9 rounded-full bg-gradient-to-b from-[#C9A227] to-[#A8841C] -ml-1 flex-shrink-0" />
                           )}
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${c.pay_day_of_month === todayDay ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm shadow-amber-200" : "bg-gray-100 text-gray-600"}`}>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${c.pay_day_of_month === todayDay ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm shadow-amber-200" : "bg-slate-700 text-slate-300"}`}>
                             {c.full_name?.[0]?.toUpperCase() || "?"}
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-300 font-semibold" : "text-slate-200"}`}>{c.full_name}</span>
                             {c.pay_day_of_month === todayDay && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 payday</span>
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-amber-900/40 border border-amber-700/30 px-1.5 py-0.5 rounded-full">💰 payday</span>
                             )}
                             {merged && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-300 bg-indigo-950/50 border border-indigo-700/30 px-1.5 py-0.5 rounded-full">
                                 👥 {merged.allIds.length}× duplicate
                               </span>
                             )}
@@ -448,15 +448,15 @@ export default function Customers({ currentUser }) {
                     </motion.tr>
                     {/* Expanded: payments per model for duplicates */}
                     {merged && isExpanded && (
-                      <tr className="bg-indigo-50/40 border-b border-indigo-100">
+                      <tr className="bg-indigo-950/20 border-b border-indigo-700/20">
                         <td colSpan={6} className="px-8 py-3">
-                          <p className="text-xs font-semibold text-indigo-600 mb-2">Payments by model (merged {merged.allIds.length} records with the same name):</p>
+                          <p className="text-xs font-semibold text-indigo-300 mb-2">Payments by model (merged {merged.allIds.length} records with the same name):</p>
                           <div className="flex flex-wrap gap-3">
                             {Object.entries(merged.byModel).map(([modelName, data]) => (
-                              <div key={modelName} className="flex items-center gap-2 bg-white border border-indigo-100 rounded-lg px-3 py-1.5">
-                                <span className="text-xs font-medium text-amber-700 bg-amber-50 border border-amber-100 rounded px-1.5 py-0.5">{modelName}</span>
-                                <span className="text-sm font-bold text-gray-800">{data.total.toLocaleString()} Kč</span>
-                                <span className="text-xs text-gray-400">{data.count}× payments</span>
+                              <div key={modelName} className="flex items-center gap-2 bg-[#1e1e1e] border border-white/10 rounded-lg px-3 py-1.5">
+                                <span className="text-xs font-medium text-amber-300 bg-amber-900/30 border border-amber-700/30 rounded px-1.5 py-0.5">{modelName}</span>
+                                <span className="text-sm font-bold text-slate-200">{data.total.toLocaleString()} Kč</span>
+                                <span className="text-xs text-slate-500">{data.count}× payments</span>
                               </div>
                             ))}
                           </div>

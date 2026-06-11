@@ -143,11 +143,11 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
   const currentSlide = SLIDES[slideIdx];
 
   return (
-    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] h-full overflow-hidden flex flex-col">
+    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] h-full overflow-hidden flex flex-col">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
-          <div className="bg-slate-50 rounded-xl w-9 h-9 flex items-center justify-center">
+          <div className="bg-slate-900 rounded-xl w-9 h-9 flex items-center justify-center">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_5_sljjsp.png" alt="" className="w-6 h-6 object-contain" />
           </div>
           <h3 className="text-sm font-semibold text-white">Poznámky</h3>
@@ -176,7 +176,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
       <div className="p-4 flex-1 overflow-hidden flex flex-col gap-3">
         {/* Form */}
         {showForm && (
-          <div className="p-4 bg-amber-50/60 rounded-xl border border-amber-100 space-y-3">
+          <div className="p-4 bg-[#131929] rounded-xl border border-white/10 space-y-3">
             {/* Main: just the note content */}
             <div>
               <Textarea
@@ -194,7 +194,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
               <button
                 type="button"
                 onClick={prevSlide}
-                className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-amber-100 text-amber-500 transition-colors flex-shrink-0"
+                className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-700 text-slate-400 transition-colors flex-shrink-0"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -207,12 +207,12 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                       key={i}
                       type="button"
                       onClick={() => setSlideIdx(i)}
-                      className={`w-1.5 h-1.5 rounded-full transition-all ${i === slideIdx ? "bg-amber-500 w-3" : "bg-amber-200"}`}
+                      className={`w-1.5 h-1.5 rounded-full transition-all ${i === slideIdx ? "bg-[#C9A227] w-3" : "bg-slate-600"}`}
                     />
                   ))}
                 </div>
 
-                <div className="text-[10px] text-amber-600/60 text-center font-medium uppercase tracking-wide mb-1.5">
+                <div className="text-[10px] text-slate-500 text-center font-medium uppercase tracking-wide mb-1.5">
                   {slideLabel[currentSlide]}
                 </div>
 
@@ -232,10 +232,10 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                       className="h-8 text-sm"
                     />
                     {showCustomerDropdown && filteredCustomers.length > 0 && (
-                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-36 overflow-y-auto">
+                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#1e1e1e] border border-white/10 rounded-lg shadow-lg max-h-36 overflow-y-auto">
                         {filteredCustomers.map((c) => (
                           <button key={c.id} type="button" onMouseDown={() => selectCustomer(c.full_name)}
-                            className="w-full text-left px-3 py-2 text-xs hover:bg-amber-50 text-gray-700">
+                            className="w-full text-left px-3 py-2 text-xs hover:bg-white/5 text-slate-200">
                             {c.full_name}
                           </button>
                         ))}
@@ -284,7 +284,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
               <button
                 type="button"
                 onClick={nextSlide}
-                className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-amber-100 text-amber-500 transition-colors flex-shrink-0"
+                className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-700 text-slate-400 transition-colors flex-shrink-0"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -292,9 +292,9 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
 
             {/* Actions */}
             <div className="flex justify-end gap-2 pt-1">
-              <Button size="sm" variant="ghost" onClick={() => { setShowForm(false); setCustomerSearch(""); setSlideIdx(0); }} className="h-8 text-xs">Zrušit</Button>
+              <Button size="sm" variant="ghost" onClick={() => { setShowForm(false); setCustomerSearch(""); setSlideIdx(0); }} className="h-8 text-xs text-slate-400 hover:text-slate-200">Zrušit</Button>
               <Button size="sm" onClick={() => createMutation.mutate(form)} disabled={createMutation.isPending}
-                className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-white">
+                className="h-8 text-xs bg-[#C9A227] hover:bg-[#A8841C] text-white">
                 {createMutation.isPending ? "Ukládám..." : "Přidat"}
               </Button>
             </div>
@@ -303,12 +303,12 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
 
         {/* Payday strip */}
         {paydayCustomers.length > 0 && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg flex-shrink-0">
+          <div className="flex items-center gap-2 px-3 py-2 bg-amber-950/30 border border-amber-700/30 rounded-lg flex-shrink-0">
             <span className="text-sm">💰</span>
-            <span className="text-xs font-semibold text-amber-800">Dnes výplata:</span>
+            <span className="text-xs font-semibold text-amber-300">Dnes výplata:</span>
             <div className="flex flex-wrap gap-1.5">
               {paydayCustomers.map((c) => (
-                <span key={c.id} className="text-xs bg-amber-100 text-amber-800 border border-amber-200 rounded-full px-2 py-0.5 font-medium">
+                <span key={c.id} className="text-xs bg-amber-900/40 text-amber-300 border border-amber-700/30 rounded-full px-2 py-0.5 font-medium">
                   {c.full_name}
                 </span>
               ))}
@@ -319,7 +319,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
         {/* Notes carousel — 1 note at a time */}
         <div className="flex-1 flex flex-col min-h-0">
           {sortedNotes.length === 0 ? (
-            <p className="text-xs text-gray-400 text-center py-6">Zatím žádné poznámky</p>
+            <p className="text-xs text-slate-500 text-center py-6">Zatím žádné poznámky</p>
           ) : (() => {
             const safeIdx = Math.min(noteIdx, sortedNotes.length - 1);
             const n = sortedNotes[safeIdx];
@@ -332,19 +332,19 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                   <button
                     onClick={prevNote}
                     disabled={safeIdx === 0}
-                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-slate-700 disabled:opacity-30 transition-colors"
                   >
-                    <ChevronLeft className="w-4 h-4 text-gray-500" />
+                    <ChevronLeft className="w-4 h-4 text-slate-400" />
                   </button>
-                  <span className="text-[11px] text-gray-400 font-medium">
+                  <span className="text-[11px] text-slate-500 font-medium">
                     {safeIdx + 1} / {sortedNotes.length}
                   </span>
                   <button
                     onClick={nextNote}
                     disabled={safeIdx === sortedNotes.length - 1}
-                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-slate-700 disabled:opacity-30 transition-colors"
                   >
-                    <ChevronRight className="w-4 h-4 text-gray-500" />
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
                   </button>
                 </div>
 
@@ -353,28 +353,28 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                   key={n.id}
                   className={`group relative rounded-2xl border p-4 transition-all shadow-sm flex-1 ${
                     isToday
-                      ? "bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200"
-                      : "bg-white border-gray-100"
+                      ? "bg-amber-950/20 border-amber-700/30"
+                      : "bg-[#131929] border-white/10"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <div className="flex items-center gap-2 min-w-0">
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
-                        isToday ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-500"}`}>
+                        isToday ? "bg-amber-900/50 text-amber-300" : "bg-slate-700 text-slate-400"}`}>
                         {n.customer_name ? n.customer_name.charAt(0).toUpperCase() : "?"}
                       </div>
                       {n.customer_name
-                        ? <span className={`text-sm font-bold truncate ${isToday ? "text-amber-900" : "text-gray-800"}`}>{n.customer_name}</span>
-                        : <span className="text-xs text-gray-400 italic">Bez klienta</span>}
+                        ? <span className={`text-sm font-bold truncate ${isToday ? "text-amber-200" : "text-slate-200"}`}>{n.customer_name}</span>
+                        : <span className="text-xs text-slate-500 italic">Bez klienta</span>}
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {isToday
-                        ? <span className="text-[10px] font-bold tracking-wide text-white bg-amber-500 rounded-full px-2.5 py-0.5">DNES</span>
+                        ? <span className="text-[10px] font-bold tracking-wide text-white bg-[#C9A227] rounded-full px-2.5 py-0.5">DNES</span>
                         : n.note_date
-                          ? <span className="text-[11px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">{format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}</span>
+                          ? <span className="text-[11px] text-slate-500 bg-slate-800 rounded-full px-2 py-0.5">{format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}</span>
                           : null}
                       <button onClick={() => { deleteMutation.mutate(n.id); setNoteIdx(i => Math.max(0, i - 1)); }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400">
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-600 hover:text-red-400">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -383,21 +383,17 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                   {(n.amount || accountLabel || n.model_name) && (
                     <div className="flex flex-wrap gap-1.5 mb-2.5">
                       {n.amount && (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-950/50 text-emerald-400">
                           {Number(n.amount).toLocaleString("cs-CZ")} Kč
                         </span>
                       )}
                       {accountLabel && (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-950/50 text-sky-400">
                           {accountLabel}
                         </span>
                       )}
                       {n.model_name && (
-                        <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
-                          n.model_name?.toLowerCase().includes("dominic") ? "bg-pink-100 text-pink-700" :
-                          n.model_name?.toLowerCase().includes("laura") ? "bg-violet-100 text-violet-700" :
-                          "bg-purple-100 text-purple-700"
-                        }`}>
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-purple-950/50 text-purple-400">
                           {n.model_name}
                         </span>
                       )}
@@ -405,7 +401,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                   )}
 
                   {n.content && (
-                    <p className={`text-xs leading-relaxed pl-9 ${isToday ? "text-amber-800" : "text-gray-500"}`}>
+                    <p className={`text-xs leading-relaxed pl-9 ${isToday ? "text-amber-300/80" : "text-slate-400"}`}>
                       {n.content}
                     </p>
                   )}

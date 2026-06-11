@@ -58,7 +58,7 @@ function EditableCell({ value, onSave, canCreate = false, highlight = "" }) {
       {value > 0 ? (
         <span className="text-xs tabular-nums group-hover:text-[#C9A227] transition-colors">{fmt(value)}</span>
       ) : (
-        <span className="text-gray-300 group-hover:text-[#C9A227] transition-colors">
+        <span className="text-slate-600 group-hover:text-[#C9A227] transition-colors">
           {canCreate ? <Plus className="w-3 h-3" /> : "—"}
         </span>
       )}
@@ -66,37 +66,37 @@ function EditableCell({ value, onSave, canCreate = false, highlight = "" }) {
   );
 }
 
-function SummaryRow({ label, totals, chatters, bg = "bg-gray-50", textClass = "text-xs font-bold", stickyTop = "" }) {
+function SummaryRow({ label, totals, chatters, bg = "bg-slate-800/50", textClass = "text-xs font-bold", stickyTop = "" }) {
   return (
-    <tr className={cn(bg, "border-b-2 border-gray-200", stickyTop && `sticky ${stickyTop} z-20`)}>
-      <td className={cn("px-3 py-2.5 sticky left-0 z-30", bg, textClass, "text-gray-700")}>{label}</td>
+    <tr className={cn(bg, "border-b-2 border-slate-700/50", stickyTop && `sticky ${stickyTop} z-20`)}>
+      <td className={cn("px-3 py-2.5 sticky left-0 z-30", bg, textClass, "text-slate-300")}>{label}</td>
       {/* Global: Příjmy */}
-      <td className={cn("px-3 py-2.5 text-right tabular-nums text-gray-800 bg-indigo-50/50", textClass)}>
+      <td className={cn("px-3 py-2.5 text-right tabular-nums text-slate-200 bg-indigo-950/20", textClass)}>
         {fmt(totals.totalRevenue)}
       </td>
       {/* Global: Ad Spend */}
-      <td className={cn("px-3 py-2.5 text-right tabular-nums text-rose-600 bg-rose-50/30", textClass)}>
+      <td className={cn("px-3 py-2.5 text-right tabular-nums text-rose-400 bg-rose-950/20", textClass)}>
         {fmt(totals.adSpend)}
       </td>
       {/* Global: Profit */}
-      <td className={cn("px-3 py-2.5 text-right tabular-nums bg-emerald-50/40", textClass,
-        totals.profit >= 0 ? "text-emerald-600" : "text-red-500"
+      <td className={cn("px-3 py-2.5 text-right tabular-nums bg-emerald-950/20", textClass,
+        totals.profit >= 0 ? "text-emerald-400" : "text-red-400"
       )}>
         {fmt(totals.profit)}
       </td>
       {/* Divider */}
-      <td className="px-1 bg-gray-200 w-px"></td>
+      <td className="px-1 bg-slate-700 w-px"></td>
       {/* Per-chatter totals */}
       {chatters.map((c, ci) => (
         <React.Fragment key={c.email}>
-          <td className={cn("px-3 py-2.5 text-right tabular-nums text-amber-600", textClass)}>
+          <td className={cn("px-3 py-2.5 text-right tabular-nums text-amber-400", textClass)}>
             {fmt(totals.chatterRevenues[ci]?.revenue || 0)}
           </td>
-          <td className={cn("px-3 py-2.5 text-right tabular-nums text-rose-500", textClass)}>
+          <td className={cn("px-3 py-2.5 text-right tabular-nums text-rose-400", textClass)}>
             {fmt(totals.chatterRevenues[ci]?.adSpend || 0)}
           </td>
           <td className={cn("px-3 py-2.5 text-right tabular-nums", textClass,
-            (totals.chatterRevenues[ci]?.profit || 0) >= 0 ? "text-emerald-600" : "text-red-500"
+            (totals.chatterRevenues[ci]?.profit || 0) >= 0 ? "text-emerald-400" : "text-red-400"
           )}>
             {fmt(totals.chatterRevenues[ci]?.profit || 0)}
           </td>
@@ -282,26 +282,26 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mt-6">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden mt-6">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h2 className="text-sm font-semibold text-gray-800">Finanční tabulka</h2>
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <h2 className="text-sm font-semibold text-slate-200">Finanční tabulka</h2>
         <div className="flex items-center gap-3">
-          <button onClick={prevMonth} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-            <ChevronLeft className="w-4 h-4 text-gray-600" />
+          <button onClick={prevMonth} className="w-7 h-7 rounded-lg hover:bg-slate-700 flex items-center justify-center">
+            <ChevronLeft className="w-4 h-4 text-slate-400" />
           </button>
-          <span className="text-sm font-semibold text-gray-700 min-w-[140px] text-center">
+          <span className="text-sm font-semibold text-slate-300 min-w-[140px] text-center">
             {MONTH_NAMES[viewMonth]} {viewYear}
           </span>
-          <button onClick={nextMonth} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-            <ChevronRight className="w-4 h-4 text-gray-600" />
+          <button onClick={nextMonth} className="w-7 h-7 rounded-lg hover:bg-slate-700 flex items-center justify-center">
+            <ChevronRight className="w-4 h-4 text-slate-400" />
           </button>
         </div>
         <div className="flex items-center gap-3">
-          <p className="text-xs text-gray-400 hidden sm:block">Kliknutím upravíte hodnotu</p>
+          <p className="text-xs text-slate-600 hidden sm:block">Kliknutím upravíte hodnotu</p>
           <button
             onClick={() => exportCSV(rows, chatters, viewYear, viewMonth)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:border-[#C9A227] hover:text-[#C9A227] text-xs text-gray-500 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-transparent hover:border-[#C9A227] hover:text-[#C9A227] text-xs text-slate-500 transition-all"
           >
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-3.5 h-3.5 object-contain" /> Export CSV
           </button>
@@ -312,36 +312,36 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
         <table className="w-full text-xs">
           <thead>
             {/* Group headers */}
-            <tr className="bg-gray-50 border-b border-gray-100 sticky top-0 z-20">
-              <th className="sticky left-0 bg-gray-50 z-10 px-3 py-2" rowSpan={2}></th>
-              <th colSpan={3} className="text-center px-3 py-2 font-semibold text-gray-700 border-b border-gray-200 bg-slate-50">
+            <tr className="bg-[#131929] border-b border-white/10 sticky top-0 z-20">
+              <th className="sticky left-0 bg-[#131929] z-10 px-3 py-2" rowSpan={2}></th>
+              <th colSpan={3} className="text-center px-3 py-2 font-semibold text-slate-400 border-b border-white/10 bg-[#131929]">
                 Celkové
               </th>
-              <th className="bg-gray-200 w-px px-0" rowSpan={2}></th>
+              <th className="bg-slate-700 w-px px-0" rowSpan={2}></th>
               {chatters.map(c => (
-                <th key={c.email} colSpan={3} className="text-center px-3 py-2 font-semibold text-[#C9A227] border-b border-amber-100 bg-amber-50/40">
+                <th key={c.email} colSpan={3} className="text-center px-3 py-2 font-semibold text-[#C9A227] border-b border-amber-700/20 bg-amber-950/10">
                   {c.name.split(" ")[0]}
                 </th>
               ))}
             </tr>
-            <tr className="bg-gray-50 border-b border-gray-200 sticky top-[36px] z-20">
-              <th className="text-right px-3 py-2 font-medium text-gray-600 bg-slate-50/80 min-w-[90px]">Příjmy</th>
-              <th className="text-right px-3 py-2 font-medium text-rose-500 bg-rose-50/20 min-w-[90px]">Ad Spend</th>
-              <th className="text-right px-3 py-2 font-medium text-emerald-600 bg-emerald-50/30 min-w-[90px]">Profit</th>
+            <tr className="bg-[#131929] border-b border-white/10 sticky top-[36px] z-20">
+              <th className="text-right px-3 py-2 font-medium text-slate-400 bg-indigo-950/20 min-w-[90px]">Příjmy</th>
+              <th className="text-right px-3 py-2 font-medium text-rose-400 bg-rose-950/20 min-w-[90px]">Ad Spend</th>
+              <th className="text-right px-3 py-2 font-medium text-emerald-400 bg-emerald-950/20 min-w-[90px]">Profit</th>
               {chatters.map(c => (
                 <React.Fragment key={c.email}>
-                  <th className="text-right px-3 py-2 font-medium text-amber-600 bg-amber-50/20 min-w-[90px]">Příjmy</th>
-                  <th className="text-right px-3 py-2 font-medium text-rose-400 bg-rose-50/10 min-w-[90px]">Ad Spend</th>
-                  <th className="text-right px-3 py-2 font-medium text-emerald-500 bg-emerald-50/10 min-w-[90px]">Profit</th>
+                  <th className="text-right px-3 py-2 font-medium text-amber-400 bg-amber-950/10 min-w-[90px]">Příjmy</th>
+                  <th className="text-right px-3 py-2 font-medium text-rose-400 bg-rose-950/10 min-w-[90px]">Ad Spend</th>
+                  <th className="text-right px-3 py-2 font-medium text-emerald-400 bg-emerald-950/10 min-w-[90px]">Profit</th>
                 </React.Fragment>
               ))}
             </tr>
           </thead>
           <thead>
             {/* TOTALS ROW */}
-            <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-amber-50/30" textClass="text-xs font-bold" stickyTop="top-[72px]" />
+            <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-amber-950/20" textClass="text-xs font-bold" stickyTop="top-[72px]" />
             {/* AVERAGE ROW */}
-            <SummaryRow label="PRŮMĚR / den" totals={averages} chatters={chatters} bg="bg-gray-50/80" textClass="text-xs font-medium" stickyTop="top-[105px]" />
+            <SummaryRow label="PRŮMĚR / den" totals={averages} chatters={chatters} bg="bg-slate-800/50" textClass="text-xs font-medium" stickyTop="top-[105px]" />
           </thead>
           <tbody>
             {rows.map(row => {
@@ -351,26 +351,26 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                 <tr
                   key={row.day}
                   className={cn(
-                    "border-b border-gray-50 transition-colors",
-                    isToday ? "bg-amber-50/40" : "hover:bg-gray-50/40",
+                    "border-b border-white/5 transition-colors",
+                    isToday ? "bg-amber-950/20" : "hover:bg-white/5",
                     !hasData && "opacity-40"
                   )}
                 >
                   <td className={cn(
                     "px-3 py-2 font-medium sticky left-0 z-10 whitespace-nowrap",
-                    isToday ? "bg-amber-50/70 text-[#C9A227]" : "bg-white text-gray-500"
+                    isToday ? "bg-amber-950/30 text-[#C9A227]" : "bg-[#1e1e1e] text-slate-500"
                   )}>
                     {String(row.day).padStart(2, "0")}.{String(viewMonth + 1).padStart(2, "0")}.
                     {isToday && <span className="ml-1 text-[10px] text-amber-400">dnes</span>}
                   </td>
 
                   {/* Global Příjmy — read-only sum */}
-                  <td className="px-3 py-2 bg-slate-50/30 text-right tabular-nums text-gray-700 font-medium">
-                    {row.totalRevenue > 0 ? fmt(row.totalRevenue) : <span className="text-gray-200">—</span>}
+                  <td className="px-3 py-2 bg-indigo-950/10 text-right tabular-nums text-slate-300 font-medium">
+                    {row.totalRevenue > 0 ? fmt(row.totalRevenue) : <span className="text-slate-700">—</span>}
                   </td>
 
                   {/* Global Ad Spend — editable */}
-                  <td className="px-3 py-2 bg-rose-50/10">
+                  <td className="px-3 py-2 bg-rose-950/10">
                     <EditableCell
                       value={row.globalAdSpend}
                       canCreate={true}
@@ -379,14 +379,14 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                   </td>
 
                   {/* Global Profit — computed */}
-                  <td className={cn("px-3 py-2 text-right tabular-nums font-semibold bg-emerald-50/20",
-                    !hasData ? "text-gray-200" : row.globalProfit >= 0 ? "text-emerald-600" : "text-red-500"
+                  <td className={cn("px-3 py-2 text-right tabular-nums font-semibold bg-emerald-950/10",
+                    !hasData ? "text-slate-700" : row.globalProfit >= 0 ? "text-emerald-400" : "text-red-400"
                   )}>
                     {hasData ? fmt(row.globalProfit) : "—"}
                   </td>
 
                   {/* Divider */}
-                  <td className="bg-gray-200 w-px p-0"></td>
+                  <td className="bg-slate-700 w-px p-0"></td>
 
                   {/* Per-chatter columns */}
                   {row.chatterRevenues.map((cr) => {
@@ -394,7 +394,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                     return (
                       <React.Fragment key={cr.email}>
                         {/* Příjmy */}
-                        <td className="px-3 py-2 bg-amber-50/10">
+                        <td className="px-3 py-2 bg-amber-950/10">
                           {cr.cPayments.length === 1 ? (
                             <EditableCell
                               value={cr.revenue}
@@ -402,13 +402,13 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                               onSave={(v) => handleChatterRevenue(cr, v)}
                             />
                           ) : (
-                            <div className="text-right tabular-nums text-gray-500">
-                              {cr.revenue > 0 ? fmt(cr.revenue) : <span className="text-gray-200">—</span>}
+                            <div className="text-right tabular-nums text-slate-400">
+                              {cr.revenue > 0 ? fmt(cr.revenue) : <span className="text-slate-700">—</span>}
                             </div>
                           )}
                         </td>
                         {/* Ad Spend */}
-                        <td className="px-3 py-2 bg-rose-50/10">
+                        <td className="px-3 py-2 bg-rose-950/10">
                           <EditableCell
                             value={cr.adSpend}
                             canCreate={true}
@@ -416,8 +416,8 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                           />
                         </td>
                         {/* Profit */}
-                        <td className={cn("px-3 py-2 text-right tabular-nums bg-emerald-50/10",
-                          !chatterHasData ? "text-gray-200" : cr.profit >= 0 ? "text-emerald-600" : "text-red-500"
+                        <td className={cn("px-3 py-2 text-right tabular-nums bg-emerald-950/10",
+                          !chatterHasData ? "text-slate-700" : cr.profit >= 0 ? "text-emerald-400" : "text-red-400"
                         )}>
                           {chatterHasData ? fmt(cr.profit) : "—"}
                         </td>

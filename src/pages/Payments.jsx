@@ -17,10 +17,10 @@ import CustomerFormModal from "../components/customers/CustomerFormModal";
 import PaymentInvoiceActions from "../components/invoices/PaymentInvoiceActions";
 
 const statusColors = {
-  completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  pending: "bg-amber-50 text-amber-700 border-amber-100",
-  failed: "bg-red-50 text-red-600 border-red-100",
-  refunded: "bg-gray-50 text-gray-500 border-gray-200",
+  completed: "bg-emerald-950/50 text-emerald-400 border-emerald-700/30",
+  pending: "bg-amber-950/50 text-amber-300 border-amber-700/30",
+  failed: "bg-red-950/50 text-red-400 border-red-700/30",
+  refunded: "bg-slate-800 text-slate-500 border-white/10",
 };
 
 export default function Payments({ currentUser }) {
@@ -125,7 +125,7 @@ export default function Payments({ currentUser }) {
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by customer, model, chatter..." className="pl-10" />
         </div>
         <Select value={modelFilter} onValueChange={setModelFilter}>
@@ -148,21 +148,21 @@ export default function Payments({ currentUser }) {
       {filtered.length === 0 && !isLoading ? (
         <EmptyState icon={CreditCard} title="No payments" description="Add your first payment" actionLabel="Add payment" onAction={() => setShowForm(true)} />
       ) : (
-        <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Customer</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Model</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Date</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Account</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Status</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Amount</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Invoice</th>
+                <tr className="border-b border-white/10 bg-[#131929]">
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Customer</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Model</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Chatter</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Date</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Account</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Status</th>
+                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Amount</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Invoice</th>
                   <th className="px-5 py-3"></th>
-                   </tr>
+                </tr>
               </thead>
               <tbody>
                 {filtered.map((p, i) => (
@@ -171,30 +171,30 @@ export default function Payments({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.015 }}
-                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
+                        <div className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-xs font-semibold text-amber-300">
                           {p.customer_name?.[0]?.toUpperCase() || "?"}
                         </div>
-                        <span className="text-sm font-medium text-gray-800">{p.customer_name || "—"}</span>
+                        <span className="text-sm font-medium text-slate-200">{p.customer_name || "—"}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">{p.model_name || "—"}</td>
-                     <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">{p.chatter_name || "—"}</td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">
+                    <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">{p.model_name || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-400 hidden lg:table-cell">{p.chatter_name || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">
                       {p.payment_date ? format(new Date(p.payment_date), "MMM d, yyyy") : p.created_date ? format(new Date(p.created_date), "MMM d") : "—"}
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden lg:table-cell">
-                      {p.account_name || bankAccounts.find(a => a.id === p.bank_account_id)?.name || <span className="text-gray-200">—</span>}
+                    <td className="px-5 py-3.5 text-sm text-slate-400 hidden lg:table-cell">
+                      {p.account_name || bankAccounts.find(a => a.id === p.bank_account_id)?.name || <span className="text-slate-700">—</span>}
                     </td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={statusColors[p.status] || statusColors.completed}>
                         {p.status || "completed"}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-900">
+                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-100">
                       {(p.amount || 0).toLocaleString()} CZK
                     </td>
                     <td className="px-5 py-3.5">
@@ -206,7 +206,7 @@ export default function Payments({ currentUser }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => setEditingPayment(p)}
-                          className="h-8 w-8 p-0 text-gray-300 hover:text-amber-500 hover:bg-amber-50 transition-colors"
+                          className="h-8 w-8 p-0 text-slate-600 hover:text-amber-400 hover:bg-amber-900/20 transition-colors"
                         >
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -214,13 +214,13 @@ export default function Payments({ currentUser }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDelete(p)}
-                          className="h-8 w-8 p-0 text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          className="h-8 w-8 p-0 text-slate-600 hover:text-red-400 hover:bg-red-900/20 transition-colors"
                         >
                           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-5 h-5 object-contain" />
                         </Button>
                       </div>
                     </td>
-                    </motion.tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
