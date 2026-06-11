@@ -94,12 +94,15 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               to={createPageUrl(item.page)}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "relative flex items-center gap-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
-                isActive ? "bg-white/10 text-white" : "text-slate-400 hover:text-slate-200 hover:bg-white/5",
+                "relative flex items-center gap-3 py-1 rounded-lg text-sm font-medium transition-all duration-150",
+                isActive ? "text-white" : "text-slate-400 hover:text-slate-200",
                 (expanded || forMobile) ? "px-3" : "px-0 justify-center"
               )}
             >
-              <span className="flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0">
+              <span className={cn(
+                "flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0 transition-colors",
+                isActive ? "bg-white/10" : "hover:bg-white/5"
+              )}>
                 <Icon className={cn("w-5 h-5", isActive ? "text-[#C9A227]" : "text-slate-500")} />
               </span>
               <span className={cn(
