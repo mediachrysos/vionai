@@ -4,8 +4,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
-  MessageSquare, Settings, Search, LogOut, ChevronLeft,
-  ChevronRight, Menu, X
+  MessageSquare, Settings, Search, LogOut, Menu, X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,11 +19,10 @@ const allPages = [
   { name: "Customer Scraper", icon: Search, page: "CustomerScraper" },
 ];
 
-const defaultChatterPages = ["ChatterPortal", "Customers"];
 const defaultLawyerPages = ["Finance"];
 
 export default function Sidebar({ currentPage, user, onLogout }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const userRoles = user?.roles?.length > 0 ? user.roles : (user?.role ? [user.role] : []);
@@ -56,30 +54,28 @@ export default function Sidebar({ currentPage, user, onLogout }) {
     ? user.full_name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()
     : "?";
 
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+  // Desktop sidebar — collapsed by default, expands on hover
+  const expanded = hovered;
+
+  const SidebarInner = ({ forMobile = false }) => (
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Logo */}
       <div className={cn(
-        "flex items-center gap-3 h-16 px-5 overflow-hidden",
-        collapsed && "justify-center px-3"
+        "flex items-center h-16 overflow-hidden transition-all duration-300",
+        (expanded || forMobile) ? "px-5 gap-3" : "px-0 justify-center"
       )}>
-        {!collapsed ? (
-          <img
-            src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274783/Chrysos_Media_Logo_gmfbds.png"
-            alt="Chrysos Media"
-            className="h-8 w-auto object-contain brightness-200"
-          />
-        ) : (
-          <img
-            src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274783/Chrysos_Media_Logo_gmfbds.png"
-            alt="Chrysos Media"
-            className="h-7 w-7 object-contain brightness-200"
-          />
-        )}
+        <img
+          src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274783/Chrysos_Media_Logo_gmfbds.png"
+          alt="Chrysos Media"
+          className={cn(
+            "object-contain brightness-200 transition-all duration-300",
+            (expanded || forMobile) ? "h-8 w-auto" : "h-7 w-7"
+          )}
+        />
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 px-3 space-y-0.5">
+      <nav className="flex-1 py-4 px-2 space-y-0.5">
         {items.map((item) => {
           const isActive = currentPage === item.page ||
             (item.page === "Dashboard" && currentPage === "Home");
@@ -90,57 +86,57 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               to={createPageUrl(item.page)}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
+                "relative flex items-center gap-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
                 isActive
                   ? "bg-white/10 text-white"
                   : "text-slate-400 hover:text-slate-200 hover:bg-white/5",
-                collapsed && "justify-center px-2"
+                (expanded || forMobile) ? "px-3" : "px-0 justify-center"
               )}
             >
               <Icon className={cn(
-                "flex-shrink-0",
-                collapsed ? "w-5 h-5" : "w-4 h-4",
+                "flex-shrink-0 w-5 h-5",
                 isActive ? "text-[#C9A227]" : "text-slate-500"
               )} />
-              {!collapsed && <span>{item.name}</span>}
+              <span className={cn(
+                "whitespace-nowrap transition-all duration-200",
+                (expanded || forMobile) ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
+              )}>
+                {item.name}
+              </span>
             </Link>
           );
         })}
       </nav>
 
       {/* User */}
-      <div className={cn("px-3 py-3 border-t border-white/10", collapsed && "px-2")}>
+      <div className={cn(
+        "border-t border-white/10 py-3 transition-all duration-300",
+        (expanded || forMobile) ? "px-3" : "px-2"
+      )}>
         <div className={cn(
           "flex items-center gap-3",
-          collapsed && "justify-center"
+          !(expanded || forMobile) && "justify-center"
         )}>
           <div className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center flex-shrink-0">
             <span className="text-xs font-semibold text-slate-200">{initials}</span>
           </div>
-          {!collapsed && (
-            <>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-slate-200 truncate">{user?.full_name || "User"}</p>
-                <p className="text-[11px] text-slate-500 truncate">{roleLabel}</p>
-              </div>
-              <button
-                onClick={onLogout}
-                className="text-slate-500 hover:text-slate-300 transition-colors p-1 rounded flex-shrink-0"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-              </button>
-            </>
-          )}
+          <div className={cn(
+            "flex items-center gap-2 flex-1 min-w-0 transition-all duration-200",
+            (expanded || forMobile) ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
+          )}>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-slate-200 truncate">{user?.full_name || "User"}</p>
+              <p className="text-[11px] text-slate-500 truncate">{roleLabel}</p>
+            </div>
+            <button
+              onClick={onLogout}
+              className="text-slate-500 hover:text-slate-300 transition-colors p-1 rounded flex-shrink-0"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Collapse toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="hidden lg:flex items-center justify-center h-8 border-t border-white/10 text-slate-600 hover:text-slate-400 transition-colors hover:bg-white/5"
-      >
-        {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
-      </button>
     </div>
   );
 
@@ -175,7 +171,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ type: "spring", damping: 28, stiffness: 320 }}
-            className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] bg-[#161616] border-r border-white/10 z-50 shadow-2xl relative"
+            className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] bg-[#161616] border-r border-white/10 z-50 shadow-2xl"
           >
             <button
               onClick={() => setMobileOpen(false)}
@@ -183,18 +179,25 @@ export default function Sidebar({ currentPage, user, onLogout }) {
             >
               <X className="w-4 h-4" />
             </button>
-            <SidebarContent />
+            <SidebarInner forMobile />
           </motion.aside>
         )}
       </AnimatePresence>
 
-      {/* Desktop sidebar */}
-      <aside className={cn(
-        "hidden lg:flex flex-col bg-[#161616] border-r border-white/10 h-screen sticky top-0 transition-all duration-300 ease-out relative",
-        collapsed ? "w-[60px]" : "w-[220px]"
-      )}>
-        <SidebarContent />
+      {/* Desktop sidebar — fixed, collapsed by default, hover to expand */}
+      <aside
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className={cn(
+          "hidden lg:flex flex-col fixed left-0 top-0 bottom-0 bg-[#161616] border-r border-white/10 z-40 transition-all duration-300 ease-out",
+          hovered ? "w-[220px] shadow-2xl shadow-black/40" : "w-[60px]"
+        )}
+      >
+        <SidebarInner />
       </aside>
+
+      {/* Spacer to push main content right (always width of collapsed sidebar) */}
+      <div className="hidden lg:block flex-shrink-0 w-[60px]" />
     </>
   );
 }
