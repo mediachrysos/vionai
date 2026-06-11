@@ -288,7 +288,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
       {/* Two summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {/* Earnings card */}
-        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/40">
+        <div className="bg-[#131929] rounded-xl p-4 border border-slate-700/40">
           <p className="text-sm text-slate-400 font-medium mb-1">Earnings</p>
           <p className="text-2xl font-bold text-white">{fmt(totalGross)}</p>
           <p className="text-xs text-slate-500 mb-3">{dateRangeLabel}</p>
@@ -296,7 +296,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         </div>
 
         {/* This month card */}
-        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/40">
+        <div className="bg-[#131929] rounded-xl p-4 border border-slate-700/40">
           <p className="text-sm text-slate-400 font-medium mb-1">This month</p>
           <div className="flex items-start gap-2">
             <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)}</p>
