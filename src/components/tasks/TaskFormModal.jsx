@@ -88,7 +88,7 @@ export default function TaskFormModal({ open, onClose, onSave, task, users, curr
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={onClose}>Zrušit</Button>
-            <Button onClick={handleSubmit} disabled={!form.title || saving} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button onClick={handleSubmit} disabled={!form.title || saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
               {saving ? "Ukládám..." : task ? "Uložit" : "Vytvořit"}
             </Button>
           </div>
