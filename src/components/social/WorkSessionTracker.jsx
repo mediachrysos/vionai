@@ -137,37 +137,37 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
   // ── HISTORY VIEW ──
   if (showHistory) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3">
+      <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-5 flex flex-col gap-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <button
             onClick={() => setShowHistory(false)}
-            className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors">
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-slate-100 transition-colors">
             
             <ArrowLeft className="w-4 h-4" /> Work history
           </button>
-          <span className="text-xs text-gray-400">{allSessions.filter((s) => !s.is_active).length} sessions</span>
+          <span className="text-xs text-slate-500">{allSessions.filter((s) => !s.is_active).length} sessions</span>
         </div>
 
         {/* Scrollable list — fixed height forces scroll */}
         <div style={{ maxHeight: "260px", overflowY: "auto" }} className="flex flex-col gap-3 pr-1">
           {historyByDay.length === 0 &&
-          <p className="text-xs text-gray-400 text-center py-4">No recorded sessions yet.</p>
+          <p className="text-xs text-slate-500 text-center py-4">No recorded sessions yet.</p>
           }
           {historyByDay.map(([date, sessions]) =>
           <div key={date}>
               {/* Day label */}
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                   {date === today ? "Today" : fmtDate(date)}
                 </span>
-                <span className="text-[11px] text-gray-400">
+                <span className="text-[11px] text-slate-500">
                   {minutesToDisplay(sessions.reduce((s, x) => s + (x.minutes_worked || 0), 0))}
                 </span>
               </div>
               <div className="space-y-1">
                 {sessions.map((s) =>
-              <div key={s.id} className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
+              <div key={s.id} className="flex items-center gap-2 text-xs text-slate-400 bg-white/5 rounded-lg px-3 py-2">
                     {editingSession === s.id ?
                 <>
                         <Input
@@ -187,8 +187,8 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
                       </> :
 
                 <>
-                        <span className="flex-1 text-gray-400">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
-                        <span className="font-semibold text-gray-700">{minutesToDisplay(s.minutes_worked || 0)}</span>
+                        <span className="flex-1 text-slate-500">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
+                        <span className="font-semibold text-slate-300">{minutesToDisplay(s.minutes_worked || 0)}</span>
                         {isAdmin &&
                   <>
                             <button onClick={() => {setEditingSession(s.id);setEditMinutes(String(s.minutes_worked || 0));}} className="text-gray-300 hover:text-amber-500 transition-colors">
@@ -213,18 +213,18 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
 
   // ── TODAY VIEW (default) ──
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-5 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           
 
           
-          <span className="text-sm font-semibold text-gray-800">Today's work</span>
+          <span className="text-sm font-semibold text-slate-200">Today's work</span>
         </div>
         <button
           onClick={() => setShowHistory(true)}
-          className="text-gray-300 hover:text-gray-500 transition-colors"
+          className="text-slate-600 hover:text-slate-400 transition-colors"
           title="View full history">
           
           <History className="w-4 h-4" />
@@ -237,7 +237,7 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
           {minutesToDisplay(roundedTotal)}
         </span>
         {activeSession &&
-        <span className="text-xs text-gray-400 mt-1.5 flex items-center gap-1.5">
+        <span className="text-xs text-slate-500 mt-1.5 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Running since {fmtTime(activeSession.started_at)}
           </span>
@@ -267,10 +267,10 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
       {isAdmin &&
       <div className="flex flex-col gap-2">
           {activeSession &&
-        <div className="flex items-center justify-between bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2">
+        <div className="flex items-center justify-between bg-emerald-950/30 border border-emerald-700/30 rounded-xl px-3 py-2">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs text-gray-500">Running since {fmtTime(activeSession.started_at)}</span>
+                <span className="text-xs text-slate-400">Running since {fmtTime(activeSession.started_at)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -288,7 +288,7 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
 
           {/* Today's finished sessions — admin can edit */}
           {todaySessions.filter((s) => !s.is_active).map((s) =>
-        <div key={s.id} className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
+        <div key={s.id} className="flex items-center gap-2 text-xs text-slate-400 bg-white/5 rounded-xl px-3 py-2">
               {editingSession === s.id ?
           <>
                   <Input
@@ -308,8 +308,8 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
                 </> :
 
           <>
-                  <span className="flex-1 text-gray-400">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
-                  <span className="font-semibold text-gray-700">{minutesToDisplay(s.minutes_worked || 0)}</span>
+                  <span className="flex-1 text-slate-500">{fmtTime(s.started_at)} – {fmtTime(s.ended_at)}</span>
+                  <span className="font-semibold text-slate-300">{minutesToDisplay(s.minutes_worked || 0)}</span>
                   <button onClick={() => {setEditingSession(s.id);setEditMinutes(String(s.minutes_worked || 0));}} className="text-gray-300 hover:text-amber-500 transition-colors">
                     <Edit2 className="w-3 h-3" />
                   </button>
@@ -324,7 +324,7 @@ export default function WorkSessionTracker({ designerEmail, dashboardId, isAdmin
           {!activeSession &&
         <button
           onClick={handleStart}
-          className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-medium rounded-xl py-2 transition-colors">
+          className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-slate-400 text-xs font-medium rounded-xl py-2 transition-colors">
           
               <Play className="w-3.5 h-3.5" /> Start session for designer
             </button>

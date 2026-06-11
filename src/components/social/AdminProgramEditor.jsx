@@ -18,9 +18,9 @@ const DAYS = [
 const PRESET_TYPES = ["Reels", "Post", "Story"];
 
 const typeColors = {
-  Reels: "bg-purple-100 text-purple-700",
-  Post: "bg-blue-100 text-blue-700",
-  Story: "bg-pink-100 text-pink-700",
+  Reels: "bg-purple-950/50 text-purple-300",
+  Post: "bg-blue-950/50 text-blue-300",
+  Story: "bg-pink-950/50 text-pink-300",
 };
 
 const PRIORITIES = [
@@ -206,14 +206,14 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
 
   return (
     <>
-    <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-5 space-y-4">
       {isDraft && (
-        <div className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+        <div className="flex items-center justify-between gap-3 bg-amber-950/30 border border-amber-700/30 rounded-xl px-4 py-3">
           <div className="flex items-center gap-2">
             <Copy className="w-4 h-4 text-amber-500 flex-shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">Návrh z minulého týdne</p>
-              <p className="text-xs text-amber-600">Tasky byly automaticky zkopírovány. Potvrď, uprav nebo zamítni.</p>
+              <p className="text-sm font-semibold text-amber-300">Návrh z minulého týdne</p>
+              <p className="text-xs text-amber-400/70">Tasky byly automaticky zkopírovány. Potvrď, uprav nebo zamítni.</p>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -229,8 +229,8 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
 
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-gray-800">Edit Weekly Program</h3>
-          {designerName && <p className="text-xs text-gray-400 mt-0.5">Grafik: {designerName}</p>}
+          <h3 className="text-sm font-semibold text-slate-200">Edit Weekly Program</h3>
+          {designerName && <p className="text-xs text-slate-500 mt-0.5">Grafik: {designerName}</p>}
         </div>
         <div className="flex items-center gap-2">
           {hasUnsaved && !saving && (
@@ -250,9 +250,9 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
         {DAYS.map(({ key, label }) => {
           const tasks = dayTasks[key] || [];
           return (
-            <div key={key} className="bg-gray-50 rounded-xl p-4 space-y-3">
+            <div key={key} className="bg-[#252525] rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{label}</p>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{label}</p>
                 <button
                   onClick={() => addTask(key)}
                   className="flex items-center gap-1 text-xs text-[#C9A227] hover:text-[#A8841C] font-medium"
@@ -262,13 +262,13 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
               </div>
 
               {tasks.length === 0 && (
-                <p className="text-xs text-gray-400 italic">No tasks — click "Add task" to add one.</p>
+                <p className="text-xs text-slate-600 italic">No tasks — click "Add task" to add one.</p>
               )}
 
               {tasks.map((task, idx) => {
                 const isCustom = !PRESET_TYPES.includes(task.type);
                 return (
-                  <div key={idx} className="bg-white rounded-xl border border-gray-200 p-3 space-y-2.5">
+                  <div key={idx} className="bg-[#1e1e1e] rounded-xl border border-white/10 p-3 space-y-2.5">
                     <div className="flex items-center gap-2">
                       {/* Type selector */}
                       <div className="flex gap-1 flex-wrap flex-1">
@@ -278,8 +278,8 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
                             onClick={() => updateTask(key, idx, "type", t)}
                             className={`text-xs font-medium px-2.5 py-1 rounded-full border transition-all ${
                               task.type === t
-                                ? (typeColors[t] || "bg-gray-200 text-gray-700") + " border-transparent"
-                                : "border-gray-200 text-gray-400 hover:border-gray-300"
+                                ? (typeColors[t] || "bg-slate-700 text-slate-300") + " border-transparent"
+                                : "border-white/10 text-slate-500 hover:border-white/30"
                             }`}
                           >
                             {t}
@@ -289,14 +289,14 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
                           onClick={() => updateTask(key, idx, "type", "custom")}
                           className={`text-xs font-medium px-2.5 py-1 rounded-full border transition-all ${
                             isCustom
-                              ? "bg-amber-100 text-amber-700 border-transparent"
-                              : "border-gray-200 text-gray-400 hover:border-gray-300"
+                              ? "bg-amber-950/50 text-amber-300 border-transparent"
+                              : "border-white/10 text-slate-500 hover:border-white/30"
                           }`}
                         >
                           Custom
                         </button>
                       </div>
-                      <button onClick={() => removeTask(key, idx)} className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0">
+                      <button onClick={() => removeTask(key, idx)} className="text-slate-600 hover:text-red-400 transition-colors flex-shrink-0">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -321,7 +321,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
                     <select
                       value={task.model_id || ""}
                       onChange={e => updateTask(key, idx, "model_id", e.target.value)}
-                      className="w-full text-xs h-8 border border-gray-200 rounded-md px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-amber-300"
+                      className="w-full text-xs h-8 border border-white/10 rounded-md px-2 bg-[#252525] text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-400"
                     >
                       <option value="">All models / no specific model</option>
                       {models.filter(m => m.status === "active").map(m => (
@@ -331,7 +331,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
 
                     {/* Priority selector */}
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wide flex-shrink-0">Priority:</span>
+                      <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wide flex-shrink-0">Priority:</span>
                       <div className="flex gap-1 flex-wrap">
                         {PRIORITIES.map(p => (
                           <button
@@ -339,8 +339,8 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
                             onClick={() => updateTask(key, idx, "priority", p.value)}
                             className={`text-xs px-2 py-0.5 rounded-full border transition-all ${
                               (task.priority || "normal") === p.value
-                                ? "bg-gray-800 text-white border-gray-800"
-                                : "border-gray-200 text-gray-400 hover:border-gray-400"
+                                ? "bg-slate-200 text-slate-900 border-slate-200"
+                                : "border-white/10 text-slate-500 hover:border-white/30"
                             }`}
                           >
                             {p.label}
@@ -350,7 +350,7 @@ export default function AdminProgramEditor({ weekStart, program, models = [], de
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Link className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
+                      <Link className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
                       <Input
                         placeholder="Inspiration link (optional)..."
                         value={task.inspiration_link}

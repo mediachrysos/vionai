@@ -7,24 +7,24 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ExternalLink, Link, Send, CheckCircle, XCircle, Edit2, ChevronDown, ChevronUp } from "lucide-react";
 
 const typeColors = {
-  Reels: "bg-purple-100 text-purple-700",
-  Post: "bg-blue-100 text-blue-700",
-  Story: "bg-pink-100 text-pink-700",
+  Reels: "bg-purple-950/50 text-purple-300",
+  Post: "bg-blue-950/50 text-blue-300",
+  Story: "bg-pink-950/50 text-pink-300",
 };
 
 const priorityConfig = {
-  urgent: { label: "🔴 Urgent", color: "bg-red-100 text-red-700 border border-red-200" },
-  high:   { label: "🟠 High",   color: "bg-orange-100 text-orange-700 border border-orange-200" },
-  normal: null, // don't show badge for normal
-  low:    { label: "⚪ Low",    color: "bg-gray-100 text-gray-500 border border-gray-200" },
+  urgent: { label: "🔴 Urgent", color: "bg-red-950/50 text-red-400 border border-red-700/30" },
+  high:   { label: "🟠 High",   color: "bg-orange-950/50 text-orange-400 border border-orange-700/30" },
+  normal: null,
+  low:    { label: "⚪ Low",    color: "bg-slate-800 text-slate-500 border border-white/10" },
 };
 
 const statusConfig = {
-  not_started: { label: "Not started", color: "bg-gray-100 text-gray-500" },
-  submitted: { label: "Pending review", color: "bg-amber-100 text-amber-700" },
-  approved: { label: "Approved", color: "bg-emerald-100 text-emerald-700" },
-  rejected: { label: "Rejected", color: "bg-red-100 text-red-600" },
-  edit_requested: { label: "Edit requested", color: "bg-orange-100 text-orange-600" },
+  not_started: { label: "Not started", color: "bg-slate-800 text-slate-500" },
+  submitted: { label: "Pending review", color: "bg-amber-950/50 text-amber-300" },
+  approved: { label: "Approved", color: "bg-emerald-950/50 text-emerald-400" },
+  rejected: { label: "Rejected", color: "bg-red-950/50 text-red-400" },
+  edit_requested: { label: "Edit requested", color: "bg-orange-950/50 text-orange-400" },
 };
 
 function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAction, models }) {
@@ -58,15 +58,15 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
   };
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-white/10 rounded-xl overflow-hidden">
       {/* Task header */}
       <button
         onClick={() => setExpanded(e => !e)}
-        className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-[#252525] hover:bg-white/5 transition-colors"
       >
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colorClass}`}>{label}</span>
-          {model && <span className="text-xs text-gray-400">📸 {model.name}</span>}
+          {model && <span className="text-xs text-slate-500">📸 {model.name}</span>}
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cfg.color}`}>{cfg.label}</span>
           {task.priority && task.priority !== "normal" && priorityConfig[task.priority] && (
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${priorityConfig[task.priority].color}`}>
@@ -74,13 +74,13 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
             </span>
           )}
         </div>
-        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />}
+        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />}
       </button>
 
       {expanded && (
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-3 bg-[#1e1e1e]">
           {/* Task info */}
-          {task.desc && <p className="text-sm text-gray-600">{task.desc}</p>}
+          {task.desc && <p className="text-sm text-slate-400">{task.desc}</p>}
           {task.inspiration_link && (
             <a href={task.inspiration_link} target="_blank" rel="noreferrer"
               className="flex items-center gap-1.5 text-xs text-blue-500 hover:underline">
@@ -90,18 +90,18 @@ function TaskSubmissionRow({ task, idx, taskSub, isAdmin, onSaveLink, onAdminAct
 
           {/* Admin note (rejection/edit) */}
           {taskSub?.admin_note && (status === "rejected" || status === "edit_requested") && (
-            <div className={`rounded-lg px-3 py-2 ${status === "rejected" ? "bg-red-50 border border-red-200" : "bg-orange-50 border border-orange-200"}`}>
-              <p className={`text-xs font-semibold mb-0.5 ${status === "rejected" ? "text-red-600" : "text-orange-600"}`}>
+            <div className={`rounded-lg px-3 py-2 ${status === "rejected" ? "bg-red-950/30 border border-red-700/30" : "bg-orange-950/30 border border-orange-700/30"}`}>
+              <p className={`text-xs font-semibold mb-0.5 ${status === "rejected" ? "text-red-400" : "text-orange-400"}`}>
                 {status === "rejected" ? "Rejection note:" : "Edit requested:"}
               </p>
-              <p className={`text-xs ${status === "rejected" ? "text-red-500" : "text-orange-500"}`}>{taskSub.admin_note}</p>
+              <p className={`text-xs ${status === "rejected" ? "text-red-400/80" : "text-orange-400/80"}`}>{taskSub.admin_note}</p>
             </div>
           )}
 
           {/* Submitted link display */}
           {taskSub?.submitted_link && (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-3">
-              <p className="text-xs text-gray-600 truncate flex-1">{taskSub.submitted_link}</p>
+            <div className="bg-[#252525] border border-white/10 rounded-xl p-3 flex items-center justify-between gap-3">
+              <p className="text-xs text-slate-400 truncate flex-1">{taskSub.submitted_link}</p>
               <a href={taskSub.submitted_link} target="_blank" rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C9A227] hover:bg-[#A8841C] text-white text-xs font-medium rounded-lg flex-shrink-0 transition-colors">
                 <ExternalLink className="w-3 h-3" /> Open
@@ -179,16 +179,16 @@ function getDayDate(weekStart, dayKey) {
 }
 
 const graphicStatusConfig = {
-  pending:     { label: "Čeká", color: "bg-amber-100 text-amber-700" },
-  in_progress: { label: "Probíhá", color: "bg-blue-100 text-blue-700" },
-  done:        { label: "Hotovo", color: "bg-emerald-100 text-emerald-700" },
-  rejected:    { label: "Odmítnuto", color: "bg-red-100 text-red-600" },
+  pending:     { label: "Čeká", color: "bg-amber-950/50 text-amber-300" },
+  in_progress: { label: "Probíhá", color: "bg-blue-950/50 text-blue-300" },
+  done:        { label: "Hotovo", color: "bg-emerald-950/50 text-emerald-400" },
+  rejected:    { label: "Odmítnuto", color: "bg-red-950/50 text-red-400" },
 };
 
 const graphicPriorityConfig = {
-  urgent: { label: "🔴 Urgent", color: "bg-red-100 text-red-700 border border-red-200" },
-  high:   { label: "🟠 High",   color: "bg-orange-100 text-orange-700 border border-orange-200" },
-  low:    { label: "⚪ Low",    color: "bg-gray-100 text-gray-500 border border-gray-200" },
+  urgent: { label: "🔴 Urgent", color: "bg-red-950/50 text-red-400 border border-red-700/30" },
+  high:   { label: "🟠 High",   color: "bg-orange-950/50 text-orange-400 border border-orange-700/30" },
+  low:    { label: "⚪ Low",    color: "bg-slate-800 text-slate-500 border border-white/10" },
 };
 
 function GraphicRequestRow({ request: r, isAdmin, onRefresh }) {
@@ -228,14 +228,14 @@ function GraphicRequestRow({ request: r, isAdmin, onRefresh }) {
   };
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-white/10 rounded-xl overflow-hidden">
       <button
         onClick={() => setExpanded(e => !e)}
-        className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-[#252525] hover:bg-white/5 transition-colors"
       >
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${typeColor}`}>{typeLabel}</span>
-          <span className="text-xs text-gray-400">📸 {r.model_name || "—"}</span>
+          <span className="text-xs text-slate-500">📸 {r.model_name || "—"}</span>
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${st.color}`}>{st.label}</span>
           {r.priority && r.priority !== "normal" && graphicPriorityConfig[r.priority] && (
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${graphicPriorityConfig[r.priority].color}`}>
@@ -243,16 +243,16 @@ function GraphicRequestRow({ request: r, isAdmin, onRefresh }) {
             </span>
           )}
         </div>
-        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />}
+        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />}
       </button>
 
       {expanded && (
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-3 bg-[#1e1e1e]">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-gray-700">{r.title}</p>
-            <span className="text-[10px] text-gray-400">od {r.chatter_name || r.chatter_email}</span>
+            <p className="text-sm font-semibold text-slate-200">{r.title}</p>
+            <span className="text-[10px] text-slate-500">od {r.chatter_name || r.chatter_email}</span>
           </div>
-          {r.description && <p className="text-sm text-gray-600">{r.description}</p>}
+          {r.description && <p className="text-sm text-slate-400">{r.description}</p>}
           {r.reference_url && (
             <a href={r.reference_url} target="_blank" rel="noreferrer"
               className="flex items-center gap-1.5 text-xs text-blue-500 hover:underline">
@@ -262,8 +262,8 @@ function GraphicRequestRow({ request: r, isAdmin, onRefresh }) {
 
           {/* Submitted result link display */}
           {r.result_url && (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-3">
-              <p className="text-xs text-gray-600 truncate flex-1">{r.result_url}</p>
+            <div className="bg-[#252525] border border-white/10 rounded-xl p-3 flex items-center justify-between gap-3">
+              <p className="text-xs text-slate-400 truncate flex-1">{r.result_url}</p>
               <a href={r.result_url} target="_blank" rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C9A227] hover:bg-[#A8841C] text-white text-xs font-medium rounded-lg flex-shrink-0 transition-colors">
                 <ExternalLink className="w-3 h-3" /> Open
@@ -295,7 +295,7 @@ function GraphicRequestRow({ request: r, isAdmin, onRefresh }) {
           {/* Admin: reject */}
           {isAdmin && r.status !== "rejected" && r.status !== "done" && (
             <Button size="sm" variant="outline" onClick={handleAdminReject} disabled={saving}
-              className="text-red-500 border-red-200 hover:bg-red-50 text-xs">
+              className="text-red-400 border-red-900/50 hover:bg-red-950/30 text-xs">
               <XCircle className="w-3 h-3 mr-1" /> Odmítnout
             </Button>
           )}
@@ -411,12 +411,12 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold text-gray-800">{dayName}</DialogTitle>
+          <DialogTitle className="text-base font-semibold text-slate-100">{dayName}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 pt-1">
           {tasks.length === 0 ? (
-            <div className="bg-gray-50 rounded-xl p-4 text-center text-sm text-gray-400 italic">No tasks assigned for this day.</div>
+            <div className="bg-[#252525] rounded-xl p-4 text-center text-sm text-slate-500 italic">No tasks assigned for this day.</div>
           ) : (
             tasks.map((task, idx) => (
               <TaskSubmissionRow
@@ -434,8 +434,8 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
 
           {/* Graphic requests for this day */}
           {dayGraphicRequests.length > 0 && (
-            <div className="border-t border-dashed border-gray-200 pt-3 space-y-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Requesty od chatterů</p>
+            <div className="border-t border-dashed border-white/10 pt-3 space-y-2">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Requesty od chatterů</p>
               {dayGraphicRequests.map(r => (
                 <GraphicRequestRow key={r.id} request={r} isAdmin={isAdmin} onRefresh={refetch} />
               ))}
@@ -444,13 +444,13 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
 
           {/* Admin link section */}
           {isAdmin && (
-            <div className="border-t border-dashed border-gray-200 pt-3 space-y-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase">Admin link</p>
+            <div className="border-t border-dashed border-white/10 pt-3 space-y-2">
+              <p className="text-xs font-semibold text-slate-500 uppercase">Admin link</p>
               {submission?.admin_link ? (
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-3">
-                  <p className="text-xs text-gray-600 truncate flex-1">{submission.admin_link}</p>
+                <div className="bg-[#252525] border border-white/10 rounded-xl p-3 flex items-center justify-between gap-3">
+                  <p className="text-xs text-slate-400 truncate flex-1">{submission.admin_link}</p>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <button onClick={() => setAdminLink(submission.admin_link)} className="text-xs text-gray-400 hover:text-gray-600 underline">Edit</button>
+                    <button onClick={() => setAdminLink(submission.admin_link)} className="text-xs text-slate-500 hover:text-slate-300 underline">Edit</button>
                     <a href={submission.admin_link} target="_blank" rel="noreferrer"
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C9A227] hover:bg-[#A8841C] text-white text-xs font-medium rounded-lg transition-colors">
                       <ExternalLink className="w-3 h-3" /> Open

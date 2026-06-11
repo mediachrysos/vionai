@@ -139,14 +139,14 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-4">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-5 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           
 
           
-          <span className="text-sm font-semibold text-gray-800">Salary</span>
+          <span className="text-sm font-semibold text-slate-200">Salary</span>
         </div>
 
         {/* Rate */}
@@ -166,7 +166,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
           </div> :
 
         <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">
+            <span className="text-xs font-medium text-slate-400 bg-white/10 px-2.5 py-1 rounded-lg">
               {hourlyRate} MAD/h
             </span>
             {isAdmin &&
@@ -183,8 +183,8 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="flex flex-col items-center bg-amber-50 rounded-xl px-2 py-3 gap-0.5 relative">
-          <span className="text-[10px] text-amber-700/70 font-medium uppercase tracking-wide">Earned</span>
+        <div className="flex flex-col items-center bg-amber-950/30 rounded-xl px-2 py-3 gap-0.5 relative">
+          <span className="text-[10px] text-amber-400/80 font-medium uppercase tracking-wide">Earned</span>
           {editingBalance ?
           <div className="flex items-center gap-1 mt-0.5">
               <Input
@@ -198,7 +198,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
             
             </div> :
 
-          <span className="text-base font-bold text-amber-700 tabular-nums">{totalEarned.toLocaleString()}</span>
+          <span className="text-base font-bold text-amber-300 tabular-nums">{totalEarned.toLocaleString()}</span>
           }
           {editingBalance ?
           <div className="flex items-center gap-1.5 mt-0.5">
@@ -211,7 +211,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
               </button>
             </div> :
 
-          <span className="text-[10px] text-amber-600/60">{totalHours}h worked</span>
+          <span className="text-[10px] text-amber-400/60">{totalHours}h worked</span>
           }
           {isAdmin && !editingBalance &&
           <button
@@ -222,23 +222,23 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
             </button>
           }
         </div>
-        <div className="flex flex-col items-center bg-emerald-50 rounded-xl px-2 py-3 gap-0.5">
-          <span className="text-[10px] text-emerald-700/70 font-medium uppercase tracking-wide">Paid out</span>
-          <span className="text-base font-bold text-emerald-700 tabular-nums">{totalPaid.toLocaleString()}</span>
-          <span className="text-[10px] text-emerald-600/60">{payouts.length} payments</span>
+        <div className="flex flex-col items-center bg-emerald-950/30 rounded-xl px-2 py-3 gap-0.5">
+          <span className="text-[10px] text-emerald-400/80 font-medium uppercase tracking-wide">Paid out</span>
+          <span className="text-base font-bold text-emerald-400 tabular-nums">{totalPaid.toLocaleString()}</span>
+          <span className="text-[10px] text-emerald-400/60">{payouts.length} payments</span>
         </div>
-        <div className={`flex flex-col items-center rounded-xl px-2 py-3 gap-0.5 ${remaining > 0 ? "bg-rose-50" : "bg-gray-50"}`}>
-          <span className={`text-[10px] font-medium uppercase tracking-wide ${remaining > 0 ? "text-rose-600/70" : "text-gray-500/70"}`}>To pay</span>
-          <span className={`text-base font-bold tabular-nums ${remaining > 0 ? "text-rose-600" : "text-gray-400"}`}>
+        <div className={`flex flex-col items-center rounded-xl px-2 py-3 gap-0.5 ${remaining > 0 ? "bg-rose-950/30" : "bg-white/5"}`}>
+          <span className={`text-[10px] font-medium uppercase tracking-wide ${remaining > 0 ? "text-rose-400/80" : "text-slate-500/70"}`}>To pay</span>
+          <span className={`text-base font-bold tabular-nums ${remaining > 0 ? "text-rose-400" : "text-slate-500"}`}>
             {remaining.toLocaleString()}
           </span>
-          <span className={`text-[10px] ${remaining > 0 ? "text-rose-500/60" : "text-gray-400/60"}`}>MAD</span>
+          <span className={`text-[10px] ${remaining > 0 ? "text-rose-400/60" : "text-slate-500/60"}`}>MAD</span>
         </div>
       </div>
 
       {/* Admin: add payout */}
       {isAdmin &&
-      <div className="flex gap-2 items-center border-t border-gray-100 pt-3">
+      <div className="flex gap-2 items-center border-t border-white/10 pt-3">
           <Input
           value={payoutAmount}
           onChange={(e) => setPayoutAmount(e.target.value)}
@@ -265,7 +265,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
 
       {/* Admin: add bonus to earned */}
       {isAdmin &&
-      <div className="border-t border-gray-100 pt-3">
+      <div className="border-t border-white/10 pt-3">
           <button
           onClick={() => setShowBonusForm((v) => !v)}
           className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-800 font-medium transition-colors">
@@ -305,7 +305,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
       <div>
           <button
           onClick={() => setShowPayouts((v) => !v)}
-          className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+          className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors">
           
             {showPayouts ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             Payout history ({payouts.length})
@@ -313,10 +313,10 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
           {showPayouts &&
         <div className="mt-2 space-y-1">
               {[...payouts].reverse().map((p) =>
-          <div key={p.id} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg px-3 py-2 gap-2">
-                  <span className="text-gray-400 flex-shrink-0">{p.created_date?.split("T")[0] || p.period}</span>
-                  {p.note && <span className="text-gray-400 truncate flex-1">{p.note}</span>}
-                  <span className="font-semibold text-emerald-700">+{p.amount} MAD</span>
+          <div key={p.id} className="flex items-center justify-between text-xs bg-white/5 rounded-lg px-3 py-2 gap-2">
+                  <span className="text-slate-500 flex-shrink-0">{p.created_date?.split("T")[0] || p.period}</span>
+                  {p.note && <span className="text-slate-500 truncate flex-1">{p.note}</span>}
+                  <span className="font-semibold text-emerald-400">+{p.amount} MAD</span>
                   {isAdmin &&
             <button
               onClick={async () => {
