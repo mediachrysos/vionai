@@ -105,7 +105,7 @@ const CustomTooltip = ({ active, payload, label, mode }) => {
   if (!active || !payload?.length) return null;
   const val = mode === "net" ? payload.find(p => p.dataKey === "net") : payload.find(p => p.dataKey === "gross");
   return (
-    <div className="bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl px-4 py-3 text-sm">
+    <div className="bg-[#252525] border border-white/10 rounded-xl shadow-2xl px-4 py-3 text-sm">
       <p className="text-slate-400 font-medium mb-1">{label}</p>
       <p className="font-bold text-white">{fmt(val?.value || 0)}</p>
       {payload.find(p => p.dataKey === "gross") && payload.find(p => p.dataKey === "net") && (
@@ -193,7 +193,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
   const thisMonthLabel = new Date().toLocaleDateString("cs", { month: "long", year: "numeric" });
 
   return (
-    <div className="bg-[#131929] rounded-2xl border border-slate-700/50 shadow-[0_4px_16px_rgba(0,0,0,0.3)] p-5">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] p-5">
       {/* Top controls */}
       <div className="flex items-center gap-2 mb-5 flex-wrap">
         {/* Period preset */}
@@ -206,7 +206,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           {showPresetMenu && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl p-2 min-w-[190px]">
+            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[190px]">
               {PRESETS.map(p => (
                 <button
                   key={p.days}
@@ -233,7 +233,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           {showDateMenu && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl p-3 min-w-[240px]">
+            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-3 min-w-[240px]">
               <p className="text-xs text-slate-400 font-medium mb-2">Vlastní datum</p>
               <div className="flex gap-2 mb-2">
                 <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
@@ -263,7 +263,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
               <ChevronDown className="w-3.5 h-3.5" />
             </button>
             {showModelMenu && (
-              <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#1a2236] border border-slate-700/50 rounded-xl shadow-2xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
+              <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
                 <button
                   onClick={() => { setSelectedModelId("all"); setShowModelMenu(false); }}
                   className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === "all" ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}

@@ -176,7 +176,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
       <div className="p-4 flex-1 overflow-hidden flex flex-col gap-3">
         {/* Form */}
         {showForm && (
-          <div className="p-4 bg-[#131929] rounded-xl border border-white/10 space-y-3">
+          <div className="p-4 bg-[#252525] rounded-xl border border-white/10 space-y-3">
             {/* Main: just the note content */}
             <div>
               <Textarea
@@ -354,7 +354,7 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
                   className={`group relative rounded-2xl border p-4 transition-all shadow-sm flex-1 ${
                     isToday
                       ? "bg-amber-950/20 border-amber-700/30"
-                      : "bg-[#131929] border-white/10"
+                      : "bg-[#252525] border-white/10"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-3">

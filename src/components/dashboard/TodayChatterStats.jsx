@@ -35,8 +35,8 @@ export default function TodayChatterStats({ payments, showAll = true, currentUse
   };
 
   return (
-    <div className="bg-[#131929] rounded-xl border border-slate-700/50 shadow-[0_4px_16px_rgba(0,0,0,0.3)] h-full overflow-hidden flex flex-col">
-      <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 border-b border-slate-700/50">
+    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] h-full overflow-hidden flex flex-col">
+      <div className="px-5 py-4 flex items-center justify-between flex-shrink-0 border-b border-white/10">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold text-slate-200">Výkony chatterů</h3>
         </div>

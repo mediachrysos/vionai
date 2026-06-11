@@ -85,8 +85,8 @@ export default function ShiftOverviewWidget({ users = [] }) {
   );
 
   return (
-    <div className="bg-[#131929] border border-slate-700/50 rounded-2xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-slate-700/50 flex items-center gap-2">
+    <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
         <div className="w-6 h-6 rounded-lg bg-slate-700 flex items-center justify-center">
           <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
         </div>
@@ -111,7 +111,7 @@ export default function ShiftOverviewWidget({ users = [] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="border-b border-slate-700/50 bg-slate-800/30">
+            <tr className="border-b border-white/10 bg-white/5">
               <th className="text-left px-4 py-2 text-slate-500 font-medium w-28">Chatter</th>
               {days.map((date, i) => (
                 <th key={date} className={`text-center px-2 py-2 font-medium ${date === today ? "text-[#C9A227]" : "text-slate-500"}`}>
@@ -172,7 +172,7 @@ export default function ShiftOverviewWidget({ users = [] }) {
               </tr>
             ))}
             {/* Summary row */}
-            <tr className="bg-slate-800/30 border-t border-slate-700/50">
+            <tr className="bg-white/5 border-t border-white/10">
               <td className="px-4 py-1.5 text-[10px] text-slate-500 font-medium">Celkem</td>
               {dayCounts.map((count, i) => (
                 <td key={i} className="text-center py-1.5">
