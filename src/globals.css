@@ -7,7 +7,7 @@
 @layer base {
   :root {
     /* Dark slate base */
-    --background: 222 47% 7%;
+    --background: 0 0% 15.3%;
     --foreground: 213 31% 91%;
     --card: 222 39% 11%;
     --card-foreground: 213 31% 91%;
