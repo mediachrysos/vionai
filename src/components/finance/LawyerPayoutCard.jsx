@@ -9,12 +9,12 @@ const MONTH_NAMES = [
 "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
 
 
-function DetailRow({ label, sublabel, value, color = "text-gray-800", prefix = "", highlight = false }) {
+function DetailRow({ label, sublabel, value, color = "text-slate-200", prefix = "", highlight = false }) {
   return (
-    <div className={`flex items-center justify-between px-4 py-3 rounded-xl ${highlight ? "bg-amber-50 border border-amber-200" : "bg-gray-50"}`}>
+    <div className={`flex items-center justify-between px-4 py-3 rounded-xl ${highlight ? "bg-amber-950/40 border border-amber-700/30" : "bg-white/5"}`}>
       <div>
-        <p className="text-sm font-medium text-gray-800">{label}</p>
-        {sublabel && <p className="text-xs text-gray-400 mt-0.5">{sublabel}</p>}
+        <p className="text-sm font-medium text-slate-200">{label}</p>
+        {sublabel && <p className="text-xs text-slate-500 mt-0.5">{sublabel}</p>}
       </div>
       <p className={`text-base font-bold ${color}`}>{prefix}{Math.abs(value).toLocaleString("cs-CZ")} Kč</p>
     </div>);
@@ -60,22 +60,22 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
         </div>
 
         <div className="p-5 space-y-3">
-          <div className="bg-blue-50 rounded-xl px-4 py-3 border border-blue-100">
-            <p className="text-xs text-blue-500 font-medium uppercase tracking-wider mb-1">Vzorec výpočtu</p>
-            <p className="text-xs text-blue-700 font-mono">Výplata = (Příjmy − Výdaje) × 10 %</p>
+          <div className="bg-blue-950/30 rounded-xl px-4 py-3 border border-blue-700/30">
+            <p className="text-xs text-blue-400 font-medium uppercase tracking-wider mb-1">Vzorec výpočtu</p>
+            <p className="text-xs text-blue-300 font-mono">Výplata = (Příjmy − Výdaje) × 10 %</p>
           </div>
 
-          <div className="border-b border-dashed border-gray-200 pb-1">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Podklady</p>
+          <div className="border-b border-dashed border-white/10 pb-1">
+            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Podklady</p>
             <div className="space-y-2">
-              <DetailRow label="Celkové příjmy" sublabel={`${monthPayments.length} plateb + wallet příjmy`} value={totalIncome} color="text-emerald-700" />
-              <DetailRow label="Celkové výdaje" sublabel="Výdaje + wallet výdaje" value={totalExpenses} color="text-red-600" prefix="− " />
-              <DetailRow label="Hrubý zisk" sublabel="Příjmy − Výdaje" value={grossProfit} color={grossProfit >= 0 ? "text-[#C9A227]" : "text-red-600"} />
+              <DetailRow label="Celkové příjmy" sublabel={`${monthPayments.length} plateb + wallet příjmy`} value={totalIncome} color="text-emerald-400" />
+              <DetailRow label="Celkové výdaje" sublabel="Výdaje + wallet výdaje" value={totalExpenses} color="text-red-400" prefix="− " />
+              <DetailRow label="Hrubý zisk" sublabel="Příjmy − Výdaje" value={grossProfit} color={grossProfit >= 0 ? "text-[#C9A227]" : "text-red-400"} />
             </div>
           </div>
 
           <div>
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Výsledek</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Výsledek</p>
             <DetailRow
               label="Výplata pan D."
               sublabel="10 % z hrubého zisku"
@@ -86,7 +86,7 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
           </div>
 
           {grossProfit <= 0 &&
-          <div className="bg-red-50 rounded-xl px-4 py-3 border border-red-100 text-xs text-red-600">
+          <div className="bg-red-950/30 rounded-xl px-4 py-3 border border-red-700/30 text-xs text-red-400">
               Hrubý zisk je záporný nebo nulový — výplata se nevypočítává.
             </div>
           }

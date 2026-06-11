@@ -101,9 +101,9 @@ export default function ModelROIChart({ payments, adSpends, models }) {
   };
 
   return (
-    <div className="mt-5 pt-5 border-t border-gray-100">
+    <div className="mt-5 pt-5 border-t border-white/10">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm font-semibold text-gray-700">ROI v čase dle modelky</p>
+        <p className="text-sm font-semibold text-slate-300">ROI v čase dle modelky</p>
         <div className="flex gap-1">
           {RANGES.map((r) => (
             <button
@@ -111,8 +111,8 @@ export default function ModelROIChart({ payments, adSpends, models }) {
               onClick={() => setRange(r.days)}
               className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
                 range === r.days
-                  ? "bg-gray-900 text-white"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  ? "bg-slate-200 text-slate-900"
+                  : "bg-white/10 text-slate-400 hover:bg-white/20"
               }`}
             >
               {r.label}
@@ -122,29 +122,29 @@ export default function ModelROIChart({ payments, adSpends, models }) {
       </div>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
           <XAxis
             dataKey="date"
             tickFormatter={formatDate}
-            tick={{ fontSize: 10, fill: "#9ca3af" }}
+            tick={{ fontSize: 10, fill: "#64748b" }}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
             tickFormatter={(v) => `${v}%`}
-            tick={{ fontSize: 10, fill: "#9ca3af" }}
+            tick={{ fontSize: 10, fill: "#64748b" }}
             tickLine={false}
             axisLine={false}
             width={40}
           />
-          <ReferenceLine y={0} stroke="#e5e7eb" strokeWidth={1.5} />
+          <ReferenceLine y={0} stroke="#3f3f3f" strokeWidth={1.5} />
           <Tooltip
             formatter={(val, name) => {
               const model = modelNames.find((m) => m.id === name);
               return [val !== null ? `${val}%` : "—", model?.name || name];
             }}
             labelFormatter={formatDate}
-            contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #e5e7eb" }}
+            contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #333", background: "#1e1e1e", color: "#e2e8f0" }}
           />
           <Legend
             formatter={(value) => {
