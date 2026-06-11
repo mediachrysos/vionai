@@ -5,18 +5,18 @@ import {
 import { ChevronDown, Calendar, TrendingDown } from "lucide-react";
 
 const PRESETS = [
-  { label: "Posledních 7 dní", days: 7 },
-  { label: "Posledních 14 dní", days: 14 },
-  { label: "Posledních 30 dní", days: 30 },
-  { label: "Posledních 90 dní", days: 90 },
-  { label: "6 měsíců", days: 180 },
-  { label: "12 měsíců", days: 365 },
+  { label: "Last 7 days", days: 7 },
+  { label: "Last 14 days", days: 14 },
+  { label: "Last 30 days", days: 30 },
+  { label: "Last 90 days", days: 90 },
+  { label: "6 months", days: 180 },
+  { label: "12 months", days: 365 },
 ];
 
 function fmt(v) {
-  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M Kč`;
-  if (v >= 1000) return `${Math.round(v / 1000)}K Kč`;
-  return `${v.toLocaleString("cs-CZ")} Kč`;
+  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
+  if (v >= 1000) return `${Math.round(v / 1000)}K`;
+  return `${v.toLocaleString()}`;
 }
 
 function fmtShort(v) {
@@ -186,7 +186,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
 
   const activePresetLabel = useCustom
     ? `${customFrom} – ${customTo}`
-    : PRESETS.find(p => p.days === selectedDays)?.label || `${selectedDays} dní`;
+    : PRESETS.find(p => p.days === selectedDays)?.label || `${selectedDays} days`;
 
   const selectedModel = models.find(m => m.id === selectedModelId);
   const dateRangeLabel = `${new Date(from).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })} – ${new Date(to).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })}`;
@@ -234,7 +234,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           </button>
           {showDateMenu && (
             <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-3 min-w-[240px]">
-              <p className="text-xs text-slate-400 font-medium mb-2">Vlastní datum</p>
+              <p className="text-xs text-slate-400 font-medium mb-2">Custom date</p>
               <div className="flex gap-2 mb-2">
                 <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
                   className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
@@ -245,8 +245,8 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                 onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowDateMenu(false); } }}
                 disabled={!customFrom || !customTo}
                 className="w-full text-xs font-medium bg-[#C9A227] text-white rounded-lg py-1.5 hover:bg-[#A8841C] disabled:opacity-40 transition-colors"
-              >
-                Použít
+                >
+                 Apply
               </button>
             </div>
           )}
@@ -259,7 +259,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
               onClick={() => { setShowModelMenu(v => !v); setShowPresetMenu(false); setShowDateMenu(false); }}
               className="flex items-center gap-1.5 text-sm font-medium text-slate-300 bg-slate-700/60 hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors"
             >
-              {selectedModel ? selectedModel.name : "Všechny modely"}
+              {selectedModel ? selectedModel.name : "All models"}
               <ChevronDown className="w-3.5 h-3.5" />
             </button>
             {showModelMenu && (
@@ -268,7 +268,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                   onClick={() => { setSelectedModelId("all"); setShowModelMenu(false); }}
                   className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === "all" ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}
                 >
-                  Všechny modely
+                  All models
                 </button>
                 {models.map(m => (
                   <button
@@ -302,7 +302,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
             <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)}</p>
             {monthDiff !== 0 && (
               <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md ${monthDiff < 0 ? "bg-red-900/50 text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
-                {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString("cs-CZ")} Kč
+                {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString()}
               </span>
             )}
           </div>
@@ -360,11 +360,11 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         {/* Net / Gross summary */}
         <div className="flex gap-4 mt-3 pt-3 border-t border-white/10">
           <div>
-            <p className="text-xs text-slate-500">Gross (celkem)</p>
-            <p className="text-sm font-bold text-slate-200">{fmt(totalGross)}</p>
-          </div>
-          <div>
-            <p className="text-xs text-slate-500">Net (po ad spend)</p>
+            <p className="text-xs text-slate-500">Gross</p>
+               <p className="text-sm font-bold text-slate-200">{fmt(totalGross)}</p>
+             </div>
+             <div>
+               <p className="text-xs text-slate-500">Net (after ad spend)</p>
             <p className="text-sm font-bold text-[#C9A227]">{fmt(totalNet)}</p>
           </div>
         </div>

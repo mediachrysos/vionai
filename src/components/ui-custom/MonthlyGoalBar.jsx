@@ -77,15 +77,15 @@ export default function MonthlyGoalBar() {
           <div className="bg-white/20 rounded-xl w-9 h-9 flex items-center justify-center">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" alt="" className="w-6 h-6 object-contain" />
           </div>
-          <span className="text-xs font-semibold text-white/90 uppercase tracking-wider">Měsíční cíl</span>
+          <span className="text-xs font-semibold text-white/90 uppercase tracking-wider">Monthly goal</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-white/80">
-            <span className="font-bold text-white">{monthRev.toLocaleString()} Kč</span>
+            <span className="font-bold text-white">{monthRev.toLocaleString()}</span>
             {" / "}
-            {goal.toLocaleString()} Kč
+            {goal.toLocaleString()}
           </span>
-          {reached && <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">🎉 Cíl splněn!</span>}
+          {reached && <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">🎉 Goal reached!</span>}
           <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">{pct}%</span>
         </div>
       </div>
@@ -97,20 +97,20 @@ export default function MonthlyGoalBar() {
       <div className="flex items-center gap-2 mt-2.5">
         <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
           <span className="text-sm">⏳</span>
-          <span className="text-xs text-white/70">Zbývá</span>
-          <span className="text-xs font-bold text-white">{daysLeft} dní</span>
+          <span className="text-xs text-white/70">Remaining</span>
+          <span className="text-xs font-bold text-white">{daysLeft} days</span>
         </div>
         {!reached && (
           <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
             <span className="text-sm">⚡</span>
-            <span className="text-xs text-white/70">Denně</span>
-            <span className="text-xs font-bold text-white">{dailyNeeded.toLocaleString()} Kč</span>
+            <span className="text-xs text-white/70">Daily needed</span>
+            <span className="text-xs font-bold text-white">{dailyNeeded.toLocaleString()}</span>
           </div>
         )}
         {reached && (
           <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
             <span className="text-sm">🚀</span>
-            <span className="text-xs font-bold text-white">Jedeme dál! +{(monthRev - goal).toLocaleString()} Kč nad cíl</span>
+            <span className="text-xs font-bold text-white">Keep going! +{(monthRev - goal).toLocaleString()} above goal</span>
           </div>
         )}
       </div>

@@ -17,18 +17,18 @@ export default function TodayPaymentsWidget({ payments }) {
           <div className="bg-slate-900 rounded-xl w-9 h-9 flex items-center justify-center">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" alt="" className="w-6 h-6 object-contain" />
           </div>
-          <h3 className="text-sm font-semibold text-white">Dnešní platby</h3>
+          <h3 className="text-sm font-semibold text-white">Today's payments</h3>
         </div>
         {todayPayments.length > 0 &&
         <span className="text-xs font-bold text-white bg-white/20 px-2 py-1 rounded-lg">
-            {total.toLocaleString()} Kč
+            {total.toLocaleString()}
           </span>
         }
       </div>
       <div className="p-5">
 
       {todayPayments.length === 0 ?
-        <p className="text-xs text-slate-500 text-center py-6">Dnes žádné platby</p> :
+        <p className="text-xs text-slate-500 text-center py-6">No payments today</p> :
 
         <div className="space-y-2 max-h-[13.5rem] overflow-y-auto pr-1">
           {todayPayments.map((p) =>
@@ -50,7 +50,7 @@ export default function TodayPaymentsWidget({ payments }) {
                 </div>
               </div>
               <span className="text-xs font-bold text-slate-100">
-                {(p.amount || 0).toLocaleString()} Kč
+                {(p.amount || 0).toLocaleString()}
               </span>
             </div>
           )}
