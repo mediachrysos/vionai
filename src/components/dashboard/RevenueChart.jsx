@@ -42,9 +42,9 @@ export default function RevenueChart({ payments }) {
   const data = buildChartData(payments, range.from, range.to);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-5">
       <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-        <h3 className="text-sm font-semibold text-gray-800">Tržby</h3>
+        <h3 className="text-sm font-semibold text-slate-200">Tržby</h3>
 
         <div className="flex items-center gap-2">
           <RangePicker range={range} activePreset={activePreset} onPreset={handlePreset} onDateChange={handleDateChange} />
@@ -65,13 +65,13 @@ export default function RevenueChart({ payments }) {
                 <stop offset="100%" stopColor="#e8c84a" />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="4 4" stroke="#f5f3ec" vertical={false} />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#a0a0a8" }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: "#a0a0a8" }} axisLine={false} tickLine={false} tickFormatter={v => `${v.toLocaleString()} Kč`} />
+            <CartesianGrid strokeDasharray="4 4" stroke="#2a2a2a" vertical={false} />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={v => `${v.toLocaleString()} Kč`} />
             <Tooltip
-              contentStyle={{ borderRadius: 12, border: "1px solid #e8d99a", boxShadow: "0 8px 24px rgba(201,162,39,0.12)", fontSize: 12, padding: "8px 12px" }}
+              contentStyle={{ borderRadius: 12, border: "1px solid #333", background: "#1e1e1e", color: "#e2e8f0", boxShadow: "0 8px 24px rgba(0,0,0,0.4)", fontSize: 12, padding: "8px 12px" }}
               formatter={(v) => [`${v.toLocaleString()} Kč`, "Tržby"]}
-              labelStyle={{ color: "#A8841C", fontWeight: 600 }}
+              labelStyle={{ color: "#C9A227", fontWeight: 600 }}
             />
             <Area type="monotone" dataKey="revenue" stroke="url(#lineGrad)" strokeWidth={3} fill="url(#revGrad)" dot={false} activeDot={{ r: 5, fill: "#C9A227", strokeWidth: 2, stroke: "#fff" }} />
           </AreaChart>

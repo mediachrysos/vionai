@@ -71,7 +71,7 @@ export default function MonthlyGoalBar() {
   const dailyNeeded = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
 
   return (
-    <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-xl px-5 py-3 mb-6 shadow-sm shadow-amber-200">
+    <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-xl px-5 py-3 mb-6 shadow-sm shadow-amber-900/30">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="bg-white/20 rounded-xl w-9 h-9 flex items-center justify-center">
