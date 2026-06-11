@@ -17,10 +17,10 @@ import TaskFormModal from "../components/tasks/TaskFormModal";
 import KanbanBoard from "../components/tasks/KanbanBoard";
 
 const priorityColors = {
-  low: "bg-slate-100 text-slate-600",
-  medium: "bg-blue-100 text-blue-700",
-  high: "bg-orange-100 text-orange-700",
-  urgent: "bg-red-100 text-red-700",
+  low: "bg-slate-800 text-slate-400 border-white/10",
+  medium: "bg-blue-950/50 text-blue-400 border-blue-700/30",
+  high: "bg-orange-950/50 text-orange-400 border-orange-700/30",
+  urgent: "bg-red-950/50 text-red-400 border-red-700/30",
 };
 const statusLabels = { todo: "K vyřízení", in_progress: "Probíhá", done: "Hotovo" };
 
@@ -70,7 +70,7 @@ export default function Tasks({ currentUser }) {
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat úkoly..." className="pl-10" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -98,16 +98,16 @@ export default function Tasks({ currentUser }) {
           onTaskClick={(t) => { setEditing(t); setShowForm(true); }}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Úkol</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Přiřazeno</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Priorita</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Termín</th>
+                <tr className="border-b border-white/10 bg-[#131929]">
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Úkol</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Přiřazeno</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Priorita</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Stav</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Termín</th>
                 </tr>
               </thead>
               <tbody>
@@ -117,22 +117,22 @@ export default function Tasks({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors cursor-pointer"
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
                     onClick={() => { setEditing(t); setShowForm(true); }}
                   >
                     <td className="px-5 py-3.5">
-                      <span className="text-sm font-medium text-gray-800">{t.title}</span>
+                      <span className="text-sm font-medium text-slate-200">{t.title}</span>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">{t.assignee_name || "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">{t.assignee_name || "—"}</td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className={cn("text-xs", priorityColors[t.priority])}>{t.priority}</Badge>
                     </td>
                     <td className="px-5 py-3.5">
                       <Badge variant="outline" className="text-xs">{statusLabels[t.status] || t.status}</Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">
+                    <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">
                       {t.due_date ? (
-                        <span className={cn(new Date(t.due_date) < new Date() && t.status !== "done" && "text-red-500 font-medium")}>
+                        <span className={cn(new Date(t.due_date) < new Date() && t.status !== "done" && "text-red-400 font-medium")}>
                           {format(new Date(t.due_date), "MMM d")}
                         </span>
                       ) : "—"}

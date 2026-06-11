@@ -24,14 +24,14 @@ function GoalDatePicker({ value, onChange, placeholder }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="w-full flex items-center gap-2 h-9 px-3 rounded-md border border-gray-200 bg-white text-sm hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center gap-2 h-9 px-3 rounded-md border border-white/10 bg-slate-800 text-sm hover:bg-slate-700 transition-colors"
         >
           <img
             src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png"
             alt=""
             className="w-4 h-4 object-contain flex-shrink-0"
           />
-          <span className={`flex-1 text-left ${selected ? "text-gray-800 font-medium" : "text-gray-400"}`}>
+          <span className={`flex-1 text-left ${selected ? "text-slate-200 font-medium" : "text-slate-500"}`}>
             {selected ? format(selected, "d. M. yyyy") : placeholder || "Vybrat datum"}
           </span>
           {value && (
@@ -60,9 +60,9 @@ function GoalDatePicker({ value, onChange, placeholder }) {
 }
 
 const statusConfig = {
-  pending: { label: "Pending approval", color: "bg-amber-100 text-amber-700", icon: Clock },
-  approved: { label: "Approved", color: "bg-green-100 text-green-700", icon: CheckCircle },
-  blocked: { label: "Blocked", color: "bg-red-100 text-red-700", icon: XCircle }
+  pending: { label: "Pending approval", color: "bg-amber-950/50 text-amber-300 border border-amber-700/30", icon: Clock },
+  approved: { label: "Approved", color: "bg-emerald-950/50 text-emerald-400 border border-emerald-700/30", icon: CheckCircle },
+  blocked: { label: "Blocked", color: "bg-red-950/50 text-red-400 border border-red-700/30", icon: XCircle }
 };
 
 export default function AdminUsers({ currentUser: currentUserProp }) {
@@ -135,12 +135,12 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   if (currentUser?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <Shield className="w-12 h-12 text-red-400 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-gray-800">Access Denied</h2>
-          <p className="text-sm text-gray-500 mt-1">This page is for administrators only.</p>
-        </div>
-      </div>);
+          <div className="text-center">
+            <Shield className="w-12 h-12 text-red-400 mx-auto mb-3" />
+            <h2 className="text-lg font-semibold text-slate-200">Access Denied</h2>
+            <p className="text-sm text-slate-500 mt-1">This page is for administrators only.</p>
+          </div>
+        </div>);
   }
 
   const pending = users.filter((u) => u.account_status === "pending");
@@ -149,12 +149,12 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-4">
       <div className="flex items-center gap-3 mb-2">
-        <div className="bg-slate-50 rounded-xl w-9 h-9 flex items-center justify-center shadow-sm shadow-amber-200">
+        <div className="bg-slate-800 rounded-xl w-9 h-9 flex items-center justify-center shadow-sm shadow-amber-200">
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Admin Portal</h1>
-          <p className="text-sm text-gray-500">Manage users, payments and permissions</p>
+          <h1 className="text-xl font-bold text-slate-100">Admin Portal</h1>
+          <p className="text-sm text-slate-500">Manage users, payments and permissions</p>
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         <>
             {pending.length > 0 &&
           <div className="mb-4">
-                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-2 flex items-center gap-1">
+                <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1">
                   <Clock className="w-3 h-3" /> Pending approval ({pending.length})
                 </p>
                 <div className="space-y-2">
@@ -179,7 +179,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
                 </div>
               </div>
           }
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">All users ({others.length})</p>
+            <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">All users ({others.length})</p>
             <div className="space-y-2">
               {others.map((u) => <UserRow key={u.id} user={u} onUpdate={updateUser} onDelete={deleteUser} models={models} dashboards={dashboards} setDashboards={setDashboards} />)}
             </div>
@@ -229,21 +229,21 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
 
 function Section({ label, icon, badge, open, onToggle, children }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors">
         
-        <div className="flex items-center gap-2 text-sm font-semibold text-gray-800">
-          <span className="text-gray-400">{icon}</span>
+        <div className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+          <span className="text-slate-500">{icon}</span>
           {label}
           {badge &&
           <span className="bg-amber-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center ml-1">{badge}</span>
           }
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+        {open ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
       </button>
-      {open && <div className="px-5 pb-5 pt-1 border-t border-gray-50">{children}</div>}
+      {open && <div className="px-5 pb-5 pt-1 border-t border-white/10">{children}</div>}
     </div>);
 }
 
@@ -375,18 +375,18 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   };
 
   return (
-    <div className="flex flex-col gap-0 bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+    <div className="flex flex-col gap-0 bg-[#131929] rounded-xl border border-white/10 overflow-hidden">
       <div className="flex items-center gap-3 flex-wrap px-4 py-3">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0">
           <span className="text-sm font-bold text-white">{(user.full_name || user.email || "?")[0].toUpperCase()}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-800">{user.full_name || "—"}</p>
-          <p className="text-xs text-gray-400">{user.email}</p>
+          <p className="text-sm font-semibold text-slate-200">{user.full_name || "—"}</p>
+          <p className="text-xs text-slate-500">{user.email}</p>
           {editingNickname ? (
             <div className="flex items-center gap-1 mt-1">
               <input
-                className="text-xs border border-gray-200 rounded px-2 py-0.5 h-6 w-32 focus:outline-none focus:ring-1 focus:ring-amber-300"
+                className="text-xs border border-white/10 bg-slate-800 text-slate-200 rounded px-2 py-0.5 h-6 w-32 focus:outline-none focus:ring-1 focus:ring-amber-400"
                 value={nickname}
                 onChange={e => setNickname(e.target.value)}
                 onKeyDown={async e => {
@@ -410,12 +410,12 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
                   setSavingNickname(false);
                   setEditingNickname(false);
                 }}
-                className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded hover:bg-amber-200"
+                className="text-[10px] bg-amber-900/50 text-amber-300 px-1.5 py-0.5 rounded hover:bg-amber-900/70"
               >{savingNickname ? "..." : "✓"}</button>
-              <button onClick={() => { setNickname(user.nickname || ""); setEditingNickname(false); }} className="text-[10px] text-gray-400 hover:text-gray-600">✕</button>
+              <button onClick={() => { setNickname(user.nickname || ""); setEditingNickname(false); }} className="text-[10px] text-slate-500 hover:text-slate-300">✕</button>
             </div>
           ) : (
-            <button onClick={() => setEditingNickname(true)} className="text-[10px] text-gray-400 hover:text-amber-600 mt-0.5 flex items-center gap-1 transition-colors">
+            <button onClick={() => setEditingNickname(true)} className="text-[10px] text-slate-500 hover:text-amber-400 mt-0.5 flex items-center gap-1 transition-colors">
               {nickname ? <><span className="font-medium text-amber-600">"{nickname}"</span> <span className="opacity-60">✎</span></> : <span className="opacity-60 hover:opacity-100">+ přezdívka</span>}
             </button>
           )}
@@ -434,8 +434,8 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
                 onClick={() => toggleRole(value)}
                 className={`text-xs px-2 py-1 rounded-full border font-medium transition-all ${
                   active
-                    ? "bg-violet-100 text-violet-700 border-violet-300"
-                    : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600"
+                    ? "bg-violet-950/50 text-violet-300 border-violet-700/40"
+                    : "bg-slate-800 text-slate-500 border-white/10 hover:border-slate-600 hover:text-slate-300"
                 }`}
               >
                 {label}
@@ -464,11 +464,11 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
       </div>
 
       {showPerms && !isAdmin &&
-      <div className="px-4 py-3 border-t border-gray-100 bg-white">
+      <div className="px-4 py-3 border-t border-white/10 bg-[#1a1a2e]">
           <div className="flex items-center gap-2 mb-3">
-            <Lock className="w-3.5 h-3.5 text-violet-500" />
-            <span className="text-xs font-semibold text-gray-600">Section access</span>
-            <span className="text-[10px] text-gray-400 ml-1">(empty = default by role)</span>
+            <Lock className="w-3.5 h-3.5 text-violet-400" />
+            <span className="text-xs font-semibold text-slate-400">Section access</span>
+            <span className="text-[10px] text-slate-600 ml-1">(empty = default by role)</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {PAGE_OPTIONS.map(({ page, label }) => {
@@ -477,8 +477,8 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
               <button key={page} onClick={() => togglePage(page)}
               className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all ${
               enabled ?
-              "bg-violet-100 text-violet-700 border-violet-300" :
-              "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600"}`
+              "bg-violet-950/50 text-violet-300 border-violet-700/40" :
+              "bg-slate-800 text-slate-500 border-white/10 hover:border-slate-600 hover:text-slate-300"}`
               }>
                   {enabled ? "✓ " : ""}{label}
                 </button>);
@@ -486,7 +486,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
           </div>
           {allowedPages.length > 0 &&
         <button onClick={() => { setAllowedPages([]); onUpdate(user.id, { allowed_pages: [] }); }}
-        className="mt-2 text-[11px] text-gray-400 hover:text-red-400 transition-colors underline">
+        className="mt-2 text-[11px] text-slate-600 hover:text-red-400 transition-colors underline">
               Reset to default
             </button>
         }
@@ -494,14 +494,14 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
       }
 
       {models.filter((m) => m.status === "active").length > 0 &&
-      <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-gray-100 bg-white/60">
-          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Models:</span>
+      <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#131929]">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Models:</span>
           {models.filter((m) => m.status === "active").map((m) => {
           const assigned = assignedIds.includes(m.id);
           return (
             <button key={m.id} onClick={() => toggleModel(m.id)}
             className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
-            assigned ? "bg-amber-50 text-[#C9A227] border-[#e8d99a]" : "bg-white text-gray-400 border-gray-200 hover:bg-gray-50"}`
+            assigned ? "bg-amber-950/50 text-amber-300 border-amber-700/30" : "bg-slate-800 text-slate-500 border-white/10 hover:bg-slate-700"}`
             }>
                 {assigned ? "✓ " : ""}{m.name}
               </button>);
@@ -510,12 +510,12 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
       }
 
       {isDesigner && dashboards.length > 0 &&
-        <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-gray-100 bg-violet-50/40">
-          <span className="text-[10px] font-semibold text-violet-500 uppercase tracking-wider">Social Dashboard:</span>
+        <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-violet-950/20">
+          <span className="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">Social Dashboard:</span>
           <select
             value={assignedDashboard?.id || "none"}
             onChange={e => handleDashboardAssign(e.target.value)}
-            className="text-xs h-7 border border-gray-200 rounded-lg px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-violet-300"
+            className="text-xs h-7 border border-white/10 rounded-lg px-2 bg-slate-800 text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500"
           >
             <option value="none">— not assigned —</option>
             {dashboards.map(db => (
@@ -525,7 +525,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
             ))}
           </select>
           {assignedDashboard && (
-            <span className="text-[10px] text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] text-violet-300 bg-violet-950/50 border border-violet-700/30 px-2 py-0.5 rounded-full">
               ✓ {assignedDashboard.name}
             </span>
           )}
@@ -580,11 +580,11 @@ function AddModelInline({ models, setModels }) {
       {/* Add form */}
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_160px_auto] gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Jméno *</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Jméno *</label>
           <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" className="h-9" />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Status</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Status</label>
           <Select value={form.status} onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}>
             <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -603,7 +603,7 @@ function AddModelInline({ models, setModels }) {
       {/* Search */}
       {models.length > 3 && (
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat modelky..." className="pl-10 h-9" />
         </div>
       )}
@@ -613,27 +613,27 @@ function AddModelInline({ models, setModels }) {
         <div className="space-y-2">
           {filtered.map((m) => (
             <Link key={m.id} to={`${createPageUrl("ModelDetail")}?id=${m.id}`} className="group block">
-              <div className="bg-gray-50 rounded-xl border border-gray-100 p-4 hover:border-[#e8d99a] hover:shadow-sm transition-all flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a] flex-shrink-0">
+              <div className="bg-[#1e1e1e] rounded-xl border border-white/10 p-4 hover:border-[#C9A227]/30 hover:shadow-sm transition-all flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-950/30 flex items-center justify-center border border-amber-700/30 flex-shrink-0">
                   {m.profile_photo
                     ? <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" />
                     : <Bot className="w-5 h-5 text-[#C9A227]" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800">{m.name}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${m.status === "active" ? "bg-amber-50 text-[#C9A227] border border-[#e8d99a]" : "bg-gray-100 text-gray-400"}`}>
+                  <p className="text-sm font-semibold text-slate-200">{m.name}</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${m.status === "active" ? "bg-amber-950/50 text-amber-300 border border-amber-700/30" : "bg-slate-800 text-slate-500 border border-white/10"}`}>
                     {m.status === "active" ? "Active" : "Inactive"}
                   </span>
                 </div>
                 <div className="text-right mr-4">
-                  <p className="text-xs text-gray-400">Revenue</p>
-                  <p className="text-sm font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} CZK</p>
+                  <p className="text-xs text-slate-500">Revenue</p>
+                  <p className="text-sm font-semibold text-slate-200">{(modelRevenue[m.id] || 0).toLocaleString()} CZK</p>
                 </div>
                 <div className="text-right mr-4">
-                  <p className="text-xs text-gray-400">Platby</p>
-                  <p className="text-sm font-semibold text-gray-900">{modelPaymentCount[m.id] || 0}</p>
+                  <p className="text-xs text-slate-500">Platby</p>
+                  <p className="text-sm font-semibold text-slate-200">{modelPaymentCount[m.id] || 0}</p>
                 </div>
-                <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-[#C9A227] transition-colors flex-shrink-0 mr-2" />
+                <ExternalLink className="w-4 h-4 text-slate-600 group-hover:text-[#C9A227] transition-colors flex-shrink-0 mr-2" />
                 <button onClick={(e) => handleDelete(e, m)} className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0">
                   <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
                 </button>
@@ -663,23 +663,23 @@ function AddCustomerInline({ users, onGenerateLink }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Full name *</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Full name *</label>
         <Input value={form.full_name} onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="John Smith" className="h-9" />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Email</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Email</label>
         <Input value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="jan@example.com" className="h-9" />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Bank name</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Bank name</label>
         <Input value={form.bank_name} onChange={(e) => setForm((p) => ({ ...p, bank_name: e.target.value }))} className="h-9" />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Account number</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Account number</label>
         <Input value={form.bank_account_number} onChange={(e) => setForm((p) => ({ ...p, bank_account_number: e.target.value }))} className="h-9" />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Assigned chatter</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Assigned chatter</label>
         <Select value={form.assigned_chatter} onValueChange={(v) => setForm((p) => ({ ...p, assigned_chatter: v }))}>
           <SelectTrigger className="h-9"><SelectValue placeholder="Select chatter" /></SelectTrigger>
           <SelectContent>
@@ -693,9 +693,9 @@ function AddCustomerInline({ users, onGenerateLink }) {
         </Button>
       </div>
       <div className="col-span-2 flex items-center gap-2 pt-1">
-        <div className="flex-1 border-t border-gray-100" />
-        <span className="text-xs text-gray-400">or</span>
-        <div className="flex-1 border-t border-gray-100" />
+        <div className="flex-1 border-t border-white/10" />
+        <span className="text-xs text-slate-600">or</span>
+        <div className="flex-1 border-t border-white/10" />
       </div>
       <div className="col-span-2">
         <Button variant="outline" onClick={onGenerateLink} className="w-full h-9 text-sm border-[#e8d99a] text-[#A8841C] hover:bg-[#faf6e6]">
@@ -744,7 +744,7 @@ function GoalSettingsInline() {
   return (
     <div className="space-y-3 max-w-md">
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Goal (CZK)</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Goal (CZK)</label>
         <Input
           type="number"
           value={goal}
@@ -754,11 +754,11 @@ function GoalSettingsInline() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Period start</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Period start</label>
           <GoalDatePicker value={startDate} onChange={setStartDate} placeholder="Select date" />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Period end</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Period end</label>
           <GoalDatePicker value={endDate} onChange={setEndDate} placeholder="Select date" />
         </div>
       </div>
@@ -816,7 +816,7 @@ function InvoiceSettingsInline() {
   return (
     <div className="space-y-3">
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Company name *</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Company name *</label>
         <Input 
           value={settings.company_name || ""} 
           onChange={(e) => setSettings({ ...settings, company_name: e.target.value })}
@@ -825,7 +825,7 @@ function InvoiceSettingsInline() {
         />
       </div>
       <div>
-        <label className="text-xs font-semibold text-gray-600 block mb-1">Company address</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1">Company address</label>
         <Input 
           value={settings.company_address || ""} 
           onChange={(e) => setSettings({ ...settings, company_address: e.target.value })}
@@ -835,7 +835,7 @@ function InvoiceSettingsInline() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">IČO</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">IČO</label>
           <Input 
             value={settings.ico || ""} 
             onChange={(e) => setSettings({ ...settings, ico: e.target.value })}
@@ -844,7 +844,7 @@ function InvoiceSettingsInline() {
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">DIČ</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">DIČ</label>
           <Input 
             value={settings.dic || ""} 
             onChange={(e) => setSettings({ ...settings, dic: e.target.value })}
@@ -855,7 +855,7 @@ function InvoiceSettingsInline() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Email</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Email</label>
           <Input 
             type="email"
             value={settings.email || ""} 
@@ -865,7 +865,7 @@ function InvoiceSettingsInline() {
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Phone</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Phone</label>
           <Input 
             value={settings.phone || ""} 
             onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
@@ -927,11 +927,11 @@ function BankAccountsInline({ accounts, setAccounts }) {
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3">
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Name *</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Name *</label>
           <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Main account" className="h-9" />
         </div>
         <div>
-          <label className="text-xs font-semibold text-gray-600 block mb-1">Account number *</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Account number *</label>
           <Input value={form.account_number} onChange={(e) => setForm((p) => ({ ...p, account_number: e.target.value }))} placeholder="123456/0100" className="h-9" />
         </div>
         <div className="flex items-end">
@@ -945,9 +945,9 @@ function BankAccountsInline({ accounts, setAccounts }) {
       {accounts.length > 0 &&
       <div className="space-y-2">
           {accounts.map((a) =>
-        <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50">
+        <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-white/10 bg-[#1e1e1e] hover:bg-white/5">
               <label className="relative cursor-pointer flex-shrink-0 group" title="Nahrát foto">
-                <div className="w-9 h-9 rounded-xl overflow-hidden border border-gray-200 bg-white flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/10 bg-slate-800 flex items-center justify-center">
                   {a.profile_photo ?
               <img src={a.profile_photo} alt={a.name} className="w-full h-full object-cover" /> :
               <Building2 className="w-4 h-4 text-teal-500" />
@@ -963,10 +963,10 @@ function BankAccountsInline({ accounts, setAccounts }) {
               </label>
 
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-semibold text-gray-800">{a.name}</span>
-                <span className="text-xs text-gray-400 ml-2">{a.account_number}{a.bank_name ? ` · ${a.bank_name}` : ""}</span>
+                <span className="text-sm font-semibold text-slate-200">{a.name}</span>
+                <span className="text-xs text-slate-500 ml-2">{a.account_number}{a.bank_name ? ` · ${a.bank_name}` : ""}</span>
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.is_active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.is_active ? "bg-emerald-950/50 text-emerald-400 border border-emerald-700/30" : "bg-slate-800 text-slate-500 border border-white/10"}`}>
                 {a.is_active ? "Active" : "Inactive"}
               </span>
               <button onClick={() => toggleActive(a)} className="text-xs text-[#C9A227] hover:underline">{a.is_active ? "Deactivate" : "Activate"}</button>

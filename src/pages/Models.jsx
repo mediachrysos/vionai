@@ -71,7 +71,7 @@ export default function Models({ currentUser }) {
       </PageHeader>
 
       <div className="relative max-w-md mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search models..." className="pl-10" />
       </div>
 
@@ -85,11 +85,11 @@ export default function Models({ currentUser }) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
-            className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5 hover:border-[#e8d99a] hover:shadow-[0_8px_24px_rgba(201,162,39,0.09)] transition-all">
+            className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5 hover:border-[#C9A227]/40 hover:shadow-[0_8px_24px_rgba(201,162,39,0.12)] transition-all">
             
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a] flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-950/30 flex items-center justify-center border border-amber-700/30 flex-shrink-0">
                       {m.profile_photo ?
                   <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" /> :
 
@@ -97,7 +97,7 @@ export default function Models({ currentUser }) {
                   }
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-800">{m.name}</h3>
+                      <h3 className="text-sm font-semibold text-slate-200">{m.name}</h3>
                       
 
                   
@@ -105,12 +105,12 @@ export default function Models({ currentUser }) {
                   </div>
                   <div className="flex items-center gap-4 ml-4">
                     <div className="text-right">
-                      <p className="text-xs text-gray-400">Revenue</p>
-                      <p className="text-sm font-semibold text-gray-900">{(modelRevenue[m.id] || 0).toLocaleString()} CZK</p>
+                      <p className="text-xs text-slate-500">Revenue</p>
+                      <p className="text-sm font-semibold text-slate-200">{(modelRevenue[m.id] || 0).toLocaleString()} CZK</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-400">Payments</p>
-                      <p className="text-sm font-semibold text-gray-900">{modelPaymentCount[m.id] || 0}</p>
+                      <p className="text-xs text-slate-500">Payments</p>
+                      <p className="text-sm font-semibold text-slate-200">{modelPaymentCount[m.id] || 0}</p>
                     </div>
                     {currentUser?.role === "admin" &&
                 <button onClick={(e) => {e.preventDefault();handleDelete(e, m);}} className="opacity-60 hover:opacity-100 transition-opacity flex-shrink-0">
