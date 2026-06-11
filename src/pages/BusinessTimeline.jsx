@@ -138,19 +138,19 @@ export default function BusinessTimeline() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-amber-950/40 border border-amber-700/30 flex items-center justify-center shadow-sm">
             <Map className="w-5 h-5 text-[#c29c24]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Business Timeline</h1>
-            <p className="text-sm text-gray-400">Strategická mapa · výkon · priority</p>
+            <h1 className="text-2xl font-bold text-slate-100">Business Timeline</h1>
+            <p className="text-sm text-slate-500">Strategická mapa · výkon · priority</p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Owner filter */}
-          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-1.5">
-            <User className="w-3.5 h-3.5 text-gray-400" />
-            <select value={filterOwner} onChange={e => setFilterOwner(e.target.value)} className="text-xs text-gray-700 focus:outline-none bg-transparent">
+          <div className="flex items-center gap-1.5 bg-[#1e1e1e] border border-white/10 rounded-xl px-3 py-1.5">
+            <User className="w-3.5 h-3.5 text-slate-500" />
+            <select value={filterOwner} onChange={e => setFilterOwner(e.target.value)} className="text-xs text-slate-300 focus:outline-none bg-transparent">
               <option value="all">Všichni</option>
               {OWNERS.map(o => <option key={o} value={o}>{o}</option>)}
             </select>
@@ -172,7 +172,7 @@ export default function BusinessTimeline() {
       </div>
 
       {/* Main Goal */}
-      <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.04)] px-5 py-4 mb-6">
+      <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] px-5 py-4 mb-6">
         {editingGoal ? (
           <div className="flex items-center gap-3 flex-wrap">
             <input
@@ -180,33 +180,33 @@ export default function BusinessTimeline() {
               value={goalDraft}
               onChange={e => setGoalDraft(e.target.value)}
               placeholder="Název hlavního cíle..."
-              className="flex-1 text-sm border border-amber-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#c29c24] min-w-[200px]"
+              className="flex-1 text-sm border border-amber-700/40 bg-slate-800 text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#c29c24] min-w-[200px]"
             />
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">Postup:</span>
+              <span className="text-xs text-slate-500">Postup:</span>
               <input
                 type="number"
                 min={0} max={100}
                 value={pctDraft}
                 onChange={e => setPctDraft(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
-                className="w-16 text-sm border border-amber-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#c29c24] text-center"
+                className="w-16 text-sm border border-amber-700/40 bg-slate-800 text-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#c29c24] text-center"
               />
-              <span className="text-xs text-gray-400">%</span>
+              <span className="text-xs text-slate-500">%</span>
             </div>
             <button onClick={saveGoal} className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-[#c29c24] to-[#a8841c] text-white text-xs rounded-lg font-medium"><Check className="w-3.5 h-3.5" /> Uložit</button>
-            <button onClick={() => { setEditingGoal(false); setGoalDraft(mainGoal); setPctDraft(mainGoalPct); }} className="text-gray-400 hover:text-gray-600"><X className="w-4 h-4" /></button>
+            <button onClick={() => { setEditingGoal(false); setGoalDraft(mainGoal); setPctDraft(mainGoalPct); }} className="text-slate-500 hover:text-slate-300"><X className="w-4 h-4" /></button>
           </div>
         ) : (
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">🎯 Long Term Goal</span>
-                  <span className="text-sm font-bold text-gray-800">{mainGoal}</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">🎯 Long Term Goal</span>
+                  <span className="text-sm font-bold text-slate-200">{mainGoal}</span>
                 </div>
                 <span className="text-xs font-bold text-[#c29c24]">{mainGoalPct}%</span>
               </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                 <motion.div
                   className="h-full rounded-full bg-gradient-to-r from-[#c29c24] to-[#e8c84a]"
                   initial={false}
@@ -215,7 +215,7 @@ export default function BusinessTimeline() {
                 />
               </div>
             </div>
-            <button onClick={() => { setGoalDraft(mainGoal); setPctDraft(mainGoalPct); setEditingGoal(true); }} className="text-gray-300 hover:text-[#c29c24] transition-colors flex-shrink-0">
+            <button onClick={() => { setGoalDraft(mainGoal); setPctDraft(mainGoalPct); setEditingGoal(true); }} className="text-slate-600 hover:text-[#c29c24] transition-colors flex-shrink-0">
               <Pencil className="w-4 h-4" />
             </button>
           </div>
@@ -224,11 +224,11 @@ export default function BusinessTimeline() {
 
       {/* Add month form */}
       {addingMonth && (
-        <div className="bg-white rounded-xl border border-[#e8d99a] shadow-sm px-5 py-4 mb-6 flex flex-wrap items-center gap-3">
-          <input value={newMonthLabel} onChange={e => setNewMonthLabel(e.target.value)} placeholder="Název, např. Září 2026" className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#c29c24] w-48" />
-          <input value={newMonthKey} onChange={e => setNewMonthKey(e.target.value)} placeholder="Klíč, např. 2026-09" className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#c29c24] w-36" />
+        <div className="bg-[#1e1e1e] rounded-xl border border-amber-700/30 shadow-sm px-5 py-4 mb-6 flex flex-wrap items-center gap-3">
+          <input value={newMonthLabel} onChange={e => setNewMonthLabel(e.target.value)} placeholder="Název, např. Září 2026" className="text-sm border border-white/10 bg-slate-800 text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#c29c24] w-48" />
+          <input value={newMonthKey} onChange={e => setNewMonthKey(e.target.value)} placeholder="Klíč, např. 2026-09" className="text-sm border border-white/10 bg-slate-800 text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#c29c24] w-36" />
           <button onClick={addMonth} disabled={createMutation.isPending} className="px-4 py-1.5 bg-[#c29c24] text-white text-sm rounded-lg hover:bg-[#a8841c]">Vytvořit</button>
-          <button onClick={() => setAddingMonth(false)} className="text-sm text-gray-400 hover:text-gray-600">Zrušit</button>
+          <button onClick={() => setAddingMonth(false)} className="text-sm text-slate-500 hover:text-slate-300">Zrušit</button>
         </div>
       )}
 

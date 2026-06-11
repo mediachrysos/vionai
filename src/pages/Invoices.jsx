@@ -12,10 +12,10 @@ import EmptyState from "../components/ui-custom/EmptyState";
 import InvoiceModal from "../components/invoices/InvoiceModal";
 
 const statusColors = {
-  draft: "bg-gray-50 text-gray-600 border-gray-200",
-  issued: "bg-blue-50 text-blue-700 border-blue-100",
-  paid: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  cancelled: "bg-red-50 text-red-600 border-red-100",
+  draft: "bg-slate-800 text-slate-400 border-white/10",
+  issued: "bg-blue-950/50 text-blue-400 border-blue-700/30",
+  paid: "bg-emerald-950/50 text-emerald-400 border-emerald-700/30",
+  cancelled: "bg-red-950/50 text-red-400 border-red-700/30",
 };
 
 export default function Invoices({ currentUser }) {
@@ -71,7 +71,7 @@ export default function Invoices({ currentUser }) {
 
       <div className="flex items-center gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <Input 
             value={search} 
             onChange={(e) => setSearch(e.target.value)} 
@@ -89,19 +89,19 @@ export default function Invoices({ currentUser }) {
         />
       ) : filtered.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-sm text-gray-400">Žádné faktury neodpovídají vyhledávání</p>
+          <p className="text-sm text-slate-500">Žádné faktury neodpovídají vyhledávání</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Číslo faktury</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Zákazník</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Vystaveno</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Stav</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Částka</th>
+                <tr className="border-b border-white/10 bg-[#131929]">
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Číslo faktury</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Zákazník</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Vystaveno</th>
+                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Stav</th>
+                  <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Částka</th>
                   <th className="px-5 py-3"></th>
                 </tr>
               </thead>
@@ -112,7 +112,7 @@ export default function Invoices({ currentUser }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.015 }}
-                    className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
                     <td className="px-5 py-3.5">
                       <button 
@@ -125,10 +125,10 @@ export default function Invoices({ currentUser }) {
                         {inv.invoice_number}
                       </button>
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-800">
+                    <td className="px-5 py-3.5 text-sm text-slate-300">
                       {inv.customer_name}
                     </td>
-                    <td className="px-5 py-3.5 text-sm text-gray-400 hidden md:table-cell">
+                    <td className="px-5 py-3.5 text-sm text-slate-500 hidden md:table-cell">
                       {inv.issue_date ? format(new Date(inv.issue_date), "d. M. yyyy") : "—"}
                     </td>
                     <td className="px-5 py-3.5">
@@ -136,20 +136,20 @@ export default function Invoices({ currentUser }) {
                         {inv.status}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-gray-900">
+                    <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-200">
                       {(inv.total_amount || 0).toLocaleString()} {inv.currency}
                     </td>
                     <td className="px-5 py-3.5 text-right space-x-1">
                       <button
                         onClick={() => handleDownloadPdf(inv)}
-                        className="text-gray-400 hover:text-[#C9A227] transition-colors inline-block"
+                        className="text-slate-500 hover:text-[#C9A227] transition-colors inline-block"
                         title="Stáhnout PDF"
                       >
                         <Download className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(inv)}
-                        className="text-gray-300 hover:text-red-500 transition-colors inline-block ml-2"
+                        className="text-slate-600 hover:text-red-400 transition-colors inline-block ml-2"
                         title="Smazat"
                       >
                         <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />

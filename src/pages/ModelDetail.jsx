@@ -91,15 +91,15 @@ export default function ModelDetail({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
-      <Link to={createPageUrl("Models")} className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-[#C9A227] mb-4 transition-colors">
+      <Link to={createPageUrl("Models")} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#C9A227] mb-4 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Zpět na modelky
       </Link>
 
       {editMode ?
-      <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-6 mb-6">
+      <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-6 mb-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-bold text-gray-900">Upravit modelku</h2>
-            <button onClick={() => setEditMode(false)} className="text-gray-400 hover:text-gray-600">
+            <h2 className="text-lg font-bold text-slate-100">Upravit modelku</h2>
+            <button onClick={() => setEditMode(false)} className="text-slate-500 hover:text-slate-300">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -108,7 +108,7 @@ export default function ModelDetail({ currentUser }) {
             <div>
               <Label>Profilová fotografie</Label>
               <div className="mt-2 flex items-center gap-4">
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-amber-950/30 flex items-center justify-center border border-amber-700/30">
                   {editForm.profile_photo ?
                 <img src={editForm.profile_photo} alt="foto" className="w-full h-full object-cover" /> :
                 <Bot className="w-8 h-8 text-[#C9A227]" />}
@@ -116,7 +116,7 @@ export default function ModelDetail({ currentUser }) {
                 <div className="flex flex-col gap-2">
                   <label className="cursor-pointer">
                     <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploading} />
-                    <div className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-medium border border-[#e8d99a] hover:bg-amber-100 transition-colors">
+                    <div className="px-3 py-1.5 rounded-lg bg-amber-950/30 text-amber-300 text-xs font-medium border border-amber-700/30 hover:bg-amber-950/50 transition-colors">
                       {uploading ? "Nahrávám..." : "Nahrát fotku"}
                     </div>
                   </label>
@@ -155,7 +155,7 @@ export default function ModelDetail({ currentUser }) {
 
             <div>
               <Label>Přiřazení chatteři</Label>
-              <p className="text-xs text-gray-400 mb-3">Klikni na chattera pro přiřazení / odebrání</p>
+              <p className="text-xs text-slate-500 mb-3">Klikni na chattera pro přiřazení / odebrání</p>
               <div className="flex flex-wrap gap-2">
                 {users?.map((u) =>
               <button
@@ -164,7 +164,7 @@ export default function ModelDetail({ currentUser }) {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 editForm.assigned_chatters.includes(u.email) ?
                 "bg-[#C9A227] text-white" :
-                "bg-gray-100 text-gray-700 hover:bg-gray-200"}`
+                "bg-slate-800 text-slate-400 border border-white/10 hover:bg-slate-700"}`
                 }>
                 
                     {u.full_name} {editForm.assigned_chatters.includes(u.email) && <X className="w-3 h-3 inline ml-1" />}
@@ -173,7 +173,7 @@ export default function ModelDetail({ currentUser }) {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
+            <div className="flex justify-end gap-2 pt-4 border-t border-white/10">
               <Button variant="outline" onClick={() => setEditMode(false)}>Zrušit</Button>
               <Button onClick={handleSave} disabled={!editForm.name || updateMutation.isPending} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
                 {updateMutation.isPending ? "Ukládám..." : "Uložit"}
@@ -184,13 +184,13 @@ export default function ModelDetail({ currentUser }) {
 
       <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl overflow-hidden bg-amber-50 flex items-center justify-center border border-[#e8d99a]">
+            <div className="w-14 h-14 rounded-xl overflow-hidden bg-amber-950/30 flex items-center justify-center border border-amber-700/30">
               {model.profile_photo ?
             <img src={model.profile_photo} alt={model.name} className="w-full h-full object-cover" /> :
             <Bot className="w-7 h-7 text-[#C9A227]" />}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">{model.name}</h1>
+              <h1 className="text-2xl font-bold text-slate-100">{model.name}</h1>
               
 
             
@@ -205,31 +205,31 @@ export default function ModelDetail({ currentUser }) {
       }
 
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <p className="text-xs text-gray-400 uppercase tracking-wider">Celkové tržby</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{totalRevenue.toLocaleString()} Kč</p>
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
+          <p className="text-xs text-slate-500 uppercase tracking-wider">Celkové tržby</p>
+          <p className="text-2xl font-bold text-[#C9A227] mt-1">{totalRevenue.toLocaleString()} Kč</p>
         </div>
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <p className="text-xs text-gray-400 uppercase tracking-wider">Platby</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{payments.length}</p>
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
+          <p className="text-xs text-slate-500 uppercase tracking-wider">Platby</p>
+          <p className="text-2xl font-bold text-slate-100 mt-1">{payments.length}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <p className="text-xs text-gray-400 uppercase tracking-wider">Zákazníci</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{customers.length}</p>
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
+          <p className="text-xs text-slate-500 uppercase tracking-wider">Zákazníci</p>
+          <p className="text-2xl font-bold text-slate-100 mt-1">{customers.length}</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"> Zákazníci</h3>
-          {customers.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Žádní zákazníci</p> :
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
+          <h3 className="text-sm font-semibold text-slate-200 mb-4 flex items-center gap-2"> Zákazníci</h3>
+          {customers.length === 0 ? <p className="text-sm text-slate-500 text-center py-4">Žádní zákazníci</p> :
           <div className="space-y-2 max-h-64 overflow-y-auto">
               {customers.map((c) =>
-            <Link key={c.id} to={createPageUrl("CustomerDetail") + `?id=${c.id}`} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#faf6e6]/50 hover:border-[#e8d99a]/50 border border-transparent transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-xs font-semibold text-[#C9A227]">{c.full_name?.[0]?.toUpperCase()}</div>
+            <Link key={c.id} to={createPageUrl("CustomerDetail") + `?id=${c.id}`} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-amber-950/40 flex items-center justify-center text-xs font-semibold text-[#C9A227]">{c.full_name?.[0]?.toUpperCase()}</div>
                   <div>
-                    <p className="text-sm font-medium text-gray-700">{c.full_name}</p>
-                    <p className="text-xs text-gray-400">{c.email || "—"}</p>
+                    <p className="text-sm font-medium text-slate-300">{c.full_name}</p>
+                    <p className="text-xs text-slate-500">{c.email || "—"}</p>
                   </div>
                 </Link>
             )}
@@ -237,17 +237,17 @@ export default function ModelDetail({ currentUser }) {
           }
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2"> Poslední platby</h3>
-          {payments.length === 0 ? <p className="text-sm text-gray-400 text-center py-4">Zatím žádné platby</p> :
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
+          <h3 className="text-sm font-semibold text-slate-200 mb-4 flex items-center gap-2"> Poslední platby</h3>
+          {payments.length === 0 ? <p className="text-sm text-slate-500 text-center py-4">Zatím žádné platby</p> :
           <div className="space-y-2 max-h-80 overflow-y-auto">
               {payments.slice(0, 10).map((p) =>
-            <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#faf6e6]/50 transition-colors">
+            <div key={p.id} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/5 transition-colors">
                   <div>
-                    <p className="text-sm font-medium text-gray-700">{p.customer_name || "Zákazník"}</p>
-                    <p className="text-xs text-gray-400">{p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}</p>
+                    <p className="text-sm font-medium text-slate-300">{p.customer_name || "Zákazník"}</p>
+                    <p className="text-xs text-slate-500">{p.created_date ? format(new Date(p.created_date), "d. M. yyyy") : "—"}</p>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{(p.amount || 0).toLocaleString()} Kč</span>
+                  <span className="text-sm font-semibold text-slate-200">{(p.amount || 0).toLocaleString()} Kč</span>
                 </div>
             )}
             </div>

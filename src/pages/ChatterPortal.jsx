@@ -61,14 +61,14 @@ function AdminChattingSpace({ currentUser }) {
   if (selectedChatter) {
     return (
       <div>
-        <div className="bg-white border-b border-[#ececec] px-6 py-3 flex items-center gap-3">
+        <div className="bg-[#1e1e1e] border-b border-white/10 px-6 py-3 flex items-center gap-3">
           <button
             onClick={() => setSelectedChatter(null)}
-            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors font-medium">
+            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-200 transition-colors font-medium">
             ← Zpět na přehled
           </button>
-          <span className="text-gray-200">|</span>
-          <span className="text-xs text-gray-400">Zobrazuješ dashboard jako: <span className="font-semibold text-[#C9A227]">{selectedChatter.nickname || selectedChatter.full_name}</span></span>
+          <span className="text-white/10">|</span>
+          <span className="text-xs text-slate-500">Zobrazuješ dashboard jako: <span className="font-semibold text-[#C9A227]">{selectedChatter.nickname || selectedChatter.full_name}</span></span>
         </div>
         <ChatterView currentUser={selectedChatter} isAdminView={true} />
       </div>
@@ -83,7 +83,7 @@ function AdminChattingSpace({ currentUser }) {
       {chatters.length > 0 && <AdminShiftCalendar chatters={chatters} />}
 
       {chatters.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-slate-600">
           <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
           <p className="text-sm">Zatím žádní chatteři</p>
         </div>
@@ -95,24 +95,24 @@ function AdminChattingSpace({ currentUser }) {
               <button
                 key={u.id}
                 onClick={() => setSelectedChatter(u)}
-                className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-4 flex items-center justify-between hover:border-[#e8d99a] hover:shadow-md transition-all text-left">
+                className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm p-4 flex items-center justify-between hover:border-[#C9A227]/30 hover:shadow-md transition-all text-left">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold">
                     {(u.nickname || u.full_name || "?")[0].toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-800">{u.nickname || u.full_name}</p>
-                    <p className="text-xs text-gray-400">{u.email}</p>
+                    <p className="text-sm font-semibold text-slate-200">{u.nickname || u.full_name}</p>
+                    <p className="text-xs text-slate-500">{u.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6 text-right">
                   <div>
-                    <p className="text-xs text-gray-400">Tento měsíc</p>
-                    <p className="text-sm font-bold text-gray-900">{stats.monthTotal.toLocaleString()} Kč</p>
+                    <p className="text-xs text-slate-500">Tento měsíc</p>
+                    <p className="text-sm font-bold text-slate-200">{stats.monthTotal.toLocaleString()} Kč</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400">Plateb</p>
-                    <p className="text-sm font-bold text-gray-700">{stats.payments.length}</p>
+                    <p className="text-xs text-slate-500">Plateb</p>
+                    <p className="text-sm font-bold text-slate-400">{stats.payments.length}</p>
                   </div>
                 </div>
               </button>
@@ -210,7 +210,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f7f8]">
+    <div className="min-h-screen bg-[#272727]">
       {showNicknameModal && (
         <NicknameSetupModal
           user={currentUser}
@@ -218,14 +218,14 @@ function ChatterView({ currentUser, isAdminView = false }) {
       )}
 
       {/* Hero */}
-      <div className="bg-white border-b border-[#ececec] px-6 pt-6 pb-5">
+      <div className="bg-[#1e1e1e] border-b border-white/10 px-6 pt-6 pb-5">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest">Chatting Space</p>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
               {(displayName || "?")[0].toUpperCase()}
             </div>
-            <p className="text-gray-900 text-sm font-semibold">{displayName}</p>
+            <p className="text-slate-200 text-sm font-semibold">{displayName}</p>
           </div>
         </div>
       </div>
@@ -240,7 +240,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
             onAdd={handleAddNote}
             onDelete={handleDeleteNote} />
 
-          <div className="bg-white border border-[#ececec] rounded-2xl p-6">
+          <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-6">
             <OnboardingLinkForm models={models.filter((m) => {
               const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
               return ids.length === 0 || ids.includes(m.id);
@@ -250,7 +250,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
         {/* Dnešní výkonnost + Výplata — side by side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden">
+          <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
             <TierLadder
               todayRevenue={todayRevenue}
               hoursWorked={hoursToday}

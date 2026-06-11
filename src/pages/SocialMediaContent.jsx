@@ -257,20 +257,20 @@ export default function SocialMediaContent({ currentUser }) {
   if (!isAdmin && !myEmail) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6">
+    <div className="min-h-screen bg-[#272727] p-6">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Graphic Space</h1>
-            <p className="text-sm text-gray-400 mt-0.5">Weekly Designer Schedule</p>
+            <h1 className="text-xl font-bold text-slate-100">Graphic Space</h1>
+            <p className="text-sm text-slate-500 mt-0.5">Weekly Designer Schedule</p>
           </div>
           <div className="flex items-center gap-2">
             {isAdmin && activeDashboard && (
               <button
                 onClick={() => { setShowEditor(e => !e); setShowDashboardManager(false); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showEditor ? "bg-[#faf6e6] border-[#C9A227] text-[#C9A227]" : "bg-white border-gray-200 text-gray-600 hover:border-[#C9A227]"}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showEditor ? "bg-amber-950/50 border-[#C9A227] text-[#C9A227]" : "bg-[#1e1e1e] border-white/10 text-slate-400 hover:border-[#C9A227]/40"}`}
               >
                 <Settings className="w-4 h-4" />
                 {showEditor ? "Close editor" : "Edit program"}
@@ -279,7 +279,7 @@ export default function SocialMediaContent({ currentUser }) {
             {isAdmin && (
               <button
                 onClick={() => { setShowDashboardManager(e => !e); setShowEditor(false); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showDashboardManager ? "bg-violet-50 border-violet-300 text-violet-700" : "bg-white border-gray-200 text-gray-600 hover:border-violet-300"}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showDashboardManager ? "bg-violet-950/50 border-violet-700/40 text-violet-300" : "bg-[#1e1e1e] border-white/10 text-slate-400 hover:border-violet-700/40"}`}
               >
                 <Settings className="w-4 h-4" />
                 Dashboards
@@ -307,12 +307,12 @@ export default function SocialMediaContent({ currentUser }) {
                 className={`flex flex-col items-start px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                   selectedDashboardId === db.id
                     ? "bg-[#C9A227] text-white border-[#C9A227] shadow-sm"
-                    : "bg-white border-gray-200 text-gray-600 hover:border-[#C9A227]"
+                    : "bg-[#1e1e1e] border-white/10 text-slate-400 hover:border-[#C9A227]/40"
                 }`}
               >
                 <span>{db.name}</span>
                 {db.designer_name && (
-                  <span className={`text-xs mt-0.5 ${selectedDashboardId === db.id ? "text-white/70" : "text-gray-400"}`}>
+                  <span className={`text-xs mt-0.5 ${selectedDashboardId === db.id ? "text-white/70" : "text-slate-600"}`}>
                     🎨 {db.designer_name}
                   </span>
                 )}
@@ -322,36 +322,36 @@ export default function SocialMediaContent({ currentUser }) {
         )}
 
         {isAdmin && dashboards.length === 0 && !showDashboardManager && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700">
+          <div className="bg-amber-950/30 border border-amber-700/30 rounded-xl px-4 py-3 text-sm text-amber-300">
             No dashboards. Click <strong>Dashboards</strong> to create the first one.
           </div>
         )}
 
         {/* No designer assigned — info only */}
         {isAdmin && activeDashboard && !activeDashboard.designer_email && (
-          <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500">
+          <div className="bg-[#1e1e1e] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-500">
             No designer assigned — the program is visible to admins only.
           </div>
         )}
 
         {/* Week nav */}
         {(activeDesignerEmail || isAdmin) && (
-          <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-200 px-4 py-3">
-            <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-              <ChevronLeft className="w-4 h-4 text-gray-500" />
+          <div className="flex items-center gap-3 bg-[#1e1e1e] rounded-2xl border border-white/10 px-4 py-3">
+            <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center">
+              <ChevronLeft className="w-4 h-4 text-slate-400" />
             </button>
             <div className="flex-1 flex flex-col items-center">
-              <p className="text-sm font-semibold text-gray-700">{formatWeekLabel(weekStart)}</p>
+              <p className="text-sm font-semibold text-slate-200">{formatWeekLabel(weekStart)}</p>
               {program?.is_draft && (
-                <span className="text-[10px] text-amber-600 flex items-center gap-1 mt-0.5">
+                <span className="text-[10px] text-amber-400 flex items-center gap-1 mt-0.5">
                   <Copy className="w-2.5 h-2.5" /> návrh z minulého týdne
                 </span>
               )}
             </div>
-            <button onClick={() => { const next = addWeeks(weekStart, 1); handleWeekChange(next, weekStart); }} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-              <ChevronRight className="w-4 h-4 text-gray-500" />
+            <button onClick={() => { const next = addWeeks(weekStart, 1); handleWeekChange(next, weekStart); }} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center">
+              <ChevronRight className="w-4 h-4 text-slate-400" />
             </button>
-            <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-[#faf6e6]">
+            <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-amber-950/30">
               This week
             </button>
           </div>
@@ -404,7 +404,7 @@ export default function SocialMediaContent({ currentUser }) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 text-gray-400 text-sm">
+          <div className="text-center py-16 text-slate-600 text-sm">
             {isAdmin ? "Select a dashboard." : "You have no dashboard assigned yet."}
           </div>
         )}
