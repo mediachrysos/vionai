@@ -47,7 +47,9 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
         </div>
         <div className="text-right">
           <p className="text-base font-bold text-emerald-600">{totalDue.toLocaleString("cs-CZ")} Kč</p>
-
+          {carryOver > 0 && (
+            <p className="text-xs text-orange-500 font-medium">+ {carryOver.toLocaleString("cs-CZ")} Kč přenos</p>
+          )}
         </div>
       </div>
 
