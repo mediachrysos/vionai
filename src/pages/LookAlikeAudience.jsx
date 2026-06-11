@@ -86,15 +86,15 @@ export default function LookAlikeAudience() {
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Look-alike Audience</h1>
-          <p className="text-sm text-gray-500 mt-1">{audience.length} kontaktů</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-100">Look-alike Audience</h1>
+          <p className="text-sm text-slate-500 mt-1">{audience.length} kontaktů</p>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
             onClick={handleSync}
             disabled={syncing}
-            className="border-blue-200 text-blue-700 hover:bg-blue-50 gap-2"
+            className="border-white/10 text-slate-300 hover:bg-white/5 gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
             Synchronizovat
@@ -102,7 +102,7 @@ export default function LookAlikeAudience() {
           <Button
             variant="outline"
             onClick={downloadXlsx}
-            className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 gap-2"
+            className="border-white/10 text-slate-300 hover:bg-white/5 gap-2"
           >
             <Download className="w-4 h-4" />
             Export .csv
@@ -111,7 +111,7 @@ export default function LookAlikeAudience() {
       </div>
 
       <div className="relative mb-5">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -120,26 +120,26 @@ export default function LookAlikeAudience() {
         />
       </div>
 
-      <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 w-12">#</th>
-                <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Křestní jméno</th>
-                <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Příjmení</th>
-                <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Telefon</th>
-                <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Celkem (CZK)</th>
+              <tr className="border-b border-white/10 bg-white/5">
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 w-12">#</th>
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Křestní jméno</th>
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Příjmení</th>
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Telefon</th>
+                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Celkem (CZK)</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-12 text-gray-400 text-sm">Načítám...</td>
+                  <td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Načítám...</td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-12 text-gray-400 text-sm">Žádné záznamy</td>
+                  <td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Žádné záznamy</td>
                 </tr>
               ) : (
                 filtered.map((a, i) => {
@@ -150,17 +150,17 @@ export default function LookAlikeAudience() {
                     return (paymentTotals[key] || paymentTotals[keyRev] || 0) > 0;
                   })();
                   return (
-                    <tr key={a.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                      <td className="px-5 py-3.5 text-sm text-gray-400">{i + 1}</td>
-                      <td className="px-5 py-3.5 text-sm font-medium text-gray-800">{a.first_name}</td>
-                      <td className="px-5 py-3.5 text-sm font-medium text-gray-800">{a.last_name}</td>
-                      <td className="px-5 py-3.5 text-sm text-gray-600 font-mono">{a.phone || "—"}</td>
+                    <tr key={a.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="px-5 py-3.5 text-sm text-slate-500">{i + 1}</td>
+                      <td className="px-5 py-3.5 text-sm font-medium text-slate-200">{a.first_name}</td>
+                      <td className="px-5 py-3.5 text-sm font-medium text-slate-200">{a.last_name}</td>
+                      <td className="px-5 py-3.5 text-sm text-slate-400 font-mono">{a.phone || "—"}</td>
                       <td className="px-5 py-3.5 text-right">
-                        <span className={`text-sm font-semibold ${isFromDB ? "text-emerald-600" : "text-gray-700"}`}>
+                        <span className={`text-sm font-semibold ${isFromDB ? "text-emerald-400" : "text-slate-300"}`}>
                           {total > 0 ? `${total.toLocaleString()} Kč` : "—"}
                         </span>
                         {isFromDB && (
-                          <span className="ml-1.5 text-[10px] text-emerald-500 bg-emerald-50 border border-emerald-100 rounded px-1 py-0.5">live</span>
+                          <span className="ml-1.5 text-[10px] text-emerald-400 bg-emerald-950/50 border border-emerald-700/30 rounded px-1 py-0.5">live</span>
                         )}
                       </td>
                     </tr>

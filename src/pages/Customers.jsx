@@ -341,11 +341,11 @@ export default function Customers({ currentUser }) {
       {filtered.length === 0 && !isLoading ?
       <EmptyState icon={UserCircle} title="No customers" description="Add your first customer to get started" actionLabel="Add customer" onAction={() => setShowForm(true)} /> :
 
-      <div className="bg-[#131929] rounded-xl border border-slate-700/50 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
+      <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700/50 bg-slate-800/30">
+                <tr className="border-b border-white/10 bg-white/5">
                   <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Name</th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
                   <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Models</th>

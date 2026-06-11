@@ -70,7 +70,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
 
         <div className="px-5 py-4 overflow-y-auto flex-1">
           {duplicate && (
-            <Alert className="border-amber-200 bg-amber-50 mb-3">
+            <Alert className="border-amber-700/30 bg-amber-950/30 mb-3">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
               <AlertDescription className="text-xs">
                 Podobný zákazník již existuje: <strong>{duplicate.full_name}</strong> ({duplicate.email || duplicate.bank_account_number}).
@@ -80,27 +80,27 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
 
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
-              <Label className="text-xs text-gray-500">Celé jméno *</Label>
+              <Label className="text-xs text-slate-400">Celé jméno *</Label>
               <Input value={form.full_name} onChange={e => handleChange("full_name", e.target.value)} placeholder="Jan Novák" className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">Email</Label>
+              <Label className="text-xs text-slate-400">Email</Label>
               <Input type="email" value={form.email || ""} onChange={e => handleChange("email", e.target.value)} placeholder="jan@example.com" className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">Telefon</Label>
+              <Label className="text-xs text-slate-400">Telefon</Label>
               <Input type="tel" value={form.phone || ""} onChange={e => handleChange("phone", e.target.value)} placeholder="+420 123 456 789" className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">Název banky</Label>
+              <Label className="text-xs text-slate-400">Název banky</Label>
               <Input value={form.bank_name || ""} onChange={e => handleChange("bank_name", e.target.value)} className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">Číslo účtu</Label>
+              <Label className="text-xs text-slate-400">Číslo účtu</Label>
               <Input value={form.bank_account_number || ""} onChange={e => handleChange("bank_account_number", e.target.value)} className="mt-1 h-8 text-sm" />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">Den výplaty (1–31)</Label>
+              <Label className="text-xs text-slate-400">Den výplaty (1–31)</Label>
               <Input
                 type="number" min={1} max={31}
                 value={form.pay_day_of_month || ""}
@@ -110,7 +110,7 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
               />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">Status</Label>
+              <Label className="text-xs text-slate-400">Status</Label>
               <Select value={form.status} onValueChange={v => handleChange("status", v)}>
                 <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -122,13 +122,13 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
               </Select>
             </div>
             <div className="col-span-2">
-              <Label className="text-xs text-gray-500">Přiřazené modelky</Label>
-              <div className="mt-1 flex flex-wrap gap-1.5 p-2 border border-input rounded-md min-h-[34px]">
+              <Label className="text-xs text-slate-400">Přiřazené modelky</Label>
+              <div className="mt-1 flex flex-wrap gap-1.5 p-2 border border-white/10 rounded-md min-h-[34px]">
                 {(form.assigned_models || []).map(id => {
                   const m = models?.find(x => x.id === id);
                   if (!m) return null;
                   return (
-                    <Badge key={id} variant="outline" className="bg-amber-50 border-amber-200 text-amber-800 flex items-center gap-1 text-xs">
+                    <Badge key={id} variant="outline" className="bg-amber-900/30 border-amber-700/30 text-amber-300 flex items-center gap-1 text-xs">
                       {m.name}
                       <button onClick={() => toggleModel(id)}><X className="w-3 h-3" /></button>
                     </Badge>
@@ -147,13 +147,13 @@ export default function CustomerFormModal({ open, onClose, onSave, customer, mod
               </div>
             </div>
             <div className="col-span-2">
-              <Label className="text-xs text-gray-500">Poznámky</Label>
+              <Label className="text-xs text-slate-400">Poznámky</Label>
               <Textarea value={form.notes || ""} onChange={e => handleChange("notes", e.target.value)} rows={2} className="mt-1 text-sm resize-none" />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-100 flex-shrink-0">
+        <div className="flex justify-end gap-2 px-5 py-3 border-t border-white/10 flex-shrink-0">
           <Button variant="outline" size="sm" onClick={onClose}>Zrušit</Button>
           <Button
             size="sm"

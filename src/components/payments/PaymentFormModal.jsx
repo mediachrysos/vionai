@@ -119,16 +119,16 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
         </div>
 
         {/* Mode tabs */}
-        <div className="flex border-b border-gray-100">
+        <div className="flex border-b border-white/10">
           <button
             onClick={() => setMode("payment")}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payment" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-gray-400 hover:text-gray-600"}`}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payment" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-slate-400 hover:text-slate-200"}`}
           >
             <CreditCard className="w-4 h-4" /> Příjem
           </button>
           <button
             onClick={() => setMode("payout")}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payout" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-gray-400 hover:text-gray-600"}`}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${mode === "payout" ? "text-[#C9A227] border-b-2 border-[#C9A227]" : "text-slate-400 hover:text-slate-200"}`}
           >
             <Wallet className="w-4 h-4" /> Výplata
           </button>
@@ -137,7 +137,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
         <div className="space-y-4 p-6">
           {/* Customer Search — only for payment mode */}
           {mode === "payout" && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-700">
+            <div className="bg-amber-950/30 border border-amber-700/30 rounded-lg px-4 py-3 text-sm text-amber-300">
               Výplata bude zapsána do historie transakcí, ale nebude se počítat jako příjem ani výdaj.
             </div>
           )}
@@ -155,26 +155,26 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 className="pl-10" />
             </div>
             {showCustomerDropdown &&
-            <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-50 w-full mt-1 bg-[#252525] border border-white/10 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                 {filteredCustomers.map((c) =>
               <button
                 key={c.id}
                 onClick={() => selectCustomer(c)}
-                className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-xs font-semibold text-[#C9A227]">
+                className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-amber-900/30 flex items-center justify-center text-xs font-semibold text-[#C9A227]">
                       {c.full_name?.[0]?.toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-medium text-slate-700">{c.full_name}</p>
-                      <p className="text-xs text-slate-400">{c.email || "Bez emailu"}</p>
+                      <p className="font-medium text-slate-200">{c.full_name}</p>
+                      <p className="text-xs text-slate-500">{c.email || "Bez emailu"}</p>
                     </div>
                   </button>
               )}
                 {filteredCustomers.length === 0 &&
               <button
                 onClick={() => {onAddNewCustomer && onAddNewCustomer(customerSearch);setShowCustomerDropdown(false);}}
-                className="w-full text-left px-4 py-2.5 hover:bg-amber-50 text-sm flex items-center gap-3 text-[#C9A227] border-t border-gray-100">
-                    <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center">
+                className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm flex items-center gap-3 text-[#C9A227] border-t border-white/10">
+                    <div className="w-7 h-7 rounded-full bg-amber-900/30 flex items-center justify-center">
                        <UserPlus className="w-3.5 h-3.5 text-[#C9A227]" />
                     </div>
                     <div>
@@ -213,7 +213,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                   "px-4 py-2 rounded-lg border text-sm font-medium transition-all",
                   parseFloat(form.amount) === a ?
                   "bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white border-[#C9A227]" :
-                  "bg-white text-gray-600 border-gray-200 hover:border-[#C9A227]"
+                  "bg-[#2a2a2a] text-slate-300 border-white/10 hover:border-[#C9A227]"
                 )}>
                 
                   {a.toLocaleString()} Kč
@@ -256,7 +256,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+          <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
             <Button variant="outline" onClick={onClose} disabled={saving}>Zrušit</Button>
             <Button
               onClick={handleSubmit}

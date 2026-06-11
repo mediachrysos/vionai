@@ -288,7 +288,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
       {/* Two summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {/* Earnings card */}
-        <div className="bg-[#131929] rounded-xl p-4 border border-slate-700/40">
+        <div className="bg-[#252525] rounded-xl p-4 border border-white/10">
           <p className="text-sm text-slate-400 font-medium mb-1">Earnings</p>
           <p className="text-2xl font-bold text-white">{fmt(totalGross)}</p>
           <p className="text-xs text-slate-500 mb-3">{dateRangeLabel}</p>
@@ -296,7 +296,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         </div>
 
         {/* This month card */}
-        <div className="bg-[#131929] rounded-xl p-4 border border-slate-700/40">
+        <div className="bg-[#252525] rounded-xl p-4 border border-white/10">
           <p className="text-sm text-slate-400 font-medium mb-1">This month</p>
           <div className="flex items-start gap-2">
             <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)}</p>
@@ -340,7 +340,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                   <stop offset="100%" stopColor="#C9A227" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e2d45" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
               <YAxis tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={fmtShort} width={44} />
               <Tooltip content={<CustomTooltip mode={chartMode} />} cursor={{ stroke: "#334155", strokeWidth: 1 }} />
@@ -358,7 +358,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         </div>
 
         {/* Net / Gross summary */}
-        <div className="flex gap-4 mt-3 pt-3 border-t border-slate-700/50">
+        <div className="flex gap-4 mt-3 pt-3 border-t border-white/10">
           <div>
             <p className="text-xs text-slate-500">Gross (celkem)</p>
             <p className="text-sm font-bold text-slate-200">{fmt(totalGross)}</p>
