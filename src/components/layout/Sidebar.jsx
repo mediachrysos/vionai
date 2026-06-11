@@ -16,7 +16,7 @@ const allPages = [
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
   { name: "Chatting Space", icon: MessageSquare, page: "ChatterPortal" },
   { name: "Admin Portal", icon: Settings, page: "AdminUsers" },
-  { name: "Customer Scraper", icon: Search, page: "CustomerScraper" },
+
 ];
 
 const defaultLawyerPages = ["Finance"];
