@@ -31,6 +31,11 @@ export default function Dashboard({ currentUser }) {
     queryFn: () => base44.entities.User.list(),
     staleTime: 120000,
   });
+  const { data: adSpends = [] } = useQuery({
+    queryKey: ["adSpends"],
+    queryFn: () => base44.entities.AdSpend.list(),
+    staleTime: 60000,
+  });
 
   // Models assigned to current user — from Model.assigned_chatters OR User.assigned_model_ids
   const myModelIds = useMemo(() => {
@@ -68,7 +73,7 @@ export default function Dashboard({ currentUser }) {
 
       {/* Analytics chart */}
       <div className="mt-4">
-        <AnalyticsChart payments={filteredPayments} />
+        <AnalyticsChart payments={filteredPayments} adSpends={adSpends} models={models} />
       </div>
 
       {/* Filter toggle — visible only for non-admins */}

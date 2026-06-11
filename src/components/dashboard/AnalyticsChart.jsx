@@ -1,296 +1,372 @@
 import React, { useState, useMemo } from "react";
 import {
-  ComposedChart, Bar, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line
 } from "recharts";
-import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
+import { ChevronDown, Calendar, TrendingDown } from "lucide-react";
 
 const PRESETS = [
-  { label: "7 dní", days: 7 },
-  { label: "14 dní", days: 14 },
-  { label: "30 dní", days: 30 },
-  { label: "90 dní", days: 90 },
+  { label: "Posledních 7 dní", days: 7 },
+  { label: "Posledních 14 dní", days: 14 },
+  { label: "Posledních 30 dní", days: 30 },
+  { label: "Posledních 90 dní", days: 90 },
   { label: "6 měsíců", days: 180 },
   { label: "12 měsíců", days: 365 },
 ];
 
-function formatCZK(v) {
-  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
-  if (v >= 1000) return `${Math.round(v / 1000)}K`;
-  return v.toLocaleString("cs-CZ");
+function fmt(v) {
+  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M Kč`;
+  if (v >= 1000) return `${Math.round(v / 1000)}K Kč`;
+  return `${v.toLocaleString("cs-CZ")} Kč`;
 }
 
-function buildData(payments, from, to) {
-  const days = [];
+function fmtShort(v) {
+  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
+  if (v >= 1000) return `${Math.round(v / 1000)}K`;
+  return String(v);
+}
+
+function toDateStr(d) { return d.toISOString().split("T")[0]; }
+
+function buildDailyData(payments, adSpends, from, to) {
   const start = new Date(from);
   const end = new Date(to);
   const diffDays = Math.round((end - start) / 86400000);
 
-  // For longer ranges group by week or month
+  const bucket = {}; // key => { gross, adSpend }
+
   if (diffDays > 90) {
-    // Group by month
-    const months = {};
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    // monthly
+    for (let d = new Date(start); d <= end; d.setMonth(d.getMonth() + 1)) {
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-      if (!months[key]) months[key] = 0;
+      if (!bucket[key]) bucket[key] = { gross: 0, adSpend: 0, label: d.toLocaleDateString("cs", { month: "short", year: "2-digit" }) };
     }
     payments.forEach(p => {
       const pd = p.payment_date || p.created_date?.split("T")[0];
       if (!pd || pd < from || pd > to) return;
       const key = pd.slice(0, 7);
-      if (months[key] !== undefined) months[key] += p.amount || 0;
+      if (bucket[key]) bucket[key].gross += p.amount || 0;
     });
-    Object.entries(months).sort(([a], [b]) => a.localeCompare(b)).forEach(([key, revenue]) => {
-      const d = new Date(key + "-01");
-      days.push({
-        date: d.toLocaleDateString("cs", { month: "short", year: "2-digit" }),
-        revenue,
-      });
+    adSpends.forEach(a => {
+      const pd = a.date;
+      if (!pd || pd < from || pd > to) return;
+      const key = pd.slice(0, 7);
+      if (bucket[key]) bucket[key].adSpend += a.amount || 0;
     });
+    return Object.entries(bucket).sort(([a], [b]) => a.localeCompare(b)).map(([, v]) => ({
+      date: v.label, gross: v.gross, net: Math.max(0, v.gross - v.adSpend)
+    }));
   } else if (diffDays > 30) {
-    // Group by week
-    const weeks = {};
+    // weekly
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const day = d.toISOString().split("T")[0];
-      const weekStart = new Date(d);
-      weekStart.setDate(d.getDate() - d.getDay() + 1);
-      const key = weekStart.toISOString().split("T")[0];
-      if (!weeks[key]) weeks[key] = 0;
+      const ws = new Date(d);
+      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      const key = toDateStr(ws);
+      if (!bucket[key]) bucket[key] = { gross: 0, adSpend: 0, label: ws.toLocaleDateString("cs", { day: "numeric", month: "short" }) };
     }
     payments.forEach(p => {
       const pd = p.payment_date || p.created_date?.split("T")[0];
       if (!pd || pd < from || pd > to) return;
       const d = new Date(pd);
-      const weekStart = new Date(d);
-      weekStart.setDate(d.getDate() - d.getDay() + 1);
-      const key = weekStart.toISOString().split("T")[0];
-      if (weeks[key] !== undefined) weeks[key] += p.amount || 0;
+      const ws = new Date(d);
+      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      const key = toDateStr(ws);
+      if (bucket[key]) bucket[key].gross += p.amount || 0;
     });
-    Object.entries(weeks).sort(([a], [b]) => a.localeCompare(b)).forEach(([key, revenue]) => {
-      const d = new Date(key);
-      days.push({
-        date: d.toLocaleDateString("cs", { day: "numeric", month: "short" }),
-        revenue,
-      });
+    adSpends.forEach(a => {
+      const pd = a.date;
+      if (!pd || pd < from || pd > to) return;
+      const d = new Date(pd);
+      const ws = new Date(d);
+      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      const key = toDateStr(ws);
+      if (bucket[key]) bucket[key].adSpend += a.amount || 0;
     });
+    return Object.entries(bucket).sort(([a], [b]) => a.localeCompare(b)).map(([, v]) => ({
+      date: v.label, gross: v.gross, net: Math.max(0, v.gross - v.adSpend)
+    }));
   } else {
-    // Daily
+    // daily
+    const result = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const dateStr = d.toISOString().split("T")[0];
-      const total = payments
-        .filter(p => (p.payment_date || p.created_date?.split("T")[0]) === dateStr)
-        .reduce((s, p) => s + (p.amount || 0), 0);
-      days.push({
+      const dateStr = toDateStr(d);
+      const gross = payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) === dateStr).reduce((s, p) => s + (p.amount || 0), 0);
+      const adSpend = adSpends.filter(a => a.date === dateStr).reduce((s, a) => s + (a.amount || 0), 0);
+      result.push({
         date: d.toLocaleDateString("cs", { day: "numeric", month: "short" }),
-        revenue: total,
+        gross,
+        net: Math.max(0, gross - adSpend),
       });
     }
+    return result;
   }
-  return days;
 }
 
-function StatMini({ label, value, change, sparkData }) {
-  const isPos = change >= 0;
-  return (
-    <div className="flex-1 bg-gray-50 rounded-xl p-4 flex flex-col gap-1 min-w-[140px]">
-      <p className="text-xs text-gray-400 font-medium">{label}</p>
-      <p className="text-xl font-bold text-gray-900">{value}</p>
-      <div className={`flex items-center gap-1 text-xs font-semibold ${isPos ? "text-emerald-500" : "text-red-400"}`}>
-        {isPos ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-        {isPos ? "+" : ""}{change.toFixed(1)}%
-      </div>
-    </div>
-  );
-}
-
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, mode }) => {
   if (!active || !payload?.length) return null;
+  const val = mode === "net" ? payload.find(p => p.dataKey === "net") : payload.find(p => p.dataKey === "gross");
   return (
-    <div className="bg-white border border-[#e8d99a] rounded-xl shadow-lg px-4 py-3 text-sm">
-      <p className="text-[#A8841C] font-semibold mb-1">{label}</p>
-      <div className="flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-[#C9A227]" />
-        <span className="text-gray-600">Tržby:</span>
-        <span className="font-bold text-gray-900">{(payload[0]?.value || 0).toLocaleString("cs-CZ")} Kč</span>
-      </div>
+    <div className="bg-white border border-gray-100 rounded-xl shadow-xl px-4 py-3 text-sm">
+      <p className="text-gray-500 font-medium mb-1">{label}</p>
+      <p className="font-bold text-gray-900">{fmt(val?.value || 0)}</p>
+      {payload.find(p => p.dataKey === "gross") && payload.find(p => p.dataKey === "net") && (
+        <div className="mt-1 space-y-0.5 text-xs text-gray-400">
+          <p>Gross: {fmt(payload.find(p => p.dataKey === "gross")?.value || 0)}</p>
+          <p>Net: {fmt(payload.find(p => p.dataKey === "net")?.value || 0)}</p>
+        </div>
+      )}
     </div>
   );
 };
 
-export default function AnalyticsChart({ payments = [] }) {
+const MiniSparkline = ({ data, dataKey, color }) => (
+  <ResponsiveContainer width="100%" height={50}>
+    <LineChart data={data} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+      <Line type="monotone" dataKey={dataKey} stroke={color} strokeWidth={1.5} dot={false} />
+    </LineChart>
+  </ResponsiveContainer>
+);
+
+export default function AnalyticsChart({ payments = [], adSpends = [], models = [] }) {
   const [selectedDays, setSelectedDays] = useState(30);
-  const [showPresets, setShowPresets] = useState(false);
+  const [showPresetMenu, setShowPresetMenu] = useState(false);
+  const [showModelMenu, setShowModelMenu] = useState(false);
+  const [showDateMenu, setShowDateMenu] = useState(false);
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
   const [useCustom, setUseCustom] = useState(false);
+  const [selectedModelId, setSelectedModelId] = useState("all");
+  const [chartMode, setChartMode] = useState("net"); // "net" | "gross"
 
   const { from, to } = useMemo(() => {
     if (useCustom && customFrom && customTo) return { from: customFrom, to: customTo };
     const toDate = new Date();
     const fromDate = new Date(Date.now() - (selectedDays - 1) * 86400000);
-    return {
-      from: fromDate.toISOString().split("T")[0],
-      to: toDate.toISOString().split("T")[0],
-    };
+    return { from: toDateStr(fromDate), to: toDateStr(toDate) };
   }, [selectedDays, useCustom, customFrom, customTo]);
 
-  const data = useMemo(() => buildData(payments, from, to), [payments, from, to]);
+  // Filter payments by model
+  const filteredPayments = useMemo(() =>
+    selectedModelId === "all" ? payments : payments.filter(p => p.model_id === selectedModelId),
+    [payments, selectedModelId]
+  );
 
-  const totalRevenue = useMemo(() => data.reduce((s, d) => s + d.revenue, 0), [data]);
+  const filteredAdSpends = useMemo(() =>
+    selectedModelId === "all" ? adSpends : adSpends.filter(a => a.model_id === selectedModelId),
+    [adSpends, selectedModelId]
+  );
 
-  // Compare to previous period
-  const prevFrom = useMemo(() => {
-    const diff = new Date(to) - new Date(from);
-    return new Date(new Date(from) - diff).toISOString().split("T")[0];
-  }, [from, to]);
-  const prevTo = useMemo(() => new Date(new Date(from) - 86400000).toISOString().split("T")[0], [from]);
-  const prevData = useMemo(() => buildData(payments, prevFrom, prevTo), [payments, prevFrom, prevTo]);
-  const prevTotal = useMemo(() => prevData.reduce((s, d) => s + d.revenue, 0), [prevData]);
-  const changePercent = prevTotal > 0 ? ((totalRevenue - prevTotal) / prevTotal) * 100 : 0;
+  const data = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, from, to), [filteredPayments, filteredAdSpends, from, to]);
 
-  // Best day
-  const bestDay = useMemo(() => data.reduce((best, d) => d.revenue > (best?.revenue || 0) ? d : best, null), [data]);
+  const totalGross = useMemo(() => data.reduce((s, d) => s + d.gross, 0), [data]);
+  const totalNet = useMemo(() => data.reduce((s, d) => s + d.net, 0), [data]);
 
-  // Avg per period unit
-  const avg = data.length > 0 ? totalRevenue / data.length : 0;
+  // This month stats
+  const thisMonthFrom = useMemo(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+  }, []);
+  const thisMonthData = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, thisMonthFrom, toDateStr(new Date())), [filteredPayments, filteredAdSpends, thisMonthFrom]);
+  const thisMonthGross = useMemo(() => thisMonthData.reduce((s, d) => s + d.gross, 0), [thisMonthData]);
+  const thisMonthNet = useMemo(() => thisMonthData.reduce((s, d) => s + d.net, 0), [thisMonthData]);
+
+  // Previous period comparison for "this month"
+  const prevMonthFrom = useMemo(() => {
+    const now = new Date();
+    const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    return toDateStr(prev);
+  }, []);
+  const prevMonthTo = useMemo(() => {
+    const now = new Date();
+    const last = new Date(now.getFullYear(), now.getMonth(), 0);
+    return toDateStr(last);
+  }, []);
+  const prevMonthData = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, prevMonthFrom, prevMonthTo), [filteredPayments, filteredAdSpends, prevMonthFrom, prevMonthTo]);
+  const prevMonthGross = useMemo(() => prevMonthData.reduce((s, d) => s + d.gross, 0), [prevMonthData]);
+  const monthDiff = thisMonthGross - prevMonthGross;
 
   const activePresetLabel = useCustom
     ? `${customFrom} – ${customTo}`
     : PRESETS.find(p => p.days === selectedDays)?.label || `${selectedDays} dní`;
 
-  return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-6">
-      {/* Header */}
-      <div className="flex items-start justify-between flex-wrap gap-3 mb-2">
-        <div>
-          <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">Celkové tržby</p>
-          <p className="text-3xl font-bold text-gray-900">{totalRevenue.toLocaleString("cs-CZ")} Kč</p>
-          <p className="text-xs text-gray-400 mt-1">
-            {new Date(from).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })}
-            {" – "}
-            {new Date(to).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })}
-          </p>
-        </div>
+  const selectedModel = models.find(m => m.id === selectedModelId);
+  const dateRangeLabel = `${new Date(from).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })} – ${new Date(to).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })}`;
+  const thisMonthLabel = new Date().toLocaleDateString("cs", { month: "long", year: "numeric" });
 
-        {/* Period selector */}
+  return (
+    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
+      {/* Top controls */}
+      <div className="flex items-center gap-2 mb-5 flex-wrap">
+        {/* Period preset */}
         <div className="relative">
           <button
-            onClick={() => setShowPresets(v => !v)}
-            className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl px-4 py-2 transition-colors"
+            onClick={() => { setShowPresetMenu(v => !v); setShowDateMenu(false); setShowModelMenu(false); }}
+            className="flex items-center gap-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors"
           >
             {activePresetLabel}
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDown className="w-3.5 h-3.5" />
           </button>
-          {showPresets && (
-            <div className="absolute right-0 top-full mt-2 z-50 bg-white border border-gray-100 rounded-xl shadow-xl p-3 min-w-[220px]">
-              <div className="grid grid-cols-2 gap-1.5 mb-3">
-                {PRESETS.map(p => (
-                  <button
-                    key={p.days}
-                    onClick={() => { setSelectedDays(p.days); setUseCustom(false); setShowPresets(false); }}
-                    className={`text-xs font-medium px-3 py-2 rounded-lg transition-all ${
-                      !useCustom && selectedDays === p.days
-                        ? "bg-[#C9A227] text-white"
-                        : "bg-gray-50 text-gray-600 hover:bg-amber-50 hover:text-[#C9A227]"
-                    }`}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-              <div className="border-t border-gray-100 pt-3 space-y-2">
-                <p className="text-xs text-gray-400 font-medium">Vlastní rozmezí</p>
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    value={customFrom}
-                    onChange={e => setCustomFrom(e.target.value)}
-                    className="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]"
-                  />
-                  <input
-                    type="date"
-                    value={customTo}
-                    onChange={e => setCustomTo(e.target.value)}
-                    className="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]"
-                  />
-                </div>
+          {showPresetMenu && (
+            <div className="absolute left-0 top-full mt-1.5 z-50 bg-white border border-gray-100 rounded-xl shadow-xl p-2 min-w-[190px]">
+              {PRESETS.map(p => (
                 <button
-                  onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowPresets(false); } }}
-                  disabled={!customFrom || !customTo}
-                  className="w-full text-xs font-medium bg-[#C9A227] text-white rounded-lg py-1.5 hover:bg-[#A8841C] disabled:opacity-40 transition-colors"
+                  key={p.days}
+                  onClick={() => { setSelectedDays(p.days); setUseCustom(false); setShowPresetMenu(false); }}
+                  className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${
+                    !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-gray-700 hover:bg-gray-50"
+                  }`}
                 >
-                  Použít
+                  {p.label}
                 </button>
-              </div>
+              ))}
             </div>
           )}
         </div>
+
+        {/* Date range picker */}
+        <div className="relative">
+          <button
+            onClick={() => { setShowDateMenu(v => !v); setShowPresetMenu(false); setShowModelMenu(false); }}
+            className="flex items-center gap-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors"
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            {dateRangeLabel}
+            <ChevronDown className="w-3.5 h-3.5" />
+          </button>
+          {showDateMenu && (
+            <div className="absolute left-0 top-full mt-1.5 z-50 bg-white border border-gray-100 rounded-xl shadow-xl p-3 min-w-[240px]">
+              <p className="text-xs text-gray-400 font-medium mb-2">Vlastní datum</p>
+              <div className="flex gap-2 mb-2">
+                <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
+                  className="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
+                <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
+                  className="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
+              </div>
+              <button
+                onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowDateMenu(false); } }}
+                disabled={!customFrom || !customTo}
+                className="w-full text-xs font-medium bg-[#C9A227] text-white rounded-lg py-1.5 hover:bg-[#A8841C] disabled:opacity-40 transition-colors"
+              >
+                Použít
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Model filter */}
+        {models.length > 0 && (
+          <div className="relative">
+            <button
+              onClick={() => { setShowModelMenu(v => !v); setShowPresetMenu(false); setShowDateMenu(false); }}
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors"
+            >
+              {selectedModel ? selectedModel.name : "Všechny modely"}
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+            {showModelMenu && (
+              <div className="absolute left-0 top-full mt-1.5 z-50 bg-white border border-gray-100 rounded-xl shadow-xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
+                <button
+                  onClick={() => { setSelectedModelId("all"); setShowModelMenu(false); }}
+                  className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === "all" ? "bg-[#C9A227] text-white font-medium" : "text-gray-700 hover:bg-gray-50"}`}
+                >
+                  Všechny modely
+                </button>
+                {models.map(m => (
+                  <button
+                    key={m.id}
+                    onClick={() => { setSelectedModelId(m.id); setShowModelMenu(false); }}
+                    className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === m.id ? "bg-[#C9A227] text-white font-medium" : "text-gray-700 hover:bg-gray-50"}`}
+                  >
+                    {m.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Chart */}
-      <div className="h-[280px] mt-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={data} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
-            <defs>
-              <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#C9A227" stopOpacity={0.25} />
-                <stop offset="70%" stopColor="#e8c84a" stopOpacity={0.06} />
-                <stop offset="100%" stopColor="#C9A227" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#C9A227" />
-                <stop offset="100%" stopColor="#e8c84a" />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0ece0" vertical={false} />
-            <XAxis
-              dataKey="date"
-              tick={{ fontSize: 11, fill: "#b0a98a" }}
-              axisLine={false}
-              tickLine={false}
-              interval="preserveStartEnd"
-            />
-            <YAxis
-              tick={{ fontSize: 11, fill: "#b0a98a" }}
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={formatCZK}
-              width={50}
-            />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(201,162,39,0.06)" }} />
-            <Bar dataKey="revenue" fill="#f5e9c2" radius={[4, 4, 0, 0]} maxBarSize={40} />
-            <Area
-              type="monotone"
-              dataKey="revenue"
-              stroke="url(#goldLine)"
-              strokeWidth={2.5}
-              fill="url(#goldGrad)"
-              dot={false}
-              activeDot={{ r: 5, fill: "#C9A227", strokeWidth: 2, stroke: "#fff" }}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+      {/* Two summary cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        {/* Earnings card */}
+        <div className="bg-gray-50 rounded-xl p-4">
+          <p className="text-sm text-gray-500 font-medium mb-1">Earnings</p>
+          <p className="text-2xl font-bold text-gray-900">{fmt(totalGross)}</p>
+          <p className="text-xs text-gray-400 mb-3">{dateRangeLabel}</p>
+          <MiniSparkline data={data} dataKey="gross" color="#C9A227" />
+        </div>
+
+        {/* This month card */}
+        <div className="bg-gray-50 rounded-xl p-4">
+          <p className="text-sm text-gray-500 font-medium mb-1">This month</p>
+          <div className="flex items-start gap-2">
+            <p className="text-2xl font-bold text-gray-900">{fmt(thisMonthGross)}</p>
+            {monthDiff !== 0 && (
+              <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md ${monthDiff < 0 ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
+                {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString("cs-CZ")} Kč
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-gray-400 mb-3">{thisMonthLabel}</p>
+          <MiniSparkline data={thisMonthData} dataKey="gross" color="#C9A227" />
+        </div>
       </div>
 
-      {/* Stats row */}
-      <div className="flex flex-wrap gap-3 mt-5">
-        <StatMini
-          label="Změna oproti předchozímu období"
-          value={`${changePercent >= 0 ? "+" : ""}${changePercent.toFixed(1)}%`}
-          change={changePercent}
-        />
-        <div className="flex-1 bg-gray-50 rounded-xl p-4 min-w-[140px]">
-          <p className="text-xs text-gray-400 font-medium">Průměr / den</p>
-          <p className="text-xl font-bold text-gray-900">{Math.round(avg).toLocaleString("cs-CZ")} Kč</p>
+      {/* Earnings over time */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <p className="text-sm font-semibold text-gray-800">Earnings over time</p>
+          <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+            <button
+              onClick={() => setChartMode("net")}
+              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "net" ? "bg-[#C9A227] text-white shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              Net
+            </button>
+            <button
+              onClick={() => setChartMode("gross")}
+              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "gross" ? "bg-[#C9A227] text-white shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              Gross
+            </button>
+          </div>
         </div>
-        <div className="flex-1 bg-amber-50 rounded-xl p-4 min-w-[140px]">
-          <p className="text-xs text-[#A8841C] font-medium">Nejlepší den</p>
-          <p className="text-xl font-bold text-[#C9A227]">{bestDay ? bestDay.revenue.toLocaleString("cs-CZ") : 0} Kč</p>
-          <p className="text-xs text-amber-400">{bestDay?.date || "–"}</p>
+
+        <div className="h-[220px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#C9A227" stopOpacity={0.18} />
+                  <stop offset="100%" stopColor="#C9A227" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} tickFormatter={fmtShort} width={44} />
+              <Tooltip content={<CustomTooltip mode={chartMode} />} cursor={{ stroke: "#e5e7eb", strokeWidth: 1 }} />
+              <Area
+                type="monotone"
+                dataKey={chartMode}
+                stroke="#C9A227"
+                strokeWidth={2}
+                fill="url(#chartGrad)"
+                dot={false}
+                activeDot={{ r: 4, fill: "#C9A227", strokeWidth: 2, stroke: "#fff" }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
-        <div className="flex-1 bg-gray-50 rounded-xl p-4 min-w-[140px]">
-          <p className="text-xs text-gray-400 font-medium">Předchozí období</p>
-          <p className="text-xl font-bold text-gray-500">{prevTotal.toLocaleString("cs-CZ")} Kč</p>
+
+        {/* Net / Gross summary */}
+        <div className="flex gap-4 mt-3 pt-3 border-t border-gray-100">
+          <div>
+            <p className="text-xs text-gray-400">Gross (celkem)</p>
+            <p className="text-sm font-bold text-gray-800">{fmt(totalGross)}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">Net (po ad spend)</p>
+            <p className="text-sm font-bold text-[#C9A227]">{fmt(totalNet)}</p>
+          </div>
         </div>
       </div>
     </div>
