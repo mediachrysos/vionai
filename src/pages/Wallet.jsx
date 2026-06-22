@@ -250,6 +250,7 @@ export default function Wallet() {
             key={acc.id}
             account={acc}
             walletTxs={walletTxs}
+            payments={payments}
             onEdit={(a) => {setEditingAccount(a);setShowAccountModal(true);}}
             onDelete={deleteAccountMutation.mutate} />
 

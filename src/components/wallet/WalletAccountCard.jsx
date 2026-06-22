@@ -2,10 +2,13 @@ import React from "react";
 import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs = [] }) {
+export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs = [], payments = [] }) {
   const accountTxs = walletTxs.filter(t => t.account_id === account.id);
-  const totalIncome = accountTxs.filter(t => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
-  const totalExpense = accountTxs.filter(t => t.type === "expense").reduce((s, t) => s + (t.amount || 0), 0);
+  const accountPayments = payments.filter(p => p.bank_account_id === account.id && p.status !== "failed" && p.status !== "refunded");
+  const walletIncome = accountTxs.filter(t => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
+  const paymentIncome = accountPayments.reduce((s, p) => s + (p.amount || 0), 0);
+  const totalIncome = walletIncome + paymentIncome;
+  const totalExpense = accountTxs.filter(t => t.type === "expense" && t.category !== "Výplata" && t.category !== "Payout" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
 
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5 flex flex-col gap-3">
