@@ -9,9 +9,12 @@ Deno.serve(async (req) => {
     // Get legal documents filtered by company (public, no token needed)
     if (get_docs) {
       const allDocs = await base44.asServiceRole.entities.LegalDocument.list();
-      const docs = company
-        ? allDocs.filter(d => d.company === company || !d.company)
-        : allDocs;
+      const targetCompany = company || "Chrysos Media";
+      // Strict match — only docs for the exact company; fallback to Chrysos Media docs if none found
+      let docs = allDocs.filter(d => (d.company || "Chrysos Media") === targetCompany);
+      if (docs.length === 0) {
+        docs = allDocs.filter(d => (d.company || "Chrysos Media") === "Chrysos Media");
+      }
       return Response.json({ docs });
     }
 
