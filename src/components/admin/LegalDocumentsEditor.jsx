@@ -31,7 +31,9 @@ export default function LegalDocumentsEditor() {
       base44.entities.LegalDocument.list(),
       base44.entities.Model.list(),
     ]).then(([docList, modelList]) => {
-      setDocs(docList);
+      // Docs without company default to Chrysos Media (backwards compat)
+      const normalizedDocs = docList.map(d => ({ ...d, company: d.company || "Chrysos Media" }));
+      setDocs(normalizedDocs);
       setModels(modelList);
       // Collect all unique companies from docs + models + defaults
       const fromData = [
