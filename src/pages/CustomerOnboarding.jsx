@@ -227,8 +227,8 @@ export default function CustomerOnboarding() {
 function DocumentModal({ open, onClose, title, content }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 overflow-hidden">
-        <DialogHeader className="px-6 py-4 border-b border-gray-100 flex-shrink-0">
+      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 overflow-hidden bg-white text-gray-900">
+        <DialogHeader className="px-6 py-4 border-b border-gray-100 flex-shrink-0 bg-white">
           <DialogTitle className="text-base font-semibold text-gray-800 flex items-center gap-2">
             <FileText className="w-4 h-4 text-amber-500" />
             {title}
