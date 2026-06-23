@@ -23,26 +23,30 @@ export default function CustomerOnboarding() {
   useEffect(() => {
     if (!token) { setStatus("invalid"); return; }
 
-    base44.functions.invoke("completeOnboarding", { token, check_only: true })
-      .then(res => {
-        const d = res.data;
+    const init = async () => {
+      try {
+        const checkRes = await base44.functions.invoke("completeOnboarding", { token, check_only: true });
+        const d = checkRes.data;
         if (d?.expired) { setStatus("expired"); return; }
-        if (d?.invalid) { setStatus("invalid"); return; }
-        const detectedCompany = d?.company || "Chrysos Media";
+        if (d?.invalid || !d?.valid) { setStatus("invalid"); return; }
+
+        const detectedCompany = d.company || "Chrysos Media";
         setCompany(detectedCompany);
-        setStatus("idle");
-        // Load docs filtered by company
-        return base44.functions.invoke("completeOnboarding", { get_docs: true, company: detectedCompany });
-      })
-      .then(res => {
-        if (!res) return;
-        const list = res.data?.docs || [];
+
+        const docsRes = await base44.functions.invoke("completeOnboarding", { get_docs: true, company: detectedCompany });
+        const list = docsRes.data?.docs || [];
         setLegalDocs({
-          gdpr: list.find(d => d.key === "gdpr") || null,
-          terms: list.find(d => d.key === "terms") || null,
+          gdpr: list.find(doc => doc.key === "gdpr") || null,
+          terms: list.find(doc => doc.key === "terms") || null,
         });
-      })
-      .catch(() => setStatus("invalid"));
+
+        setStatus("idle");
+      } catch {
+        setStatus("invalid");
+      }
+    };
+
+    init();
   }, [token]);
 
   const handleSubmit = async (e) => {
