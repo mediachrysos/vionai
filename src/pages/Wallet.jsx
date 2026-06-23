@@ -120,9 +120,10 @@ export default function Wallet() {
     mutationFn: async (tx) => {
       if (tx.source === "Wallet") {
         await base44.entities.WalletTransaction.delete(tx.id);
-        // Reverse balance update
+        // Reverse balance update — always fetch fresh to avoid stale cache race condition
         if (tx.account_id) {
-          const acc = accounts.find((a) => a.id === tx.account_id);
+          const fresh = await base44.entities.BankAccount.filter({ id: tx.account_id });
+          const acc = fresh[0];
           if (acc) {
             const delta = tx.type === "income" ? -tx.amount : tx.amount;
             await base44.entities.BankAccount.update(tx.account_id, { balance: (acc.balance || 0) + delta });
@@ -146,9 +147,10 @@ export default function Wallet() {
   const saveTxMutation = useMutation({
     mutationFn: async (data) => {
       const tx = await base44.entities.WalletTransaction.create(data);
-      // Update BankAccount balance
+      // Update BankAccount balance — always fetch fresh to avoid stale cache race condition
       if (data.account_id) {
-        const acc = accounts.find((a) => a.id === data.account_id);
+        const fresh = await base44.entities.BankAccount.filter({ id: data.account_id });
+        const acc = fresh[0];
         if (acc) {
           const delta = data.type === "income" ? data.amount : -data.amount;
           await base44.entities.BankAccount.update(data.account_id, { balance: (acc.balance || 0) + delta });

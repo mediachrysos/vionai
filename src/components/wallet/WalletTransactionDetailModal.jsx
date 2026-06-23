@@ -71,9 +71,10 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
         model_name: form.model_name || null,
       });
     } else {
+      const newAmount = parseFloat(form.amount) || 0;
       await base44.entities.WalletTransaction.update(transaction.id, {
         title: form.title,
-        amount: parseFloat(form.amount) || 0,
+        amount: newAmount,
         type: form.type,
         category: form.category,
         account_id: form.account_id,
@@ -83,6 +84,19 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
         invoice_url: form.invoice_url,
         invoice_name: form.invoice_name,
       });
+      // Correct balance: revert old, apply new — fetch fresh to avoid stale cache
+      const accountId = form.account_id || transaction.account_id;
+      if (accountId) {
+        const fresh = await base44.entities.BankAccount.filter({ id: accountId });
+        const acc = fresh[0];
+        if (acc) {
+          // Revert old transaction effect
+          const oldDelta = transaction.type === "income" ? -transaction.amount : transaction.amount;
+          // Apply new transaction effect
+          const newDelta = form.type === "income" ? newAmount : -newAmount;
+          await base44.entities.BankAccount.update(accountId, { balance: (acc.balance || 0) + oldDelta + newDelta });
+        }
+      }
     }
     onUpdate?.();
     setSaving(false);
@@ -96,6 +110,15 @@ export default function WalletTransactionDetailModal({ open, onClose, transactio
       await base44.entities.Expense.delete(transaction.id.replace("exp_", ""));
     } else if (isWallet) {
       await base44.entities.WalletTransaction.delete(transaction.id);
+      // Revert balance — fetch fresh to avoid stale cache
+      if (transaction.account_id) {
+        const fresh = await base44.entities.BankAccount.filter({ id: transaction.account_id });
+        const acc = fresh[0];
+        if (acc) {
+          const delta = transaction.type === "income" ? -transaction.amount : transaction.amount;
+          await base44.entities.BankAccount.update(transaction.account_id, { balance: (acc.balance || 0) + delta });
+        }
+      }
     }
     onDelete?.();
     onClose();

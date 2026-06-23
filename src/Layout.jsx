@@ -66,7 +66,7 @@ export default function Layout({ children, currentPageName }) {
           });
         }
       }
-      // Update BankAccount balance — fetch fresh record to avoid stale cache
+      // Update BankAccount balance — always fetch fresh to avoid stale cache race condition
       if (data.bank_account_id) {
         const freshAccounts = await base44.entities.BankAccount.filter({ id: data.bank_account_id });
         const acc = freshAccounts[0];
