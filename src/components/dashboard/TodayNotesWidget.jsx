@@ -142,275 +142,275 @@ export default function TodayNotesWidget({ currentUser, paydayCustomers = [], mo
 
   const currentSlide = SLIDES[slideIdx];
 
-  return (
-    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] h-full overflow-hidden flex flex-col hidden">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0 hidden">
-        <div className="flex items-center gap-2">
-          <div className="bg-slate-900 rounded-xl w-9 h-9 flex items-center justify-center">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_5_sljjsp.png" alt="" className="w-6 h-6 object-contain" />
-          </div>
-          <h3 className="text-sm font-semibold text-white">Poznámky</h3>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="relative">
-            <input
-              value={noteSearch}
-              onChange={(e) => setNoteSearch(e.target.value)}
-              placeholder="Hledat..."
-              className="h-7 w-28 bg-white/20 text-white text-xs placeholder-white/60 rounded-lg px-2.5 outline-none focus:bg-white/30 transition-colors" />
-            
-            {noteSearch &&
-            <button onClick={() => setNoteSearch("")} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-white/70 hover:text-white">
-                <X className="w-3 h-3" />
-              </button>
-            }
-          </div>
-          <Button size="sm" variant="ghost" onClick={() => {setShowForm((v) => !v);setCustomerSearch("");setSlideIdx(0);}}
-          className="h-7 w-7 p-0 rounded-lg text-white hover:bg-white/20">
-            {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          </Button>
-        </div>
-      </div>
+  return null;
 
-      <div className="p-4 flex-1 overflow-hidden flex flex-col gap-3 hidden">
-        {/* Form */}
-        {showForm &&
-        <div className="p-4 bg-[#252525] rounded-xl border border-white/10 space-y-3">
-            {/* Main: just the note content */}
-            <div>
-              <Textarea
-              value={form.content}
-              onChange={(e) => setForm((p) => ({ ...p, content: e.target.value }))}
-              placeholder="Napište poznámku..."
-              rows={2}
-              className="text-sm resize-none"
-              autoFocus />
-            
-            </div>
 
-            {/* Slide extra fields */}
-            <div className="flex items-center gap-2">
-              <button
-              type="button"
-              onClick={prevSlide}
-              className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-700 text-slate-400 transition-colors flex-shrink-0">
-              
-                <ChevronLeft className="w-4 h-4" />
-              </button>
 
-              <div className="flex-1 min-w-0">
-                {/* Slide dots */}
-                <div className="flex items-center justify-center gap-1 mb-2">
-                  {SLIDES.map((_, i) =>
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setSlideIdx(i)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all ${i === slideIdx ? "bg-[#C9A227] w-3" : "bg-slate-600"}`} />
 
-                )}
-                </div>
 
-                <div className="text-[10px] text-slate-500 text-center font-medium uppercase tracking-wide mb-1.5">
-                  {slideLabel[currentSlide]}
-                </div>
 
-                {/* Slide: Klient */}
-                {currentSlide === "customer" &&
-              <div className="relative">
-                    <Input
-                  value={customerSearch}
-                  onChange={(e) => {
-                    setCustomerSearch(e.target.value);
-                    setForm((p) => ({ ...p, customer_name: e.target.value }));
-                    setShowCustomerDropdown(true);
-                  }}
-                  onFocus={() => setShowCustomerDropdown(true)}
-                  onBlur={() => setTimeout(() => setShowCustomerDropdown(false), 150)}
-                  placeholder="Jméno klienta..."
-                  className="h-8 text-sm" />
-                
-                    {showCustomerDropdown && filteredCustomers.length > 0 &&
-                <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#1e1e1e] border border-white/10 rounded-lg shadow-lg max-h-36 overflow-y-auto">
-                        {filteredCustomers.map((c) =>
-                  <button key={c.id} type="button" onMouseDown={() => selectCustomer(c.full_name)}
-                  className="w-full text-left px-3 py-2 text-xs hover:bg-white/5 text-slate-200">
-                            {c.full_name}
-                          </button>
-                  )}
-                      </div>
-                }
-                  </div>
-              }
 
-                {/* Slide: Datum + Částka */}
-                {currentSlide === "datetime_amount" &&
-              <div className="grid grid-cols-2 gap-2">
-                    <DatePicker value={form.note_date} onChange={(v) => setForm((p) => ({ ...p, note_date: v }))} />
-                    <Input type="number" value={form.amount} onChange={(e) => setForm((p) => ({ ...p, amount: e.target.value }))}
-                placeholder="Částka (Kč)" className="h-8 text-sm" />
-                  </div>
-              }
 
-                {/* Slide: Účet */}
-                {currentSlide === "account" &&
-              <div className="space-y-1.5">
-                    <Select value={form.account || "__manual__"} onValueChange={handleAccountChange}>
-                      <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Vyberte účet" /></SelectTrigger>
-                      <SelectContent>
-                        {bankAccounts.map((a) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
-                        <SelectItem value="__manual__">— Zadat ručně —</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {form.account === "" &&
-                <Input value={form.account_name} onChange={(e) => setForm((p) => ({ ...p, account_name: e.target.value }))}
-                placeholder="č. účtu nebo název" className="h-8 text-sm" />
-                }
-                  </div>
-              }
 
-                {/* Slide: Modelka */}
-                {currentSlide === "model" &&
-              <Select value={form.model_id} onValueChange={handleModelChange}>
-                    <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Vyberte modelku" /></SelectTrigger>
-                    <SelectContent>
-                      {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-              }
-              </div>
 
-              <button
-              type="button"
-              onClick={nextSlide}
-              className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-700 text-slate-400 transition-colors flex-shrink-0">
-              
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
 
-            {/* Actions */}
-            <div className="flex justify-end gap-2 pt-1">
-              <Button size="sm" variant="ghost" onClick={() => {setShowForm(false);setCustomerSearch("");setSlideIdx(0);}} className="h-8 text-xs text-slate-400 hover:text-slate-200">Zrušit</Button>
-              <Button size="sm" onClick={() => createMutation.mutate(form)} disabled={createMutation.isPending}
-            className="h-8 text-xs bg-[#C9A227] hover:bg-[#A8841C] text-white">
-                {createMutation.isPending ? "Ukládám..." : "Přidat"}
-              </Button>
-            </div>
-          </div>
-        }
 
-        {/* Payday strip */}
-        {paydayCustomers.length > 0 &&
-        <div className="flex items-center gap-2 px-3 py-2 bg-amber-950/30 border border-amber-700/30 rounded-lg flex-shrink-0">
-            <span className="text-sm">💰</span>
-            <span className="text-xs font-semibold text-amber-300">Dnes výplata:</span>
-            <div className="flex flex-wrap gap-1.5">
-              {paydayCustomers.map((c) =>
-            <span key={c.id} className="text-xs bg-amber-900/40 text-amber-300 border border-amber-700/30 rounded-full px-2 py-0.5 font-medium">
-                  {c.full_name}
-                </span>
-            )}
-            </div>
-          </div>
-        }
 
-        {/* Notes carousel — 1 note at a time */}
-        <div className="flex-1 flex flex-col min-h-0">
-          {sortedNotes.length === 0 ?
-          <p className="text-xs text-slate-500 text-center py-6">Zatím žádné poznámky</p> :
-          (() => {
-            const safeIdx = Math.min(noteIdx, sortedNotes.length - 1);
-            const n = sortedNotes[safeIdx];
-            const isToday = n.note_date === today;
-            const accountLabel = n.account_name || bankAccounts.find((a) => a.id === n.account)?.name || n.account;
-            return (
-              <div className="flex flex-col gap-2 flex-1">
-                {/* Navigation bar */}
-                <div className="flex items-center justify-between px-1">
-                  <button
-                    onClick={prevNote}
-                    disabled={safeIdx === 0}
-                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-slate-700 disabled:opacity-30 transition-colors">
-                    
-                    <ChevronLeft className="w-4 h-4 text-slate-400" />
-                  </button>
-                  <span className="text-[11px] text-slate-500 font-medium">
-                    {safeIdx + 1} / {sortedNotes.length}
-                  </span>
-                  <button
-                    onClick={nextNote}
-                    disabled={safeIdx === sortedNotes.length - 1}
-                    className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-slate-700 disabled:opacity-30 transition-colors">
-                    
-                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </button>
-                </div>
 
-                {/* Single note card */}
-                <div
-                  key={n.id}
-                  className={`group relative rounded-2xl border p-4 transition-all shadow-sm flex-1 ${
-                  isToday ?
-                  "bg-amber-950/20 border-amber-700/30" :
-                  "bg-[#252525] border-white/10"}`
-                  }>
-                  
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
-                      isToday ? "bg-amber-900/50 text-amber-300" : "bg-slate-700 text-slate-400"}`}>
-                        {n.customer_name ? n.customer_name.charAt(0).toUpperCase() : "?"}
-                      </div>
-                      {n.customer_name ?
-                      <span className={`text-sm font-bold truncate ${isToday ? "text-amber-200" : "text-slate-200"}`}>{n.customer_name}</span> :
-                      <span className="text-xs text-slate-500 italic">Bez klienta</span>}
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {isToday ?
-                      <span className="text-[10px] font-bold tracking-wide text-white bg-[#C9A227] rounded-full px-2.5 py-0.5">DNES</span> :
-                      n.note_date ?
-                      <span className="text-[11px] text-slate-500 bg-slate-800 rounded-full px-2 py-0.5">{format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}</span> :
-                      null}
-                      <button onClick={() => {deleteMutation.mutate(n.id);setNoteIdx((i) => Math.max(0, i - 1));}}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-600 hover:text-red-400">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
 
-                  {(n.amount || accountLabel || n.model_name) &&
-                  <div className="flex flex-wrap gap-1.5 mb-2.5">
-                      {n.amount &&
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-950/50 text-emerald-400">
-                          {Number(n.amount).toLocaleString("cs-CZ")} Kč
-                        </span>
-                    }
-                      {accountLabel &&
-                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-950/50 text-sky-400">
-                          {accountLabel}
-                        </span>
-                    }
-                      {n.model_name &&
-                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-purple-950/50 text-purple-400">
-                          {n.model_name}
-                        </span>
-                    }
-                    </div>
-                  }
 
-                  {n.content &&
-                  <p className={`text-xs leading-relaxed pl-9 ${isToday ? "text-amber-300/80" : "text-slate-400"}`}>
-                      {n.content}
-                    </p>
-                  }
-                </div>
-              </div>);
 
-          })()}
-        </div>
-      </div>
-    </div>);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
