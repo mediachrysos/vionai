@@ -66,5 +66,55 @@
   "required": [
     "customer_id",
     "amount"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.chatter_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.chatter_email": "{{user.email}}"
+        },
+        {
+          "data.model_id": {
+            "$in": [
+              "{{user.assigned_model_ids}}"
+            ]
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.chatter_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }
