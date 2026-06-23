@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CustomerOnboarding from './pages/CustomerOnboarding';
 import CustomerScraper from './pages/CustomerScraper';
+import ChattersPerformance from './pages/ChattersPerformance';
 import SocialMediaContent from './pages/SocialMediaContent';
 import LookAlikeAudience from './pages/LookAlikeAudience';
 import CustomerDetail from './pages/CustomerDetail';
@@ -82,6 +83,7 @@ function App() {
             <Route path="/CustomerDetail" element={<LayoutWrapper currentPageName="CustomerDetail"><CustomerDetail /></LayoutWrapper>} />
             <Route path="/SocialMediaContent" element={<LayoutWrapper currentPageName="SocialMediaContent"><SocialMediaContent /></LayoutWrapper>} />
             <Route path="/LookAlikeAudience" element={<LayoutWrapper currentPageName="LookAlikeAudience"><LookAlikeAudience /></LayoutWrapper>} />
+            <Route path="/ChattersPerformance" element={<LayoutWrapper currentPageName="ChattersPerformance"><ChattersPerformance /></LayoutWrapper>} />
             {/* Všechny ostatní stránky vyžadují auth */}
             <Route path="*" element={<AuthenticatedApp />} />
           </Routes>

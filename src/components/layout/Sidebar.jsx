@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
-  MessageSquare, Settings, Search, LogOut, Menu, X
+  MessageSquare, Settings, Search, LogOut, Menu, X, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +15,8 @@ const allPages = [
   { name: "Wallet", icon: CreditCard, page: "Wallet" },
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
   { name: "Chatting Space", icon: MessageSquare, page: "ChatterPortal" },
+  { name: "Chatters Performance", icon: Activity, page: "ChattersPerformance" },
   { name: "Admin Portal", icon: Settings, page: "AdminUsers" },
-
 ];
 
 const defaultLawyerPages = ["Finance"];
