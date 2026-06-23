@@ -10,6 +10,15 @@
       ],
       "description": "Typ dokumentu: gdpr nebo terms"
     },
+    "company": {
+      "type": "string",
+      "enum": [
+        "Chrysos Media",
+        "Anza Media"
+      ],
+      "default": "Chrysos Media",
+      "description": "Firma, ke kter\u00e9 dokument pat\u0159\u00ed"
+    },
     "title": {
       "type": "string",
       "description": "N\u00e1zev dokumentu"
@@ -21,6 +30,7 @@
   },
   "required": [
     "key",
+    "company",
     "title",
     "content"
   ]

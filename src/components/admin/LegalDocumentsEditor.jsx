@@ -6,55 +6,84 @@ import { Textarea } from "@/components/ui/textarea";
 import { FileText, Save, CheckCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
+const COMPANIES = ["Chrysos Media", "Anza Media"];
+const DOC_KEYS = [
+  { key: "gdpr", label: "GDPR / Osobní údaje" },
+  { key: "terms", label: "Obchodní podmínky" },
+];
+
 export default function LegalDocumentsEditor() {
-  const [docs, setDocs] = useState({ gdpr: null, terms: null });
-  const [forms, setForms] = useState({ gdpr: { title: "", content: "" }, terms: { title: "", content: "" } });
-  const [saving, setSaving] = useState({ gdpr: false, terms: false });
-  const [saved, setSaved] = useState({ gdpr: false, terms: false });
-  const [activeTab, setActiveTab] = useState("gdpr");
+  // All docs from DB: { company: { key: docObj } }
+  const [allDocs, setAllDocs] = useState({});
+  const [forms, setForms] = useState({});
+  const [saving, setSaving] = useState({});
+  const [saved, setSaved] = useState({});
+  const [activeCompany, setActiveCompany] = useState("Chrysos Media");
+  const [activeDocKey, setActiveDocKey] = useState("gdpr");
 
   useEffect(() => {
     base44.entities.LegalDocument.list().then(list => {
-      const gdpr = list.find(d => d.key === "gdpr");
-      const terms = list.find(d => d.key === "terms");
-      setDocs({ gdpr, terms });
-      setForms({
-        gdpr: { title: gdpr?.title || "", content: gdpr?.content || "" },
-        terms: { title: terms?.title || "", content: terms?.content || "" },
-      });
+      const byCompanyKey = {};
+      for (const company of COMPANIES) {
+        byCompanyKey[company] = {};
+        const formEntry = {};
+        for (const { key } of DOC_KEYS) {
+          const doc = list.find(d => d.company === company && d.key === key) || null;
+          byCompanyKey[company][key] = doc;
+          formEntry[key] = { title: doc?.title || "", content: doc?.content || "" };
+        }
+        forms[company] = formEntry;
+      }
+      setAllDocs(byCompanyKey);
+      setForms({ ...forms });
     });
   }, []);
 
-  const handleSave = async (key) => {
-    setSaving(p => ({ ...p, [key]: true }));
-    const form = forms[key];
-    if (docs[key]) {
-      await base44.entities.LegalDocument.update(docs[key].id, form);
-      setDocs(p => ({ ...p, [key]: { ...p[key], ...form } }));
+  const handleSave = async (company, key) => {
+    const saveKey = `${company}_${key}`;
+    setSaving(p => ({ ...p, [saveKey]: true }));
+    const form = forms[company]?.[key] || { title: "", content: "" };
+    const existingDoc = allDocs[company]?.[key];
+    let updatedDoc;
+    if (existingDoc) {
+      await base44.entities.LegalDocument.update(existingDoc.id, { ...form, company, key });
+      updatedDoc = { ...existingDoc, ...form };
     } else {
-      const created = await base44.entities.LegalDocument.create({ key, ...form });
-      setDocs(p => ({ ...p, [key]: created }));
+      updatedDoc = await base44.entities.LegalDocument.create({ key, company, ...form });
     }
-    setSaving(p => ({ ...p, [key]: false }));
-    setSaved(p => ({ ...p, [key]: true }));
-    setTimeout(() => setSaved(p => ({ ...p, [key]: false })), 2500);
+    setAllDocs(p => ({ ...p, [company]: { ...p[company], [key]: updatedDoc } }));
+    setSaving(p => ({ ...p, [saveKey]: false }));
+    setSaved(p => ({ ...p, [saveKey]: true }));
+    setTimeout(() => setSaved(p => ({ ...p, [saveKey]: false })), 2500);
   };
 
-  const tabs = [
-    { key: "gdpr", label: "GDPR / Osobní údaje" },
-    { key: "terms", label: "Obchodní podmínky" },
-  ];
+  const currentForm = forms[activeCompany]?.[activeDocKey] || { title: "", content: "" };
+  const saveKey = `${activeCompany}_${activeDocKey}`;
 
   return (
     <div className="space-y-4">
-      {/* Tabs */}
+      {/* Company selector */}
       <div className="flex gap-2">
-        {tabs.map(t => (
-          <button key={t.key} onClick={() => setActiveTab(t.key)}
+        {COMPANIES.map(company => (
+          <button key={company} onClick={() => setActiveCompany(company)}
             className={`text-xs font-semibold px-4 py-2 rounded-lg border transition-all ${
-              activeTab === t.key
+              activeCompany === company
                 ? "bg-amber-50 border-amber-300 text-amber-800"
                 : "bg-white border-gray-200 text-gray-500 hover:border-gray-300"
+            }`}>
+            {company}
+          </button>
+        ))}
+      </div>
+
+      {/* Doc type tabs */}
+      <div className="flex gap-2">
+        {DOC_KEYS.map(t => (
+          <button key={t.key} onClick={() => setActiveDocKey(t.key)}
+            className={`text-xs font-semibold px-4 py-2 rounded-lg border transition-all ${
+              activeDocKey === t.key
+                ? "bg-slate-100 border-slate-300 text-slate-700"
+                : "bg-white border-gray-200 text-gray-400 hover:border-gray-300"
             }`}>
             <FileText className="w-3.5 h-3.5 inline mr-1.5" />
             {t.label}
@@ -63,48 +92,52 @@ export default function LegalDocumentsEditor() {
       </div>
 
       {/* Editor */}
-      {tabs.map(t => activeTab === t.key && (
-        <div key={t.key} className="space-y-3">
-          <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">Název dokumentu</label>
-            <Input
-              value={forms[t.key].title}
-              onChange={e => setForms(p => ({ ...p, [t.key]: { ...p[t.key], title: e.target.value } }))}
-              className="h-9 text-sm"
-              placeholder="Název dokumentu"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">
-              Obsah dokumentu{" "}
-              <span className="text-gray-400 font-normal">(podporuje Markdown: **tučně**, # Nadpis, - odrážka)</span>
-            </label>
-            <Textarea
-              value={forms[t.key].content}
-              onChange={e => setForms(p => ({ ...p, [t.key]: { ...p[t.key], content: e.target.value } }))}
-              rows={20}
-              className="text-xs font-mono resize-y leading-relaxed"
-              placeholder="Zde vložte text dokumentu ve formátu Markdown..."
-            />
-          </div>
-          <div className="flex justify-end">
-            <Button
-              onClick={() => handleSave(t.key)}
-              disabled={saving[t.key] || !forms[t.key].content}
-              className={`h-9 text-sm font-semibold px-5 ${
-                saved[t.key]
-                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                  : "bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"
-              }`}>
-              {saved[t.key] ? (
-                <><CheckCircle className="w-4 h-4 mr-1.5" /> Uloženo!</>
-              ) : saving[t.key] ? "Ukládám..." : (
-                <><Save className="w-4 h-4 mr-1.5" /> Uložit dokument</>
-              )}
-            </Button>
-          </div>
+      <div className="space-y-3">
+        <div>
+          <label className="text-xs font-medium text-gray-500 block mb-1">Název dokumentu</label>
+          <Input
+            value={currentForm.title}
+            onChange={e => setForms(p => ({
+              ...p,
+              [activeCompany]: { ...p[activeCompany], [activeDocKey]: { ...currentForm, title: e.target.value } }
+            }))}
+            className="h-9 text-sm"
+            placeholder={`${activeCompany} — ${DOC_KEYS.find(d => d.key === activeDocKey)?.label}`}
+          />
         </div>
-      ))}
+        <div>
+          <label className="text-xs font-medium text-gray-500 block mb-1">
+            Obsah dokumentu{" "}
+            <span className="text-gray-400 font-normal">(podporuje Markdown: **tučně**, # Nadpis, - odrážka)</span>
+          </label>
+          <Textarea
+            value={currentForm.content}
+            onChange={e => setForms(p => ({
+              ...p,
+              [activeCompany]: { ...p[activeCompany], [activeDocKey]: { ...currentForm, content: e.target.value } }
+            }))}
+            rows={20}
+            className="text-xs font-mono resize-y leading-relaxed"
+            placeholder="Zde vložte text dokumentu ve formátu Markdown..."
+          />
+        </div>
+        <div className="flex justify-end">
+          <Button
+            onClick={() => handleSave(activeCompany, activeDocKey)}
+            disabled={saving[saveKey] || !currentForm.content}
+            className={`h-9 text-sm font-semibold px-5 ${
+              saved[saveKey]
+                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                : "bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"
+            }`}>
+            {saved[saveKey] ? (
+              <><CheckCircle className="w-4 h-4 mr-1.5" /> Uloženo!</>
+            ) : saving[saveKey] ? "Ukládám..." : (
+              <><Save className="w-4 h-4 mr-1.5" /> Uložit dokument</>
+            )}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

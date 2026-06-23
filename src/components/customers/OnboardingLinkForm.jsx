@@ -22,12 +22,15 @@ export default function OnboardingLinkForm({ models = [] }) {
     setLoading(true);
     const token = generateToken();
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const selectedModel = models.find(m => m.id === assignedModel);
+    const company = selectedModel?.company || "Chrysos Media";
     await base44.entities.CustomerOnboardingRequest.create({
       full_name: name.trim(),
       token,
       status: "pending",
       assigned_model: assignedModel,
       assigned_chatter: null,
+      company,
       expires_at: expiresAt
     });
     const link = `${window.location.origin}/CustomerOnboarding?token=${token}&name=${encodeURIComponent(name.trim())}`;

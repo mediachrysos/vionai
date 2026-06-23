@@ -18,6 +18,7 @@ export default function CustomerOnboarding() {
   const [status, setStatus] = useState("loading");
   const [errorMsg, setErrorMsg] = useState("");
   const [legalDocs, setLegalDocs] = useState({ gdpr: null, terms: null });
+  const [company, setCompany] = useState("Chrysos Media");
 
   useEffect(() => {
     if (!token) { setStatus("invalid"); return; }
@@ -27,17 +28,21 @@ export default function CustomerOnboarding() {
         const d = res.data;
         if (d?.expired) { setStatus("expired"); return; }
         if (d?.invalid) { setStatus("invalid"); return; }
+        const detectedCompany = d?.company || "Chrysos Media";
+        setCompany(detectedCompany);
         setStatus("idle");
+        // Load docs filtered by company
+        return base44.functions.invoke("completeOnboarding", { get_docs: true, company: detectedCompany });
+      })
+      .then(res => {
+        if (!res) return;
+        const list = res.data?.docs || [];
+        setLegalDocs({
+          gdpr: list.find(d => d.key === "gdpr") || null,
+          terms: list.find(d => d.key === "terms") || null,
+        });
       })
       .catch(() => setStatus("invalid"));
-
-    base44.functions.invoke("completeOnboarding", { get_docs: true }).then(res => {
-      const list = res.data?.docs || [];
-      setLegalDocs({
-        gdpr: list.find(d => d.key === "gdpr") || null,
-        terms: list.find(d => d.key === "terms") || null,
-      });
-    }).catch(() => {});
   }, [token]);
 
   const handleSubmit = async (e) => {
@@ -114,13 +119,23 @@ export default function CustomerOnboarding() {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-4">
-          <a href="https://chrysos-media-website.base44.app" target="_blank" rel="noopener noreferrer" className="inline-block mb-3">
-            <img
-              src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274896/hf_20260323_140153_38afd9a9-0561-418e-aa6f-da2f6f022bae_copy_cakidp.png"
-              alt="Chrysos Media"
-              className="w-48 h-48 object-contain mx-auto hover:opacity-90 transition-opacity"
-            />
-          </a>
+          {company === "Anza Media" ? (
+            <div className="inline-block mb-3">
+              <img
+                src="https://res.cloudinary.com/drkudvyog/image/upload/v1737450333/Anza_media_logo_tmavy_podklad_zmenšene_jj8ksh.png"
+                alt="Anza Media"
+                className="w-48 h-48 object-contain mx-auto"
+              />
+            </div>
+          ) : (
+            <a href="https://chrysos-media-website.base44.app" target="_blank" rel="noopener noreferrer" className="inline-block mb-3">
+              <img
+                src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274896/hf_20260323_140153_38afd9a9-0561-418e-aa6f-da2f6f022bae_copy_cakidp.png"
+                alt="Chrysos Media"
+                className="w-48 h-48 object-contain mx-auto hover:opacity-90 transition-opacity"
+              />
+            </a>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
