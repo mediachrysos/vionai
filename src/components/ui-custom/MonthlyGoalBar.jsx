@@ -4,7 +4,6 @@ import { base44 } from "@/api/base44Client";
 import confetti from "canvas-confetti";
 import { usePayments } from "@/hooks/usePayments";
 
-
 export default function MonthlyGoalBar() {
   const { data: payments = [] } = usePayments();
 
@@ -18,22 +17,20 @@ export default function MonthlyGoalBar() {
   const periodStart = goalSettings?.goal_start_date || new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
   const periodEnd = goalSettings?.goal_end_date || new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0];
 
-  const monthRev = payments.
-  filter((p) => {
-    const d = p.payment_date || p.created_date?.split("T")[0];
-    return d >= periodStart && d <= periodEnd;
-  }).
-  reduce((s, p) => s + (p.amount || 0), 0);
+  const monthRev = payments
+    .filter((p) => {
+      const d = p.payment_date || p.created_date?.split("T")[0];
+      return d >= periodStart && d <= periodEnd;
+    })
+    .reduce((s, p) => s + (p.amount || 0), 0);
 
-  const pct = Math.min(100, Math.round(monthRev / goal * 100));
+  const pct = Math.min(100, Math.round((monthRev / goal) * 100));
   const reached = monthRev >= goal;
 
-  // Konfety + zvuk při splnění cíle
   const celebratedRef = useRef(false);
   useEffect(() => {
     if (reached && !celebratedRef.current && goals.length > 0) {
       celebratedRef.current = true;
-      // Konfety přes celou stránku
       const duration = 4000;
       const end = Date.now() + duration;
       const frame = () => {
@@ -42,7 +39,6 @@ export default function MonthlyGoalBar() {
         if (Date.now() < end) requestAnimationFrame(frame);
       };
       frame();
-      // Zvuk výhry
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const notes = [523, 659, 784, 1047];
@@ -61,59 +57,74 @@ export default function MonthlyGoalBar() {
     }
   }, [reached, goals.length]);
 
-  // Zbývající dny a denní požadavek
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const end = new Date(periodEnd);
-  end.setHours(0, 0, 0, 0);
-  const daysLeft = Math.max(0, Math.ceil((end - today) / (1000 * 60 * 60 * 24)) + 1);
+  const endDate = new Date(periodEnd);
+  endDate.setHours(0, 0, 0, 0);
+  const daysLeft = Math.max(0, Math.ceil((endDate - today) / (1000 * 60 * 60 * 24)) + 1);
   const remaining = Math.max(0, goal - monthRev);
   const dailyNeeded = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
 
   return (
-    <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-xl px-5 py-3 mb-6 shadow-sm shadow-amber-900/30">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <div className="bg-white/20 rounded-xl w-9 h-9 flex items-center justify-center">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" alt="" className="w-6 h-6 object-contain" />
-          </div>
-          <span className="text-xs font-semibold text-white/90 uppercase tracking-wider">Monthly goal</span>
+    <div className="w-full bg-[#1a1a1a] border border-white/8 rounded-2xl px-6 py-4 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+      {/* Top row */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Monthly Goal</span>
+          {reached && (
+            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full border border-emerald-400/20">
+              🎉 Reached!
+            </span>
+          )}
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-white/80">
-            <span className="font-bold text-white">{monthRev.toLocaleString()}</span>
-            {" / "}
-            {goal.toLocaleString()}
-          </span>
-          {reached && <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">🎉 Goal reached!</span>}
-          <span className="text-xs font-bold text-white bg-white/25 px-2.5 py-0.5 rounded-full">{pct}%</span>
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <span className="text-lg font-bold text-white">{monthRev.toLocaleString("cs-CZ")}</span>
+            <span className="text-sm text-slate-500 ml-1">/ {goal.toLocaleString("cs-CZ")}</span>
+          </div>
+          <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-[#C9A227]/40 bg-[#C9A227]/10">
+            <span className="text-xs font-bold text-[#C9A227]">{pct}%</span>
+          </div>
         </div>
       </div>
-      <div className="h-2 bg-white/25 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full bg-white transition-all duration-700"
-          style={{ width: `${pct}%` }} />
-      </div>
-      <div className="flex items-center gap-2 mt-2.5">
-        <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
-          <span className="text-sm">⏳</span>
-          <span className="text-xs text-white/70">Remaining</span>
-          <span className="text-xs font-bold text-white">{daysLeft} days</span>
-        </div>
-        {!reached && (
-          <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
-            <span className="text-sm">⚡</span>
-            <span className="text-xs text-white/70">Daily needed</span>
-            <span className="text-xs font-bold text-white">{dailyNeeded.toLocaleString()}</span>
-          </div>
-        )}
-        {reached && (
-          <div className="flex items-center gap-1.5 bg-white/15 rounded-lg px-2.5 py-1">
-            <span className="text-sm">🚀</span>
-            <span className="text-xs font-bold text-white">Keep going! +{(monthRev - goal).toLocaleString()} above goal</span>
-          </div>
-        )}
-      </div>
-    </div>);
 
+      {/* Progress bar */}
+      <div className="h-1.5 bg-white/8 rounded-full overflow-hidden mb-3">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${pct}%`,
+            background: reached
+              ? "linear-gradient(90deg, #34d399, #10b981)"
+              : "linear-gradient(90deg, #C9A227, #f5d56e)"
+          }}
+        />
+      </div>
+
+      {/* Bottom stats */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] text-slate-500 uppercase tracking-wider">Remaining days</span>
+          <span className="text-xs font-semibold text-slate-200">{daysLeft}</span>
+        </div>
+        <div className="w-px h-3 bg-white/10" />
+        {!reached ? (
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider">Daily needed</span>
+            <span className="text-xs font-semibold text-[#C9A227]">{dailyNeeded.toLocaleString("cs-CZ")}</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider">Above goal</span>
+            <span className="text-xs font-semibold text-emerald-400">+{(monthRev - goal).toLocaleString("cs-CZ")}</span>
+          </div>
+        )}
+        <div className="w-px h-3 bg-white/10" />
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] text-slate-500 uppercase tracking-wider">Remaining</span>
+          <span className="text-xs font-semibold text-slate-200">{remaining.toLocaleString("cs-CZ")}</span>
+        </div>
+      </div>
+    </div>
+  );
 }
