@@ -199,99 +199,99 @@ export function AdminShiftCalendar({ chatters }) {
 
   const today = new Date().toISOString().split("T")[0];
 
-  return (
-    <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden hidden">
-      <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2 hidden">
-        <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
-          <CalendarDays className="w-3.5 h-3.5 text-blue-600" />
-        </div>
-        <h3 className="text-sm font-bold text-gray-800">Shift calendar</h3>
-        <div className="ml-auto flex items-center gap-1">
-          <button onClick={() => {const d = new Date(weekStart);d.setDate(d.getDate() - 7);setWeekStart(d.toISOString().split("T")[0]);}} className="p-1 rounded hover:bg-gray-100 text-gray-400">
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="text-xs text-gray-600 font-medium px-1 min-w-[200px] text-center">{formatWeekLabel(weekStart)}</span>
-          <button onClick={() => {const d = new Date(weekStart);d.setDate(d.getDate() + 7);setWeekStart(d.toISOString().split("T")[0]);}} className="p-1 rounded hover:bg-gray-100 text-gray-400">
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+  return null;
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs hidden">
-          <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left px-4 py-2 text-gray-500 font-medium w-28">Chatter</th>
-              {days.map((date, i) =>
-              <th key={date} className={`text-center px-2 py-2 font-medium hidden ${date === today ? "text-[#C9A227]" : "text-gray-500"}`}>
-                  <div>{DAY_NAMES[i]}</div>
-                  <div className={`text-[10px] ${date === today ? "font-bold text-[#C9A227]" : "text-gray-400"}`}>{new Date(date).getDate()}.</div>
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {chatters.map((chatter) =>
-            <tr key={chatter.email} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                <td className="px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
-                      {(chatter.nickname || chatter.full_name || "?")[0].toUpperCase()}
-                    </div>
-                    <span className="font-medium text-gray-700 truncate max-w-[80px]">{chatter.nickname || chatter.full_name?.split(" ")[0]}</span>
-                  </div>
-                </td>
-                {days.map((date) => {
-                const shift = shiftMap[chatter.email]?.[date];
-                return (
-                  <td key={date} className="px-1 py-2 text-center">
-                      <button
-                      onClick={() => toggleShift(chatter, date)}
-                      title={shift?.note || ""}
-                      className={`w-8 h-8 rounded-lg transition-all border mx-auto block ${
-                      shift ?
-                      "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white border-[#C9A227] shadow-sm" :
-                      "border-gray-200 bg-gray-50 hover:border-gray-300"}`
-                      }>
-                      
-                        {shift ? "✓" : ""}
-                      </button>
-                      {shift &&
-                    <button
-                      onClick={() => setEditingShift({ id: shift.id, date, chatterName: chatter.nickname || chatter.full_name, note: shift.note || "" })}
-                      className="text-[9px] text-blue-400 hover:text-blue-600 mt-0.5 block mx-auto truncate max-w-[64px]">
-                      
-                          {shift.note ? shift.note.slice(0, 8) + (shift.note.length > 8 ? "…" : "") : "+ note"}
-                        </button>
-                    }
-                    </td>);
 
-              })}
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
 
-      {/* Note editor */}
-      {editingShift &&
-      <div className="px-4 pb-4">
-          <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Note: {editingShift.chatterName} · {new Date(editingShift.date).toLocaleDateString()}</p>
-            <input
-            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#C9A227]"
-            value={editingShift.note}
-            onChange={(e) => setEditingShift((prev) => ({ ...prev, note: e.target.value }))}
-            placeholder="E.g. morning shift, 8-16..."
-            autoFocus />
-          
-            <div className="flex gap-2 mt-2">
-              <button onClick={() => saveNote(editingShift.id, editingShift.note)} className="text-xs bg-[#C9A227] text-white px-3 py-1.5 rounded-lg hover:bg-[#A8841C]">Save</button>
-              <button onClick={() => setEditingShift(null)} className="text-xs text-gray-400 px-2 py-1.5">Cancel</button>
-            </div>
-          </div>
-        </div>
-      }
-    </div>);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
