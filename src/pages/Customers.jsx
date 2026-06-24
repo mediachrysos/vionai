@@ -554,7 +554,7 @@ export default function Customers({ currentUser }) {
             <OnboardingLinkForm models={models} />
           </div>
         </div>
-        <p className="text-sm text-slate-500">{customers.length} customers total</p>
+        <p className="text-sm text-slate-500">{filtered.length} customers total</p>
       </div>
 
       {/* Filters */}
