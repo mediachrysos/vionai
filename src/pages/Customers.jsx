@@ -132,6 +132,8 @@ export default function Customers({ currentUser }) {
     queryFn: () => base44.entities.CustomerOnboardingRequest.filter({ status: "completed" }),
   });
 
+  const customerIdsWithPayments = useMemo(() => new Set(allPayments.map((p) => p.customer_id).filter(Boolean)), [allPayments]);
+
   const pendingCustomers = useMemo(() => {
     return customers.filter((c) => !customerIdsWithPayments.has(c.id));
   }, [customers, customerIdsWithPayments]);
@@ -313,8 +315,6 @@ export default function Customers({ currentUser }) {
     if (!p.customer_id) return;
     customerPaymentCount[p.customer_id] = (customerPaymentCount[p.customer_id] || 0) + 1;
   });
-
-  const customerIdsWithPayments = useMemo(() => new Set(allPayments.map((p) => p.customer_id).filter(Boolean)), [allPayments]);
 
   // Filter out non-primary duplicates (show only first of each name group)
   const filtered = customers.filter((c) => {
