@@ -142,14 +142,7 @@ export default function CustomerOnboarding() {
           )}
         </div>
 
-        {company !== "Anza Media" && (
-          <h1
-            className="text-center text-2xl font-bold mb-6"
-            style={{ color: "#C29D24", fontFamily: "Georgia, serif" }}
-          >
-            {company}
-          </h1>
-        )}
+
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Pre-filled name */}
