@@ -15,7 +15,6 @@ const allPages = [
   { name: "Wallet", icon: CreditCard, page: "Wallet" },
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
   { name: "Chatting Space", icon: MessageSquare, page: "ChatterPortal" },
-  { name: "Chatters Performance", icon: Activity, page: "ChattersPerformance" },
   { name: "Admin Portal", icon: Settings, page: "AdminUsers" },
 ];
 

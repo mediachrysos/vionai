@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, BarChart2, Users } from "lucide-react";
 import PageHeader from "../components/ui-custom/PageHeader";
 import NicknameSetupModal from "../components/ui-custom/NicknameSetupModal";
 import OnboardingLinkForm from "../components/customers/OnboardingLinkForm";
 import { DEFAULT_TIERS } from "../components/chatter/tierUtils";
-import DailyKpiCards from "../components/chatter/DailyKpiCards";
 import TierLadder from "../components/chatter/TierLadder";
 import MonthlyPaceCard from "../components/chatter/MonthlyPaceCard";
-import DailyBreakdownCard from "../components/chatter/DailyBreakdownCard";
 import TodayPaymentsWidget from "../components/chatter/TodayPaymentsWidget";
 import { ChatterShiftPicker, AdminShiftCalendar } from "../components/chatter/ShiftCalendar";
 import ChatterScraperEmbed from "../components/chatter/ChatterScraperEmbed";
@@ -19,43 +17,86 @@ import StatsCard from "../components/chatter/StatsCard";
 import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
 import ChatterCustomersList from "../components/chatter/ChatterCustomersList";
 import GraphicRequestWidget from "../components/chatter/GraphicRequestWidget";
+import { usePayments } from "@/hooks/usePayments";
+import KpiCard from "../components/chatters/KpiCard";
+import PeriodSelector, { getPeriodDates } from "../components/chatters/PeriodSelector";
+import PerformanceAlerts from "../components/chatters/PerformanceAlerts";
+import RecentPaymentsPanel from "../components/chatters/RecentPaymentsPanel";
+import ChatterLeaderboardTable from "../components/chatters/ChatterLeaderboardTable";
+import TodayNotesWidget from "../components/dashboard/TodayNotesWidget";
+import ShiftOverviewWidget from "../components/dashboard/ShiftOverviewWidget";
+import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget";
 
 // ─── Admin view ────────────────────────────────────────────────────────────
 function AdminChattingSpace({ currentUser }) {
   const [selectedChatter, setSelectedChatter] = useState(null);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [period, setPeriod] = useState({ key: "this_month" });
 
   const { data: users = [] } = useQuery({
     queryKey: ["users-chatters"],
     queryFn: () => base44.entities.User.list(),
     staleTime: 60000
   });
-
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list(),
     staleTime: 120000
   });
-
-  const { data: allPayments = [] } = useQuery({
-    queryKey: ["all-payments-chatting"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-    staleTime: 60000
+  const { data: customers = [] } = useQuery({
+    queryKey: ["customers"],
+    queryFn: () => base44.entities.Customer.list("-created_date", 5000),
+    staleTime: 60000,
+  });
+  const { data: payments = [] } = usePayments();
+  const { data: allShifts = [] } = useQuery({
+    queryKey: ["all-chatter-shifts"],
+    queryFn: () => base44.entities.ChatterShift.list("-date", 2000),
+    staleTime: 15000,
+  });
+  const { data: payouts = [] } = useQuery({
+    queryKey: ["chatterPayouts"],
+    queryFn: () => base44.entities.ChatterPayout.list("-period", 500),
+    staleTime: 60000,
   });
 
-  const chatters = users.filter((u) => {
+  const chatters = useMemo(() => users.filter((u) => {
     const uRoles = u.roles?.length > 0 ? u.roles : u.role ? [u.role] : [];
     return uRoles.includes("chatter") || u.allowed_pages?.includes("ChatterPortal");
-  });
+  }), [users]);
+
+  const { start, end, prevStart, prevEnd } = getPeriodDates(period);
+
+  const periodPayments = useMemo(() =>
+    payments.filter(p => { const d = p.payment_date || p.created_date?.split("T")[0]; return d && d >= start && d <= end; }),
+    [payments, start, end]);
+
+  const prevPayments = useMemo(() => {
+    if (!prevStart || !prevEnd) return [];
+    return payments.filter(p => { const d = p.payment_date || p.created_date?.split("T")[0]; return d && d >= prevStart && d <= prevEnd; });
+  }, [payments, prevStart, prevEnd]);
+
+  const periodShifts = useMemo(() => allShifts.filter(s => s.date >= start && s.date <= end), [allShifts, start, end]);
+
+  const totalRevenue = periodPayments.reduce((s, p) => s + (p.amount || 0), 0);
+  const prevRevenue = prevPayments.reduce((s, p) => s + (p.amount || 0), 0);
+  const revTrendPct = prevRevenue > 0 ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 100) : null;
+
+  const activeChatters = chatters.filter(c =>
+    periodShifts.some(s => s.chatter_email === c.email) || periodPayments.some(p => p.chatter_email === c.email)
+  );
+  const totalPaymentCount = periodPayments.length;
+  const revPerChatter = activeChatters.length > 0 ? Math.round(totalRevenue / activeChatters.length) : 0;
+
+  const paydayCustomers = customers.filter(
+    c => c.pay_day_of_month === new Date().getDate() && c.status !== "blocked" && c.status !== "inactive"
+  );
 
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
-
   function getStats(email) {
-    const ps = allPayments.filter((p) => p.chatter_email === email);
+    const ps = payments.filter((p) => p.chatter_email === email);
     const month = ps.filter((p) => (p.payment_date || p.created_date?.split("T")[0]) >= monthStart);
-    return {
-      payments: ps,
-      monthTotal: month.reduce((s, p) => s + (p.amount || 0), 0)
-    };
+    return { payments: ps, monthTotal: month.reduce((s, p) => s + (p.amount || 0), 0) };
   }
 
   if (selectedChatter) {
@@ -76,48 +117,88 @@ function AdminChattingSpace({ currentUser }) {
   }
 
   return (
-    <div className="p-4 lg:p-8 max-w-5xl mx-auto space-y-6">
-      <PageHeader title="Chatting Space" subtitle="Přehled všech chatterů" />
-
-      {/* Admin shift calendar */}
-      {chatters.length > 0 && <AdminShiftCalendar chatters={chatters} />}
-
-      {chatters.length === 0 ? (
-        <div className="text-center py-16 text-slate-600">
-          <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
-          <p className="text-sm">Zatím žádní chatteři</p>
+    <div className="p-4 lg:p-8 max-w-7xl mx-auto space-y-6">
+      {/* Tabs */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-1 bg-white/5 rounded-xl p-1 border border-white/10 w-fit">
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "dashboard" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+            <BarChart2 className="w-4 h-4" /> Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab("chatters")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "chatters" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+            <Users className="w-4 h-4" /> Chatters
+          </button>
         </div>
-      ) : (
-        <div className="grid gap-3">
-          {chatters.map((u) => {
-            const stats = getStats(u.email);
-            return (
-              <button
-                key={u.id}
-                onClick={() => setSelectedChatter(u)}
-                className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm p-4 flex items-center justify-between hover:border-[#C9A227]/30 hover:shadow-md transition-all text-left">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold">
-                    {(u.nickname || u.full_name || "?")[0].toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-200">{u.nickname || u.full_name}</p>
-                    <p className="text-xs text-slate-500">{u.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-6 text-right">
-                  <div>
-                    <p className="text-xs text-slate-500">Tento měsíc</p>
-                    <p className="text-sm font-bold text-slate-200">{stats.monthTotal.toLocaleString()} Kč</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Plateb</p>
-                    <p className="text-sm font-bold text-slate-400">{stats.payments.length}</p>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
+        {activeTab === "dashboard" && <PeriodSelector period={period} onChange={setPeriod} />}
+      </div>
+
+      {/* ── Dashboard tab ── */}
+      {activeTab === "dashboard" && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <KpiCard label="Total Revenue" value={totalRevenue.toLocaleString("cs-CZ") + " CZK"} highlight trend={revTrendPct} trendLabel={revTrendPct !== null ? `${revTrendPct > 0 ? "+" : ""}${revTrendPct}% vs prev period` : "No comparison data"} />
+            <KpiCard label="Active Chatters" value={`${activeChatters.length} / ${chatters.length}`} sub="with shift or payment" />
+            <KpiCard label="Total Payments" value={totalPaymentCount.toString()} sub={totalPaymentCount > 0 ? `avg ${Math.round(totalRevenue / totalPaymentCount).toLocaleString("cs-CZ")} CZK` : "No payments"} />
+            <KpiCard label="Revenue / Chatter" value={activeChatters.length > 0 ? revPerChatter.toLocaleString("cs-CZ") + " CZK" : "—"} sub={activeChatters.length > 0 ? `across ${activeChatters.length} active` : "No active chatters"} />
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-4">
+            <TodayNotesWidget currentUser={currentUser} paydayCustomers={paydayCustomers} models={models} />
+            <PerformanceAlerts chatters={chatters} payments={payments} shifts={allShifts} periodDates={{ start, end }} />
+          </div>
+
+          <ChatterLeaderboardTable chatters={chatters} payments={periodPayments} prevPayments={prevPayments} shifts={periodShifts} models={models} payouts={payouts} />
+          <RecentPaymentsPanel payments={payments} />
+          <RecentCustomersWidget customers={customers} />
+          <ShiftOverviewWidget users={users} />
+        </div>
+      )}
+
+      {/* ── Chatters tab ── */}
+      {activeTab === "chatters" && (
+        <div className="space-y-4">
+          {chatters.length > 0 && <AdminShiftCalendar chatters={chatters} />}
+          {chatters.length === 0 ? (
+            <div className="text-center py-16 text-slate-600">
+              <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
+              <p className="text-sm">Zatím žádní chatteři</p>
+            </div>
+          ) : (
+            <div className="grid gap-3">
+              {chatters.map((u) => {
+                const stats = getStats(u.email);
+                return (
+                  <button
+                    key={u.id}
+                    onClick={() => setSelectedChatter(u)}
+                    className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm p-4 flex items-center justify-between hover:border-[#C9A227]/30 hover:shadow-md transition-all text-left">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold">
+                        {(u.nickname || u.full_name || "?")[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-200">{u.nickname || u.full_name}</p>
+                        <p className="text-xs text-slate-500">{u.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6 text-right">
+                      <div>
+                        <p className="text-xs text-slate-500">Tento měsíc</p>
+                        <p className="text-sm font-bold text-slate-200">{stats.monthTotal.toLocaleString()} Kč</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500">Plateb</p>
+                        <p className="text-sm font-bold text-slate-400">{stats.payments.length}</p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
