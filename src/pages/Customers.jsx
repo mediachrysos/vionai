@@ -37,7 +37,7 @@ export default function Customers({ currentUser }) {
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ["customers"],
     queryFn: () => base44.entities.Customer.list("-created_date", 5000),
-    staleTime: 0,
+    staleTime: 0
   });
   const { data: allPayments = [] } = useQuery({
     queryKey: ["payments"],
@@ -69,7 +69,7 @@ export default function Customers({ currentUser }) {
 
   const modelMap = useMemo(() => {
     const m = {};
-    models.forEach((mdl) => { m[mdl.id] = mdl.name; });
+    models.forEach((mdl) => {m[mdl.id] = mdl.name;});
     return m;
   }, [models]);
 
@@ -129,7 +129,7 @@ export default function Customers({ currentUser }) {
   // --- Pending customers (completed onboarding but no payments) ---
   const { data: onboardingRequests = [] } = useQuery({
     queryKey: ["onboarding-requests"],
-    queryFn: () => base44.entities.CustomerOnboardingRequest.filter({ status: "completed" }),
+    queryFn: () => base44.entities.CustomerOnboardingRequest.filter({ status: "completed" })
   });
 
   const customerIdsWithPayments = useMemo(() => new Set(allPayments.map((p) => p.customer_id).filter(Boolean)), [allPayments]);
@@ -144,7 +144,7 @@ export default function Customers({ currentUser }) {
 
   const { data: audience = [], isLoading: laLoading } = useQuery({
     queryKey: ["look-alike-audience"],
-    queryFn: () => base44.entities.LookAlikeAudience.list("-total_czk", 5000),
+    queryFn: () => base44.entities.LookAlikeAudience.list("-total_czk", 5000)
   });
 
   const paymentTotals = useMemo(() => {
@@ -169,7 +169,7 @@ export default function Customers({ currentUser }) {
     const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
     const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
     const fromPayments = paymentTotals[key] || paymentTotals[keyRev] || 0;
-    return fromPayments > 0 ? fromPayments : (a.total_czk || 0);
+    return fromPayments > 0 ? fromPayments : a.total_czk || 0;
   };
 
   const handleSync = async () => {
@@ -187,14 +187,14 @@ export default function Customers({ currentUser }) {
 
   const downloadAudienceCsv = () => {
     const rows = [
-      ["No.", "First name", "Last name", "Phone", "Total (CZK)"],
-      ...filteredAudience.map((a, i) => [i + 1, a.first_name || "", a.last_name || "", a.phone || "", getAudienceTotal(a)]),
-    ];
+    ["No.", "First name", "Last name", "Phone", "Total (CZK)"],
+    ...filteredAudience.map((a, i) => [i + 1, a.first_name || "", a.last_name || "", a.phone || "", getAudienceTotal(a)])];
+
     const csv = rows.map((r) => r.map((v) => `"${v ?? ""}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "look-alike-audience.csv"; a.click();
+    a.href = url;a.download = "look-alike-audience.csv";a.click();
     URL.revokeObjectURL(url);
   };
   // --- end Look-alike ---
@@ -223,16 +223,16 @@ export default function Customers({ currentUser }) {
       const [primary, ...dupes] = group;
       // Merge assigned_models from all duplicates into primary
       const allModelIds = [...new Set([
-        ...(primary.assigned_models || []),
-        ...dupes.flatMap((d) => d.assigned_models || []),
-      ])];
+      ...(primary.assigned_models || []),
+      ...dupes.flatMap((d) => d.assigned_models || [])]
+      )];
       // Update primary with merged models and sum totals
       const mergedTotal = group.reduce((s, c) => s + (c.total_spent || 0), 0);
       const mergedCount = group.reduce((s, c) => s + (c.payment_count || 0), 0);
       await base44.entities.Customer.update(primary.id, {
         assigned_models: allModelIds,
         total_spent: mergedTotal,
-        payment_count: mergedCount,
+        payment_count: mergedCount
       });
       // Reassign all payments from dupes to primary
       for (const dupe of dupes) {
@@ -288,12 +288,12 @@ export default function Customers({ currentUser }) {
   const downloadXlsx = () => {
     const rows = [
     ["Name", "Email", "Phone", "Bank", "Account Number", "Pay Day", "Total", "Payments"],
-    ...customers
-      .filter((c) => (customerStats[c.id]?.total || 0) > 0)
-      .map((c) => {
-        const st = customerStats[c.id] || {};
-        return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter((p) => p.customer_id === c.id).length];
-      })];
+    ...customers.
+    filter((c) => (customerStats[c.id]?.total || 0) > 0).
+    map((c) => {
+      const st = customerStats[c.id] || {};
+      return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter((p) => p.customer_id === c.id).length];
+    })];
 
     const csv = rows.map((r) => r.map((v) => `"${v ?? ""}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -367,39 +367,39 @@ export default function Customers({ currentUser }) {
       <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1 w-fit border border-white/10">
         <button
           onClick={() => setActiveTab("customers")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "customers" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}
-        >
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "customers" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+          
           <UserCircle className="w-4 h-4" /> Customers
         </button>
         <button
           onClick={() => setActiveTab("pending")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "pending" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}
-        >
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "pending" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+          
           <Clock className="w-4 h-4" /> Pending
-          {pendingCustomers.length > 0 && (
-            <span className="bg-amber-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">{pendingCustomers.length}</span>
-          )}
+          {pendingCustomers.length > 0 &&
+          <span className="bg-amber-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">{pendingCustomers.length}</span>
+          }
         </button>
         <button
           onClick={() => setActiveTab("lookalike")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "lookalike" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}
-        >
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "lookalike" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+          
           <ScanSearch className="w-4 h-4" /> Look-alike Audience
         </button>
       </div>
 
-      {activeTab === "pending" && (
-        <div>
+      {activeTab === "pending" &&
+      <div>
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-bold text-slate-100">Pending customers</h2>
               <p className="text-sm text-slate-500 mt-0.5">{pendingCustomers.length} zákazníků potvrdilo onboarding, ale zatím neposlali žádné peníze</p>
             </div>
           </div>
-          {pendingCustomers.length === 0 ? (
-            <div className="text-center py-16 text-slate-500 text-sm">Všichni zákazníci už platili 🎉</div>
-          ) : (
-            <div className="bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden">
+          {pendingCustomers.length === 0 ?
+        <div className="text-center py-16 text-slate-500 text-sm">Všichni zákazníci už platili 🎉</div> :
+
+        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/5">
@@ -412,18 +412,18 @@ export default function Customers({ currentUser }) {
                 </thead>
                 <tbody>
                   {pendingCustomers.map((c, i) => {
-                    const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
-                    const modelNames = mids.map((mid) => modelMap[mid]).filter(Boolean);
-                    const daysSince = c.created_date ? Math.floor((Date.now() - new Date(c.created_date)) / 86400000) : null;
-                    return (
-                      <motion.tr
-                        key={c.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: i * 0.02 }}
-                        className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
-                        onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
-                      >
+                const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
+                const modelNames = mids.map((mid) => modelMap[mid]).filter(Boolean);
+                const daysSince = c.created_date ? Math.floor((Date.now() - new Date(c.created_date)) / 86400000) : null;
+                return (
+                  <motion.tr
+                    key={c.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.02 }}
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
+                    
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-amber-900/40 border border-amber-700/30 flex items-center justify-center text-xs font-bold text-amber-400 flex-shrink-0">
@@ -434,11 +434,11 @@ export default function Customers({ currentUser }) {
                         </td>
                         <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">{c.email || "—"}</td>
                         <td className="px-5 py-3.5 hidden lg:table-cell">
-                          {modelNames.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
+                          {modelNames.length > 0 ?
+                      <div className="flex flex-wrap gap-1">
                               {modelNames.map((n) => <span key={n} className="text-xs bg-amber-900/30 text-amber-400 border border-amber-800/30 rounded-md px-1.5 py-0.5">{n}</span>)}
-                            </div>
-                          ) : <span className="text-slate-600 text-sm">—</span>}
+                            </div> :
+                      <span className="text-slate-600 text-sm">—</span>}
                         </td>
                         <td className="px-5 py-3.5 text-sm text-slate-500 hidden md:table-cell">
                           {daysSince !== null ? `před ${daysSince} dny` : "—"}
@@ -446,34 +446,34 @@ export default function Customers({ currentUser }) {
                         <td className="px-4 py-3.5 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             <button
-                              onClick={(e) => { e.stopPropagation(); setEditing(c); setShowForm(true); }}
-                              className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-amber-900/40 transition-colors flex items-center justify-center"
-                            >
+                          onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
+                          className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-amber-900/40 transition-colors flex items-center justify-center">
+                          
                               <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-4 h-4 object-contain" />
                             </button>
                           </div>
                         </td>
-                      </motion.tr>
-                    );
-                  })}
+                      </motion.tr>);
+
+              })}
                 </tbody>
               </table>
             </div>
-          )}
+        }
           <CustomerFormModal
-            open={showForm}
-            onClose={() => { setShowForm(false); setEditing(null); }}
-            onSave={saveMutation.mutateAsync}
-            customer={editing}
-            models={models}
-            users={users}
-            allCustomers={customers}
-          />
+          open={showForm}
+          onClose={() => {setShowForm(false);setEditing(null);}}
+          onSave={saveMutation.mutateAsync}
+          customer={editing}
+          models={models}
+          users={users}
+          allCustomers={customers} />
+        
         </div>
-      )}
+      }
 
-      {activeTab === "lookalike" && (
-        <div>
+      {activeTab === "lookalike" &&
+      <div>
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-slate-500">{audience.length} contacts</p>
             <div className="flex gap-2">
@@ -502,17 +502,17 @@ export default function Customers({ currentUser }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {laLoading ? (
-                    <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Načítám...</td></tr>
-                  ) : filteredAudience.length === 0 ? (
-                    <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">No records</td></tr>
-                  ) : filteredAudience.map((a, i) => {
-                    const total = getAudienceTotal(a);
-                    const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
-                    const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
-                    const isFromDB = (paymentTotals[key] || paymentTotals[keyRev] || 0) > 0;
-                    return (
-                      <tr key={a.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                  {laLoading ?
+                <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">Načítám...</td></tr> :
+                filteredAudience.length === 0 ?
+                <tr><td colSpan={5} className="text-center py-12 text-slate-500 text-sm">No records</td></tr> :
+                filteredAudience.map((a, i) => {
+                  const total = getAudienceTotal(a);
+                  const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
+                  const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+                  const isFromDB = (paymentTotals[key] || paymentTotals[keyRev] || 0) > 0;
+                  return (
+                    <tr key={a.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="px-5 py-3.5 text-sm text-slate-500">{i + 1}</td>
                         <td className="px-5 py-3.5 text-sm font-medium text-slate-200">{a.first_name}</td>
                         <td className="px-5 py-3.5 text-sm font-medium text-slate-200">{a.last_name}</td>
@@ -523,15 +523,15 @@ export default function Customers({ currentUser }) {
                           </span>
                           {isFromDB && <span className="ml-1.5 text-[10px] text-emerald-400 bg-emerald-950/50 border border-emerald-700/30 rounded px-1 py-0.5">live</span>}
                         </td>
-                      </tr>
-                    );
-                  })}
+                      </tr>);
+
+                })}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-      )}
+      }
 
       {activeTab === "customers" && <>
       <div className="mb-6 lg:mb-8">
@@ -541,16 +541,16 @@ export default function Customers({ currentUser }) {
             <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
               <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export
             </Button>
-            {duplicateNames.size > 0 && (
+            {duplicateNames.size > 0 &&
               <Button
                 onClick={handleMergeDuplicates}
                 disabled={merging}
                 variant="outline"
-                className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 h-9"
-              >
+                className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 h-9">
+                
                 {merging ? "Merging..." : `👥 Merge duplicates (${duplicateNames.size / 2 | 0}+)`}
               </Button>
-            )}
+              }
             <OnboardingLinkForm models={models} />
           </div>
         </div>
@@ -576,20 +576,20 @@ export default function Customers({ currentUser }) {
           <SelectContent>
             <SelectItem value="all">All models</SelectItem>
             {models.map((m) =>
-            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-            )}
+              <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+              )}
           </SelectContent>
         </Select>
         {!isAdmin &&
-        <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
-        }
+          <ChatterFilterToggle showAll={showAll} onToggle={toggle} />
+          }
       </div>
 
       {/* Table */}
       {filtered.length === 0 && !isLoading ?
-      <EmptyState icon={UserCircle} title="No customers" description="Add your first customer to get started" actionLabel="Add customer" onAction={() => setShowForm(true)} /> :
+        <EmptyState icon={UserCircle} title="No customers" description="Add your first customer to get started" actionLabel="Add customer" onAction={() => setShowForm(true)} /> :
 
-      <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
+        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -604,59 +604,59 @@ export default function Customers({ currentUser }) {
               </thead>
               <tbody>
                 {filtered.map((c, i) => {
-                const merged = mergedStats[c.id];
-                const st = merged ? { total: merged.total, lastDate: null, lastAmount: null } : (customerStats[c.id] || {});
-                const rawSt = customerStats[c.id] || {};
-                const displayTotal = merged ? merged.total : (rawSt.total || 0);
-                const displayCount = merged ? merged.count : (customerPaymentCount[c.id] || 0);
-                const daysSinceLast = rawSt.lastDate ? Math.floor((Date.now() - new Date(rawSt.lastDate)) / 86400000) : null;
-                const isExpanded = expandedMerge === c.id;
+                  const merged = mergedStats[c.id];
+                  const st = merged ? { total: merged.total, lastDate: null, lastAmount: null } : customerStats[c.id] || {};
+                  const rawSt = customerStats[c.id] || {};
+                  const displayTotal = merged ? merged.total : rawSt.total || 0;
+                  const displayCount = merged ? merged.count : customerPaymentCount[c.id] || 0;
+                  const daysSinceLast = rawSt.lastDate ? Math.floor((Date.now() - new Date(rawSt.lastDate)) / 86400000) : null;
+                  const isExpanded = expandedMerge === c.id;
 
-                return (
-                  <React.Fragment key={c.id}>
+                  return (
+                    <React.Fragment key={c.id}>
                   <motion.tr
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.02 }}
-                    className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/10 border-amber-800/30 hover:from-amber-900/30" : "border-slate-700/30 hover:bg-slate-800/50"}`}
-                    onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: i * 0.02 }}
+                        className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/10 border-amber-800/30 hover:from-amber-900/30" : "border-slate-700/30 hover:bg-slate-800/50"}`}
+                        onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
                     
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          {c.pay_day_of_month === todayDay && (
+                          {c.pay_day_of_month === todayDay &&
                             <div className="w-1 h-9 rounded-full bg-gradient-to-b from-[#C9A227] to-[#A8841C] -ml-1 flex-shrink-0" />
-                          )}
+                            }
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${c.pay_day_of_month === todayDay ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm shadow-amber-200" : "bg-slate-700 text-slate-300"}`}>
                             {c.full_name?.[0]?.toUpperCase() || "?"}
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className={`text-sm font-medium ${c.pay_day_of_month === todayDay ? "text-amber-300 font-semibold" : "text-slate-200"}`}>{c.full_name}</span>
-                            {c.pay_day_of_month === todayDay && (
+                            {c.pay_day_of_month === todayDay &&
                               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-amber-900/40 border border-amber-700/30 px-1.5 py-0.5 rounded-full">💰 payday</span>
-                            )}
-                            {merged && (
+                              }
+                            {merged &&
                               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-300 bg-indigo-950/50 border border-indigo-700/30 px-1.5 py-0.5 rounded-full">
                                 👥 {merged.allIds.length}× duplicate
                               </span>
-                            )}
+                              }
                           </div>
                         </div>
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden md:table-cell">
                         {c.pay_day_of_month ?
-                      <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> :
-                      <span className="text-slate-600">—</span>}
+                          <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> :
+                          <span className="text-slate-600">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-sm hidden lg:table-cell">
                         {(() => {
-                        const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
-                        const names = mids.map((mid) => modelMap[mid]).filter(Boolean);
-                        return names.length > 0 ?
-                        <div className="flex flex-wrap gap-1">
+                            const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
+                            const names = mids.map((mid) => modelMap[mid]).filter(Boolean);
+                            return names.length > 0 ?
+                            <div className="flex flex-wrap gap-1">
                               {names.map((n) => <span key={n} className="text-xs bg-amber-900/30 text-amber-400 border border-amber-800/30 rounded-md px-1.5 py-0.5">{n}</span>)}
                             </div> :
-                        <span className="text-slate-600">—</span>;
-                      })()}
+                            <span className="text-slate-600">—</span>;
+                          })()}
                       </td>
                       <td className="px-5 py-3.5 text-right">
                         <p className="text-sm font-semibold text-slate-200">{displayTotal.toLocaleString()} CZK</p>
@@ -664,71 +664,71 @@ export default function Customers({ currentUser }) {
                       </td>
                       <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                         {daysSinceLast !== null ?
-                        <div>
+                          <div>
                              <p className="text-xs font-medium text-slate-300">{rawSt.lastAmount?.toLocaleString()} CZK</p>
                             <p className="text-xs text-slate-500">{daysSinceLast} days ago</p>
                           </div> :
-                      <span className="text-xs text-slate-600">—</span>}
+                          <span className="text-xs text-slate-600">—</span>}
                       </td>
                       <td className="px-4 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          {merged && (
+                          {merged &&
                             <button
-                              onClick={(e) => { e.stopPropagation(); setExpandedMerge(isExpanded ? null : c.id); }}
+                              onClick={(e) => {e.stopPropagation();setExpandedMerge(isExpanded ? null : c.id);}}
                               className="w-8 h-8 rounded-lg bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center justify-center text-indigo-500 text-xs font-bold"
-                              title="Show payments by model"
-                            >
+                              title="Show payments by model">
+                              
                               {isExpanded ? "▲" : "▼"}
                             </button>
-                          )}
+                            }
                           <button
-                           onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
-                           className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-amber-900/40 transition-colors flex items-center justify-center">
+                              onClick={(e) => {e.stopPropagation();setEditing(c);setShowForm(true);}}
+                              className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-amber-900/40 transition-colors flex items-center justify-center">
                             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-4 h-4 object-contain" />
                           </button>
                           <button
-                           onClick={(e) => handleDelete(e, c)}
-                           className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-red-900/40 transition-colors flex items-center justify-center">
+                              onClick={(e) => handleDelete(e, c)}
+                              className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-red-900/40 transition-colors flex items-center justify-center">
                            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-4 h-4 object-contain" />
                           </button>
                         </div>
                       </td>
                     </motion.tr>
                     {/* Expanded: payments per model for duplicates */}
-                    {merged && isExpanded && (
+                    {merged && isExpanded &&
                       <tr className="bg-indigo-950/20 border-b border-indigo-700/20">
                         <td colSpan={6} className="px-8 py-3">
                           <p className="text-xs font-semibold text-indigo-300 mb-2">Payments by model (merged {merged.allIds.length} duplicate records):</p>
                           <div className="flex flex-wrap gap-3">
-                            {Object.entries(merged.byModel).map(([modelName, data]) => (
-                              <div key={modelName} className="flex items-center gap-2 bg-[#1e1e1e] border border-white/10 rounded-lg px-3 py-1.5">
+                            {Object.entries(merged.byModel).map(([modelName, data]) =>
+                            <div key={modelName} className="flex items-center gap-2 bg-[#1e1e1e] border border-white/10 rounded-lg px-3 py-1.5">
                                 <span className="text-xs font-medium text-amber-300 bg-amber-900/30 border border-amber-700/30 rounded px-1.5 py-0.5">{modelName}</span>
                                 <span className="text-sm font-bold text-slate-200">{data.total.toLocaleString()} CZK
 </span>
                                 <span className="text-xs text-slate-500">{data.count}× payments</span>
                               </div>
-                            ))}
+                            )}
                           </div>
                         </td>
                       </tr>
-                    )}
+                      }
                   </React.Fragment>);
 
-              })}
+                })}
               </tbody>
             </table>
           </div>
         </div>
-      }
+        }
 
       <CustomerFormModal
-        open={showForm}
-        onClose={() => {setShowForm(false);setEditing(null);}}
-        onSave={saveMutation.mutateAsync}
-        customer={editing}
-        models={models}
-        users={users}
-        allCustomers={customers} />
+          open={showForm}
+          onClose={() => {setShowForm(false);setEditing(null);}}
+          onSave={saveMutation.mutateAsync}
+          customer={editing}
+          models={models}
+          users={users}
+          allCustomers={customers} />
       </>}
     </div>);
 
