@@ -84,7 +84,7 @@ export function ChatterShiftPicker({ email, name }) {
   return (
     <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
       <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
-        <div className="w-6 h-6 rounded-lg bg-blue-500/20 flex items-center justify-center">
+        <div className="w-6 h-6 rounded-lg bg-blue-500/20 flex items-center justify-center hidden">
           <CalendarDays className="w-3.5 h-3.5 text-blue-400" />
         </div>
         <h3 className="text-xs font-bold text-slate-200">My shifts</h3>

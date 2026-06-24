@@ -24,7 +24,7 @@ function calcMonthlyEarned(monthPayments, hoursWorked) {
   }
   let total = 0;
   for (const [day, revenue] of Object.entries(byDay)) {
-    const hours = day === today ? (hoursWorked || 0) : 0;
+    const hours = day === today ? hoursWorked || 0 : 0;
     const { payout } = calcDailyPayout(revenue, hours, DEFAULT_TIERS);
     total += payout;
   }
@@ -50,13 +50,13 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
     queryKey: ["chatterPayouts", chatterEmail],
     queryFn: () => base44.entities.ChatterPayout.filter({ chatter_email: chatterEmail }),
     enabled: !!chatterEmail,
-    staleTime: 30000,
+    staleTime: 30000
   });
 
   const earned = Math.round(
-    monthPayments
-      ? calcMonthlyEarned(monthPayments, hoursWorked)
-      : calcDailyPayout(totalChatted, hoursWorked, DEFAULT_TIERS).payout
+    monthPayments ?
+    calcMonthlyEarned(monthPayments, hoursWorked) :
+    calcDailyPayout(totalChatted, hoursWorked, DEFAULT_TIERS).payout
   );
   const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
   const remaining = earned - totalPaid;
@@ -70,7 +70,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
       chatter_email: chatterEmail,
       amount,
       period: getCurrentPeriod(),
-      note: payoutNote,
+      note: payoutNote
     });
     setPayoutAmount("");
     setPayoutNote("");
@@ -83,29 +83,29 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#C9A227]/20 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-[#C9A227]/20 flex items-center justify-center hidden">
             <Banknote className="w-3.5 h-3.5 text-[#C9A227]" />
           </div>
           <span className="text-sm font-semibold text-slate-200">Payout</span>
         </div>
         <div className="flex items-center gap-2">
           <span className={`text-xs font-medium ${tier.color}`}>{tier.label}</span>
-          <button onClick={() => setShowInfo(v => !v)} className="text-slate-600 hover:text-slate-400">
+          <button onClick={() => setShowInfo((v) => !v)} className="text-slate-600 hover:text-slate-400">
             <Info className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* Info box */}
-      {showInfo && (
-        <div className="bg-white/5 rounded-xl p-3 text-xs text-slate-400 space-y-1 border border-white/10">
+      {showInfo &&
+      <div className="bg-white/5 rounded-xl p-3 text-xs text-slate-400 space-y-1 border border-white/10">
           <p className="font-semibold text-slate-300 mb-1">Payout calculation:</p>
           <p>0 – 1,999 → 0</p>
           <p>2,000 – 4,999 → 120/hour</p>
           <p>5,000 – 9,999 → 120/hour + 5% commission</p>
           <p>10,000+ → 120/hour + 10% commission</p>
         </div>
-      )}
+      }
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2">
@@ -127,73 +127,73 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
       </div>
 
       {/* Work session timer */}
-      {showWorkSession && (
-        <div className="flex flex-col items-center justify-center py-3 border-t border-white/10">
+      {showWorkSession &&
+      <div className="flex flex-col items-center justify-center py-3 border-t border-white/10">
           <WorkSessionWidget email={chatterEmail} />
         </div>
-      )}
+      }
 
       {/* Admin: add payout */}
-      {isAdmin && (
-        <div className="flex gap-2 items-center border-t border-white/10 pt-3">
+      {isAdmin &&
+      <div className="flex gap-2 items-center border-t border-white/10 pt-3">
           <Input
-            value={payoutAmount}
-            onChange={e => setPayoutAmount(e.target.value)}
-            placeholder="Amount"
-            type="number"
-            min="0"
-            className="h-8 text-xs w-28 flex-shrink-0 bg-white/5 border-white/10 text-slate-200"
-          />
+          value={payoutAmount}
+          onChange={(e) => setPayoutAmount(e.target.value)}
+          placeholder="Amount"
+          type="number"
+          min="0"
+          className="h-8 text-xs w-28 flex-shrink-0 bg-white/5 border-white/10 text-slate-200" />
+        
           <Input
-            value={payoutNote}
-            onChange={e => setPayoutNote(e.target.value)}
-            placeholder="Note (optional)"
-            className="h-8 text-xs flex-1 min-w-0 bg-white/5 border-white/10 text-slate-200"
-          />
+          value={payoutNote}
+          onChange={(e) => setPayoutNote(e.target.value)}
+          placeholder="Note (optional)"
+          className="h-8 text-xs flex-1 min-w-0 bg-white/5 border-white/10 text-slate-200" />
+        
           <button
-            onClick={handleAddPayout}
-            disabled={addingPayout || !payoutAmount}
-            className="flex items-center gap-1 text-xs font-semibold bg-[#C9A227] hover:bg-[#A8841C] disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors"
-          >
+          onClick={handleAddPayout}
+          disabled={addingPayout || !payoutAmount}
+          className="flex items-center gap-1 text-xs font-semibold bg-[#C9A227] hover:bg-[#A8841C] disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors">
+          
             <Plus className="w-3.5 h-3.5" /> Pay
           </button>
         </div>
-      )}
+      }
 
       {/* Payout history */}
-      {payouts.length > 0 && (
-        <div>
+      {payouts.length > 0 &&
+      <div>
           <button
-            onClick={() => setShowPayouts(v => !v)}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors"
-          >
+          onClick={() => setShowPayouts((v) => !v)}
+          className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+          
             {showPayouts ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             Payout history ({payouts.length})
           </button>
-          {showPayouts && (
-            <div className="mt-2 space-y-1">
-              {[...payouts].reverse().map(p => (
-                <div key={p.id} className="flex items-center justify-between text-xs bg-white/5 rounded-lg px-3 py-2 gap-2">
+          {showPayouts &&
+        <div className="mt-2 space-y-1">
+              {[...payouts].reverse().map((p) =>
+          <div key={p.id} className="flex items-center justify-between text-xs bg-white/5 rounded-lg px-3 py-2 gap-2">
                   <span className="text-slate-500 flex-shrink-0">{p.created_date?.split("T")[0] || p.period}</span>
                   {p.note && <span className="text-slate-500 truncate flex-1">{p.note}</span>}
                   <span className="font-semibold text-emerald-400">+{p.amount.toLocaleString()}</span>
-                  {isAdmin && (
-                    <button
-                      onClick={async () => {
-                        await base44.entities.ChatterPayout.delete(p.id);
-                        qc.invalidateQueries({ queryKey: ["chatterPayouts", chatterEmail] });
-                      }}
-                      className="text-slate-600 hover:text-red-400 transition-colors flex-shrink-0"
-                    >
+                  {isAdmin &&
+            <button
+              onClick={async () => {
+                await base44.entities.ChatterPayout.delete(p.id);
+                qc.invalidateQueries({ queryKey: ["chatterPayouts", chatterEmail] });
+              }}
+              className="text-slate-600 hover:text-red-400 transition-colors flex-shrink-0">
+              
                       <X className="w-3 h-3" />
                     </button>
-                  )}
+            }
                 </div>
-              ))}
-            </div>
           )}
+            </div>
+        }
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
