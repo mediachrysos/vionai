@@ -90,29 +90,22 @@ export default function ChatterNotesWidget({ chatterEmail, currentUser }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] p-5">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-            <StickyNote className="w-3.5 h-3.5 text-amber-500" />
-          </div>
-          <h3 className="text-sm font-semibold text-gray-800">Poznámky</h3>
-        </div>
-        <Button
-          size="sm"
-          variant="ghost"
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-4 flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">My notes</span>
+        <button
           onClick={() => { setShowForm(v => !v); setCustomerSearch(""); setForm(emptyForm()); }}
-          className="h-7 w-7 p-0 rounded-lg"
+          className="w-6 h-6 rounded-md bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-slate-200 transition-colors"
         >
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-        </Button>
+          {showForm ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+        </button>
       </div>
 
+      {/* Form */}
       {showForm && (
-        <div className="mb-4 p-4 bg-amber-50/60 rounded-xl border border-amber-100 space-y-3">
-          {/* Klient */}
+        <div className="mb-3 space-y-2">
           <div className="relative">
-            <label className="text-xs font-medium text-gray-500 block mb-1">Klient</label>
             <Input
               value={customerSearch}
               onChange={e => {
@@ -122,17 +115,17 @@ export default function ChatterNotesWidget({ chatterEmail, currentUser }) {
               }}
               onFocus={() => setShowDropdown(true)}
               onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-              placeholder="Vyhledat nebo napsat jméno..."
-              className="h-8 text-sm"
+              placeholder="Klient (volitelné)..."
+              className="h-8 text-xs bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
             />
             {showDropdown && filteredCustomers.length > 0 && (
-              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#2a2a2a] border border-white/10 rounded-lg shadow-lg max-h-36 overflow-y-auto">
                 {filteredCustomers.map(c => (
                   <button
                     key={c.id}
                     type="button"
                     onMouseDown={() => selectCustomer(c.full_name)}
-                    className="w-full text-left px-3 py-2 text-xs hover:bg-amber-50 text-gray-700"
+                    className="w-full text-left px-3 py-1.5 text-xs hover:bg-white/5 text-slate-300"
                   >
                     {c.full_name}
                   </button>
@@ -141,36 +134,21 @@ export default function ChatterNotesWidget({ chatterEmail, currentUser }) {
             )}
           </div>
 
-          {/* Datum */}
-          <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">Datum</label>
-            <Input
-              type="date"
-              value={form.note_date}
-              onChange={e => setForm(p => ({ ...p, note_date: e.target.value }))}
-              className="h-8 text-sm"
-            />
-          </div>
-
-          {/* Poznámka */}
-          <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">Poznámka</label>
-            <Textarea
-              value={form.content}
-              onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
-              placeholder="Napište poznámku..."
-              rows={2}
-              className="text-sm resize-none"
-            />
-          </div>
+          <Textarea
+            value={form.content}
+            onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
+            placeholder="Napište poznámku..."
+            rows={3}
+            className="text-xs resize-none bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
+          />
 
           <div className="flex justify-end gap-2">
-            <Button size="sm" variant="ghost" onClick={() => { setShowForm(false); setCustomerSearch(""); }} className="h-8 text-xs">Zrušit</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setShowForm(false); setCustomerSearch(""); }} className="h-7 text-xs text-slate-500 hover:text-slate-300">Zrušit</Button>
             <Button
               size="sm"
               onClick={() => createMutation.mutate(form)}
               disabled={createMutation.isPending || !form.content.trim()}
-              className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-white"
+              className="h-7 text-xs bg-white/10 hover:bg-white/20 text-slate-200 border-0"
             >
               {createMutation.isPending ? "Ukládám..." : "Přidat"}
             </Button>
@@ -178,29 +156,31 @@ export default function ChatterNotesWidget({ chatterEmail, currentUser }) {
         </div>
       )}
 
-      <div className="space-y-2 max-h-64 overflow-y-auto">
-        {notes.length === 0 && <p className="text-xs text-gray-400 text-center py-6">Zatím žádné poznámky</p>}
+      {/* Notes list */}
+      <div className="flex-1 space-y-1.5 overflow-y-auto min-h-0">
+        {notes.length === 0 && <p className="text-xs text-slate-600 text-center py-8">Zatím žádné poznámky</p>}
         {notes.map(n => (
-          <div key={n.id} className="group relative rounded-xl border border-gray-100 bg-gray-50 hover:border-amber-200 p-3.5 transition-all">
-            <div className="flex items-start justify-between gap-2 mb-1">
-              <span className="text-sm font-semibold text-gray-800 truncate">
-                {n.customer_name || <span className="text-xs text-gray-400 italic font-normal">Bez klienta</span>}
-              </span>
+          <div key={n.id} className="group relative rounded-xl bg-white/5 hover:bg-white/8 border border-white/5 hover:border-white/10 p-3 transition-all">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              {n.customer_name
+                ? <span className="text-xs font-medium text-slate-300 truncate">{n.customer_name}</span>
+                : <span className="text-xs text-slate-600 italic">Bez klienta</span>
+              }
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 {n.note_date && (
-                  <span className="text-[11px] text-gray-400">
-                    {format(new Date(n.note_date), "d. MMM yyyy", { locale: cs })}
+                  <span className="text-[10px] text-slate-600">
+                    {format(new Date(n.note_date), "d. MMM", { locale: cs })}
                   </span>
                 )}
                 <button
                   onClick={() => deleteMutation.mutate(n.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-600 hover:text-red-400"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-3 h-3" />
                 </button>
               </div>
             </div>
-            {n.content && <p className="text-xs text-gray-600 leading-relaxed">{n.content}</p>}
+            {n.content && <p className="text-xs text-slate-400 leading-relaxed">{n.content}</p>}
           </div>
         ))}
       </div>
