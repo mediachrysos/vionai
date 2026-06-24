@@ -16,24 +16,24 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-sm p-3 h-full flex flex-col">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-3 h-full flex flex-col">
       <div className="flex items-center gap-2 mb-0.5">
-        <div className="w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center">
+        <div className="w-6 h-6 rounded-lg bg-[#C9A227]/20 flex items-center justify-center">
           <Flame className="w-3 h-3 text-[#C9A227]" />
         </div>
-        <h3 className="text-xs font-bold text-gray-800">Today's performance</h3>
+        <h3 className="text-xs font-bold text-slate-200">Today's performance</h3>
       </div>
       <p className="text-[10px] text-[#C9A227] font-medium mb-2.5 ml-8">{microcopy()}</p>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 gap-1.5 mb-2.5">
-        <div className="bg-gray-50 rounded-lg p-2">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Chatted</p>
-          <p className="text-sm font-bold text-gray-900">{todayRevenue.toLocaleString()}</p>
+        <div className="bg-white/5 rounded-lg p-2">
+          <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-0.5">Chatted</p>
+          <p className="text-sm font-bold text-slate-100">{todayRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-gray-50 rounded-lg p-2">
-          <p className="text-[9px] text-gray-400 uppercase tracking-wide mb-0.5">Payout dnes</p>
-          <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()}</p>
+        <div className="bg-white/5 rounded-lg p-2">
+          <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-0.5">Payout dnes</p>
+          <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()}</p>
         </div>
       </div>
 
@@ -47,45 +47,45 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
               key={i}
               className={`flex items-center gap-2 rounded-lg px-2 py-1.5 border transition-all ${
                 isActive
-                  ? "border-[#C9A227] bg-gradient-to-r from-[#faf6e6] to-[#fffdf5] shadow-[0_0_0_1px_#C9A22720]"
+                  ? "border-[#C9A227]/50 bg-[#C9A227]/10"
                   : isCompleted
-                  ? "border-emerald-200 bg-emerald-50/40"
-                  : "border-gray-100 bg-gray-50/50"
+                  ? "border-emerald-500/30 bg-emerald-500/10"
+                  : "border-white/8 bg-white/5"
               }`}
             >
               <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold flex-shrink-0 ${
-                isActive ? "bg-[#C9A227] text-white" : isCompleted ? "bg-emerald-500 text-white" : "bg-gray-200 text-gray-400"
+                isActive ? "bg-[#C9A227] text-white" : isCompleted ? "bg-emerald-500 text-white" : "bg-white/10 text-slate-500"
               }`}>
                 {isCompleted ? "✓" : i + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-[11px] font-semibold ${isActive ? "text-[#A8841C]" : isCompleted ? "text-emerald-700" : "text-gray-400"}`}>{tier.name}</p>
-                <p className="text-[9px] text-gray-400 truncate">
+                <p className={`text-[11px] font-semibold ${isActive ? "text-[#C9A227]" : isCompleted ? "text-emerald-400" : "text-slate-500"}`}>{tier.name}</p>
+                <p className="text-[9px] text-slate-600 truncate">
                   {tier.max !== null && tier.max !== undefined
                     ? `${tier.min.toLocaleString()}–${tier.max.toLocaleString()}`
                     : `${tier.min.toLocaleString()}+`}
                   {tier.commission > 0 && ` · ${tier.commission}% commission`}
                 </p>
               </div>
-              {isActive && <span className="text-[8px] font-bold text-[#C9A227] bg-[#C9A227]/10 px-1 py-0.5 rounded-full">ACTIVE</span>}
+              {isActive && <span className="text-[8px] font-bold text-[#C9A227] bg-[#C9A227]/15 px-1 py-0.5 rounded-full">ACTIVE</span>}
             </div>
           );
         })}
       </div>
 
       {dailyGoalEnabled && dailyGoalAmount > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-             <span>Daily goal</span>
-            <span className="font-semibold">{Math.min(100, Math.round(todayRevenue / dailyGoalAmount * 100))}%</span>
+        <div className="mt-4 pt-4 border-t border-white/10">
+          <div className="flex justify-between text-xs text-slate-500 mb-1.5">
+            <span>Daily goal</span>
+            <span className="font-semibold text-[#C9A227]">{Math.min(100, Math.round(todayRevenue / dailyGoalAmount * 100))}%</span>
           </div>
-          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all"
               style={{ width: `${Math.min(100, todayRevenue / dailyGoalAmount * 100)}%` }}
             />
           </div>
-          <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+          <div className="flex justify-between text-[10px] text-slate-600 mt-1">
             <span>{todayRevenue.toLocaleString()}</span>
             <span>{dailyGoalAmount.toLocaleString()}</span>
           </div>

@@ -142,20 +142,20 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
   const pendingCount = requests.filter((r) => r.status === "pending").length;
 
   return (
-    <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
 
       {/* ── Header ── */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-[#faf6e6]/40 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#faf6e6] to-[#fdf3c8] flex items-center justify-center border border-[#e8d99a]">
+          <div className="w-8 h-8 rounded-xl bg-[#C9A227]/20 flex items-center justify-center border border-[#C9A227]/30">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png" alt="" className="w-5 h-5 object-contain" />
           </div>
-          <span className="text-sm font-semibold text-gray-800">Requesty pro grafika</span>
+          <span className="text-sm font-semibold text-slate-200">Requesty pro grafika</span>
           {pendingCount > 0 && (
-            <span className="bg-[#faf6e6] text-[#C9A227] border border-[#e8d99a] text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-[#C9A227]/20 text-[#C9A227] border border-[#C9A227]/30 text-xs font-bold px-2 py-0.5 rounded-full">
               {pendingCount}
             </span>
           )}
@@ -163,53 +163,53 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
         <div className="flex items-center gap-2">
           <button
             onClick={(e) => { e.stopPropagation(); setShowForm((v) => !v); setExpanded(true); }}
-            className="flex items-center gap-1 text-xs text-[#A8841C] hover:text-[#8a6c16] bg-[#faf6e6] hover:bg-[#fdf3c8] border border-[#e8d99a] px-2.5 py-1 rounded-full transition-colors font-semibold"
+            className="flex items-center gap-1 text-xs text-[#C9A227] hover:text-[#e8c84a] bg-[#C9A227]/10 hover:bg-[#C9A227]/20 border border-[#C9A227]/30 px-2.5 py-1 rounded-full transition-colors font-semibold"
           >
             <Plus className="w-3 h-3" /> Přidat
           </button>
-          {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+          {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
         </div>
       </button>
 
       {expanded && (
-        <div className="border-t border-[#ececec]">
+        <div className="border-t border-white/10">
 
           {/* ── Form ── */}
           {showForm && (
-            <form onSubmit={handleSubmit} className="px-5 py-4 bg-[#fdf9ee] border-b border-[#e8d99a] space-y-3">
+            <form onSubmit={handleSubmit} className="px-5 py-4 bg-white/5 border-b border-white/10 space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-bold text-[#A8841C] uppercase tracking-wide">Nový request</p>
-                <button type="button" onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600">
+                <p className="text-xs font-bold text-[#C9A227] uppercase tracking-wide">Nový request</p>
+                <button type="button" onClick={() => setShowForm(false)} className="text-slate-500 hover:text-slate-300">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Content type */}
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-2">Typ obsahu *</label>
+                <label className="text-xs font-semibold text-slate-400 block mb-2">Typ obsahu *</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { type: "video", icon: Video, label: "Video", sub: "→ Ishaq" },
                     { type: "photo", icon: Camera, label: "Fotografie", sub: "→ Soufiane" },
-                  ].map(({ type, icon: Icon, label, sub }) => (
+                  ].map(({ type, icon: TypeIcon, label, sub }) => (
                     <button
                       key={type}
                       type="button"
                       onClick={() => setForm((p) => ({ ...p, content_type: type }))}
                       className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 transition-all text-left ${
                         form.content_type === type
-                          ? "border-[#C9A227] bg-[#faf6e6]"
-                          : "border-gray-200 bg-white hover:border-[#e8d99a]"
+                          ? "border-[#C9A227] bg-[#C9A227]/10"
+                          : "border-white/10 bg-white/5 hover:border-white/20"
                       }`}
                     >
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        form.content_type === type ? "bg-[#C9A227]" : "bg-gray-100"
+                        form.content_type === type ? "bg-[#C9A227]" : "bg-white/10"
                       }`}>
-                        <Icon className={`w-4 h-4 ${form.content_type === type ? "text-white" : "text-gray-400"}`} />
+                        <TypeIcon className={`w-4 h-4 ${form.content_type === type ? "text-white" : "text-slate-500"}`} />
                       </div>
                       <div>
-                        <p className={`text-xs font-semibold ${form.content_type === type ? "text-[#A8841C]" : "text-gray-700"}`}>{label}</p>
-                        <p className="text-[10px] text-gray-400">{sub}</p>
+                        <p className={`text-xs font-semibold ${form.content_type === type ? "text-[#C9A227]" : "text-slate-400"}`}>{label}</p>
+                        <p className="text-[10px] text-slate-600">{sub}</p>
                       </div>
                     </button>
                   ))}
@@ -218,7 +218,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
               {/* Day picker */}
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-2">
+                <label className="text-xs font-semibold text-slate-400 block mb-2">
                   <CalendarDays className="w-3 h-3 inline mr-1 opacity-60" />
                   Datum požadavku *
                 </label>
@@ -233,13 +233,13 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                         className={`flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-xl border-2 transition-all ${
                           selected
                             ? "border-[#C9A227] bg-[#C9A227] text-white shadow-sm"
-                            : "border-gray-200 bg-white hover:border-[#e8d99a] text-gray-600"
+                            : "border-white/10 bg-white/5 hover:border-white/20 text-slate-400"
                         }`}
                       >
-                        <span className={`text-[10px] font-semibold uppercase tracking-wide ${selected ? "text-white/80" : "text-gray-400"}`}>
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide ${selected ? "text-white/80" : "text-slate-500"}`}>
                           {d.isToday ? "Dnes" : d.isTomorrow ? "Zítra" : d.dayName}
                         </span>
-                        <span className={`text-sm font-bold leading-tight ${selected ? "text-white" : "text-gray-800"}`}>
+                        <span className={`text-sm font-bold leading-tight ${selected ? "text-white" : "text-slate-300"}`}>
                           {d.dayNum}
                         </span>
                       </button>
@@ -249,34 +249,34 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Název *</label>
+                <label className="text-xs font-semibold text-slate-400 block mb-1">Název *</label>
                 <input
                   required
                   value={form.title}
                   onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
                   placeholder="Co potřebuješ od grafika?"
-                  className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
+                  className="w-full h-9 px-3 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-white/5 text-slate-200 placeholder:text-slate-600"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Popis</label>
+                <label className="text-xs font-semibold text-slate-400 block mb-1">Popis</label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                   placeholder="Detailní popis, formát, délka..."
                   rows={2}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white resize-none"
+                  className="w-full px-3 py-2 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-white/5 text-slate-200 placeholder:text-slate-600 resize-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">Modelka</label>
+                  <label className="text-xs font-semibold text-slate-400 block mb-1">Modelka</label>
                   <select
                     value={form.model_id}
                     onChange={(e) => setForm((p) => ({ ...p, model_id: e.target.value }))}
-                    className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
+                    className="w-full h-9 px-3 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-[#1a1a1a] text-slate-300"
                   >
                     <option value="">— žádná —</option>
                     {models.filter((m) => m.status === "active").map((m) => (
@@ -285,11 +285,11 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">Priorita</label>
+                  <label className="text-xs font-semibold text-slate-400 block mb-1">Priorita</label>
                   <select
                     value={form.priority}
                     onChange={(e) => setForm((p) => ({ ...p, priority: e.target.value }))}
-                    className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
+                    className="w-full h-9 px-3 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-[#1a1a1a] text-slate-300"
                   >
                     <option value="low">Nízká</option>
                     <option value="normal">Normální</option>
@@ -300,17 +300,17 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Reference URL</label>
+                <label className="text-xs font-semibold text-slate-400 block mb-1">Reference URL</label>
                 <input
                   value={form.reference_url}
                   onChange={(e) => setForm((p) => ({ ...p, reference_url: e.target.value }))}
                   placeholder="https://..."
-                  className="w-full h-9 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e8d99a] bg-white"
+                  className="w-full h-9 px-3 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-white/5 text-slate-200 placeholder:text-slate-600"
                 />
               </div>
 
               <div className="flex justify-end gap-2 pt-1">
-                <button type="button" onClick={() => setShowForm(false)} className="text-xs text-gray-400 hover:text-gray-600 px-3 py-1.5 rounded-lg">
+                <button type="button" onClick={() => setShowForm(false)} className="text-xs text-slate-500 hover:text-slate-300 px-3 py-1.5 rounded-lg">
                   Zrušit
                 </button>
                 <button
@@ -326,8 +326,8 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
           {/* ── List grouped by date ── */}
           {requests.length === 0 ? (
-            <div className="px-5 py-8 text-center text-gray-400">
-              <div className="w-10 h-10 rounded-full bg-[#faf6e6] flex items-center justify-center mx-auto mb-2">
+            <div className="px-5 py-8 text-center text-slate-600">
+              <div className="w-10 h-10 rounded-full bg-[#C9A227]/10 flex items-center justify-center mx-auto mb-2">
                 <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png" alt="" className="w-5 h-5 object-contain opacity-40" />
               </div>
               <p className="text-xs">Zatím žádné requesty</p>
@@ -337,17 +337,17 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               {sortedKeys.map((dateKey) => (
                 <div key={dateKey}>
                   {/* Date group header */}
-                  <div className="px-5 py-2 bg-gray-50/60 border-y border-[#f0f0f0] flex items-center gap-2">
+                  <div className="px-5 py-2 bg-white/5 border-y border-white/10 flex items-center gap-2">
                     <CalendarDays className="w-3.5 h-3.5 text-[#C9A227]" />
-                    <span className="text-xs font-semibold text-gray-600">
+                    <span className="text-xs font-semibold text-slate-400">
                       {dateKey === "__no_date__" ? "Bez data" : formatDateLabel(dateKey)}
                     </span>
-                    <span className="ml-auto text-[10px] text-gray-400">
+                    <span className="ml-auto text-[10px] text-slate-600">
                       {grouped[dateKey].length} {grouped[dateKey].length === 1 ? "request" : "requesty"}
                     </span>
                   </div>
 
-                  <div className="divide-y divide-[#f5f5f5]">
+                  <div className="divide-y divide-white/5">
                     {grouped[dateKey].map((r) => {
                       const pCfg = PRIORITY_CONFIG[r.priority] || PRIORITY_CONFIG.normal;
                       const sCfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
@@ -356,26 +356,26 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                       const isDeleting = deletingId === r.id;
 
                       return (
-                        <div key={r.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-gray-50/50 transition-colors">
+                        <div key={r.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-white/5 transition-colors">
                           <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                            isVideo ? "bg-[#faf6e6] border border-[#e8d99a]" : "bg-blue-50 border border-blue-100"
+                            isVideo ? "bg-[#C9A227]/15 border border-[#C9A227]/30" : "bg-blue-500/15 border border-blue-500/30"
                           }`}>
                             <TypeIcon className={`w-4 h-4 ${isVideo ? "text-[#C9A227]" : "text-blue-400"}`} />
                           </div>
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <p className="text-sm font-semibold text-gray-800">{r.title}</p>
+                              <p className="text-sm font-semibold text-slate-200">{r.title}</p>
                               {r.assigned_designer_name && (
-                                <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
+                                <span className="text-[10px] text-slate-500 bg-white/10 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
                               )}
                               {r.model_name && (
-                                <span className="text-[10px] text-[#C9A227] bg-[#faf6e6] border border-[#e8d99a] px-1.5 py-0.5 rounded-full">{r.model_name}</span>
+                                <span className="text-[10px] text-[#C9A227] bg-[#C9A227]/10 border border-[#C9A227]/30 px-1.5 py-0.5 rounded-full">{r.model_name}</span>
                               )}
                             </div>
 
                             {r.description && (
-                              <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{r.description}</p>
+                              <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{r.description}</p>
                             )}
 
                             <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">

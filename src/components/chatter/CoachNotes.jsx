@@ -80,7 +80,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
   const currentSlide = SLIDES[slideIdx];
 
   return (
-    <div className="bg-white rounded-xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] h-full overflow-hidden flex flex-col">
+    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 h-full overflow-hidden flex flex-col">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
       <div className="p-4 flex-1 overflow-hidden flex flex-col gap-3">
         {/* Form OR Notes — never both expanded */}
         {showForm ? (
-          <div className="p-4 bg-amber-50/60 rounded-xl border border-amber-100 space-y-3">
+          <div className="p-4 bg-white/5 rounded-xl border border-white/10 space-y-3">
             {/* Note content */}
             <Textarea
               value={form.content}
@@ -138,11 +138,11 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                       onBlur={() => setTimeout(() => setShowCustomerDropdown(false), 150)}
                       placeholder="Client name..." className="h-8 text-sm" />
                     {showCustomerDropdown && filteredCustomers.length > 0 && (
-                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-36 overflow-y-auto">
+                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#2a2a2a] border border-white/10 rounded-lg shadow-lg max-h-36 overflow-y-auto">
                         {filteredCustomers.map(c => (
                           <button key={c.id} type="button"
                             onMouseDown={() => { setForm(p => ({ ...p, customer_name: c.full_name })); setCustomerSearch(c.full_name); setShowCustomerDropdown(false); }}
-                            className="w-full text-left px-3 py-2 text-xs hover:bg-amber-50 text-gray-700">{c.full_name}</button>
+                            className="w-full text-left px-3 py-2 text-xs hover:bg-white/10 text-slate-300">{c.full_name}</button>
                         ))}
                       </div>
                     )}
@@ -191,9 +191,9 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
 
             <div className="flex justify-end gap-2 pt-1">
               <button onClick={() => { setShowForm(false); setForm(emptyForm()); setCustomerSearch(""); }}
-                className="h-8 px-3 text-xs rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">Cancel</button>
+                className="h-8 px-3 text-xs rounded-lg text-slate-500 hover:bg-white/10 transition-colors">Cancel</button>
                 <button onClick={handleAdd} disabled={!form.content.trim() || saving}
-                 className="h-8 px-4 text-xs rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold transition-colors disabled:opacity-50">
+                 className="h-8 px-4 text-xs rounded-lg bg-[#C9A227] hover:bg-[#A8841C] text-white font-semibold transition-colors disabled:opacity-50">
                  {saving ? "Saving..." : "Add"}
               </button>
             </div>
@@ -202,19 +202,19 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
           /* Notes carousel */
           <div className="flex-1 flex flex-col min-h-0">
             {notes.length === 0 ? (
-              <p className="text-xs text-gray-400 text-center py-6">No notes yet</p>
+              <p className="text-xs text-slate-600 text-center py-6">No notes yet</p>
             ) : (
               <div className="flex flex-col gap-2 flex-1">
                 {notes.length > 1 && (
                   <div className="flex items-center justify-between px-1">
                     <button onClick={() => setNoteIdx(i => Math.max(0, i - 1))} disabled={safeIdx === 0}
-                      className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 transition-colors">
-                      <ChevronLeft className="w-4 h-4 text-gray-500" />
+                      className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 disabled:opacity-30 transition-colors">
+                      <ChevronLeft className="w-4 h-4 text-slate-500" />
                     </button>
-                    <span className="text-[11px] text-gray-400 font-medium">{safeIdx + 1} / {notes.length}</span>
+                    <span className="text-[11px] text-slate-500 font-medium">{safeIdx + 1} / {notes.length}</span>
                     <button onClick={() => setNoteIdx(i => Math.min(notes.length - 1, i + 1))} disabled={safeIdx === notes.length - 1}
-                      className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 transition-colors">
-                      <ChevronRight className="w-4 h-4 text-gray-500" />
+                      className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/10 disabled:opacity-30 transition-colors">
+                      <ChevronRight className="w-4 h-4 text-slate-500" />
                     </button>
                   </div>
                 )}
@@ -223,24 +223,24 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                   const isToday = currentNote.note_date === today;
                   const accountLabel = currentNote.account_name || bankAccounts.find(a => a.id === currentNote.account)?.name || currentNote.account;
                   return (
-                    <div className={`group relative rounded-2xl border p-4 flex-1 shadow-sm transition-all ${isToday ? "bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200" : "bg-white border-gray-100"}`}>
+                    <div className={`group relative rounded-2xl border p-4 flex-1 transition-all ${isToday ? "bg-[#C9A227]/10 border-[#C9A227]/30" : "bg-white/5 border-white/10"}`}>
                       <div className="flex items-center justify-between gap-2 mb-3">
                         <div className="flex items-center gap-2">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${isToday ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-500"}`}>
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${isToday ? "bg-[#C9A227]/30 text-[#C9A227]" : "bg-white/10 text-slate-400"}`}>
                             {currentNote.customer_name ? currentNote.customer_name.charAt(0).toUpperCase() : "📝"}
                           </div>
                           {currentNote.customer_name
-                            ? <span className={`text-sm font-bold truncate ${isToday ? "text-amber-900" : "text-gray-800"}`}>{currentNote.customer_name}</span>
-                            : <span className="text-xs text-gray-400 italic">No client</span>}
+                            ? <span className={`text-sm font-bold truncate ${isToday ? "text-[#C9A227]" : "text-slate-200"}`}>{currentNote.customer_name}</span>
+                            : <span className="text-xs text-slate-600 italic">No client</span>}
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {isToday
-                            ? <span className="text-[10px] font-bold tracking-wide text-white bg-amber-500 rounded-full px-2.5 py-0.5">TODAY</span>
+                            ? <span className="text-[10px] font-bold tracking-wide text-white bg-[#C9A227] rounded-full px-2.5 py-0.5">TODAY</span>
                             : currentNote.note_date
-                              ? <span className="text-[11px] text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">{format(new Date(currentNote.note_date), "d. MMM yyyy", { locale: cs })}</span>
+                              ? <span className="text-[11px] text-slate-500 bg-white/10 rounded-full px-2 py-0.5">{format(new Date(currentNote.note_date), "d. MMM yyyy", { locale: cs })}</span>
                               : null}
                           <button onClick={() => { onDelete(currentNote.id); setNoteIdx(i => Math.max(0, i - 1)); }}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400">
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-600 hover:text-red-400">
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -249,17 +249,17 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                       {(currentNote.amount || accountLabel || currentNote.model_name) && (
                         <div className="flex flex-wrap gap-1.5 mb-2.5">
                           {currentNote.amount && (
-                            <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                            <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400">
                               {Number(currentNote.amount).toLocaleString()}
                             </span>
                           )}
                           {accountLabel && (
-                            <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">
+                            <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400">
                               {accountLabel}
                             </span>
                           )}
                           {currentNote.model_name && (
-                            <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-purple-100 text-purple-700">
+                            <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-400">
                               {currentNote.model_name}
                             </span>
                           )}
@@ -267,7 +267,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                       )}
 
                       {currentNote.content && (
-                        <p className={`text-xs leading-relaxed ${isToday ? "text-amber-800" : "text-gray-500"}`}>
+                        <p className={`text-xs leading-relaxed ${isToday ? "text-[#C9A227]/80" : "text-slate-400"}`}>
                           {currentNote.content}
                         </p>
                       )}

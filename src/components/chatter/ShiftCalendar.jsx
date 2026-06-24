@@ -82,18 +82,18 @@ export function ChatterShiftPicker({ email, name }) {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
-        <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
-          <CalendarDays className="w-3.5 h-3.5 text-blue-600" />
+    <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+        <div className="w-6 h-6 rounded-lg bg-blue-500/20 flex items-center justify-center">
+          <CalendarDays className="w-3.5 h-3.5 text-blue-400" />
         </div>
-        <h3 className="text-xs font-bold text-gray-800">My shifts</h3>
+        <h3 className="text-xs font-bold text-slate-200">My shifts</h3>
         <div className="ml-auto flex items-center gap-1">
-          <button onClick={prevWeek} className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
+          <button onClick={prevWeek} className="p-1 rounded hover:bg-white/10 text-slate-500 hover:text-slate-300 transition-colors">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-xs text-gray-600 font-medium px-1 min-w-[180px] text-center">{formatWeekLabel(weekStart)}</span>
-          <button onClick={nextWeek} className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
+          <span className="text-xs text-slate-400 font-medium px-1 min-w-[180px] text-center">{formatWeekLabel(weekStart)}</span>
+          <button onClick={nextWeek} className="p-1 rounded hover:bg-white/10 text-slate-500 hover:text-slate-300 transition-colors">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -107,47 +107,43 @@ export function ChatterShiftPicker({ email, name }) {
             const isActive = !!shift;
             return (
               <div key={date} className="flex flex-col items-center gap-1">
-                <span className={`text-[10px] font-medium ${isToday ? "text-[#C9A227]" : "text-gray-400"}`}>{DAY_NAMES[i]}</span>
+                <span className={`text-[10px] font-medium ${isToday ? "text-[#C9A227]" : "text-slate-500"}`}>{DAY_NAMES[i]}</span>
                 <button
                   onClick={() => toggleDay(date)}
                   className={`w-9 h-9 rounded-xl text-xs font-bold transition-all border ${
                   isActive ?
                   "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white border-[#C9A227] shadow-sm" :
                   isToday ?
-                  "border-[#C9A227] text-[#C9A227] bg-white" :
-                  "border-gray-200 text-gray-400 bg-gray-50 hover:border-gray-300"}`
+                  "border-[#C9A227] text-[#C9A227] bg-transparent" :
+                  "border-white/10 text-slate-500 bg-white/5 hover:border-white/20"}`
                   }>
-                  
                   {new Date(date).getDate()}
                 </button>
                 {isActive &&
                 <button
                   onClick={() => setEditingNote({ date, value: shift.note || "" })}
-                  className="text-[9px] text-blue-400 hover:text-blue-600 truncate max-w-full px-0.5"
+                  className="text-[9px] text-blue-400 hover:text-blue-300 truncate max-w-full px-0.5"
                   title={shift.note || "Add note"}>
-                  
                     {shift.note ? shift.note.slice(0, 8) + (shift.note.length > 8 ? "…" : "") : "+ note"}
                   </button>
                 }
               </div>);
-
           })}
         </div>
 
         {/* Note editor */}
         {editingNote &&
-        <div className="mt-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Note for {new Date(editingNote.date).toLocaleDateString()}</p>
+        <div className="mt-3 p-3 bg-white/5 rounded-xl border border-white/10">
+            <p className="text-xs text-slate-500 mb-2">Note for {new Date(editingNote.date).toLocaleDateString()}</p>
             <input
-            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#C9A227]"
+            className="w-full text-sm border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#C9A227] bg-white/5 text-slate-200 placeholder:text-slate-600"
             value={editingNote.value}
             onChange={(e) => setEditingNote((prev) => ({ ...prev, value: e.target.value }))}
             placeholder="E.g. morning shift, 8-16..."
             autoFocus />
-          
             <div className="flex gap-2 mt-2">
               <button onClick={() => saveNote(editingNote.date, editingNote.value)} className="text-xs bg-[#C9A227] text-white px-3 py-1.5 rounded-lg hover:bg-[#A8841C] transition-colors">Save</button>
-              <button onClick={() => setEditingNote(null)} className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1.5">Cancel</button>
+              <button onClick={() => setEditingNote(null)} className="text-xs text-slate-500 hover:text-slate-300 px-2 py-1.5">Cancel</button>
             </div>
           </div>
         }

@@ -45,20 +45,20 @@ export default function OnboardingLinkForm({ models = [] }) {
   return (
     <div className="flex items-end gap-2 flex-wrap">
       <div className="min-w-48">
-        <label className="text-xs font-semibold text-gray-600 block mb-1.5">Name *</label>
+        <label className="text-xs font-semibold text-slate-400 block mb-1.5">Name *</label>
          <Input
            placeholder="Customer name..."
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="h-9 text-sm"
+          className="h-9 text-sm bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
         />
       </div>
 
       {models.length > 0 && (
         <div className="min-w-48">
-          <label className="text-xs font-semibold text-gray-600 block mb-1.5">Model *</label>
+          <label className="text-xs font-semibold text-slate-400 block mb-1.5">Model *</label>
            <Select value={assignedModel} onValueChange={setAssignedModel}>
-             <SelectTrigger className="h-9 text-sm">
+             <SelectTrigger className="h-9 text-sm bg-white/5 border-white/10 text-slate-300">
                <SelectValue placeholder="Select model..." />
             </SelectTrigger>
             <SelectContent>

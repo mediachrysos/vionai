@@ -91,22 +91,22 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
   });
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_6px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 overflow-hidden">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3 flex-wrap">
-        <h3 className="font-semibold text-gray-800 text-sm">Zákazníci ({customers.length})</h3>
+      <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-3 flex-wrap">
+        <h3 className="font-semibold text-slate-200 text-sm">Zákazníci ({customers.length})</h3>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
             <Input
               placeholder="Hledat..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-8 text-xs w-44"
+              className="pl-9 h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
             />
           </div>
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="h-8 text-xs w-44">
+            <SelectTrigger className="h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-300">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -119,15 +119,15 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       </div>
 
       {/* Add form — always visible */}
-      <div className="px-5 py-3 border-b border-gray-100 bg-gray-50/50 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+      <div className="px-5 py-3 border-b border-white/10 bg-white/5 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
         <Input
           placeholder="Jméno *"
           value={form.full_name}
           onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-          className="h-8 text-xs"
+          className="h-8 text-xs bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
         />
         <Select value={form.model_id} onValueChange={(v) => setForm({ ...form, model_id: v })}>
-          <SelectTrigger className="h-8 text-xs">
+          <SelectTrigger className="h-8 text-xs bg-white/5 border-white/10 text-slate-300">
             <SelectValue placeholder="Vybrat modelku *" />
           </SelectTrigger>
           <SelectContent>
@@ -148,19 +148,19 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
 
       {/* Table */}
       {isLoading ? (
-        <p className="text-xs text-gray-400 text-center py-8">Načítám...</p>
+        <p className="text-xs text-slate-500 text-center py-8">Načítám...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-gray-400 text-center py-8">Zatím žádní zákazníci</p>
+        <p className="text-xs text-slate-500 text-center py-8">Zatím žádní zákazníci</p>
       ) : (
         <div className="overflow-x-auto overflow-y-auto max-h-[480px]">
           <table className="w-full">
             <thead className="sticky top-0 z-10">
-              <tr className="border-b border-gray-100 bg-gray-50/90 backdrop-blur-sm">
-                <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Jméno</th>
-                <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
-                <th className="text-center text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
-                <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3">Celkem / Platby</th>
-                <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Poslední platba</th>
+              <tr className="border-b border-white/10 bg-[#1e1e1e]/95 backdrop-blur-sm">
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Jméno</th>
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
+                <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
+                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Celkem / Platby</th>
+                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Poslední platba</th>
               </tr>
             </thead>
             <tbody>
@@ -175,41 +175,41 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                   <tr
                     key={c.id}
                     onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
-                    className={`border-b cursor-pointer transition-colors ${isPayday ? "bg-gradient-to-r from-amber-50 to-yellow-50/30 border-amber-100 hover:from-amber-100/70" : "border-gray-50 hover:bg-gray-50/60"}`}
+                    className={`border-b cursor-pointer transition-colors ${isPayday ? "bg-[#C9A227]/10 border-[#C9A227]/20 hover:bg-[#C9A227]/15" : "border-white/5 hover:bg-white/5"}`}
                   >
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         {isPayday && <div className="w-1 h-9 rounded-full bg-gradient-to-b from-[#C9A227] to-[#A8841C] -ml-1 flex-shrink-0" />}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${isPayday ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white shadow-sm shadow-amber-200" : "bg-gray-100 text-gray-600"}`}>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${isPayday ? "bg-gradient-to-br from-[#C9A227] to-[#A8841C] text-white" : "bg-white/10 text-slate-400"}`}>
                           {c.full_name?.[0]?.toUpperCase() || "?"}
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className={`text-sm font-medium ${isPayday ? "text-amber-900 font-semibold" : "text-gray-800"}`}>{c.full_name}</span>
-                          {isPayday && <span className="text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-1.5 py-0.5 rounded-full">💰 payday</span>}
+                          <span className={`text-sm font-medium ${isPayday ? "text-[#C9A227] font-semibold" : "text-slate-200"}`}>{c.full_name}</span>
+                          {isPayday && <span className="text-[10px] font-bold text-[#C9A227] bg-[#C9A227]/15 border border-[#C9A227]/30 px-1.5 py-0.5 rounded-full">💰 payday</span>}
                         </div>
                       </div>
                     </td>
                     <td className="px-5 py-3.5 hidden lg:table-cell">
                       {modelNames.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
-                          {modelNames.map(n => <span key={n} className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded-md px-1.5 py-0.5">{n}</span>)}
+                          {modelNames.map(n => <span key={n} className="text-xs bg-[#C9A227]/10 text-[#C9A227] border border-[#C9A227]/20 rounded-md px-1.5 py-0.5">{n}</span>)}
                         </div>
-                      ) : <span className="text-gray-300">—</span>}
+                      ) : <span className="text-slate-700">—</span>}
                     </td>
                     <td className="px-5 py-3.5 text-center hidden md:table-cell">
-                      {c.pay_day_of_month ? <span className="text-sm font-medium text-gray-700">Day {c.pay_day_of_month}</span> : <span className="text-gray-300">—</span>}
+                      {c.pay_day_of_month ? <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> : <span className="text-slate-700">—</span>}
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <p className="text-sm font-semibold text-gray-800">{(st.total || 0).toLocaleString()} Kč</p>
-                      <p className="text-xs text-gray-400">{st.count || 0}× platby</p>
+                      <p className="text-sm font-semibold text-slate-200">{(st.total || 0).toLocaleString()} Kč</p>
+                      <p className="text-xs text-slate-500">{st.count || 0}× platby</p>
                     </td>
                     <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                       {daysSinceLast !== null ? (
                         <div>
-                          <p className="text-xs font-medium text-gray-600">{st.lastAmount?.toLocaleString()} Kč</p>
-                          <p className="text-xs text-gray-400">před {daysSinceLast} dny</p>
+                          <p className="text-xs font-medium text-slate-400">{st.lastAmount?.toLocaleString()} Kč</p>
+                          <p className="text-xs text-slate-600">před {daysSinceLast} dny</p>
                         </div>
-                      ) : <span className="text-xs text-gray-300">—</span>}
+                      ) : <span className="text-xs text-slate-700">—</span>}
                     </td>
                   </tr>
                 );
