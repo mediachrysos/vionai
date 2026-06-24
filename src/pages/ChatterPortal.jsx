@@ -390,8 +390,14 @@ function ChatterView({ currentUser, isAdminView = false }) {
           monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
           monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
 
-        {/* Today's payments */}
-        <TodayPaymentsWidget payments={payments} />
+        {/* Today's payments + Graphic Requests — side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          <TodayPaymentsWidget payments={payments} />
+          <GraphicRequestWidget
+            chatterEmail={email}
+            chatterName={displayName}
+            models={models} />
+        </div>
 
         {/* Shift calendar */}
         <ChatterShiftPicker email={email} name={displayName} />
@@ -404,12 +410,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
             nextTierRevenue={5000} />
           <RecentPaymentsCard payments={payments} />
         </div>
-
-        {/* Graphic Requests */}
-        <GraphicRequestWidget
-          chatterEmail={email}
-          chatterName={displayName}
-          models={models} />
 
         {/* Customer Scraper */}
         <ChatterScraperEmbed chatterEmail={email} />

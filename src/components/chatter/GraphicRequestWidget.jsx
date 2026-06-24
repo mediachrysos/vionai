@@ -9,20 +9,20 @@ const DESIGNER_MAP = {
 };
 
 const PRIORITY_CONFIG = {
-  low: { label: "Nízká", bg: "bg-gray-100", text: "text-gray-500" },
-  normal: { label: "Normální", bg: "bg-blue-50", text: "text-blue-600" },
-  high: { label: "Vysoká", bg: "bg-amber-50", text: "text-[#C9A227]" },
-  urgent: { label: "Urgentní", bg: "bg-red-50", text: "text-red-600" }
+  low: { label: "Low", bg: "bg-gray-100", text: "text-gray-500" },
+  normal: { label: "Normal", bg: "bg-blue-50", text: "text-blue-600" },
+  high: { label: "High", bg: "bg-amber-50", text: "text-[#C9A227]" },
+  urgent: { label: "Urgent", bg: "bg-red-50", text: "text-red-600" }
 };
 
 const STATUS_CONFIG = {
-  pending: { label: "Čeká", bg: "bg-amber-50", text: "text-amber-600" },
-  in_progress: { label: "Zpracovává se", bg: "bg-blue-50", text: "text-blue-600" },
-  done: { label: "Hotovo ✓", bg: "bg-green-50", text: "text-green-600" },
-  rejected: { label: "Zamítnuto", bg: "bg-red-50", text: "text-red-500" }
+  pending: { label: "Pending", bg: "bg-amber-50", text: "text-amber-600" },
+  in_progress: { label: "In progress", bg: "bg-blue-50", text: "text-blue-600" },
+  done: { label: "Done ✓", bg: "bg-green-50", text: "text-green-600" },
+  rejected: { label: "Rejected", bg: "bg-red-50", text: "text-red-500" }
 };
 
-const DAY_NAMES = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function todayStr() {
   return new Date().toISOString().split("T")[0];
@@ -52,10 +52,10 @@ function formatDateLabel(dateStr) {
   if (!dateStr) return "Bez data";
   const today = todayStr();
   const tomorrow = (() => {const d = new Date();d.setDate(d.getDate() + 1);return d.toISOString().split("T")[0];})();
-  if (dateStr === today) return "Dnes";
-  if (dateStr === tomorrow) return "Zítra";
+  if (dateStr === today) return "Today";
+  if (dateStr === tomorrow) return "Tomorrow";
   const d = new Date(dateStr + "T12:00:00");
-  return d.toLocaleDateString("cs-CZ", { weekday: "long", day: "numeric", month: "numeric" });
+  return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "numeric" });
 }
 
 export default function GraphicRequestWidget({ chatterEmail, chatterName, models = [] }) {
@@ -153,7 +153,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
           
 
           
-          <span className="text-sm font-semibold text-slate-200">Requesty pro grafika</span>
+          <span className="text-sm font-semibold text-slate-200">Graphic requests</span>
           {pendingCount > 0 &&
           <span className="bg-[#C9A227]/20 text-[#C9A227] border border-[#C9A227]/30 text-xs font-bold px-2 py-0.5 rounded-full">
               {pendingCount}
@@ -165,7 +165,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
             onClick={(e) => {e.stopPropagation();setShowForm((v) => !v);setExpanded(true);}}
             className="flex items-center gap-1 text-xs text-[#C9A227] hover:text-[#e8c84a] bg-[#C9A227]/10 hover:bg-[#C9A227]/20 border border-[#C9A227]/30 px-2.5 py-1 rounded-full transition-colors font-semibold">
             
-            <Plus className="w-3 h-3" /> Přidat
+            <Plus className="w-3 h-3" /> Add
           </button>
           {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
         </div>
@@ -178,7 +178,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
           {showForm &&
         <form onSubmit={handleSubmit} className="px-5 py-4 bg-white/5 border-b border-white/10 space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-bold text-[#C9A227] uppercase tracking-wide">Nový request</p>
+                <p className="text-xs font-bold text-[#C9A227] uppercase tracking-wide">New request</p>
                 <button type="button" onClick={() => setShowForm(false)} className="text-slate-500 hover:text-slate-300">
                   <X className="w-4 h-4" />
                 </button>
@@ -186,11 +186,11 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
               {/* Content type */}
               <div>
-                <label className="text-xs font-semibold text-slate-400 block mb-2">Typ obsahu *</label>
+                <label className="text-xs font-semibold text-slate-400 block mb-2">Content type *</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
               { type: "video", icon: Video, label: "Video", sub: "→ Ishaq" },
-              { type: "photo", icon: Camera, label: "Fotografie", sub: "→ Soufiane" }].
+              { type: "photo", icon: Camera, label: "Photo", sub: "→ Soufiane" }].
               map(({ type, icon: TypeIcon, label, sub }) =>
               <button
                 key={type}
@@ -220,7 +220,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               <div>
                 <label className="text-xs font-semibold text-slate-400 block mb-2">
                   <CalendarDays className="w-3 h-3 inline mr-1 opacity-60" />
-                  Datum požadavku *
+                  Request date *
                 </label>
                 <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                   {days.map((d) => {
@@ -237,7 +237,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                     }>
                     
                         <span className={`text-[10px] font-semibold uppercase tracking-wide ${selected ? "text-white/80" : "text-slate-500"}`}>
-                          {d.isToday ? "Dnes" : d.isTomorrow ? "Zítra" : d.dayName}
+                          {d.isToday ? "Today" : d.isTomorrow ? "Tomorrow" : d.dayName}
                         </span>
                         <span className={`text-sm font-bold leading-tight ${selected ? "text-white" : "text-slate-300"}`}>
                           {d.dayNum}
@@ -249,22 +249,22 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-400 block mb-1">Název *</label>
+                <label className="text-xs font-semibold text-slate-400 block mb-1">Title *</label>
                 <input
               required
               value={form.title}
               onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-              placeholder="Co potřebuješ od grafika?"
+              placeholder="What do you need from the designer?"
               className="w-full h-9 px-3 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-white/5 text-slate-200 placeholder:text-slate-600" />
             
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-400 block mb-1">Popis</label>
+                <label className="text-xs font-semibold text-slate-400 block mb-1">Description</label>
                 <textarea
               value={form.description}
               onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-              placeholder="Detailní popis, formát, délka..."
+              placeholder="Detailed description, format, length..."
               rows={2}
               className="w-full px-3 py-2 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-white/5 text-slate-200 placeholder:text-slate-600 resize-none" />
             
@@ -272,29 +272,29 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-400 block mb-1">Modelka</label>
+                  <label className="text-xs font-semibold text-slate-400 block mb-1">Model</label>
                   <select
                 value={form.model_id}
                 onChange={(e) => setForm((p) => ({ ...p, model_id: e.target.value }))}
                 className="w-full h-9 px-3 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-[#1a1a1a] text-slate-300">
                 
-                    <option value="">— žádná —</option>
+                    <option value="">— none —</option>
                     {models.filter((m) => m.status === "active").map((m) =>
                 <option key={m.id} value={m.id}>{m.name}</option>
                 )}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-slate-400 block mb-1">Priorita</label>
+                  <label className="text-xs font-semibold text-slate-400 block mb-1">Priority</label>
                   <select
                 value={form.priority}
                 onChange={(e) => setForm((p) => ({ ...p, priority: e.target.value }))}
                 className="w-full h-9 px-3 text-sm border border-white/10 rounded-lg focus:outline-none focus:border-[#C9A227] bg-[#1a1a1a] text-slate-300">
                 
-                    <option value="low">Nízká</option>
-                    <option value="normal">Normální</option>
-                    <option value="high">Vysoká</option>
-                    <option value="urgent">Urgentní</option>
+                    <option value="low">Low</option>
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
                   </select>
                 </div>
               </div>
@@ -311,14 +311,14 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
               <div className="flex justify-end gap-2 pt-1">
                 <button type="button" onClick={() => setShowForm(false)} className="text-xs text-slate-500 hover:text-slate-300 px-3 py-1.5 rounded-lg">
-                  Zrušit
+                  Cancel
                 </button>
                 <button
               type="submit"
               disabled={saving || !form.title.trim() || !form.content_type}
               className="text-xs bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] disabled:opacity-40 text-white px-5 py-1.5 rounded-lg font-semibold transition-all shadow-sm">
               
-                  {saving ? "Odesílám..." : "Odeslat request"}
+                  {saving ? "Sending..." : "Send request"}
                 </button>
               </div>
             </form>
@@ -330,7 +330,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               
 
           
-              <p className="text-xs">Zatím žádné requesty</p>
+              <p className="text-xs">No requests yet</p>
             </div> :
 
         <div>
@@ -340,10 +340,10 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                   <div className="px-5 py-2 bg-white/5 border-y border-white/10 flex items-center gap-2">
                     <CalendarDays className="w-3.5 h-3.5 text-[#C9A227]" />
                     <span className="text-xs font-semibold text-slate-400">
-                      {dateKey === "__no_date__" ? "Bez data" : formatDateLabel(dateKey)}
+                      {dateKey === "__no_date__" ? "No date" : formatDateLabel(dateKey)}
                     </span>
                     <span className="ml-auto text-[10px] text-slate-600">
-                      {grouped[dateKey].length} {grouped[dateKey].length === 1 ? "request" : "requesty"}
+                      {grouped[dateKey].length} {grouped[dateKey].length === 1 ? "request" : "requests"}
                     </span>
                   </div>
 
@@ -386,12 +386,12 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                         }
                               {r.result_url &&
                         <a href={r.result_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#C9A227] hover:underline flex items-center gap-0.5 font-medium">
-                                  <ExternalLink className="w-2.5 h-2.5" /> Výsledek
+                                  <ExternalLink className="w-2.5 h-2.5" /> Result
                                 </a>
                         }
                               {r.reference_url &&
                         <a href={r.reference_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5">
-                                  <ExternalLink className="w-2.5 h-2.5" /> Reference
+                                  <ExternalLink className="w-2.5 h-2.5" /> Ref
                                 </a>
                         }
                             </div>
@@ -405,11 +405,11 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                         onClick={() => deleteMutation.mutate(r.id)}
                         disabled={deleteMutation.isPending}
                         className="text-[10px] text-white bg-red-500 hover:bg-red-600 px-2 py-0.5 rounded-full font-semibold transition-colors disabled:opacity-50">
-                        
-                                  Smazat
+
+                                  Delete
                                 </button>
                                 <button onClick={() => setDeletingId(null)} className="text-[10px] text-gray-400 hover:text-gray-600 px-1">
-                                  Zpět
+                                  Back
                                 </button>
                               </div> :
 
