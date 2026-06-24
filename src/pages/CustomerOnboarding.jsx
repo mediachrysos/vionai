@@ -124,23 +124,30 @@ export default function CustomerOnboarding() {
         {/* Logo */}
         <div className="text-center mb-4">
           {company === "Anza Media" ? (
-            <div className="inline-block mb-3">
+            <a href="https://anzamedia.net/" target="_blank" rel="noopener noreferrer" className="inline-block mb-3">
               <img
-                src="https://res.cloudinary.com/drkudvyog/image/upload/v1737450333/Anza_media_logo_tmavy_podklad_zmenšene_jj8ksh.png"
+                src="https://res.cloudinary.com/dbwwymd7r/image/upload/v1782314524/image_fld8qt.webp"
                 alt="Anza Media"
-                className="w-48 h-48 object-contain mx-auto"
+                className="w-48 h-24 object-contain mx-auto hover:opacity-90 transition-opacity"
               />
-            </div>
+            </a>
           ) : (
-            <a href="https://chrysos-media-website.base44.app" target="_blank" rel="noopener noreferrer" className="inline-block mb-3">
+            <a href="https://chrysos-media-website.base44.app/" target="_blank" rel="noopener noreferrer" className="inline-block mb-3">
               <img
-                src="https://res.cloudinary.com/drkudvyog/image/upload/v1774274896/hf_20260323_140153_38afd9a9-0561-418e-aa6f-da2f6f022bae_copy_cakidp.png"
+                src="https://res.cloudinary.com/dbwwymd7r/image/upload/v1782314586/hf_20260323_140153_38afd9a9-0561-418e-aa6f-da2f6f022bae_copy_wvgcsu.png"
                 alt="Chrysos Media"
                 className="w-48 h-48 object-contain mx-auto hover:opacity-90 transition-opacity"
               />
             </a>
           )}
         </div>
+
+        <h1
+          className="text-center text-2xl font-bold mb-6"
+          style={{ color: company === "Anza Media" ? "#03284D" : "#C29D24", fontFamily: "Georgia, serif" }}
+        >
+          {company}
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Pre-filled name */}
@@ -202,7 +209,10 @@ export default function CustomerOnboarding() {
           <Button
             type="submit"
             disabled={!termsAccepted || !gdprAccepted || status === "loading"}
-            className="w-full bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white font-semibold shadow-sm shadow-amber-200"
+            className="w-full text-white font-semibold"
+            style={company === "Anza Media"
+              ? { background: "#03284D" }
+              : { background: "linear-gradient(to right, #C9A227, #A8841C)" }}
           >
             {status === "loading" ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Odesílám...</>
