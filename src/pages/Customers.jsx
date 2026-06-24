@@ -133,10 +133,8 @@ export default function Customers({ currentUser }) {
   });
 
   const pendingCustomers = useMemo(() => {
-    // Find customers who have no payments at all
-    const customerIdsWithPayments = new Set(allPayments.map((p) => p.customer_id).filter(Boolean));
     return customers.filter((c) => !customerIdsWithPayments.has(c.id));
-  }, [customers, allPayments]);
+  }, [customers, customerIdsWithPayments]);
 
   // --- Look-alike Audience state & logic ---
   const [laSearch, setLaSearch] = useState("");
@@ -316,8 +314,11 @@ export default function Customers({ currentUser }) {
     customerPaymentCount[p.customer_id] = (customerPaymentCount[p.customer_id] || 0) + 1;
   });
 
+  const customerIdsWithPayments = useMemo(() => new Set(allPayments.map((p) => p.customer_id).filter(Boolean)), [allPayments]);
+
   // Filter out non-primary duplicates (show only first of each name group)
   const filtered = customers.filter((c) => {
+    if (!customerIdsWithPayments.has(c.id)) return false; // only paying customers
     const merged = mergedStats[c.id];
     if (merged && !merged.isPrimary) return false;
     const matchSearch = !search ||
