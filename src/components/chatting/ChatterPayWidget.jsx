@@ -128,7 +128,7 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
 
       {/* Work session timer */}
       {showWorkSession &&
-      <div className="flex flex-col items-center justify-center py-3 border-t border-white/10">
+      <div className="flex items-center justify-center gap-4 pt-3 border-t border-white/10">
           <WorkSessionWidget email={chatterEmail} />
         </div>
       }

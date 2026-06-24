@@ -97,8 +97,8 @@ export default function WorkSessionWidget({ email, compact }) {
   return (
     <div className="flex items-center gap-3">
       <div>
-        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-0.5">Pracuješ?</p>
-        <p className="text-lg font-bold text-gray-900">{isWorking ? sessionTime : "00:00"}</p>
+        <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Pracuješ?</p>
+        <p className="text-xl font-bold text-slate-100 tabular-nums">{isWorking ? sessionTime : "00:00"}</p>
       </div>
       <Button
         onClick={toggle}
