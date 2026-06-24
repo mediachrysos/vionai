@@ -84,9 +84,9 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
       {/* Header */}
       <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
-          <div className="bg-slate-50 rounded-xl w-9 h-9 flex items-center justify-center hidden">
-            <MessageSquare className="w-5 h-5 text-[#C9A227]" />
-          </div>
+          
+
+          
           <h3 className="text-sm font-semibold text-white">My notes</h3>
         </div>
         <button

@@ -150,9 +150,9 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors">
         
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#C9A227]/20 flex items-center justify-center border border-[#C9A227]/30 hidden">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png" alt="" className="w-5 h-5 object-contain" />
-          </div>
+          
+
+          
           <span className="text-sm font-semibold text-slate-200">Requesty pro grafika</span>
           {pendingCount > 0 &&
           <span className="bg-[#C9A227]/20 text-[#C9A227] border border-[#C9A227]/30 text-xs font-bold px-2 py-0.5 rounded-full">
@@ -327,9 +327,9 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
           {/* ── List grouped by date ── */}
           {requests.length === 0 ?
         <div className="px-5 py-8 text-center text-slate-600">
-              <div className="w-10 h-10 rounded-full bg-[#C9A227]/10 flex items-center justify-center mx-auto mb-2 hidden">
-                <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_17_kklr9x.png" alt="" className="w-5 h-5 object-contain opacity-40" />
-              </div>
+              
+
+          
               <p className="text-xs">Zatím žádné requesty</p>
             </div> :
 

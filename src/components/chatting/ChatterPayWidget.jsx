@@ -83,9 +83,9 @@ export default function ChatterPayWidget({ chatterEmail, hoursWorked, totalChatt
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#C9A227]/20 flex items-center justify-center hidden">
-            <Banknote className="w-3.5 h-3.5 text-[#C9A227]" />
-          </div>
+          
+
+          
           <span className="text-sm font-semibold text-slate-200">Payout</span>
         </div>
         <div className="flex items-center gap-2">

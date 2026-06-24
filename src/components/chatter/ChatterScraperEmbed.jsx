@@ -90,9 +90,9 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
         onClick={() => setOpen((v) => !v)}
         className="w-full px-4 py-3 flex items-center gap-2 hover:bg-white/5 transition-colors">
         
-        <div className="w-6 h-6 rounded-lg bg-[#C9A227]/15 flex items-center justify-center hidden">
-          <Search className="w-3.5 h-3.5 text-[#C9A227]" />
-        </div>
+        
+
+        
         <span className="text-xs font-bold text-slate-200">Customer Scraper</span>
         <span className="ml-auto text-slate-500">{open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</span>
       </button>

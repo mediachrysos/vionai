@@ -15,9 +15,9 @@ export default function TodayPaymentsWidget({ payments }) {
   return (
     <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
       <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
-        <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center hidden">
-          <CreditCard className="w-3.5 h-3.5 text-emerald-400" />
-        </div>
+        
+
+        
         <h3 className="text-xs font-bold text-slate-200">Dnešní platby</h3>
         <span className="ml-auto text-xs font-bold text-emerald-400">{total.toLocaleString()} Kč</span>
       </div>
