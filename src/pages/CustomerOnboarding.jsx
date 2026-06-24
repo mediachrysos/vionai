@@ -229,18 +229,20 @@ export default function CustomerOnboarding() {
         onClose={() => setShowGdpr(false)}
         title={legalDocs.gdpr?.title || "Zásady ochrany osobních údajů"}
         content={legalDocs.gdpr?.content}
+        company={company}
       />
       <DocumentModal
         open={showTerms}
         onClose={() => setShowTerms(false)}
         title={legalDocs.terms?.title || "Obchodní podmínky"}
         content={legalDocs.terms?.content}
+        company={company}
       />
     </div>
   );
 }
 
-function DocumentModal({ open, onClose, title, content }) {
+function DocumentModal({ open, onClose, title, content, company }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 overflow-hidden bg-white text-gray-900">
@@ -275,7 +277,7 @@ function DocumentModal({ open, onClose, title, content }) {
           )}
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex-shrink-0">
-          <Button onClick={onClose} className="w-full bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white">Zavřít</Button>
+          <Button onClick={onClose} className="w-full text-white" style={{ background: company === "Anza Media" ? "#03284D" : "linear-gradient(to right, #C9A227, #A8841C)" }}>Zavřít</Button>
         </div>
       </DialogContent>
     </Dialog>
