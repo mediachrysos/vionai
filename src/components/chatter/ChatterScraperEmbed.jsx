@@ -85,20 +85,20 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
   }
 
   return (
-    <div className="bg-white border border-[#ececec] rounded-2xl overflow-hidden">
+    <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
       <button
         onClick={() => setOpen(v => !v)}
-        className="w-full px-4 py-3 flex items-center gap-2 hover:bg-gray-50 transition-colors"
+        className="w-full px-4 py-3 flex items-center gap-2 hover:bg-white/5 transition-colors"
       >
-        <div className="w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center">
+        <div className="w-6 h-6 rounded-lg bg-[#C9A227]/15 flex items-center justify-center">
           <Search className="w-3.5 h-3.5 text-[#C9A227]" />
         </div>
-        <span className="text-xs font-bold text-gray-800">Customer Scraper</span>
-        <span className="ml-auto text-gray-400">{open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</span>
+        <span className="text-xs font-bold text-slate-200">Customer Scraper</span>
+        <span className="ml-auto text-slate-500">{open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</span>
       </button>
 
       {open && (
-        <div className="px-4 pb-4 space-y-3 border-t border-gray-50">
+        <div className="px-4 pb-4 space-y-3 border-t border-white/10">
           <div className="flex gap-2 mt-3">
             <Button size="sm" onClick={handleCopyScraper} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white text-xs h-8">
               {copied ? <><Check className="w-3.5 h-3.5 mr-1.5" />Zkopírováno!</> : <><Copy className="w-3.5 h-3.5 mr-1.5" />Scraper kód</>}
@@ -108,7 +108,7 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder={"Jan Novák\nMarie Svobodová\n..."}
-            className="min-h-[120px] font-mono text-sm"
+            className="min-h-[120px] font-mono text-sm bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
           />
           <Button size="sm" onClick={handleSearch} disabled={!input.trim()} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white text-xs h-8">
             <Search className="w-3.5 h-3.5 mr-1.5" /> Najít shody
@@ -117,26 +117,26 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
           {results && (
             <div className="space-y-3">
               {/* Matched */}
-              <div className="rounded-xl border border-[#ececec] overflow-hidden">
-                <div className="px-3 py-2 border-b border-gray-100 flex items-center gap-2 bg-gray-50">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                  <span className="text-xs font-semibold text-gray-700">Nalezené shody</span>
-                  <span className="ml-auto text-xs text-gray-400">{results.matched.length}</span>
+              <div className="rounded-xl border border-white/10 overflow-hidden">
+                <div className="px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-white/5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-xs font-semibold text-slate-300">Nalezené shody</span>
+                  <span className="ml-auto text-xs text-slate-500">{results.matched.length}</span>
                 </div>
                 {results.matched.length === 0 ? (
-                  <p className="text-xs text-gray-400 px-3 py-2">Žádné shody</p>
+                  <p className="text-xs text-slate-600 px-3 py-2">Žádné shody</p>
                 ) : (
-                  <div className="divide-y divide-gray-50">
+                  <div className="divide-y divide-white/5">
                     {results.matched.map((r) => (
-                      <div key={r.customer.id} className="px-3 py-2 flex items-center gap-2 hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}>
-                        <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-700 flex-shrink-0">
+                      <div key={r.customer.id} className="px-3 py-2 flex items-center gap-2 hover:bg-white/5 cursor-pointer transition-colors" onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}>
+                        <div className="w-6 h-6 rounded-full bg-[#C9A227]/20 flex items-center justify-center text-[10px] font-bold text-[#C9A227] flex-shrink-0">
                           {r.customer.full_name?.[0]?.toUpperCase() || "?"}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-800 truncate">{r.customer.full_name}</p>
-                          <p className="text-[10px] text-gray-400">{(r.customer.total_spent || 0).toLocaleString()} Kč · {formatDate(lastPaymentDate[r.customer.id])}</p>
+                          <p className="text-xs font-medium text-slate-200 truncate">{r.customer.full_name}</p>
+                          <p className="text-[10px] text-slate-500">{(r.customer.total_spent || 0).toLocaleString()} Kč · {formatDate(lastPaymentDate[r.customer.id])}</p>
                         </div>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 flex-shrink-0">✓</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 flex-shrink-0">✓</span>
                       </div>
                     ))}
                   </div>
@@ -145,18 +145,18 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
 
               {/* Historical */}
               {results.matchedHistorical.length > 0 && (
-                <div className="rounded-xl border border-purple-100 overflow-hidden">
-                  <div className="px-3 py-2 border-b border-purple-50 flex items-center gap-2 bg-purple-50/50">
+                <div className="rounded-xl border border-purple-500/20 overflow-hidden">
+                  <div className="px-3 py-2 border-b border-purple-500/20 flex items-center gap-2 bg-purple-500/10">
                     <Ghost className="w-3.5 h-3.5 text-purple-400" />
-                    <span className="text-xs font-semibold text-gray-700">Duchové</span>
-                    <span className="ml-auto text-xs text-gray-400">{results.matchedHistorical.length}</span>
+                    <span className="text-xs font-semibold text-slate-300">Duchové</span>
+                    <span className="ml-auto text-xs text-slate-500">{results.matchedHistorical.length}</span>
                   </div>
-                  <div className="divide-y divide-gray-50">
+                  <div className="divide-y divide-white/5">
                     {results.matchedHistorical.map((r, i) => (
                       <div key={i} className="px-3 py-2 flex items-center gap-2">
                         <Ghost className="w-4 h-4 text-purple-400 flex-shrink-0" />
-                        <p className="text-xs text-gray-700">{r.historical.full_name}</p>
-                        <span className="ml-auto text-[10px] text-purple-500">{(r.historical.total_spent || 0).toLocaleString()} Kč</span>
+                        <p className="text-xs text-slate-300">{r.historical.full_name}</p>
+                        <span className="ml-auto text-[10px] text-purple-400">{(r.historical.total_spent || 0).toLocaleString()} Kč</span>
                       </div>
                     ))}
                   </div>
@@ -164,20 +164,20 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
               )}
 
               {/* Unmatched */}
-              <div className="rounded-xl border border-[#ececec] overflow-hidden">
-                <div className="px-3 py-2 border-b border-gray-100 flex items-center gap-2 bg-gray-50">
-                  <XCircle className="w-3.5 h-3.5 text-gray-400" />
-                  <span className="text-xs font-semibold text-gray-700">Bez shody</span>
-                  <span className="ml-auto text-xs text-gray-400">{results.unmatched.length}</span>
+              <div className="rounded-xl border border-white/10 overflow-hidden">
+                <div className="px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-white/5">
+                  <XCircle className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="text-xs font-semibold text-slate-300">Bez shody</span>
+                  <span className="ml-auto text-xs text-slate-500">{results.unmatched.length}</span>
                 </div>
                 {results.unmatched.length === 0 ? (
-                  <p className="text-xs text-gray-400 px-3 py-2">Vše nalezeno 🎉</p>
+                  <p className="text-xs text-slate-500 px-3 py-2">Vše nalezeno 🎉</p>
                 ) : (
-                  <div className="divide-y divide-gray-50">
+                  <div className="divide-y divide-white/5">
                     {results.unmatched.map((name, i) => (
                       <div key={i} className="px-3 py-2 flex items-center gap-2">
-                        <UserCircle className="w-4 h-4 text-gray-300 flex-shrink-0" />
-                        <p className="text-xs text-gray-500 italic">{name}</p>
+                        <UserCircle className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                        <p className="text-xs text-slate-500 italic">{name}</p>
                       </div>
                     ))}
                   </div>
