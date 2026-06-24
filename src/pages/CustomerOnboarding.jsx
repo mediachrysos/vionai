@@ -120,7 +120,7 @@ export default function CustomerOnboarding() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
+      <div className="rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md" style={{ background: company === "Anza Media" ? "#F3F4F1" : "#ffffff" }}>
         {/* Logo */}
         <div className="text-center mb-4">
           {company === "Anza Media" ? (
@@ -142,12 +142,14 @@ export default function CustomerOnboarding() {
           )}
         </div>
 
-        <h1
-          className="text-center text-2xl font-bold mb-6"
-          style={{ color: company === "Anza Media" ? "#03284D" : "#C29D24", fontFamily: "Georgia, serif" }}
-        >
-          {company}
-        </h1>
+        {company !== "Anza Media" && (
+          <h1
+            className="text-center text-2xl font-bold mb-6"
+            style={{ color: "#C29D24", fontFamily: "Georgia, serif" }}
+          >
+            {company}
+          </h1>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Pre-filled name */}
@@ -175,9 +177,9 @@ export default function CustomerOnboarding() {
             <button
               type="button"
               onClick={() => setShowGdpr(true)}
-              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-gray-200 text-xs font-semibold hover:opacity-80 transition-colors"
+              style={{ color: company === "Anza Media" ? "#03284D" : "#6b7280" }}
             >
-              <FileText className="w-3.5 h-3.5" />
               Přečíst zásady ochrany osobních údajů
             </button>
           </div>
@@ -199,9 +201,9 @@ export default function CustomerOnboarding() {
             <button
               type="button"
               onClick={() => setShowTerms(true)}
-              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center justify-center gap-1.5 py-2 border-t border-gray-200 text-xs font-semibold hover:opacity-80 transition-colors"
+              style={{ color: company === "Anza Media" ? "#03284D" : "#6b7280" }}
             >
-              <ScrollText className="w-3.5 h-3.5" />
               Přečíst obchodní podmínky
             </button>
           </div>
@@ -243,8 +245,7 @@ function DocumentModal({ open, onClose, title, content }) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 overflow-hidden bg-white text-gray-900">
         <DialogHeader className="px-6 py-4 border-b border-gray-100 flex-shrink-0 bg-white">
-          <DialogTitle className="text-base font-semibold text-gray-800 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-amber-500" />
+          <DialogTitle className="text-base font-semibold text-gray-800">
             {title}
           </DialogTitle>
         </DialogHeader>
