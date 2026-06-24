@@ -101,15 +101,15 @@ function AdminChattingSpace({ currentUser }) {
 
   if (selectedChatter) {
     return (
-      <div>
+      <div className="min-h-screen bg-[#1a1a1a]">
         <div className="bg-[#1e1e1e] border-b border-white/10 px-6 py-3 flex items-center gap-3">
           <button
             onClick={() => setSelectedChatter(null)}
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-200 transition-colors font-medium">
+            className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-[#C9A227] transition-colors font-medium">
             ← Zpět na přehled
           </button>
           <span className="text-white/10">|</span>
-          <span className="text-xs text-slate-500">Zobrazuješ dashboard jako: <span className="font-semibold text-[#C9A227]">{selectedChatter.nickname || selectedChatter.full_name}</span></span>
+          <span className="text-xs text-slate-500">Viewing as: <span className="font-semibold text-[#C9A227]">{selectedChatter.nickname || selectedChatter.full_name}</span></span>
         </div>
         <ChatterView currentUser={selectedChatter} isAdminView={true} />
       </div>
@@ -117,9 +117,20 @@ function AdminChattingSpace({ currentUser }) {
   }
 
   return (
-    <div className="p-4 lg:p-8 max-w-7xl mx-auto space-y-6">
-      {/* Tabs */}
-      <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-[#1a1a1a]">
+      {/* Page header bar */}
+      <div className="bg-[#1e1e1e] border-b border-white/10 px-6 pt-6 pb-5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div>
+            <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest mb-1">Admin</p>
+            <h1 className="text-2xl font-bold text-slate-100">Chatting Space</h1>
+          </div>
+          {activeTab === "dashboard" && <PeriodSelector period={period} onChange={setPeriod} />}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6 pb-12 space-y-6">
+        {/* Tabs */}
         <div className="flex gap-1 bg-white/5 rounded-xl p-1 border border-white/10 w-fit">
           <button
             onClick={() => setActiveTab("dashboard")}
@@ -130,77 +141,100 @@ function AdminChattingSpace({ currentUser }) {
             onClick={() => setActiveTab("chatters")}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "chatters" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
             <Users className="w-4 h-4" /> Chatters
+            {chatters.length > 0 && (
+              <span className="bg-white/10 text-slate-300 text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[20px] text-center">{chatters.length}</span>
+            )}
           </button>
         </div>
-        {activeTab === "dashboard" && <PeriodSelector period={period} onChange={setPeriod} />}
+
+        {/* ── Dashboard tab ── */}
+        {activeTab === "dashboard" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <KpiCard label="Total Revenue" value={totalRevenue.toLocaleString("cs-CZ") + " CZK"} highlight trend={revTrendPct} trendLabel={revTrendPct !== null ? `${revTrendPct > 0 ? "+" : ""}${revTrendPct}% vs prev period` : "No comparison data"} />
+              <KpiCard label="Active Chatters" value={`${activeChatters.length} / ${chatters.length}`} sub="with shift or payment" />
+              <KpiCard label="Total Payments" value={totalPaymentCount.toString()} sub={totalPaymentCount > 0 ? `avg ${Math.round(totalRevenue / totalPaymentCount).toLocaleString("cs-CZ")} CZK` : "No payments"} />
+              <KpiCard label="Revenue / Chatter" value={activeChatters.length > 0 ? revPerChatter.toLocaleString("cs-CZ") + " CZK" : "—"} sub={activeChatters.length > 0 ? `across ${activeChatters.length} active` : "No active chatters"} />
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-4">
+              <TodayNotesWidget currentUser={currentUser} paydayCustomers={paydayCustomers} models={models} />
+              <PerformanceAlerts chatters={chatters} payments={payments} shifts={allShifts} periodDates={{ start, end }} />
+            </div>
+
+            <ChatterLeaderboardTable chatters={chatters} payments={periodPayments} prevPayments={prevPayments} shifts={periodShifts} models={models} payouts={payouts} />
+            <RecentPaymentsPanel payments={payments} />
+            <RecentCustomersWidget customers={customers} />
+            <ShiftOverviewWidget users={users} />
+          </div>
+        )}
+
+        {/* ── Chatters tab ── */}
+        {activeTab === "chatters" && (
+          <div className="space-y-5">
+            {chatters.length > 0 && <AdminShiftCalendar chatters={chatters} />}
+
+            {chatters.length === 0 ? (
+              <div className="text-center py-20 text-slate-600">
+                <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm">Zatím žádní chatteři</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {chatters.map((u, i) => {
+                  const stats = getStats(u.email);
+                  const initials = (u.nickname || u.full_name || "?")[0].toUpperCase();
+                  const monthlyRevenuePct = stats.monthTotal > 0 ? Math.min(100, Math.round((stats.monthTotal / 150000) * 100)) : 0;
+                  return (
+                    <button
+                      key={u.id}
+                      onClick={() => setSelectedChatter(u)}
+                      className="group bg-[#1e1e1e] rounded-2xl border border-white/10 p-5 flex flex-col gap-4 hover:border-[#C9A227]/40 hover:shadow-lg hover:shadow-black/30 transition-all text-left card-hover">
+                      {/* Top: avatar + name */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-base font-bold flex-shrink-0 shadow-sm shadow-amber-900/30">
+                          {initials}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-100 truncate">{u.nickname || u.full_name}</p>
+                          <p className="text-xs text-slate-500 truncate">{u.email}</p>
+                        </div>
+                        <span className="text-xs text-[#C9A227] opacity-0 group-hover:opacity-100 transition-opacity font-medium">Zobrazit →</span>
+                      </div>
+
+                      {/* Stats row */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white/5 rounded-xl px-3 py-2.5">
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Tento měsíc</p>
+                          <p className="text-sm font-bold text-slate-100">{stats.monthTotal.toLocaleString()} Kč</p>
+                        </div>
+                        <div className="bg-white/5 rounded-xl px-3 py-2.5">
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Plateb celkem</p>
+                          <p className="text-sm font-bold text-slate-100">{stats.payments.length}</p>
+                        </div>
+                      </div>
+
+                      {/* Progress bar */}
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <p className="text-[10px] text-slate-500">Měsíční cíl (150 000 Kč)</p>
+                          <p className="text-[10px] font-semibold text-[#C9A227]">{monthlyRevenuePct}%</p>
+                        </div>
+                        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all"
+                            style={{ width: `${monthlyRevenuePct}%` }}
+                          />
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
-
-      {/* ── Dashboard tab ── */}
-      {activeTab === "dashboard" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <KpiCard label="Total Revenue" value={totalRevenue.toLocaleString("cs-CZ") + " CZK"} highlight trend={revTrendPct} trendLabel={revTrendPct !== null ? `${revTrendPct > 0 ? "+" : ""}${revTrendPct}% vs prev period` : "No comparison data"} />
-            <KpiCard label="Active Chatters" value={`${activeChatters.length} / ${chatters.length}`} sub="with shift or payment" />
-            <KpiCard label="Total Payments" value={totalPaymentCount.toString()} sub={totalPaymentCount > 0 ? `avg ${Math.round(totalRevenue / totalPaymentCount).toLocaleString("cs-CZ")} CZK` : "No payments"} />
-            <KpiCard label="Revenue / Chatter" value={activeChatters.length > 0 ? revPerChatter.toLocaleString("cs-CZ") + " CZK" : "—"} sub={activeChatters.length > 0 ? `across ${activeChatters.length} active` : "No active chatters"} />
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-4">
-            <TodayNotesWidget currentUser={currentUser} paydayCustomers={paydayCustomers} models={models} />
-            <PerformanceAlerts chatters={chatters} payments={payments} shifts={allShifts} periodDates={{ start, end }} />
-          </div>
-
-          <ChatterLeaderboardTable chatters={chatters} payments={periodPayments} prevPayments={prevPayments} shifts={periodShifts} models={models} payouts={payouts} />
-          <RecentPaymentsPanel payments={payments} />
-          <RecentCustomersWidget customers={customers} />
-          <ShiftOverviewWidget users={users} />
-        </div>
-      )}
-
-      {/* ── Chatters tab ── */}
-      {activeTab === "chatters" && (
-        <div className="space-y-4">
-          {chatters.length > 0 && <AdminShiftCalendar chatters={chatters} />}
-          {chatters.length === 0 ? (
-            <div className="text-center py-16 text-slate-600">
-              <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">Zatím žádní chatteři</p>
-            </div>
-          ) : (
-            <div className="grid gap-3">
-              {chatters.map((u) => {
-                const stats = getStats(u.email);
-                return (
-                  <button
-                    key={u.id}
-                    onClick={() => setSelectedChatter(u)}
-                    className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm p-4 flex items-center justify-between hover:border-[#C9A227]/30 hover:shadow-md transition-all text-left">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold">
-                        {(u.nickname || u.full_name || "?")[0].toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-slate-200">{u.nickname || u.full_name}</p>
-                        <p className="text-xs text-slate-500">{u.email}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-6 text-right">
-                      <div>
-                        <p className="text-xs text-slate-500">Tento měsíc</p>
-                        <p className="text-sm font-bold text-slate-200">{stats.monthTotal.toLocaleString()} Kč</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Plateb</p>
-                        <p className="text-sm font-bold text-slate-400">{stats.payments.length}</p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
