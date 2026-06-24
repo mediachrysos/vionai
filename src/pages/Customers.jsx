@@ -538,7 +538,7 @@ export default function Customers({ currentUser }) {
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-100">Customers</h1>
           <div className="flex gap-2 flex-wrap items-end">
-            <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50">
+            <Button variant="outline" onClick={downloadXlsx} className="bg-background text-[#ebc624] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-emerald-200 hover:bg-emerald-50 hidden">
               <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-4 h-4 mr-2 object-contain" /> Export
             </Button>
             {duplicateNames.size > 0 &&
