@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
-import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2, Link2, RefreshCw, ScanSearch } from "lucide-react";
+import { Search, Plus, UserCircle, Download, ChevronDown, Pencil, Trash2, Link2, RefreshCw, ScanSearch, Clock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
@@ -125,6 +125,18 @@ export default function Customers({ currentUser }) {
     mutationFn: (id) => base44.entities.Customer.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["customers"] })
   });
+
+  // --- Pending customers (completed onboarding but no payments) ---
+  const { data: onboardingRequests = [] } = useQuery({
+    queryKey: ["onboarding-requests"],
+    queryFn: () => base44.entities.CustomerOnboardingRequest.filter({ status: "completed" }),
+  });
+
+  const pendingCustomers = useMemo(() => {
+    // Find customers who have no payments at all
+    const customerIdsWithPayments = new Set(allPayments.map((p) => p.customer_id).filter(Boolean));
+    return customers.filter((c) => !customerIdsWithPayments.has(c.id));
+  }, [customers, allPayments]);
 
   // --- Look-alike Audience state & logic ---
   const [laSearch, setLaSearch] = useState("");
@@ -359,12 +371,105 @@ export default function Customers({ currentUser }) {
           <UserCircle className="w-4 h-4" /> Customers
         </button>
         <button
+          onClick={() => setActiveTab("pending")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "pending" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}
+        >
+          <Clock className="w-4 h-4" /> Pending
+          {pendingCustomers.length > 0 && (
+            <span className="bg-amber-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">{pendingCustomers.length}</span>
+          )}
+        </button>
+        <button
           onClick={() => setActiveTab("lookalike")}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "lookalike" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}
         >
           <ScanSearch className="w-4 h-4" /> Look-alike Audience
         </button>
       </div>
+
+      {activeTab === "pending" && (
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">Pending customers</h2>
+              <p className="text-sm text-slate-500 mt-0.5">{pendingCustomers.length} zákazníků potvrdilo onboarding, ale zatím neposlali žádné peníze</p>
+            </div>
+          </div>
+          {pendingCustomers.length === 0 ? (
+            <div className="text-center py-16 text-slate-500 text-sm">Všichni zákazníci už platili 🎉</div>
+          ) : (
+            <div className="bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10 bg-white/5">
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Jméno</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Email</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelky</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Přidán</th>
+                    <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 w-20"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingCustomers.map((c, i) => {
+                    const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
+                    const modelNames = mids.map((mid) => modelMap[mid]).filter(Boolean);
+                    const daysSince = c.created_date ? Math.floor((Date.now() - new Date(c.created_date)) / 86400000) : null;
+                    return (
+                      <motion.tr
+                        key={c.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: i * 0.02 }}
+                        className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
+                        onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
+                      >
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-amber-900/40 border border-amber-700/30 flex items-center justify-center text-xs font-bold text-amber-400 flex-shrink-0">
+                              {c.full_name?.[0]?.toUpperCase() || "?"}
+                            </div>
+                            <span className="text-sm font-medium text-slate-200">{c.full_name}</span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">{c.email || "—"}</td>
+                        <td className="px-5 py-3.5 hidden lg:table-cell">
+                          {modelNames.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {modelNames.map((n) => <span key={n} className="text-xs bg-amber-900/30 text-amber-400 border border-amber-800/30 rounded-md px-1.5 py-0.5">{n}</span>)}
+                            </div>
+                          ) : <span className="text-slate-600 text-sm">—</span>}
+                        </td>
+                        <td className="px-5 py-3.5 text-sm text-slate-500 hidden md:table-cell">
+                          {daysSince !== null ? `před ${daysSince} dny` : "—"}
+                        </td>
+                        <td className="px-4 py-3.5 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setEditing(c); setShowForm(true); }}
+                              className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-amber-900/40 transition-colors flex items-center justify-center"
+                            >
+                              <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-4 h-4 object-contain" />
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <CustomerFormModal
+            open={showForm}
+            onClose={() => { setShowForm(false); setEditing(null); }}
+            onSave={saveMutation.mutateAsync}
+            customer={editing}
+            models={models}
+            users={users}
+            allCustomers={customers}
+          />
+        </div>
+      )}
 
       {activeTab === "lookalike" && (
         <div>
