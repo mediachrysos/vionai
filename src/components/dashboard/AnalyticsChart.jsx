@@ -212,7 +212,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                   <button
                     key={p.days}
                     onClick={() => { setSelectedDays(p.days); setUseCustom(false); setShowPresetMenu(false); }}
-                    className={`text-center text-sm px-3 py-2 rounded-lg transition-all ${
+                    className={`text-center text-xs px-2 py-2 rounded-lg transition-all whitespace-nowrap ${
                       !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"
                     }`}
                   >
