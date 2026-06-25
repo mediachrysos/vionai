@@ -13,10 +13,11 @@ function getYearRange(centerYear) {
   return years;
 }
 
-export default function DatePicker({ value, onChange, placeholder = "Vybrat datum", max, variant = "default" }) {
+export default function DatePicker({ value, onChange, placeholder = "Vybrat datum", max, variant = "default", openUpward = false }) {
   const [open, setOpen] = useState(false);
   const [viewDate, setViewDate] = useState(() => value ? new Date(value) : new Date());
   const containerRef = useRef(null);
+  const [dropUp, setDropUp] = useState(openUpward);
 
   useEffect(() => {
     if (value) setViewDate(new Date(value));
@@ -28,7 +29,14 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
         setOpen(false);
       }
     };
-    if (open) document.addEventListener("mousedown", handler);
+    if (open) {
+      document.addEventListener("mousedown", handler);
+      // Auto-detect if calendar would overflow below viewport
+      if (!openUpward && containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setDropUp(rect.bottom + 280 > window.innerHeight);
+      }
+    }
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
@@ -87,8 +95,8 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
 
       {open && (
         <div
-          className="absolute z-[9999] bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-xl p-3 w-56 mt-1"
-          style={{ left: "50%", transform: "translateX(-50%)" }}
+          className="absolute z-[9999] bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-xl p-3 w-56"
+          style={{ left: "50%", transform: "translateX(-50%)", ...(dropUp ? { bottom: "calc(100% + 4px)" } : { top: "calc(100% + 4px)" }) }}
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/* Month + Year selectors */}
