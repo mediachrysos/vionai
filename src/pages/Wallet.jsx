@@ -48,12 +48,12 @@ export default function Wallet() {
       const acc = p.bank_account_id ? accounts.find((a) => a.id === p.bank_account_id) : null;
       return {
         id: "pay_" + p.id,
-        title: p.customer_name ? `Platba – ${p.customer_name}` : "Platba zákazníka",
+        title: p.customer_name ? `Payment – ${p.customer_name}` : "Customer payment",
         amount: p.amount || 0,
         type: "income",
         transaction_date: p.payment_date,
         created_date: p.created_date,
-        category: p.service_type || "Platba",
+        category: p.service_type || "Payment",
         account_name: acc?.name || (p.destination_account ? p.destination_account : null),
         source: "Finance"
       };
@@ -66,7 +66,7 @@ export default function Wallet() {
       type: "expense",
       transaction_date: e.expense_date,
       created_date: e.created_date,
-      category: e.category || "Výdaj",
+      category: e.category || "Expense",
       source: "Finance"
     }));
 
@@ -74,7 +74,7 @@ export default function Wallet() {
       ...t,
       source: "Wallet",
       // transfers and "Výplata" category are neutral — don't count as income/expense
-      type: t.type === "transfer" ? "transfer" : t.category === "Výplata" ? "neutral" : t.type
+      type: t.type === "transfer" ? "transfer" : (t.category === "Výplata" || t.category === "Payout") ? "neutral" : t.type
     }));
 
     return [...paymentTxs, ...expenseTxs, ...manualTxs].sort((a, b) => {
@@ -177,10 +177,10 @@ export default function Wallet() {
       const fromName = fromAcc?.name || "?";
       const toName = toAcc?.name || "?";
       await base44.entities.WalletTransaction.create({
-        title: `Převod: ${fromName} → ${toName}`,
+        title: `Transfer: ${fromName} → ${toName}`,
         amount,
         type: "transfer",
-        category: "Převod mezi účty",
+        category: "Account transfer",
         account_id: from_account_id,
         account_name: fromName,
         transaction_date,
