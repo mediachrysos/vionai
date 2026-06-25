@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,15 +19,19 @@ const statusColors = {
 
 export default function AdminPayments() {
   const [payments, setPayments] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [editing, setEditing] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
 
   useEffect(() => {
     loadPayments();
+    base44.entities.Customer.list("-created_date", 9999).then(setCustomers);
   }, []);
 
   const loadPayments = async () => {
@@ -40,6 +44,21 @@ export default function AdminPayments() {
   const handleEdit = (p) => {
     setEditing(p);
     setEditForm({ ...p });
+    setCustomerSearch(p.customer_name || "");
+    setShowCustomerDropdown(false);
+  };
+
+  const filteredCustomers = customerSearch
+    ? customers.filter(c =>
+        c.full_name?.toLowerCase().includes(customerSearch.toLowerCase()) ||
+        c.email?.toLowerCase().includes(customerSearch.toLowerCase())
+      )
+    : customers;
+
+  const selectCustomer = (c) => {
+    setEditForm(prev => ({ ...prev, customer_id: c.id, customer_name: c.full_name }));
+    setCustomerSearch(c.full_name);
+    setShowCustomerDropdown(false);
   };
 
   const handleSave = async () => {
@@ -144,9 +163,40 @@ export default function AdminPayments() {
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Upravit platbu</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
-            <div>
+            <div className="relative">
               <Label>Zákazník</Label>
-              <Input value={editForm.customer_name || ""} onChange={e => setEditForm(p => ({ ...p, customer_name: e.target.value }))} />
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  value={customerSearch}
+                  onChange={e => { setCustomerSearch(e.target.value); setShowCustomerDropdown(true); }}
+                  onFocus={() => setShowCustomerDropdown(true)}
+                  placeholder="Vyhledat zákazníka..."
+                  className="pl-10"
+                />
+              </div>
+              {showCustomerDropdown && (
+                <div className="absolute z-50 w-full mt-1 bg-[#252525] border border-white/10 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  {filteredCustomers.slice(0, 50).map(c => (
+                    <button
+                      key={c.id}
+                      onClick={() => selectCustomer(c)}
+                      className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm flex items-center gap-3"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-amber-900/30 flex items-center justify-center text-xs font-semibold text-[#C9A227]">
+                        {c.full_name?.[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-200">{c.full_name}</p>
+                        <p className="text-xs text-slate-500">{c.email || "Bez emailu"}</p>
+                      </div>
+                    </button>
+                  ))}
+                  {filteredCustomers.length === 0 && (
+                    <p className="px-4 py-3 text-sm text-slate-500">Žádný zákazník nenalezen</p>
+                  )}
+                </div>
+              )}
             </div>
             <div>
               <Label>Částka (Kč)</Label>
