@@ -178,52 +178,64 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-emerald-900/25 border border-emerald-700/20">
+        {/* Income */}
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
           <div className="flex items-center gap-3">
-            
-
-            
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+              <span className="text-emerald-400 text-sm font-bold">↑</span>
+            </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Total income</p>
-              <p className="text-xs text-slate-500">Payments + manual income</p>
+              <p className="text-sm font-semibold text-emerald-200">Total income</p>
+              <p className="text-xs text-emerald-500/70">Payments + manual income</p>
             </div>
           </div>
-          <p className="text-base font-bold text-emerald-400">{totalIncome.toLocaleString()}</p>
+          <p className="text-lg font-bold text-emerald-300">{totalIncome.toLocaleString()}</p>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-900/20 border border-red-700/20">
+        {/* Expenses */}
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30">
           <div className="flex items-center gap-3">
-            
-
-            
+            <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center">
+              <span className="text-red-400 text-sm font-bold">↓</span>
+            </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Total expenses</p>
-              <p className="text-xs text-slate-500">Expenses + manual expenses</p>
+              <p className="text-sm font-semibold text-red-200">Total expenses</p>
+              <p className="text-xs text-red-500/70">Expenses + manual expenses</p>
             </div>
           </div>
-          <p className="text-base font-bold text-red-400">- {totalExpenses.toLocaleString()}</p>
+          <p className="text-lg font-bold text-red-300">− {totalExpenses.toLocaleString()}</p>
         </div>
 
         <div className="border-t border-dashed border-white/10 my-1" />
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-700/20">
+        {/* Gross profit */}
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
           <div className="flex items-center gap-3">
-            <p className="text-sm font-semibold text-slate-100">Gross profit</p>
+            <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+              <span className="text-amber-400 text-sm font-bold">=</span>
+            </div>
+            <p className="text-sm font-bold text-amber-200">Gross profit</p>
           </div>
-          <p className={`text-base font-bold ${grossProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>
+          <p className={`text-lg font-bold ${grossProfit >= 0 ? "text-amber-300" : "text-red-400"}`}>
             {grossProfit.toLocaleString()}
           </p>
         </div>
 
         <div className="border-t border-dashed border-white/10 my-1" />
 
-        <Row label="Lawyer payout" sublabel="10% of gross profit" color="text-slate-300" bgColor="bg-white/5" prefix="- " value={lawyerFee} />
+        <Row label="Lawyer payout" sublabel="10% of gross profit" color="text-slate-400" bgColor="bg-white/5" prefix="− " value={lawyerFee} />
 
         <div className="border-t border-dashed border-white/10 my-1" />
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-700/20">
-          <p className="text-sm font-semibold text-slate-100">Net profit</p>
-          <p className={`text-base font-bold ${netProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>{netProfit.toLocaleString()}</p>
+        {/* Net profit */}
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-[#C9A227]/15 border border-[#C9A227]/40">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#C9A227]/20 flex items-center justify-center">
+              <span className="text-[#C9A227] text-sm font-bold">★</span>
+            </div>
+            <p className="text-sm font-bold text-[#e8c85a]">Net profit</p>
+          </div>
+          <p className={`text-lg font-bold ${netProfit >= 0 ? "text-[#C9A227]" : "text-red-400"}`}>{netProfit.toLocaleString()}</p>
         </div>
 
         <div className="border-t border-dashed border-white/10 my-1" />
