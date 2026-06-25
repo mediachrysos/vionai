@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Mail, Phone, Building, CreditCard, Download, FileText, Upload, X } from "lucide-react";
@@ -24,20 +24,19 @@ function StatCard({ label, value, sub }) {
   );
 }
 
+const parsePhone = (phone) => {
+  if (!phone) return { code: "+420", local: "" };
+  if (phone.startsWith("+421")) return { code: "+421", local: phone.slice(4) };
+  if (phone.startsWith("+420")) return { code: "+420", local: phone.slice(4) };
+  return { code: "+420", local: phone };
+};
+
 export default function CustomerDetail({ currentUser }) {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get("id");
   const [uploadingFor, setUploadingFor] = useState(null);
-
-  // Parse stored phone into country code + local number
-  const parsePhone = (phone) => {
-    if (!phone) return { code: "+420", local: "" };
-    if (phone.startsWith("+421")) return { code: "+421", local: phone.slice(4) };
-    if (phone.startsWith("+420")) return { code: "+420", local: phone.slice(4) };
-    return { code: "+420", local: phone };
-  };
-  const [phoneCode, setPhoneCode] = useState(() => parsePhone(customer?.phone).code);
-  const [phoneLocal, setPhoneLocal] = useState(() => parsePhone(customer?.phone).local);
+  const [phoneCode, setPhoneCode] = useState("+420");
+  const [phoneLocal, setPhoneLocal] = useState("");
   const fileInputRef = useRef(null);
   const qc = useQueryClient();
 
@@ -69,6 +68,14 @@ export default function CustomerDetail({ currentUser }) {
     },
     enabled: !!id && !!customer,
   });
+
+  useEffect(() => {
+    if (customer?.phone !== undefined) {
+      const parsed = parsePhone(customer.phone);
+      setPhoneCode(parsed.code);
+      setPhoneLocal(parsed.local);
+    }
+  }, [customer?.phone]);
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Customer.update(id, data),
