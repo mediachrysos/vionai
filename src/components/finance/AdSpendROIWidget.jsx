@@ -199,185 +199,185 @@ export default function AdSpendROIWidget() {
 
   }
 
-  return (
-    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-5 hidden">
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          <Megaphone className="w-4 h-4 text-[#C9A227]" />
-          <h3 className="text-sm font-semibold text-slate-200">Ad Spend vs. Noví zákazníci</h3>
-        </div>
-        <DateNav date={date} displayDate={displayDate} isToday={isToday} onShift={shiftDate} />
-      </div>
+  return null;
 
-      {/* Summary totals */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-        <div className="bg-red-950/30 rounded-xl p-3 text-center border border-red-700/20">
-          <p className="text-xs text-red-400 font-medium mb-1">Ad Spend</p>
-          <p className="text-base font-bold text-red-400">{fmt(data.totals.adSpend)}</p>
-        </div>
-        <div className="bg-emerald-950/30 rounded-xl p-3 text-center border border-emerald-700/20">
-          <p className="text-xs text-emerald-400 font-medium mb-1">Výnos (noví klienti)</p>
-          <p className="text-base font-bold text-emerald-400">{fmt(data.totals.revenue)}</p>
-        </div>
-        <div className="bg-blue-950/30 rounded-xl p-3 text-center border border-blue-700/20">
-          <p className="text-xs text-blue-400 font-medium mb-1">Noví zákazníci</p>
-          <p className="text-base font-bold text-blue-400">{data.totals.newCustomers}</p>
-        </div>
-        <div className={`rounded-xl p-3 text-center border ${data.totals.roi === null ? "bg-white/5 border-white/10" : data.totals.roi >= 0 ? "bg-emerald-950/30 border-emerald-700/20" : "bg-red-950/30 border-red-700/20"}`}>
-          <p className={`text-xs font-medium mb-1 ${data.totals.roi === null ? "text-slate-500" : data.totals.roi >= 0 ? "text-emerald-400" : "text-red-400"}`}>Celkové ROI</p>
-          <p className={`text-base font-bold ${data.totals.roi === null ? "text-slate-500" : data.totals.roi >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-            {data.totals.roi !== null ? `${data.totals.roi.toFixed(0)}%` : "—"}
-          </p>
-        </div>
-      </div>
 
-      {/* Per-model table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm border-separate border-spacing-0">
-          <thead>
-            {/* Group headers */}
-            <tr className="text-[10px] font-semibold uppercase tracking-wider">
-              <th className="pb-1 pr-3" />
-              <th colSpan={5} className="pb-1 px-2 text-center text-slate-500 border-b-2 border-white/10">Dnešní výsledky</th>
-              <th colSpan={2} className="pb-1 px-2 text-center text-[#C9A227] border-b-2 border-amber-700/30">Cena za získání zákazníka</th>
-              <th colSpan={2} className="pb-1 px-2 text-center text-emerald-400 border-b-2 border-emerald-700/30">Průměrná hodnota zákazníka</th>
-              <th colSpan={2} className="pb-1 px-2 text-center text-violet-400 border-b-2 border-violet-700/30">Zisk na zákazníka (hodnota − cena)</th>
-              <th colSpan={1} className="pb-1 pl-2 text-center text-indigo-400 border-b-2 border-indigo-700/30">Celkový průměr</th>
-            </tr>
-            {/* Column headers */}
-            <tr className="text-xs text-slate-500 font-medium">
-              <th className="text-left pt-2 pb-3 pr-3 min-w-[120px]">Modelka</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Ad Spend</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Noví klienti</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Výnos</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">Profit</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap">ROI</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Dnes (ad spend ÷ noví klienti)</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-[#C9A227]">Ø Historicky</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Dnes (výnos ÷ noví klienti)</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-emerald-500">Ø Historicky</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-violet-500">Dnes (hodnota − cena)</th>
-              <th className="text-center pt-2 pb-3 px-2 whitespace-nowrap text-violet-500">Ø Historicky</th>
-              <th className="text-center pt-2 pb-3 pl-2 whitespace-nowrap text-indigo-400">Ø ROI/den</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.rows.map((row) =>
-            <tr key={row.modelId} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                <td className="py-3 pr-3 font-semibold text-slate-200 text-sm">{row.modelName}</td>
 
-                {/* Ad Spend */}
-                <td className="py-3 px-2 text-center">
-                  {row.adSpend > 0 ?
-                <span className="text-red-400 font-medium">{fmt(row.adSpend)}</span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* Noví klienti */}
-                <td className="py-3 px-2 text-center">
-                  <span className={`inline-flex items-center justify-center gap-1 font-semibold ${row.newCustomers > 0 ? "text-blue-400" : "text-slate-700"}`}>
-                    <Users className="w-3 h-3" />
-                    {row.newCustomers}
-                  </span>
-                </td>
 
-                {/* Výnos */}
-                <td className="py-3 px-2 text-center">
-                  {row.revenue > 0 ?
-                <span className="text-emerald-400 font-medium">{fmt(row.revenue)}</span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* Profit */}
-                <td className="py-3 px-2 text-center">
-                  {row.adSpend > 0 ?
-                <span className={`font-semibold ${row.profit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {fmt(row.profit)}
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* ROI dnes */}
-                <td className="py-3 px-2 text-center">
-                  {row.roi !== null ?
-                <span className={`inline-flex items-center justify-center gap-0.5 font-bold text-sm ${row.roi >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {row.roi >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                      {row.roi.toFixed(0)}%
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* CPC dnes */}
-                <td className="py-3 px-2 text-center">
-                  {row.cpc !== null ?
-                <span className="inline-block bg-amber-950/40 border border-amber-700/30 text-amber-300 font-semibold text-xs px-2 py-1 rounded-lg">
-                      {fmt(Math.round(row.cpc))}
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* CPC all-time */}
-                <td className="py-3 px-2 text-center">
-                  {row.allTimeCpc !== null ?
-                <span className="inline-block bg-amber-950/30 border border-amber-700/20 text-amber-400 font-medium text-xs px-2 py-1 rounded-lg">
-                      {fmt(Math.round(row.allTimeCpc))}
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* Avg value dnes */}
-                <td className="py-3 px-2 text-center">
-                  {row.avgValue !== null ?
-                <span className="inline-block bg-emerald-950/40 border border-emerald-700/30 text-emerald-300 font-semibold text-xs px-2 py-1 rounded-lg">
-                      {fmt(Math.round(row.avgValue))}
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* Avg value all-time */}
-                <td className="py-3 px-2 text-center">
-                  {row.allTimeAvgValue !== null ?
-                <span className="inline-block bg-emerald-950/30 border border-emerald-700/20 text-emerald-400 font-medium text-xs px-2 py-1 rounded-lg">
-                      {fmt(Math.round(row.allTimeAvgValue))}
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* Zisk/zákazník dnes */}
-                <td className="py-3 px-2 text-center">
-                  {row.profitPerCustomer !== null ?
-                <span className={`inline-block border font-semibold text-xs px-2 py-1 rounded-lg ${row.profitPerCustomer >= 0 ? "bg-violet-950/40 border-violet-700/30 text-violet-300" : "bg-red-950/40 border-red-700/30 text-red-400"}`}>
-                      {fmt(Math.round(row.profitPerCustomer))}
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* Zisk/zákazník all-time */}
-                <td className="py-3 px-2 text-center">
-                  {row.allTimeProfitPerCustomer !== null ?
-                <span className={`inline-block border font-medium text-xs px-2 py-1 rounded-lg ${row.allTimeProfitPerCustomer >= 0 ? "bg-violet-950/30 border-violet-700/20 text-violet-400" : "bg-red-950/30 border-red-700/20 text-red-400"}`}>
-                      {fmt(Math.round(row.allTimeProfitPerCustomer))}
-                    </span> :
-                <span className="text-slate-700">—</span>}
-                </td>
 
-                {/* Ø ROI all-time */}
-                <td className="py-3 pl-2 text-center">
-                  {row.allTimeRoi !== null ?
-                <span className={`inline-flex items-center justify-center gap-0.5 font-bold text-xs px-2 py-1 rounded-lg ${row.allTimeRoi >= 0 ? "bg-indigo-950/40 text-indigo-300" : "bg-red-950/40 text-red-400"}`}>
-                      {row.allTimeRoi >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      {row.allTimeRoi.toFixed(0)}%
-                    </span> :
-                <span className="text-slate-700 text-xs">—</span>}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
 
-      <ModelROIChart payments={payments} adSpends={adSpends} models={models} />
-    </div>);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 
