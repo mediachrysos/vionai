@@ -364,7 +364,7 @@ export default function Customers({ currentUser }) {
       <MonthlyGoalBar />
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1 w-fit border border-white/10">
+      <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1 w-full border border-white/10">
         <button
           onClick={() => setActiveTab("customers")}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "customers" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
