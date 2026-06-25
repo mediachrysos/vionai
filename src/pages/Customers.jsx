@@ -618,7 +618,7 @@ export default function Customers({ currentUser }) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.02 }}
-                        className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/10 border-amber-800/30 hover:from-amber-900/30" : "border-slate-700/30 hover:bg-slate-800/50"}`}
+                        className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/10 border-amber-800/30 hover:from-amber-900/30" : "border-slate-700/30 hover:bg-[#2a2f3d]"}`}
                         onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
                     
                       <td className="px-5 py-3.5">
@@ -652,8 +652,12 @@ export default function Customers({ currentUser }) {
                             const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
                             const names = mids.map((mid) => modelMap[mid]).filter(Boolean);
                             return names.length > 0 ?
-                            <div className="flex flex-wrap gap-1">
-                              {names.map((n) => <span key={n} className="text-xs bg-amber-900/30 text-amber-400 border border-amber-800/30 rounded-md px-1.5 py-0.5">{n}</span>)}
+                            <div className="flex flex-wrap gap-1.5">
+                              {names.map((n) => (
+                                <span key={n} className="inline-flex items-center text-xs font-medium bg-[#C9A227]/15 text-[#C9A227] border border-[#C9A227]/30 rounded-full px-2.5 py-0.5 whitespace-nowrap">
+                                  {n}
+                                </span>
+                              ))}
                             </div> :
                             <span className="text-slate-600">—</span>;
                           })()}
