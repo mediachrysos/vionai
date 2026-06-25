@@ -43,11 +43,11 @@ export default function PerformanceAlerts({ chatters, payments, shifts }) {
   });
 
   if (alerts.length === 0) {
-    return (
-      <div className="bg-[#1e1e1e] border border-white/8 rounded-xl p-5 flex flex-col justify-center hidden">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-3">Performance Alerts</p>
-        <p className="text-xs text-slate-600">No active alerts — all chatters performing normally.</p>
-      </div>);
+    return null;
+
+
+
+
 
   }
 
