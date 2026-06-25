@@ -289,7 +289,7 @@ export default function CustomerDetail({ currentUser }) {
             </div>
 
             {/* Models */}
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 hidden">
               <span className="text-sm mt-1.5 flex-shrink-0">🎭</span>
               <div className="flex-1">
                 <div className="flex flex-wrap gap-1 mb-1">
