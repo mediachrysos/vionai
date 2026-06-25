@@ -37,7 +37,7 @@ export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs
         </div>
       </div>
       <div>
-        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Zůstatek</p>
+        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Balance</p>
         <p className={`text-2xl font-bold ${account.balance >= 0 ? "text-slate-100" : "text-red-500"}`}>
           {(account.balance || 0).toLocaleString()} {account.currency}
         </p>
