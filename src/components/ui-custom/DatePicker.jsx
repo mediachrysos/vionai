@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getDaysInMonth, startOfMonth, getDay, format } from "date-fns";
-import { cs } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 
-const DAYS = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
-const MONTHS = ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
+const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 function getYearRange(centerYear) {
   const years = [];
@@ -60,7 +60,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
 
   const isDisabled = (day) => maxDate ? new Date(year, month, day) > maxDate : false;
 
-  const displayValue = value ? format(new Date(value), "d. MMMM yyyy", { locale: cs }) : null;
+  const displayValue = value ? format(new Date(value), "MMM d, yyyy", { locale: enUS }) : null;
 
   const cells = [];
   for (let i = 0; i < firstDayOfWeek; i++) cells.push(null);
@@ -87,7 +87,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
 
       {open && (
         <div
-          className="absolute z-[9999] bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-xl p-4 w-72 mt-1"
+          className="absolute z-[9999] bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-xl p-3 w-56 mt-1"
           style={{ left: "50%", transform: "translateX(-50%)" }}
           onMouseDown={(e) => e.stopPropagation()}
         >
@@ -101,7 +101,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
               value={month}
               onChange={e => setViewDate(new Date(year, parseInt(e.target.value), 1))}
               onMouseDown={e => e.stopPropagation()}
-              className="flex-1 text-xs font-semibold text-slate-200 bg-slate-800 border border-white/10 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500/30 cursor-pointer"
+              className="flex-1 text-[11px] font-semibold text-slate-200 bg-slate-800 border border-white/10 rounded-lg px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500/30 cursor-pointer"
             >
               {MONTHS.map((m, i) => <option key={i} value={i}>{m}</option>)}
             </select>
@@ -109,7 +109,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
               value={year}
               onChange={e => setViewDate(new Date(parseInt(e.target.value), month, 1))}
               onMouseDown={e => e.stopPropagation()}
-              className="w-20 text-xs font-semibold text-slate-200 bg-slate-800 border border-white/10 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500/30 cursor-pointer"
+              className="w-16 text-[11px] font-semibold text-slate-200 bg-slate-800 border border-white/10 rounded-lg px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500/30 cursor-pointer"
             >
               {years.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -130,11 +130,11 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
               <div key={i} className="flex items-center justify-center">
                 {day ? (
                   <button
-                    type="button"
-                    onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); selectDay(day); }}
-                    disabled={isDisabled(day)}
-                    className={cn(
-                      "w-8 h-8 rounded-full text-sm font-medium transition-all",
+                   type="button"
+                   onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); selectDay(day); }}
+                   disabled={isDisabled(day)}
+                   className={cn(
+                     "w-6 h-6 rounded-full text-[11px] font-medium transition-all",
                       isSelected(day) && "bg-[#C9A227] text-white shadow-sm",
                       !isSelected(day) && isTodayDay(day) && "border-2 border-[#C9A227] text-[#C9A227]",
                       !isSelected(day) && !isTodayDay(day) && !isDisabled(day) && "text-slate-300 hover:bg-white/10",
@@ -152,7 +152,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
           <div className="flex justify-between mt-3 pt-3 border-t border-white/10">
             <button type="button" onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); onChange(""); setOpen(false); }}
               className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-              Vymazat
+              Clear
             </button>
             <button type="button" onMouseDown={(e) => {
               e.preventDefault(); e.stopPropagation();
@@ -160,7 +160,7 @@ export default function DatePicker({ value, onChange, placeholder = "Vybrat datu
               if (!maxDate || t <= maxDate) { onChange(t.toISOString().split("T")[0]); setViewDate(t); }
               setOpen(false);
             }} className="text-xs text-[#C9A227] font-semibold hover:text-[#A8841C] transition-colors">
-              Dnes
+              Today
             </button>
           </div>
         </div>
