@@ -28,6 +28,16 @@ export default function CustomerDetail({ currentUser }) {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get("id");
   const [uploadingFor, setUploadingFor] = useState(null);
+
+  // Parse stored phone into country code + local number
+  const parsePhone = (phone) => {
+    if (!phone) return { code: "+420", local: "" };
+    if (phone.startsWith("+421")) return { code: "+421", local: phone.slice(4) };
+    if (phone.startsWith("+420")) return { code: "+420", local: phone.slice(4) };
+    return { code: "+420", local: phone };
+  };
+  const [phoneCode, setPhoneCode] = useState(() => parsePhone(customer?.phone).code);
+  const [phoneLocal, setPhoneLocal] = useState(() => parsePhone(customer?.phone).local);
   const fileInputRef = useRef(null);
   const qc = useQueryClient();
 
@@ -176,23 +186,67 @@ export default function CustomerDetail({ currentUser }) {
         <div className="bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
           <h3 className="text-sm font-semibold text-slate-200 mb-4">Detaily</h3>
           <div className="space-y-3">
-            {[
-              { label: "Email", field: "email", icon: <Mail className="w-4 h-4 text-slate-600 flex-shrink-0" />, type: "email" },
-              { label: "Telefon", field: "phone", icon: <Phone className="w-4 h-4 text-slate-600 flex-shrink-0" />, type: "text" },
-              { label: "Název banky", field: "bank_name", icon: <Building className="w-4 h-4 text-slate-600 flex-shrink-0" />, type: "text" },
-              { label: "Číslo účtu", field: "bank_account_number", icon: <Building className="w-4 h-4 text-slate-500 flex-shrink-0 opacity-0" />, type: "text" },
-            ].map(({ label, field, icon, type }) => (
-              <div key={field} className="flex items-center gap-3">
-                {icon}
+            {/* Email */}
+            <div className="flex items-center gap-3">
+              <Mail className="w-4 h-4 text-slate-600 flex-shrink-0" />
+              <input
+                type="email"
+                defaultValue={customer.email || ""}
+                onBlur={e => handleFieldBlur("email", e.target.value)}
+                placeholder="Email"
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
+              />
+            </div>
+
+            {/* Phone with country code */}
+            <div className="flex items-center gap-3">
+              <Phone className="w-4 h-4 text-slate-600 flex-shrink-0" />
+              <div className="flex flex-1 items-center border-b border-white/8 focus-within:border-[#C9A227]/50 transition-colors">
+                <select
+                  value={phoneCode}
+                  onChange={e => {
+                    setPhoneCode(e.target.value);
+                    updateMutation.mutate({ phone: e.target.value + phoneLocal });
+                  }}
+                  className="bg-transparent text-sm text-slate-400 outline-none py-1 pr-1 cursor-pointer"
+                >
+                  <option value="+420">🇨🇿 +420</option>
+                  <option value="+421">🇸🇰 +421</option>
+                </select>
                 <input
-                  type={type}
-                  defaultValue={customer[field] || ""}
-                  onBlur={e => handleFieldBlur(field, e.target.value)}
-                  placeholder={label}
-                  className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
+                  type="text"
+                  value={phoneLocal}
+                  onChange={e => setPhoneLocal(e.target.value)}
+                  onBlur={e => updateMutation.mutate({ phone: phoneCode + e.target.value.replace(/\s/g, "") })}
+                  placeholder="Telefonní číslo"
+                  className="flex-1 bg-transparent outline-none text-sm text-slate-300 placeholder-slate-600 py-1 pl-1"
                 />
               </div>
-            ))}
+            </div>
+
+            {/* Bank name */}
+            <div className="flex items-center gap-3">
+              <Building className="w-4 h-4 text-slate-600 flex-shrink-0" />
+              <input
+                type="text"
+                defaultValue={customer.bank_name || ""}
+                onBlur={e => handleFieldBlur("bank_name", e.target.value)}
+                placeholder="Název banky"
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
+              />
+            </div>
+
+            {/* Bank account number */}
+            <div className="flex items-center gap-3">
+              <span className="w-4 h-4 flex-shrink-0" />
+              <input
+                type="text"
+                defaultValue={customer.bank_account_number || ""}
+                onBlur={e => handleFieldBlur("bank_account_number", e.target.value)}
+                placeholder="Číslo účtu"
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
+              />
+            </div>
 
             {/* Status */}
             <div className="flex items-center gap-3">
