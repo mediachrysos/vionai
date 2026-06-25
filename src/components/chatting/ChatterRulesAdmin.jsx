@@ -103,9 +103,9 @@ export default function ChatterRulesAdmin() {
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors group">
         
         <div className="flex items-center gap-3 text-sm font-semibold text-slate-200">
-          <div className="w-8 h-8 rounded-xl bg-[#252525] border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:border-[#C9A227]/30 transition-colors hidden">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" alt="" className="w-4 h-4 object-contain" />
-          </div>
+          
+
+          
           Chatter Performance Settings (tiers, goals, bonuses)
         </div>
         {open ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
