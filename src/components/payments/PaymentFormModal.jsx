@@ -70,7 +70,11 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     }
   }, [open, currentUser, existingPayment]);
 
-  const filteredCustomers = customerSearch
+  // If the search text exactly matches the already-selected customer's name, show all customers
+  // (user clicked into the field to change it, but hasn't typed yet)
+  const selectedCustomer = customers.find(c => c.id === form.customer_id);
+  const searchIsCurrentSelection = selectedCustomer && customerSearch === selectedCustomer.full_name;
+  const filteredCustomers = customerSearch && !searchIsCurrentSelection
     ? customers.filter((c) =>
         c.full_name?.toLowerCase().includes(customerSearch.toLowerCase()) ||
         c.email?.toLowerCase().includes(customerSearch.toLowerCase())
