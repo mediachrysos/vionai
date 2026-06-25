@@ -74,7 +74,7 @@ export default function Wallet() {
       ...t,
       source: "Wallet",
       // transfers and "Výplata" category are neutral — don't count as income/expense
-      type: t.type === "transfer" ? "transfer" : (t.category === "Výplata" ? "neutral" : t.type),
+      type: t.type === "transfer" ? "transfer" : t.category === "Výplata" ? "neutral" : t.type
     }));
 
     return [...paymentTxs, ...expenseTxs, ...manualTxs].sort((a, b) => {
@@ -169,8 +169,8 @@ export default function Wallet() {
   const transferMutation = useMutation({
     mutationFn: async ({ from_account_id, to_account_id, amount, transaction_date, note }) => {
       const freshAccounts = await base44.entities.BankAccount.filter({ is_active: true });
-      const fromAcc = freshAccounts.find(a => a.id === from_account_id);
-      const toAcc = freshAccounts.find(a => a.id === to_account_id);
+      const fromAcc = freshAccounts.find((a) => a.id === from_account_id);
+      const toAcc = freshAccounts.find((a) => a.id === to_account_id);
       if (fromAcc) await base44.entities.BankAccount.update(from_account_id, { balance: (fromAcc.balance || 0) - amount });
       if (toAcc) await base44.entities.BankAccount.update(to_account_id, { balance: (toAcc.balance || 0) + amount });
       // Record as a neutral wallet tx for history
@@ -184,7 +184,7 @@ export default function Wallet() {
         account_id: from_account_id,
         account_name: fromName,
         transaction_date,
-        note,
+        note
       });
     },
     onSuccess: () => {
@@ -199,7 +199,7 @@ export default function Wallet() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="bg-white/10 rounded-xl w-10 h-10 flex items-center justify-center">
+          <div className="bg-white/10 rounded-xl w-10 h-10 flex items-center justify-center hidden">
             <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_16_gtkobz.png" alt="" className="w-7 h-7 object-contain" />
           </div>
           <div>
