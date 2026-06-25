@@ -216,7 +216,7 @@ export default function Wallet() {
           </button>
           <button
             onClick={() => setShowTxModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#d4ad2e] hover:to-[#b8931f] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] shadow-md shadow-amber-900/30 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-[#1e1e1e] border border-[#C9A227]/60 text-[#C9A227] hover:bg-[#C9A227]/10 shadow-[0_0_12px_rgba(201,162,39,0.35)] hover:shadow-[0_0_18px_rgba(201,162,39,0.55)] transition-all"
           >
             <Plus className="w-4 h-4" /> Add transaction
           </button>
