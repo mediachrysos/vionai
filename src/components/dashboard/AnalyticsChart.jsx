@@ -207,17 +207,19 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           </button>
           {showPresetMenu && (
             <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[220px]">
-              {PRESETS.map(p => (
-                <button
-                  key={p.days}
-                  onClick={() => { setSelectedDays(p.days); setUseCustom(false); setShowPresetMenu(false); }}
-                  className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${
-                    !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
+              <div className="grid grid-cols-2 gap-1">
+                {PRESETS.map(p => (
+                  <button
+                    key={p.days}
+                    onClick={() => { setSelectedDays(p.days); setUseCustom(false); setShowPresetMenu(false); }}
+                    className={`text-center text-sm px-3 py-2 rounded-lg transition-all ${
+                      !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
               <div className="border-t border-white/10 mt-1 pt-2 px-1">
                 <p className="text-[10px] text-slate-500 font-medium mb-1.5 px-2">Custom range</p>
                 <div className="flex flex-col gap-1.5 mb-1.5">
