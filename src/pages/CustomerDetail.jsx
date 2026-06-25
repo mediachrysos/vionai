@@ -100,7 +100,7 @@ export default function CustomerDetail({ currentUser }) {
   const assignedModelNames = (customer?.assigned_models || []).map(mid => modelMap[mid]).filter(Boolean);
 
   if (!customer) return (
-    <div className="h-full flex items-center justify-center text-slate-500 text-sm">Načítám...</div>
+    <div className="h-full flex items-center justify-center text-slate-500 text-sm">Loading...</div>
   );
 
   const totalSpent = payments.reduce((s, p) => s + (p.amount || 0), 0);
@@ -156,7 +156,7 @@ export default function CustomerDetail({ currentUser }) {
     <div className="p-4 lg:p-8 max-w-5xl mx-auto">
       {/* Back */}
       <Link to={createPageUrl("Customers")} className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#C9A227] mb-6 transition-colors">
-        <ArrowLeft className="w-3.5 h-3.5" /> Zpět na zákazníky
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to customers
       </Link>
 
       {/* Header */}
@@ -178,20 +178,20 @@ export default function CustomerDetail({ currentUser }) {
 
       {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-        <StatCard label="Celkem utraceno" value={`${totalSpent.toLocaleString()} Kč`} />
-        <StatCard label="Počet plateb" value={payments.length} />
+        <StatCard label="Total spent" value={`${totalSpent.toLocaleString()} Kč`} />
+        <StatCard label="Payments" value={payments.length} />
         <StatCard
-          label="Poslední platba"
+          label="Last payment"
           value={lastPayment ? `${(lastPayment.amount || 0).toLocaleString()} Kč` : "—"}
           sub={lastPayment?.payment_date ? format(new Date(lastPayment.payment_date), "d. M. yyyy") : null}
         />
-        <StatCard label="Den výplaty" value={customer.pay_day_of_month ? `${customer.pay_day_of_month}.` : "—"} />
+        <StatCard label="Pay day" value={customer.pay_day_of_month ? `${customer.pay_day_of_month}.` : "—"} />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Detail card — always-editable */}
         <div className="bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-slate-200 mb-4">Detaily</h3>
+          <h3 className="text-sm font-semibold text-slate-200 mb-4">Details</h3>
           <div className="space-y-3">
             {/* Email */}
             <div className="flex items-center gap-3">
@@ -201,6 +201,7 @@ export default function CustomerDetail({ currentUser }) {
                 defaultValue={customer.email || ""}
                 onBlur={e => handleFieldBlur("email", e.target.value)}
                 placeholder="Email"
+
                 className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
               />
             </div>
@@ -225,7 +226,7 @@ export default function CustomerDetail({ currentUser }) {
                   value={phoneLocal}
                   onChange={e => setPhoneLocal(e.target.value)}
                   onBlur={e => updateMutation.mutate({ phone: phoneCode + e.target.value.replace(/\s/g, "") })}
-                  placeholder="Telefonní číslo"
+                  placeholder="Phone number"
                   className="flex-1 bg-transparent outline-none text-sm text-slate-300 placeholder-slate-600 py-1 pl-1"
                 />
               </div>
@@ -238,7 +239,7 @@ export default function CustomerDetail({ currentUser }) {
                 type="text"
                 defaultValue={customer.bank_name || ""}
                 onBlur={e => handleFieldBlur("bank_name", e.target.value)}
-                placeholder="Název banky"
+                placeholder="Bank name"
                 className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
               />
             </div>
@@ -250,7 +251,7 @@ export default function CustomerDetail({ currentUser }) {
                 type="text"
                 defaultValue={customer.bank_account_number || ""}
                 onBlur={e => handleFieldBlur("bank_account_number", e.target.value)}
-                placeholder="Číslo účtu"
+                placeholder="Account number"
                 className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
               />
             </div>
@@ -263,10 +264,10 @@ export default function CustomerDetail({ currentUser }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Aktivní</SelectItem>
-                  <SelectItem value="inactive">Neaktivní</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
                   <SelectItem value="vip">VIP</SelectItem>
-                  <SelectItem value="blocked">Blokovaný</SelectItem>
+                  <SelectItem value="blocked">Blocked</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -285,7 +286,7 @@ export default function CustomerDetail({ currentUser }) {
                 </div>
                 <Select onValueChange={toggleModel} value="">
                   <SelectTrigger className="h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-500 px-0">
-                    <SelectValue placeholder="+ Přidat modelku" />
+                    <SelectValue placeholder="+ Add model" />
                   </SelectTrigger>
                   <SelectContent>
                     {models.filter(m => !(customer.assigned_models || []).includes(m.id)).map(m => (
@@ -302,7 +303,7 @@ export default function CustomerDetail({ currentUser }) {
               <textarea
                 defaultValue={customer.notes || ""}
                 onBlur={e => handleFieldBlur("notes", e.target.value)}
-                placeholder="Poznámky..."
+                placeholder="Notes..."
                 rows={2}
                 className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 resize-none transition-colors"
               />
@@ -313,11 +314,11 @@ export default function CustomerDetail({ currentUser }) {
         {/* Payments card */}
         <div className="bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-slate-200">Platby a faktury</h3>
+            <h3 className="text-sm font-semibold text-slate-200">Payments & invoices</h3>
             <div className="flex gap-2">
               {(customer.invoices || []).length > 0 && (
                 <button onClick={downloadAllInvoices} className="flex items-center gap-1 text-xs text-slate-400 hover:text-[#C9A227] bg-white/5 hover:bg-[#C9A227]/10 border border-white/8 hover:border-[#C9A227]/25 rounded-lg px-2.5 py-1 transition-all">
-                  <Download className="w-3 h-3" /> Faktury
+                  <Download className="w-3 h-3" /> Invoices
                 </button>
               )}
               <button onClick={exportPayments} className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20 rounded-lg px-2.5 py-1 transition-all">
@@ -327,7 +328,7 @@ export default function CustomerDetail({ currentUser }) {
           </div>
 
           {payments.length === 0 ? (
-            <p className="text-sm text-slate-600 text-center py-8">Zatím žádné platby</p>
+            <p className="text-sm text-slate-600 text-center py-8">No payments yet</p>
           ) : (
             <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
               {payments.map(p => {
@@ -364,7 +365,7 @@ export default function CustomerDetail({ currentUser }) {
                             disabled={uploadingFor === p.id}
                             className="flex items-center gap-1 text-xs text-slate-600 hover:text-[#C9A227] transition-colors opacity-0 group-hover:opacity-100"
                           >
-                            {uploadingFor === p.id ? <span>Nahrávám...</span> : <><Upload className="w-3.5 h-3.5" /><span className="hidden sm:inline">Faktura</span></>}
+                            {uploadingFor === p.id ? <span>Uploading...</span> : <><Upload className="w-3.5 h-3.5" /><span className="hidden sm:inline">Invoice</span></>}
                           </button>
                         </>
                       )}
@@ -381,6 +382,7 @@ export default function CustomerDetail({ currentUser }) {
       {onboardingRequests.length > 0 && (
         <div className="mt-4 bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
           <h3 className="text-sm font-semibold text-slate-200 mb-3">Onboarding</h3>
+
           <div className="space-y-2">
             {onboardingRequests.map(req => (
               <div key={req.id} className="flex items-start gap-3 p-3 rounded-lg bg-white/3 border border-white/6">
@@ -392,7 +394,7 @@ export default function CustomerDetail({ currentUser }) {
                       req.status === "expired" ? "bg-red-500/15 text-red-400 border border-red-500/25" :
                       "bg-amber-500/15 text-amber-400 border border-amber-500/25"
                     }`}>
-                      {req.status === "completed" ? "✅ Dokončeno" : req.status === "expired" ? "⌛ Expirováno" : "⏳ Čeká"}
+                      {req.status === "completed" ? "✅ Completed" : req.status === "expired" ? "⌛ Expired" : "⏳ Pending"}
                     </span>
                     {req.assigned_model && modelMap[req.assigned_model] && (
                       <span className="text-xs bg-[#C9A227]/10 text-[#C9A227] border border-[#C9A227]/20 rounded-full px-2 py-0.5">
@@ -400,13 +402,13 @@ export default function CustomerDetail({ currentUser }) {
                       </span>
                     )}
                     {req.assigned_chatter && (
-                      <span className="text-xs text-slate-500">poslal: {userMap[req.assigned_chatter] || req.assigned_chatter}</span>
+                      <span className="text-xs text-slate-500">sent by: {userMap[req.assigned_chatter] || req.assigned_chatter}</span>
                     )}
                   </div>
                   <div className="mt-1.5 flex gap-3 text-xs text-slate-600 flex-wrap">
-                    <span>Vytvořeno: {req.created_date ? format(new Date(req.created_date), "d. M. yyyy HH:mm") : "—"}</span>
-                    {req.status === "completed" && req.updated_date && (
-                      <span className="text-emerald-500 font-medium">Vyplněno: {format(new Date(req.updated_date), "d. M. yyyy HH:mm")}</span>
+                    <span>Created: {req.created_date ? format(new Date(req.created_date), "d. M. yyyy HH:mm") : "—"}</span>
+                     {req.status === "completed" && req.updated_date && (
+                       <span className="text-emerald-500 font-medium">Filled: {format(new Date(req.updated_date), "d. M. yyyy HH:mm")}</span>
                     )}
                   </div>
                 </div>
