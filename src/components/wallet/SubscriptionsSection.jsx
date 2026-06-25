@@ -52,7 +52,7 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
       <DialogContent className="max-w-xs w-[calc(100vw-2rem)] p-0 overflow-hidden max-h-[90vh] flex flex-col">
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-4 py-3">
           <DialogTitle className="text-white text-sm font-semibold">
-            {subscription ? "Upravit předplatné" : "Nové předplatné"}
+            {subscription ? "Edit subscription" : "New subscription"}
           </DialogTitle>
         </div>
         <div className="px-4 py-4 space-y-3 overflow-y-auto flex-1">
@@ -74,11 +74,11 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
                 className="text-xs text-amber-600 hover:text-amber-800 font-medium flex items-center gap-1">
                 
                 <Upload className="w-3.5 h-3.5" />
-                {uploading ? "Nahrávám..." : "Nahrát logo"}
+                {uploading ? "Uploading..." : "Upload logo"}
               </button>
               {form.logo_url &&
               <button type="button" onClick={() => setForm((f) => ({ ...f, logo_url: "" }))} className="text-xs text-gray-400 hover:text-red-500">
-                  Odebrat
+                  Remove
                 </button>
               }
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
@@ -86,7 +86,7 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
           </div>
 
           <div>
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Název *</Label>
+            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Name *</Label>
             <Input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -95,7 +95,7 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
             
           </div>
           <div>
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Cena (Kč) *</Label>
+            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Amount (CZK) *</Label>
             <Input
               type="number"
               value={form.amount}
@@ -105,7 +105,7 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
             
           </div>
           <div>
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Den odečtení (1–31) *</Label>
+            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Billing day (1–31) *</Label>
             <Input
               type="number"
               min={1}
@@ -117,31 +117,30 @@ function SubscriptionModal({ open, onClose, onSave, subscription, accounts }) {
             
           </div>
           <div>
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Účet *</Label>
+            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Account *</Label>
             <Select value={form.account_id} onValueChange={(v) => setForm((f) => ({ ...f, account_id: v }))}>
-              <SelectTrigger className="mt-1"><SelectValue placeholder="Vybrat účet" /></SelectTrigger>
+              <SelectTrigger className="mt-1"><SelectValue placeholder="Select account" /></SelectTrigger>
               <SelectContent>
                 {accounts.map((a) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Poznámka</Label>
+            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Note</Label>
             <Input
               value={form.note}
               onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
-              placeholder="Volitelná poznámka"
+              placeholder="Optional note"
               className="mt-1" />
             
           </div>
           <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
-            <Button variant="outline" onClick={onClose}>Zrušit</Button>
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
             <Button
               disabled={!valid}
               onClick={handleSave}
               className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
-              
-              Uložit
+              Save
             </Button>
           </div>
         </div>
@@ -255,22 +254,22 @@ export default function SubscriptionsSection({ accounts }) {
         <div>
           <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
             
-            Předplatné (Subscriptions)
+            Subscriptions
           </h3>
           {subscriptions.length > 0 &&
           <p className="text-xs text-slate-500 mt-0.5">
-              Celkem měsíčně: <span className="font-semibold text-red-600">{totalMonthly.toLocaleString("cs-CZ")} Kč</span>
+              Total monthly: <span className="font-semibold text-red-600">{totalMonthly.toLocaleString("cs-CZ")} Kč</span>
             </p>
           }
         </div>
         <Button size="sm" onClick={handleNew}
         className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
-          <Plus className="w-3.5 h-3.5 mr-1" /> Přidat
+          <Plus className="w-3.5 h-3.5 mr-1" /> Add
         </Button>
       </div>
 
       {subscriptions.length === 0 ?
-      <p className="text-sm text-slate-500 text-center py-6">Žádné předplatné. Klikni na Přidat.</p> :
+      <p className="text-sm text-slate-500 text-center py-6">No subscriptions. Click Add to create one.</p> :
 
       <div className="space-y-2">
           {subscriptions.map((sub) =>
@@ -291,7 +290,7 @@ export default function SubscriptionsSection({ accounts }) {
                 <p className="text-sm font-medium text-slate-200 truncate">{sub.name}</p>
                 <div className="flex items-center gap-3 mt-0.5">
                   <span className="text-xs text-slate-500 flex items-center gap-1">
-                     {sub.billing_day}. každý měsíc
+                     {sub.billing_day}. every month
                   </span>
                   {sub.account_name &&
               <span className="text-xs text-slate-500">· {sub.account_name}</span>
@@ -309,10 +308,10 @@ export default function SubscriptionsSection({ accounts }) {
               {/* Manual deduct button */}
               {sub.is_active && (
                 <button
-                  onClick={() => window.confirm(`Odečíst ${(sub.amount || 0).toLocaleString()} Kč za "${sub.name}" nyní?`) && deductNowMutation.mutate(sub)}
-                  title="Odečíst za tento měsíc"
+                  onClick={() => window.confirm(`Deduct ${(sub.amount || 0).toLocaleString()} Kč for "${sub.name}" now?`) && deductNowMutation.mutate(sub)}
+                  title="Deduct for this month"
                   className="text-xs text-amber-400 hover:text-amber-300 border border-amber-700/50 rounded-lg px-2 py-0.5 flex-shrink-0 font-medium hover:bg-amber-900/30 transition-colors">
-                  Odečíst
+                  Deduct
                 </button>
               )}
 
@@ -320,7 +319,7 @@ export default function SubscriptionsSection({ accounts }) {
               <button
             onClick={() => toggleMutation.mutate({ id: sub.id, is_active: !sub.is_active })}
             className={`w-10 h-6 rounded-full transition-colors duration-200 flex-shrink-0 relative flex items-center px-1 ${sub.is_active ? "bg-emerald-500" : "bg-red-400"}`}
-            title={sub.is_active ? "Deaktivovat" : "Aktivovat"}>
+            title={sub.is_active ? "Deactivate" : "Activate"}>
             
                 <span className={`w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${sub.is_active ? "translate-x-4" : "translate-x-0"}`} />
               </button>
@@ -329,7 +328,7 @@ export default function SubscriptionsSection({ accounts }) {
                 <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
               </button>
               <button
-            onClick={() => window.confirm(`Smazat "${sub.name}"?`) && deleteMutation.mutate(sub.id)}
+            onClick={() => window.confirm(`Delete "${sub.name}"?`) && deleteMutation.mutate(sub.id)}
             className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0">
             
                 <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
