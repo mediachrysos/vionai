@@ -1,11 +1,11 @@
 import React, { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Mail, Phone, Building, CreditCard, Download, FileText, Upload, X, Pencil } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Building, CreditCard, Download, FileText, Upload, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
-import CustomerInlineEdit from "../components/customers/CustomerInlineEdit";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const STATUS_STYLES = {
   active:   "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
@@ -27,7 +27,6 @@ function StatCard({ label, value, sub }) {
 export default function CustomerDetail({ currentUser }) {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get("id");
-  const [showEdit, setShowEdit] = useState(false);
   const [uploadingFor, setUploadingFor] = useState(null);
   const fileInputRef = useRef(null);
   const qc = useQueryClient();
@@ -63,8 +62,18 @@ export default function CustomerDetail({ currentUser }) {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Customer.update(id, data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["customer", id] }); setShowEdit(false); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["customer", id] }); },
   });
+
+  const handleFieldBlur = (field, value) => {
+    if (customer[field] !== value) updateMutation.mutate({ [field]: value });
+  };
+
+  const toggleModel = (modelId) => {
+    const current = customer.assigned_models || [];
+    const next = current.includes(modelId) ? current.filter(id => id !== modelId) : [...current, modelId];
+    updateMutation.mutate({ assigned_models: next });
+  };
 
   const modelMap = {};
   models.forEach(m => { modelMap[m.id] = m.name; });
@@ -163,55 +172,81 @@ export default function CustomerDetail({ currentUser }) {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        {/* Detail card */}
+        {/* Detail card — always-editable */}
         <div className="bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-slate-200">Detaily</h3>
-            {!showEdit && (
-              <button onClick={() => setShowEdit(true)} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-[#C9A227]/15 border border-white/8 hover:border-[#C9A227]/30 flex items-center justify-center transition-all">
-                <Pencil className="w-3 h-3 text-slate-400 hover:text-[#C9A227]" />
-              </button>
-            )}
-          </div>
+          <h3 className="text-sm font-semibold text-slate-200 mb-4">Detaily</h3>
+          <div className="space-y-3">
+            {[
+              { label: "Email", field: "email", icon: <Mail className="w-4 h-4 text-slate-600 flex-shrink-0" />, type: "email" },
+              { label: "Telefon", field: "phone", icon: <Phone className="w-4 h-4 text-slate-600 flex-shrink-0" />, type: "text" },
+              { label: "Název banky", field: "bank_name", icon: <Building className="w-4 h-4 text-slate-600 flex-shrink-0" />, type: "text" },
+              { label: "Číslo účtu", field: "bank_account_number", icon: <Building className="w-4 h-4 text-slate-500 flex-shrink-0 opacity-0" />, type: "text" },
+            ].map(({ label, field, icon, type }) => (
+              <div key={field} className="flex items-center gap-3">
+                {icon}
+                <input
+                  type={type}
+                  defaultValue={customer[field] || ""}
+                  onBlur={e => handleFieldBlur(field, e.target.value)}
+                  placeholder={label}
+                  className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
+                />
+              </div>
+            ))}
 
-          {showEdit ? (
-            <CustomerInlineEdit
-              customer={customer}
-              models={models}
-              onSave={(data) => updateMutation.mutateAsync(data)}
-              onCancel={() => setShowEdit(false)}
-            />
-          ) : (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-slate-600 flex-shrink-0" />
-                <span className={`text-sm ${customer.email ? "text-slate-300" : "text-slate-600"}`}>{customer.email || "—"}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-slate-600 flex-shrink-0" />
-                <span className={`text-sm ${customer.phone ? "text-slate-300" : "text-slate-600"}`}>{customer.phone || "—"}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Building className="w-4 h-4 text-slate-600 flex-shrink-0" />
-                <span className={`text-sm ${customer.bank_name ? "text-slate-300" : "text-slate-600"}`}>
-                  {customer.bank_name ? `${customer.bank_name} — ${customer.bank_account_number || "—"}` : "—"}
-                </span>
-              </div>
-              {assignedModelNames.length > 0 && (
-                <div className="flex items-start gap-3">
-                  <span className="text-slate-600 text-sm mt-0.5 flex-shrink-0">🎭</span>
-                  <div className="flex flex-wrap gap-1">
-                    {assignedModelNames.map(name => (
-                      <span key={name} className="text-xs bg-[#C9A227]/10 border border-[#C9A227]/25 text-[#C9A227] rounded-full px-2 py-0.5">{name}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {customer.notes && (
-                <div className="mt-2 p-3 bg-[#C9A227]/8 border border-[#C9A227]/15 rounded-lg text-sm text-slate-300">{customer.notes}</div>
-              )}
+            {/* Status */}
+            <div className="flex items-center gap-3">
+              <span className="w-4 h-4 flex-shrink-0" />
+              <Select value={customer.status || "active"} onValueChange={v => updateMutation.mutate({ status: v })}>
+                <SelectTrigger className="flex-1 h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-300 px-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Aktivní</SelectItem>
+                  <SelectItem value="inactive">Neaktivní</SelectItem>
+                  <SelectItem value="vip">VIP</SelectItem>
+                  <SelectItem value="blocked">Blokovaný</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          )}
+
+            {/* Models */}
+            <div className="flex items-start gap-3">
+              <span className="text-sm mt-1.5 flex-shrink-0">🎭</span>
+              <div className="flex-1">
+                <div className="flex flex-wrap gap-1 mb-1">
+                  {(customer.assigned_models || []).map(mid => modelMap[mid] ? (
+                    <span key={mid} className="flex items-center gap-1 text-xs bg-[#C9A227]/10 border border-[#C9A227]/25 text-[#C9A227] rounded-full px-2 py-0.5">
+                      {modelMap[mid]}
+                      <button onClick={() => toggleModel(mid)}><X className="w-2.5 h-2.5" /></button>
+                    </span>
+                  ) : null)}
+                </div>
+                <Select onValueChange={toggleModel} value="">
+                  <SelectTrigger className="h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-500 px-0">
+                    <SelectValue placeholder="+ Přidat modelku" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {models.filter(m => !(customer.assigned_models || []).includes(m.id)).map(m => (
+                      <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div className="flex items-start gap-3">
+              <span className="w-4 h-4 flex-shrink-0" />
+              <textarea
+                defaultValue={customer.notes || ""}
+                onBlur={e => handleFieldBlur("notes", e.target.value)}
+                placeholder="Poznámky..."
+                rows={2}
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 resize-none transition-colors"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Payments card */}
