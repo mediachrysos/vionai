@@ -31,19 +31,19 @@ export default function RangePicker({ range, activePreset, onPreset, onDateChang
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-white hover:border-[#C9A227] text-sm transition-all"
+        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all ${open ? "border-[#C9A227]/60 bg-[#252525]" : "border-white/10 bg-[#252525] hover:border-[#C9A227]/40"}`}
       >
         <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266695/Chrysos_icon_3_qncd5u.png" alt="" className="w-4 h-4 object-contain" />
-        <span className="text-gray-700 text-xs">
+        <span className="text-slate-300 text-xs">
           {activePreset ? activePreset : `${formatDate(range.from)} – ${formatDate(range.to)}`}
         </span>
-        <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-1 bg-white border border-gray-200 rounded-2xl shadow-xl p-4 w-72">
+        <div className="absolute right-0 z-50 mt-1 bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-2xl p-4 w-64">
           {/* Presets */}
-          <div className="flex flex-col gap-1 mb-3">
+          <div className="flex flex-col gap-0.5 mb-3">
             {PRESETS.map(p => (
               <button
                 key={p.label}
@@ -52,7 +52,7 @@ export default function RangePicker({ range, activePreset, onPreset, onDateChang
                 className={`text-xs text-left px-3 py-2 rounded-lg transition-all ${
                   activePreset === p.label
                     ? "bg-[#C9A227] text-white font-semibold"
-                    : "text-gray-600 hover:bg-amber-50 hover:text-[#C9A227]"
+                    : "text-slate-400 hover:bg-white/5 hover:text-[#C9A227]"
                 }`}
               >
                 {p.label}
@@ -60,11 +60,11 @@ export default function RangePicker({ range, activePreset, onPreset, onDateChang
             ))}
           </div>
 
-          <div className="border-t border-gray-100 pt-3">
-            <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Custom range</p>
+          <div className="border-t border-white/10 pt-3">
+            <p className="text-[10px] text-slate-600 font-semibold uppercase tracking-wider mb-2">Custom range</p>
             <div className="flex flex-col gap-2">
-              <DatePicker value={range.from} onChange={v => { onDateChange("from", v); }} placeholder="From" />
-              <DatePicker value={range.to} onChange={v => { onDateChange("to", v); }} placeholder="To" />
+              <DatePicker value={range.from} onChange={v => { onDateChange("from", v); }} placeholder="Od" />
+              <DatePicker value={range.to} onChange={v => { onDateChange("to", v); }} placeholder="Do" />
             </div>
           </div>
         </div>
