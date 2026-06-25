@@ -11,7 +11,7 @@ import { Search, UserPlus, CreditCard, Wallet } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 import { useQuery } from "@tanstack/react-query";
 
-const quickAmounts = [100, 200, 300, 500, 700];
+const quickAmounts = [100, 200, 300, 500, 700, 1000];
 
 export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers: customersProp = [], models, users, currentUser, existingPayment }) {
   const { data: bankAccounts = [] } = useQuery({
@@ -208,7 +208,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
           {/* Quick Amount */}
           <div>
             <Label>Amount *</Label>
-            <div className="flex flex-wrap gap-2 mb-2">
+            <div className="grid grid-cols-6 gap-2 mb-2">
               {quickAmounts.map((a) =>
               <button
                 key={a}
