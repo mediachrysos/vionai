@@ -32,7 +32,7 @@ function GoalDatePicker({ value, onChange, placeholder }) {
             className="w-4 h-4 object-contain flex-shrink-0"
           />
           <span className={`flex-1 text-left ${selected ? "text-slate-200 font-medium" : "text-slate-500"}`}>
-            {selected ? format(selected, "d. M. yyyy") : placeholder || "Vybrat datum"}
+            {selected ? format(selected, "d. M. yyyy") : placeholder || "Select date"}
           </span>
           {value && (
             <span
@@ -120,7 +120,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   };
 
   const deleteUser = async (userId, userName) => {
-    if (!window.confirm(`Opravdu smazat účet uživatele "${userName}"? Tato akce je nevratná a uživatel se nebude moct přihlásit.`)) return;
+    if (!window.confirm(`Delete account for "${userName}"? This action is irreversible.`)) return;
     await base44.entities.User.delete(userId);
     setUsers((prev) => prev.filter((u) => u.id !== userId));
   };
@@ -160,7 +160,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
 
       <Section
         label="Users"
-        icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" /></div>}
+        icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png"
         badge={pending.length > 0 ? pending.length : null}
         open={openSections.users}
         onToggle={() => toggle("users")}>
@@ -187,15 +187,15 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         }
       </Section>
 
-      <Section label="Platby" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.payments} onToggle={() => toggle("payments")}>
+      <Section label="Payments" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" open={openSections.payments} onToggle={() => toggle("payments")}>
         <AdminPayments currentUser={currentUser} />
       </Section>
 
-      <Section label="Modelky" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.models} onToggle={() => toggle("models")}>
+      <Section label="Models" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png" open={openSections.models} onToggle={() => toggle("models")}>
         <AddModelInline models={models} setModels={setModels} />
       </Section>
 
-      <Section label="Přidat zákazníka" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_26_ybydei.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.customers} onToggle={() => toggle("customers")}>
+      <Section label="Add Customer" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_26_ybydei.png" open={openSections.customers} onToggle={() => toggle("customers")}>
         <AddCustomerInline users={users} onGenerateLink={() => setShowOnboardingModal(true)} />
         <OnboardingLinksList refreshTrigger={onboardingRefresh} models={models} />
       </Section>
@@ -207,19 +207,19 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         users={users}
         onLinkCreated={() => setOnboardingRefresh((p) => p + 1)} />
 
-      <Section label="Bankovní účty" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_9_z1rvej.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.accounts} onToggle={() => toggle("accounts")}>
+      <Section label="Bank Accounts" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_9_z1rvej.png" open={openSections.accounts} onToggle={() => toggle("accounts")}>
         <BankAccountsInline accounts={accounts} setAccounts={setAccounts} />
       </Section>
 
-      <Section label="Měsíční cíl" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.goal} onToggle={() => toggle("goal")}>
+      <Section label="Monthly Goal" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" open={openSections.goal} onToggle={() => toggle("goal")}>
         <GoalSettingsInline />
       </Section>
 
-      <Section label="Právní dokumenty (GDPR & Podmínky)" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_27_fagh7p.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.legal} onToggle={() => toggle("legal")}>
+      <Section label="Legal Documents (GDPR & Terms)" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_27_fagh7p.png" open={openSections.legal} onToggle={() => toggle("legal")}>
         <LegalDocumentsEditor />
       </Section>
 
-      <Section label="Nastavení faktury" icon={<div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100"><img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" alt="" className="w-5 h-5 object-contain" /></div>} open={openSections.invoices} onToggle={() => toggle("invoices")}>
+      <Section label="Invoice Settings" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" open={openSections.invoices} onToggle={() => toggle("invoices")}>
         <InvoiceSettingsInline />
       </Section>
 
@@ -232,10 +232,11 @@ function Section({ label, icon, badge, open, onToggle, children }) {
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors">
-        
-        <div className="flex items-center gap-2 text-sm font-semibold text-slate-200">
-          <span className="text-slate-500">{icon}</span>
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors group">
+        <div className="flex items-center gap-3 text-sm font-semibold text-slate-200">
+          <div className="w-8 h-8 rounded-xl bg-[#252525] border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:border-[#C9A227]/30 transition-colors">
+            <img src={icon} alt="" className="w-4 h-4 object-contain" />
+          </div>
           {label}
           {badge &&
           <span className="bg-amber-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center ml-1">{badge}</span>
@@ -401,7 +402,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
                   }
                 }}
                 autoFocus
-                placeholder="Přezdívka..."
+                placeholder="Nickname..."
               />
               <button
                 onClick={async () => {
@@ -416,7 +417,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
             </div>
           ) : (
             <button onClick={() => setEditingNickname(true)} className="text-[10px] text-slate-500 hover:text-amber-400 mt-0.5 flex items-center gap-1 transition-colors">
-              {nickname ? <><span className="font-medium text-amber-600">"{nickname}"</span> <span className="opacity-60">✎</span></> : <span className="opacity-60 hover:opacity-100">+ přezdívka</span>}
+              {nickname ? <><span className="font-medium text-amber-600">"{nickname}"</span> <span className="opacity-60">✎</span></> : <span className="opacity-60 hover:opacity-100">+ nickname</span>}
             </button>
           )}
         </div>
@@ -458,7 +459,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
           }
           <Button size="sm" variant="outline" className="h-8 text-xs text-red-400 border-red-900/50 hover:bg-red-950/30 px-3 rounded-lg"
           onClick={() => onDelete(user.id, user.full_name || user.email)}>
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3 h-3 mr-1 object-contain" /> Odstranit
+            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3 h-3 mr-1 object-contain" /> Delete
           </Button>
         </div>
       </div>
@@ -558,7 +559,7 @@ function AddModelInline({ models, setModels }) {
 
   const handleDelete = async (e, m) => {
     e.preventDefault();
-    if (!window.confirm(`Opravdu smazat modelku "${m.name}"?`)) return;
+    if (!window.confirm(`Delete model "${m.name}"?`)) return;
     await base44.entities.Model.delete(m.id);
     setModels((prev) => prev.filter(x => x.id !== m.id));
   };
@@ -580,8 +581,8 @@ function AddModelInline({ models, setModels }) {
       {/* Add form */}
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_160px_auto] gap-3">
         <div>
-          <label className="text-xs font-semibold text-slate-400 block mb-1">Jméno *</label>
-          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Jméno modelky" className="h-9" />
+          <label className="text-xs font-semibold text-slate-400 block mb-1">Name *</label>
+          <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Model name" className="h-9" />
         </div>
         <div>
           <label className="text-xs font-semibold text-slate-400 block mb-1">Status</label>
@@ -595,7 +596,7 @@ function AddModelInline({ models, setModels }) {
         </div>
         <div className="flex items-end">
           <Button onClick={handleSave} disabled={!form.name || saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 w-full text-sm font-semibold whitespace-nowrap px-6 text-white">
-            {done ? "✓ Přidáno!" : saving ? "..." : "Přidat modelku"}
+            {done ? "✓ Added!" : saving ? "..." : "Add model"}
           </Button>
         </div>
       </div>
@@ -604,7 +605,7 @@ function AddModelInline({ models, setModels }) {
       {models.length > 3 && (
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat modelky..." className="pl-10 h-9" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search models..." className="pl-10 h-9" />
         </div>
       )}
 
@@ -630,7 +631,7 @@ function AddModelInline({ models, setModels }) {
                   <p className="text-sm font-semibold text-slate-200">{(modelRevenue[m.id] || 0).toLocaleString()} CZK</p>
                 </div>
                 <div className="text-right mr-4">
-                  <p className="text-xs text-slate-500">Platby</p>
+                  <p className="text-xs text-slate-500">Payments</p>
                   <p className="text-sm font-semibold text-slate-200">{modelPaymentCount[m.id] || 0}</p>
                 </div>
                 <ExternalLink className="w-4 h-4 text-slate-600 group-hover:text-[#C9A227] transition-colors flex-shrink-0 mr-2" />
@@ -946,7 +947,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
       <div className="space-y-2">
           {accounts.map((a) =>
         <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-white/10 bg-[#1e1e1e] hover:bg-white/5">
-              <label className="relative cursor-pointer flex-shrink-0 group" title="Nahrát foto">
+              <label className="relative cursor-pointer flex-shrink-0 group"                title="Upload photo">
                 <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/10 bg-slate-800 flex items-center justify-center">
                   {a.profile_photo ?
               <img src={a.profile_photo} alt={a.name} className="w-full h-full object-cover" /> :
