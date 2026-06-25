@@ -367,13 +367,13 @@ export default function Customers({ currentUser }) {
       <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1 w-full border border-white/10">
         <button
           onClick={() => setActiveTab("customers")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "customers" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "customers" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
           
           <UserCircle className="w-4 h-4" /> Customers
         </button>
         <button
           onClick={() => setActiveTab("pending")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "pending" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "pending" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
           
           <Clock className="w-4 h-4" /> Pending
           {pendingCustomers.length > 0 &&
@@ -382,7 +382,7 @@ export default function Customers({ currentUser }) {
         </button>
         <button
           onClick={() => setActiveTab("lookalike")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "lookalike" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "lookalike" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
           
           <ScanSearch className="w-4 h-4" /> Look-alike Audience
         </button>
