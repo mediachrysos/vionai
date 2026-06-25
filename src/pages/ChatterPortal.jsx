@@ -26,6 +26,7 @@ import ChatterLeaderboardTable from "../components/chatters/ChatterLeaderboardTa
 import TodayNotesWidget from "../components/dashboard/TodayNotesWidget";
 import ShiftOverviewWidget from "../components/dashboard/ShiftOverviewWidget";
 import RecentCustomersWidget from "../components/dashboard/RecentCustomersWidget";
+import TodayPerformanceWidget from "../components/dashboard/TodayPerformanceWidget";
 
 // ─── Admin view ────────────────────────────────────────────────────────────
 function AdminChattingSpace({ currentUser }) {
@@ -162,6 +163,7 @@ function AdminChattingSpace({ currentUser }) {
               <PerformanceAlerts chatters={chatters} payments={payments} shifts={allShifts} periodDates={{ start, end }} />
             </div>
 
+            <TodayPerformanceWidget payments={payments} chatters={chatters} models={models} />
             <ChatterLeaderboardTable chatters={chatters} payments={periodPayments} prevPayments={prevPayments} shifts={periodShifts} models={models} payouts={payouts} />
             <RecentPaymentsPanel payments={payments} />
             <RecentCustomersWidget customers={customers} />
