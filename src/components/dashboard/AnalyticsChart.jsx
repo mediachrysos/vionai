@@ -3,6 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line
 } from "recharts";
 import { ChevronDown, TrendingDown } from "lucide-react";
+import DatePicker from "@/components/ui-custom/DatePicker";
 
 const PRESETS = [
   { label: "Last 7 days", days: 7 },
@@ -219,11 +220,9 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
               ))}
               <div className="border-t border-white/10 mt-1 pt-2 px-1">
                 <p className="text-[10px] text-slate-500 font-medium mb-1.5 px-2">Custom range</p>
-                <div className="flex gap-1.5 mb-1.5">
-                  <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
-                    className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
-                  <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
-                    className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
+                <div className="flex flex-col gap-1.5 mb-1.5">
+                  <DatePicker value={customFrom} onChange={v => setCustomFrom(v)} placeholder="Od" />
+                  <DatePicker value={customTo} onChange={v => setCustomTo(v)} placeholder="Do" />
                 </div>
                 <button
                   onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowPresetMenu(false); } }}
