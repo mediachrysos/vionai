@@ -289,29 +289,29 @@ export default function CustomerDetail({ currentUser }) {
             </div>
 
             {/* Models */}
-            <div className="flex items-start gap-3 hidden">
-              <span className="text-sm mt-1.5 flex-shrink-0">🎭</span>
-              <div className="flex-1">
-                <div className="flex flex-wrap gap-1 mb-1">
-                  {(customer.assigned_models || []).map((mid) => modelMap[mid] ?
-                  <span key={mid} className="flex items-center gap-1 text-xs bg-[#C9A227]/10 border border-[#C9A227]/25 text-[#C9A227] rounded-full px-2 py-0.5">
-                      {modelMap[mid]}
-                      <button onClick={() => toggleModel(mid)}><X className="w-2.5 h-2.5" /></button>
-                    </span> :
-                  null)}
-                </div>
-                <Select onValueChange={toggleModel} value="">
-                  <SelectTrigger className="h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-500 px-0">
-                    <SelectValue placeholder="+ Add model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {models.filter((m) => !(customer.assigned_models || []).includes(m.id)).map((m) =>
-                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
 
             {/* Notes */}
             <div className="flex items-start gap-3">
