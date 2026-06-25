@@ -237,6 +237,23 @@ html.light-mode .bg-\[\#252525\].hover\:bg-white\/5 { background-color: #f2f2f5 
 html.light-mode .bg-amber-950\/50 { background-color: rgba(180,140,20,0.13) !important; }
 html.light-mode .border-amber-700\/30 { border-color: rgba(180,140,20,0.35) !important; }
 
+/* ── Light mode — PaymentFormModal quick amount buttons ── */
+html.light-mode .bg-\[\#2a2a2a\] {
+  background-color: #e8eaf2 !important;
+  border-color: #c0c5d8 !important;
+  color: #1e2332 !important;
+}
+html.light-mode .bg-\[\#2a2a2a\]:hover {
+  border-color: #C9A227 !important;
+}
+
+/* ── Light mode — DatePicker button (slate-800 bg) ── */
+html.light-mode .bg-slate-800.border-white\/10 {
+  background-color: #eceef5 !important;
+  border-color: #c0c5d8 !important;
+  color: #1e2332 !important;
+}
+
 /* ── Light mode — shadows ── */
 html.light-mode .shadow-xl { box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important; }
 html.light-mode .shadow-2xl { box-shadow: 0 16px 48px rgba(0,0,0,0.12) !important; }
