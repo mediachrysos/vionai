@@ -7,6 +7,11 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
   const qc = useQueryClient();
   const [adding, setAdding] = useState(false);
   const [inputVal, setInputVal] = useState("");
+
+  const now = new Date();
+  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const isCurrentMonth = monthStr === currentMonthStr;
+  const isPastMonth = monthStr < currentMonthStr;
   const [expanded, setExpanded] = useState(false);
 
   const { data: payouts = [] } = useQuery({
@@ -92,8 +97,8 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
             </div>
           ))}
 
-          {/* Add payout inline */}
-          {adding ? (
+          {/* Add payout inline — only current month */}
+          {isCurrentMonth && adding ? (
             <div className="flex items-center gap-2 px-1 pt-1">
               <input
                 type="number"
@@ -118,7 +123,7 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
-          ) : (
+          ) : isCurrentMonth ? (
             <button
               onClick={() => setAdding(true)}
               className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-medium px-1 pt-1"
@@ -126,17 +131,25 @@ export default function OwnerPayoutRow({ owner, label, monthStr, totalDue, carry
               <Plus className="w-3.5 h-3.5" />
               Přidat výplatu
             </button>
-          )}
+          ) : null}
         </div>
       )}
 
-      {/* Remaining */}
-      <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-1.5">
-        <span className="text-xs font-medium text-slate-400">Zbývá vyplatit</span>
-        <span className={`text-xs font-bold ${remaining > 0 ? "text-orange-500" : "text-emerald-400"}`}>
-          {remaining.toLocaleString("cs-CZ")} Kč
-        </span>
-      </div>
+      {/* Remaining — only show for current month (past months carry over automatically) */}
+      {!isPastMonth && (
+        <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-1.5">
+          <span className="text-xs font-medium text-slate-400">Zbývá vyplatit</span>
+          <span className={`text-xs font-bold ${remaining > 0 ? "text-orange-500" : "text-emerald-400"}`}>
+            {remaining.toLocaleString("cs-CZ")} Kč
+          </span>
+        </div>
+      )}
+      {isPastMonth && remaining > 0 && (
+        <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-1.5">
+          <span className="text-xs font-medium text-slate-500">Přeneseno do dalšího měsíce</span>
+          <span className="text-xs font-semibold text-slate-500">{remaining.toLocaleString("cs-CZ")} Kč →</span>
+        </div>
+      )}
     </div>
   );
 }
