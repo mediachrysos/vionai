@@ -200,10 +200,10 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         <div className="relative">
           <button
             onClick={() => { setShowPresetMenu(v => !v); setShowDateMenu(false); setShowModelMenu(false); }}
-            className="flex items-center gap-1.5 text-sm font-medium text-slate-300 bg-slate-700/60 hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
           >
             {activePresetLabel}
-            <ChevronDown className="w-3.5 h-3.5" />
+            <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${showPresetMenu ? "rotate-180" : ""}`} />
           </button>
           {showPresetMenu && (
             <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[190px]">
@@ -226,11 +226,11 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         <div className="relative">
           <button
             onClick={() => { setShowDateMenu(v => !v); setShowPresetMenu(false); setShowModelMenu(false); }}
-            className="flex items-center gap-1.5 text-sm font-medium text-slate-300 bg-slate-700/60 hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
           >
             <Calendar className="w-3.5 h-3.5" />
             {dateRangeLabel}
-            <ChevronDown className="w-3.5 h-3.5" />
+            <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${showDateMenu ? "rotate-180" : ""}`} />
           </button>
           {showDateMenu && (
             <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-3 min-w-[240px]">
@@ -257,10 +257,10 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           <div className="relative">
             <button
               onClick={() => { setShowModelMenu(v => !v); setShowPresetMenu(false); setShowDateMenu(false); }}
-              className="flex items-center gap-1.5 text-sm font-medium text-slate-300 bg-slate-700/60 hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
             >
               {selectedModel ? selectedModel.name : "All models"}
-              <ChevronDown className="w-3.5 h-3.5" />
+              <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${showModelMenu ? "rotate-180" : ""}`} />
             </button>
             {showModelMenu && (
               <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
