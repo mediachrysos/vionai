@@ -138,6 +138,8 @@ export default function Customers({ currentUser }) {
     return customers.filter((c) => !customerIdsWithPayments.has(c.id));
   }, [customers, customerIdsWithPayments]);
 
+  const [pendingSearch, setPendingSearch] = useState("");
+
   // --- Look-alike Audience state & logic ---
   const [laSearch, setLaSearch] = useState("");
   const [syncing, setSyncing] = useState(false);
@@ -390,11 +392,15 @@ export default function Customers({ currentUser }) {
 
       {activeTab === "pending" &&
       <div>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-bold text-slate-100">Pending customers</h2>
               <p className="text-sm text-slate-500 mt-0.5">{pendingCustomers.length} zákazníků potvrdilo onboarding, ale zatím neposlali žádné peníze</p>
             </div>
+          </div>
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Input value={pendingSearch} onChange={(e) => setPendingSearch(e.target.value)} placeholder="Hledat jméno, email nebo modelku..." className="pl-10" />
           </div>
           {pendingCustomers.length === 0 ?
         <div className="text-center py-16 text-slate-500 text-sm">Všichni zákazníci už platili 🎉</div> :
@@ -411,7 +417,13 @@ export default function Customers({ currentUser }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {pendingCustomers.map((c, i) => {
+                  {pendingCustomers.filter(c => {
+                    if (!pendingSearch) return true;
+                    const q = pendingSearch.toLowerCase();
+                    const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
+                    const modelNames = mids.map(mid => modelMap[mid] || "").join(" ").toLowerCase();
+                    return c.full_name?.toLowerCase().includes(q) || c.email?.toLowerCase().includes(q) || modelNames.includes(q);
+                  }).map((c, i) => {
                 const mids = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
                 const modelNames = mids.map((mid) => modelMap[mid]).filter(Boolean);
                 const daysSince = c.created_date ? Math.floor((Date.now() - new Date(c.created_date)) / 86400000) : null;
