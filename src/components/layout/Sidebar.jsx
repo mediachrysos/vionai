@@ -4,9 +4,10 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
-  MessageSquare, Settings, Search, LogOut, Menu, X, Activity
+  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/lib/ThemeContext";
 
 const allPages = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
@@ -23,6 +24,8 @@ const defaultLawyerPages = ["Finance"];
 export default function Sidebar({ currentPage, user, onLogout }) {
   const [hovered, setHovered] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showSchedule, setShowSchedule] = useState(false);
+  const { theme, toggleTheme, schedule, setSchedule } = useTheme();
 
   const userRoles = user?.roles?.length > 0 ? user.roles : (user?.role ? [user.role] : []);
   const isAdmin = userRoles.includes("admin");
@@ -114,6 +117,82 @@ export default function Sidebar({ currentPage, user, onLogout }) {
           );
         })}
       </nav>
+
+      {/* Theme toggle — bottom */}
+      <div className={cn("border-t border-white/10 py-3 flex-shrink-0", (expanded || forMobile) ? "px-3" : "px-2")}>
+        {/* Toggle row */}
+        <div className={cn("flex items-center gap-2", !(expanded || forMobile) && "justify-center")}>
+          <button
+            onClick={toggleTheme}
+            className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors flex-shrink-0"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark"
+              ? <Sun className="w-4 h-4 text-[#C9A227]" />
+              : <Moon className="w-4 h-4 text-slate-500" />}
+          </button>
+          {(expanded || forMobile) && (
+            <div className="flex items-center gap-1.5 flex-1 min-w-0">
+              <span className="text-xs text-slate-400 flex-1 truncate">
+                {theme === "dark" ? "Dark mode" : "Light mode"}
+              </span>
+              <button
+                onClick={() => setShowSchedule(s => !s)}
+                className="p-1 rounded hover:bg-white/5 transition-colors"
+                title="Schedule"
+              >
+                <Clock className={cn("w-3.5 h-3.5", schedule.enabled ? "text-[#C9A227]" : "text-slate-600")} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Schedule panel */}
+        {(expanded || forMobile) && showSchedule && (
+          <div className="mt-2 bg-black/20 rounded-xl p-3 space-y-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <div
+                onClick={() => setSchedule(s => ({ ...s, enabled: !s.enabled }))}
+                className={cn(
+                  "w-8 h-4 rounded-full relative transition-colors cursor-pointer flex-shrink-0",
+                  schedule.enabled ? "bg-[#C9A227]" : "bg-white/10"
+                )}
+              >
+                <div className={cn(
+                  "absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all",
+                  schedule.enabled ? "left-[18px]" : "left-0.5"
+                )} />
+              </div>
+              <span className="text-xs text-slate-400">Auto schedule</span>
+            </label>
+
+            {schedule.enabled && (
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center gap-2">
+                  <Sun className="w-3 h-3 text-[#C9A227] flex-shrink-0" />
+                  <span className="text-[10px] text-slate-500 w-12">Light from</span>
+                  <input
+                    type="time"
+                    value={schedule.lightFrom}
+                    onChange={e => setSchedule(s => ({ ...s, lightFrom: e.target.value }))}
+                    className="text-[10px] bg-white/5 border border-white/10 rounded px-1.5 py-0.5 text-slate-300 w-20"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Moon className="w-3 h-3 text-slate-500 flex-shrink-0" />
+                  <span className="text-[10px] text-slate-500 w-12">Dark from</span>
+                  <input
+                    type="time"
+                    value={schedule.darkFrom}
+                    onChange={e => setSchedule(s => ({ ...s, darkFrom: e.target.value }))}
+                    className="text-[10px] bg-white/5 border border-white/10 rounded px-1.5 py-0.5 text-slate-300 w-20"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 
