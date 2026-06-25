@@ -77,25 +77,36 @@
 
 
 
-/* ── Light mode — layout surface overrides ── */
+/* ── Light mode — base body ── */
 html.light-mode body,
 html.light-mode #root {
   background-color: hsl(0 0% 97%);
 }
 
-html.light-mode .bg-\[\#1a1a1a\] { background-color: #f4f4f6 !important; }
+/* ── Light mode — dark card/surface colors ── */
 html.light-mode .bg-\[\#1e1e1e\] { background-color: #ffffff !important; }
+html.light-mode .bg-\[\#252525\] { background-color: #f2f2f5 !important; }
+html.light-mode .bg-\[\#1a1a1a\] { background-color: #f4f4f6 !important; }
 html.light-mode .bg-\[\#161616\] { background-color: #f0f0f2 !important; }
 html.light-mode .bg-\[\#272727\] { background-color: #f4f4f6 !important; }
+html.light-mode .bg-\[\#2d3748\] { background-color: #d0d5e0 !important; }
+
+/* ── Light mode — borders ── */
 html.light-mode .border-white\/10 { border-color: rgba(0,0,0,0.08) !important; }
 html.light-mode .border-white\/5 { border-color: rgba(0,0,0,0.05) !important; }
 html.light-mode .divide-white\/5 > * + * { border-color: rgba(0,0,0,0.05) !important; }
 html.light-mode .divide-white\/10 > * + * { border-color: rgba(0,0,0,0.08) !important; }
+html.light-mode .border-white\/20 { border-color: rgba(0,0,0,0.12) !important; }
+
+/* ── Light mode — transparent backgrounds ── */
 html.light-mode .bg-white\/5 { background-color: rgba(0,0,0,0.03) !important; }
 html.light-mode .bg-white\/10 { background-color: rgba(0,0,0,0.05) !important; }
 html.light-mode .bg-white\/20 { background-color: rgba(0,0,0,0.07) !important; }
+html.light-mode .hover\:bg-white\/5:hover { background-color: rgba(0,0,0,0.04) !important; }
 html.light-mode .bg-black\/20 { background-color: rgba(0,0,0,0.04) !important; }
-html.light-mode .bg-black\/40 { background-color: rgba(0,0,0,0.3) !important; }
+html.light-mode .bg-black\/40 { background-color: rgba(0,0,0,0.06) !important; }
+
+/* ── Light mode — slate text ── */
 html.light-mode .text-slate-100 { color: #1e2332 !important; }
 html.light-mode .text-slate-200 { color: #2d3447 !important; }
 html.light-mode .text-slate-300 { color: #3d4560 !important; }
@@ -105,12 +116,138 @@ html.light-mode .text-slate-600 { color: #9096a8 !important; }
 html.light-mode .hover\:text-slate-200:hover { color: #2d3447 !important; }
 html.light-mode .hover\:text-slate-300:hover { color: #3d4560 !important; }
 html.light-mode .text-white { color: #1e2332 !important; }
-html.light-mode .bg-\[\#2d3748\] { background-color: #d0d5e0 !important; }
+
+/* ── Light mode — slate backgrounds ── */
 html.light-mode .bg-slate-600 { background-color: #c0c5d0 !important; }
-html.light-mode .bg-slate-900 { background-color: #e8eaf0 !important; }
+html.light-mode .bg-slate-700 { background-color: #dde0ea !important; }
+html.light-mode .bg-slate-800 { background-color: #e8eaf0 !important; }
+html.light-mode .bg-slate-900 { background-color: #eceef5 !important; }
+html.light-mode .hover\:bg-slate-700:hover { background-color: #d4d8e4 !important; }
+html.light-mode .hover\:bg-slate-600:hover { background-color: #c8cdd8 !important; }
 html.light-mode .border-slate-700 { border-color: #d0d5e0 !important; }
+html.light-mode .border-slate-600 { border-color: #c0c5d0 !important; }
+
+/* ── Light mode — gray backgrounds ── */
+html.light-mode .bg-gray-900 { background-color: #f0f0f4 !important; }
+html.light-mode .bg-gray-800 { background-color: #e8eaf0 !important; }
+html.light-mode .bg-gray-700 { background-color: #dde0ea !important; }
+html.light-mode .bg-gray-950 { background-color: #f4f4f8 !important; }
+html.light-mode .border-gray-800 { border-color: #dde0ea !important; }
+html.light-mode .border-gray-700 { border-color: #d0d5e0 !important; }
+html.light-mode .text-gray-100 { color: #1e2332 !important; }
+html.light-mode .text-gray-200 { color: #2d3447 !important; }
+html.light-mode .text-gray-300 { color: #3d4560 !important; }
+html.light-mode .text-gray-400 { color: #5a6278 !important; }
+html.light-mode .text-gray-500 { color: #7a8296 !important; }
+
+/* ── Light mode — Finance table dark tinted backgrounds ── */
+html.light-mode .bg-indigo-950\/20 { background-color: rgba(79,70,229,0.06) !important; }
+html.light-mode .bg-indigo-950\/10 { background-color: rgba(79,70,229,0.04) !important; }
+html.light-mode .bg-rose-950\/20 { background-color: rgba(225,29,72,0.06) !important; }
+html.light-mode .bg-rose-950\/10 { background-color: rgba(225,29,72,0.04) !important; }
+html.light-mode .bg-emerald-950\/20 { background-color: rgba(16,185,129,0.06) !important; }
+html.light-mode .bg-emerald-950\/10 { background-color: rgba(16,185,129,0.04) !important; }
+html.light-mode .bg-amber-950\/10 { background-color: rgba(180,140,20,0.06) !important; }
+html.light-mode .bg-amber-950\/20 { background-color: rgba(180,140,20,0.08) !important; }
+html.light-mode .bg-amber-950\/30 { background-color: rgba(180,140,20,0.10) !important; }
+html.light-mode .bg-amber-950\/40 { background-color: rgba(180,140,20,0.12) !important; }
+html.light-mode .bg-amber-950\/50 { background-color: rgba(180,140,20,0.14) !important; }
+html.light-mode .bg-slate-800\/50 { background-color: rgba(200,205,218,0.5) !important; }
+html.light-mode .border-slate-700\/50 { border-color: rgba(180,185,200,0.5) !important; }
+html.light-mode .bg-amber-700\/20 { border-color: rgba(180,140,20,0.25) !important; }
+
+/* ── Light mode — Finance table sticky cell bg ── */
+html.light-mode td.sticky.bg-\[\#1e1e1e\] { background-color: #ffffff !important; }
+html.light-mode th.sticky.bg-\[\#252525\] { background-color: #f2f2f5 !important; }
+
+/* ── Light mode — RevenueChart / Finance card dark containers ── */
+html.light-mode .bg-\[\#111827\] { background-color: #f4f5f8 !important; }
+html.light-mode .bg-\[\#1f2937\] { background-color: #f0f1f5 !important; }
+html.light-mode .bg-\[\#374151\] { background-color: #e2e4ec !important; }
+
+/* ── Light mode — recharts ── */
+html.light-mode .recharts-cartesian-grid line { stroke: rgba(0,0,0,0.07) !important; }
+html.light-mode .recharts-text { fill: #5a6278 !important; }
+html.light-mode .recharts-cartesian-axis-tick-value { fill: #5a6278 !important; }
+
+/* ── Light mode — inputs ── */
+html.light-mode input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+  background-color: #ffffff !important;
+  color: #1e2332 !important;
+  border-color: #d0d5e0 !important;
+}
+html.light-mode select {
+  background-color: #ffffff !important;
+  color: #1e2332 !important;
+  border-color: #d0d5e0 !important;
+}
+html.light-mode textarea {
+  background-color: #ffffff !important;
+  color: #1e2332 !important;
+  border-color: #d0d5e0 !important;
+}
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder { color: #9096a8 !important; }
+
+/* ── Light mode — badges/tags gold ── */
+html.light-mode .border-\[\#C9A227\]\/30 { border-color: rgba(180,140,20,0.4) !important; }
+html.light-mode .text-\[\#C9A227\] { color: #a07a10 !important; }
+html.light-mode .bg-\[\#C9A227\]\/10 { background-color: rgba(180,140,20,0.12) !important; }
+html.light-mode .bg-amber-500\/10 { background-color: rgba(180,140,20,0.10) !important; }
+html.light-mode .text-amber-400 { color: #a07a10 !important; }
+html.light-mode .text-amber-500 { color: #917010 !important; }
+html.light-mode .text-amber-300 { color: #a07a10 !important; }
+html.light-mode .bg-amber-700\/30 { border-color: rgba(160,120,10,0.3) !important; }
+
+/* ── Light mode — green/red status ── */
+html.light-mode .text-emerald-400 { color: #16803a !important; }
+html.light-mode .text-emerald-500 { color: #15803d !important; }
+html.light-mode .bg-emerald-500\/10 { background-color: rgba(21,128,61,0.1) !important; }
+html.light-mode .bg-emerald-950\/30 { background-color: rgba(21,128,61,0.08) !important; }
+html.light-mode .bg-emerald-950\/50 { background-color: rgba(21,128,61,0.12) !important; }
+html.light-mode .border-emerald-700\/30 { border-color: rgba(21,128,61,0.3) !important; }
+html.light-mode .text-red-400 { color: #c01c1c !important; }
+html.light-mode .text-red-500 { color: #b91c1c !important; }
+html.light-mode .bg-red-500\/10 { background-color: rgba(185,28,28,0.1) !important; }
+html.light-mode .bg-red-950\/30 { background-color: rgba(185,28,28,0.08) !important; }
+html.light-mode .bg-red-950\/50 { background-color: rgba(185,28,28,0.12) !important; }
+html.light-mode .border-red-700\/30 { border-color: rgba(185,28,28,0.3) !important; }
+
+/* ── Light mode — other tinted backgrounds ── */
+html.light-mode .bg-violet-950\/20 { background-color: rgba(124,58,237,0.06) !important; }
+html.light-mode .bg-violet-950\/50 { background-color: rgba(124,58,237,0.1) !important; }
+html.light-mode .border-violet-700\/40 { border-color: rgba(124,58,237,0.3) !important; }
+html.light-mode .text-violet-300 { color: #6d28d9 !important; }
+html.light-mode .text-violet-400 { color: #7c3aed !important; }
+html.light-mode .bg-blue-950\/30 { background-color: rgba(37,99,235,0.07) !important; }
+html.light-mode .border-blue-700\/30 { border-color: rgba(37,99,235,0.3) !important; }
+html.light-mode .text-blue-400 { color: #1d4ed8 !important; }
+html.light-mode .text-blue-300 { color: #1e40af !important; }
+html.light-mode .bg-orange-950\/30 { background-color: rgba(234,88,12,0.08) !important; }
+html.light-mode .bg-orange-950\/50 { background-color: rgba(234,88,12,0.12) !important; }
+html.light-mode .border-orange-700\/30 { border-color: rgba(234,88,12,0.3) !important; }
+html.light-mode .text-orange-400 { color: #c2410c !important; }
+html.light-mode .text-rose-400 { color: #be123c !important; }
+html.light-mode .bg-rose-950\/30 { background-color: rgba(190,18,60,0.07) !important; }
+
+/* ── Light mode — DayCard / DayDetailModal task headers ── */
+html.light-mode .bg-\[\#252525\].hover\:bg-white\/5 { background-color: #f2f2f5 !important; }
+
+/* ── Light mode — AdminUsers sections ── */
+html.light-mode .bg-amber-950\/50 { background-color: rgba(180,140,20,0.13) !important; }
+html.light-mode .border-amber-700\/30 { border-color: rgba(180,140,20,0.35) !important; }
+
+/* ── Light mode — shadows ── */
 html.light-mode .shadow-xl { box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important; }
 html.light-mode .shadow-2xl { box-shadow: 0 16px 48px rgba(0,0,0,0.12) !important; }
+html.light-mode .shadow-sm { box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important; }
+
+/* ── Light mode — dialog/modal ── */
+html.light-mode [role="dialog"] > div {
+  background-color: #ffffff !important;
+  border-color: #dde0ea !important;
+  color: #1e2332 !important;
+}
 
 /* ── Light mode — dark card/panel surfaces ── */
 html.light-mode .bg-\[\#111827\] { background-color: #ffffff !important; }
