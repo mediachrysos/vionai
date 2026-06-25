@@ -8,10 +8,10 @@ import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const STATUS_STYLES = {
-  active:   "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
+  active: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
   inactive: "bg-slate-500/15 text-slate-400 border border-slate-500/25",
-  vip:      "bg-amber-500/15 text-amber-400 border border-amber-500/25",
-  blocked:  "bg-red-500/15 text-red-400 border border-red-500/25",
+  vip: "bg-amber-500/15 text-amber-400 border border-amber-500/25",
+  blocked: "bg-red-500/15 text-red-400 border border-red-500/25"
 };
 
 function StatCard({ label, value, sub }) {
@@ -20,8 +20,8 @@ function StatCard({ label, value, sub }) {
       <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{label}</p>
       <p className="text-lg font-bold text-slate-100">{value}</p>
       {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
-    </div>
-  );
+    </div>);
+
 }
 
 const parsePhone = (phone) => {
@@ -42,14 +42,14 @@ export default function CustomerDetail({ currentUser }) {
 
   const { data: customer } = useQuery({
     queryKey: ["customer", id],
-    queryFn: async () => { const list = await base44.entities.Customer.filter({ id }); return list[0]; },
-    enabled: !!id,
+    queryFn: async () => {const list = await base44.entities.Customer.filter({ id });return list[0];},
+    enabled: !!id
   });
 
   const { data: payments = [] } = useQuery({
     queryKey: ["customer-payments", id],
     queryFn: () => base44.entities.Payment.filter({ customer_id: id }, "-payment_date"),
-    enabled: !!id,
+    enabled: !!id
   });
 
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list() });
@@ -62,11 +62,11 @@ export default function CustomerDetail({ currentUser }) {
       if (byId.length > 0) return byId;
       if (customer?.full_name) {
         const byName = await base44.entities.CustomerOnboardingRequest.filter({ full_name: customer.full_name });
-        return byName.filter(r => r.status === "completed");
+        return byName.filter((r) => r.status === "completed");
       }
       return [];
     },
-    enabled: !!id && !!customer,
+    enabled: !!id && !!customer
   });
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function CustomerDetail({ currentUser }) {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Customer.update(id, data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["customer", id] }); },
+    onSuccess: () => {qc.invalidateQueries({ queryKey: ["customer", id] });}
   });
 
   const handleFieldBlur = (field, value) => {
@@ -88,36 +88,36 @@ export default function CustomerDetail({ currentUser }) {
 
   const toggleModel = (modelId) => {
     const current = customer.assigned_models || [];
-    const next = current.includes(modelId) ? current.filter(id => id !== modelId) : [...current, modelId];
+    const next = current.includes(modelId) ? current.filter((id) => id !== modelId) : [...current, modelId];
     updateMutation.mutate({ assigned_models: next });
   };
 
   const modelMap = {};
-  models.forEach(m => { modelMap[m.id] = m.name; });
+  models.forEach((m) => {modelMap[m.id] = m.name;});
   const userMap = {};
-  users.forEach(u => { userMap[u.email] = u.full_name || u.email; });
+  users.forEach((u) => {userMap[u.email] = u.full_name || u.email;});
 
-  const assignedModelNames = (customer?.assigned_models || []).map(mid => modelMap[mid]).filter(Boolean);
+  const assignedModelNames = (customer?.assigned_models || []).map((mid) => modelMap[mid]).filter(Boolean);
 
   if (!customer) return (
-    <div className="h-full flex items-center justify-center text-slate-500 text-sm">Loading...</div>
-  );
+    <div className="h-full flex items-center justify-center text-slate-500 text-sm">Loading...</div>);
+
 
   const totalSpent = payments.reduce((s, p) => s + (p.amount || 0), 0);
   const lastPayment = payments[0];
 
   const exportPayments = () => {
     const rows = [
-      ["Datum", "Částka (Kč)", "Modelka", "Typ služby", "Stav"],
-      ...payments.map(p => [
-        p.payment_date || p.created_date?.split("T")[0] || "",
-        p.amount || 0,
-        p.model_name || "",
-        p.service_type || "",
-        p.status || "completed",
-      ])
-    ];
-    const csv = rows.map(r => r.join(";")).join("\n");
+    ["Datum", "Částka (Kč)", "Modelka", "Typ služby", "Stav"],
+    ...payments.map((p) => [
+    p.payment_date || p.created_date?.split("T")[0] || "",
+    p.amount || 0,
+    p.model_name || "",
+    p.service_type || "",
+    p.status || "completed"]
+    )];
+
+    const csv = rows.map((r) => r.join(";")).join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -138,12 +138,12 @@ export default function CustomerDetail({ currentUser }) {
   };
 
   const removeInvoice = async (fileUrl) => {
-    const updated = (customer.invoices || []).filter(inv => inv.file_url !== fileUrl);
+    const updated = (customer.invoices || []).filter((inv) => inv.file_url !== fileUrl);
     await updateMutation.mutateAsync({ invoices: updated });
   };
 
   const downloadAllInvoices = () => {
-    (customer.invoices || []).forEach(inv => {
+    (customer.invoices || []).forEach((inv) => {
       const a = document.createElement("a");
       a.href = inv.file_url;
       a.download = inv.file_name || "faktura.pdf";
@@ -167,10 +167,10 @@ export default function CustomerDetail({ currentUser }) {
         <div className="flex-1 min-w-0">
           <h1 className="text-xl font-bold text-slate-100 truncate">{customer.full_name}</h1>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_STYLES[customer.status] || STATUS_STYLES.active}`}>
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full hidden ${STATUS_STYLES[customer.status] || STATUS_STYLES.active}`}>
               {customer.status || "active"}
             </span>
-            {customer.phone && <span className="text-xs text-slate-500">{customer.phone}</span>}
+            {customer.phone && <span className="text-xs text-slate-500 hidden">{customer.phone}</span>}
             {customer.email && <span className="text-xs text-slate-500">{customer.email}</span>}
           </div>
         </div>
@@ -183,8 +183,8 @@ export default function CustomerDetail({ currentUser }) {
         <StatCard
           label="Last payment"
           value={lastPayment ? `${(lastPayment.amount || 0).toLocaleString()} Kč` : "—"}
-          sub={lastPayment?.payment_date ? format(new Date(lastPayment.payment_date), "d. M. yyyy") : null}
-        />
+          sub={lastPayment?.payment_date ? format(new Date(lastPayment.payment_date), "d. M. yyyy") : null} />
+        
         <StatCard label="Pay day" value={customer.pay_day_of_month ? `${customer.pay_day_of_month}.` : "—"} />
       </div>
 
@@ -199,11 +199,11 @@ export default function CustomerDetail({ currentUser }) {
               <input
                 type="email"
                 defaultValue={customer.email || ""}
-                onBlur={e => handleFieldBlur("email", e.target.value)}
+                onBlur={(e) => handleFieldBlur("email", e.target.value)}
                 placeholder="Email"
 
-                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
-              />
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors" />
+              
             </div>
 
             {/* Phone with country code */}
@@ -212,23 +212,23 @@ export default function CustomerDetail({ currentUser }) {
               <div className="flex flex-1 items-center border-b border-white/8 focus-within:border-[#C9A227]/50 transition-colors">
                 <select
                   value={phoneCode}
-                  onChange={e => {
+                  onChange={(e) => {
                     setPhoneCode(e.target.value);
                     updateMutation.mutate({ phone: e.target.value + phoneLocal });
                   }}
-                  className="bg-transparent text-sm text-slate-400 outline-none py-1 pr-1 cursor-pointer"
-                >
+                  className="bg-transparent text-sm text-slate-400 outline-none py-1 pr-1 cursor-pointer">
+                  
                   <option value="+420">🇨🇿 +420</option>
                   <option value="+421">🇸🇰 +421</option>
                 </select>
                 <input
                   type="text"
                   value={phoneLocal}
-                  onChange={e => setPhoneLocal(e.target.value)}
-                  onBlur={e => updateMutation.mutate({ phone: phoneCode + e.target.value.replace(/\s/g, "") })}
+                  onChange={(e) => setPhoneLocal(e.target.value)}
+                  onBlur={(e) => updateMutation.mutate({ phone: phoneCode + e.target.value.replace(/\s/g, "") })}
                   placeholder="Phone number"
-                  className="flex-1 bg-transparent outline-none text-sm text-slate-300 placeholder-slate-600 py-1 pl-1"
-                />
+                  className="flex-1 bg-transparent outline-none text-sm text-slate-300 placeholder-slate-600 py-1 pl-1" />
+                
               </div>
             </div>
 
@@ -238,10 +238,10 @@ export default function CustomerDetail({ currentUser }) {
               <input
                 type="text"
                 defaultValue={customer.bank_name || ""}
-                onBlur={e => handleFieldBlur("bank_name", e.target.value)}
+                onBlur={(e) => handleFieldBlur("bank_name", e.target.value)}
                 placeholder="Bank name"
-                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
-              />
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors" />
+              
             </div>
 
             {/* Bank account number */}
@@ -250,16 +250,16 @@ export default function CustomerDetail({ currentUser }) {
               <input
                 type="text"
                 defaultValue={customer.bank_account_number || ""}
-                onBlur={e => handleFieldBlur("bank_account_number", e.target.value)}
+                onBlur={(e) => handleFieldBlur("bank_account_number", e.target.value)}
                 placeholder="Account number"
-                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors"
-              />
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors" />
+              
             </div>
 
             {/* Status */}
             <div className="flex items-center gap-3">
               <span className="w-4 h-4 flex-shrink-0" />
-              <Select value={customer.status || "active"} onValueChange={v => updateMutation.mutate({ status: v })}>
+              <Select value={customer.status || "active"} onValueChange={(v) => updateMutation.mutate({ status: v })}>
                 <SelectTrigger className="flex-1 h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-300 px-0">
                   <SelectValue />
                 </SelectTrigger>
@@ -277,21 +277,21 @@ export default function CustomerDetail({ currentUser }) {
               <span className="text-sm mt-1.5 flex-shrink-0">🎭</span>
               <div className="flex-1">
                 <div className="flex flex-wrap gap-1 mb-1">
-                  {(customer.assigned_models || []).map(mid => modelMap[mid] ? (
-                    <span key={mid} className="flex items-center gap-1 text-xs bg-[#C9A227]/10 border border-[#C9A227]/25 text-[#C9A227] rounded-full px-2 py-0.5">
+                  {(customer.assigned_models || []).map((mid) => modelMap[mid] ?
+                  <span key={mid} className="flex items-center gap-1 text-xs bg-[#C9A227]/10 border border-[#C9A227]/25 text-[#C9A227] rounded-full px-2 py-0.5">
                       {modelMap[mid]}
                       <button onClick={() => toggleModel(mid)}><X className="w-2.5 h-2.5" /></button>
-                    </span>
-                  ) : null)}
+                    </span> :
+                  null)}
                 </div>
                 <Select onValueChange={toggleModel} value="">
                   <SelectTrigger className="h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-500 px-0">
                     <SelectValue placeholder="+ Add model" />
                   </SelectTrigger>
                   <SelectContent>
-                    {models.filter(m => !(customer.assigned_models || []).includes(m.id)).map(m => (
-                      <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                    ))}
+                    {models.filter((m) => !(customer.assigned_models || []).includes(m.id)).map((m) =>
+                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -302,11 +302,11 @@ export default function CustomerDetail({ currentUser }) {
               <span className="w-4 h-4 flex-shrink-0" />
               <textarea
                 defaultValue={customer.notes || ""}
-                onBlur={e => handleFieldBlur("notes", e.target.value)}
+                onBlur={(e) => handleFieldBlur("notes", e.target.value)}
                 placeholder="Notes..."
                 rows={2}
-                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 resize-none transition-colors"
-              />
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 resize-none transition-colors" />
+              
             </div>
           </div>
         </div>
@@ -316,25 +316,25 @@ export default function CustomerDetail({ currentUser }) {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-slate-200">Payments & invoices</h3>
             <div className="flex gap-2">
-              {(customer.invoices || []).length > 0 && (
-                <button onClick={downloadAllInvoices} className="flex items-center gap-1 text-xs text-slate-400 hover:text-[#C9A227] bg-white/5 hover:bg-[#C9A227]/10 border border-white/8 hover:border-[#C9A227]/25 rounded-lg px-2.5 py-1 transition-all">
+              {(customer.invoices || []).length > 0 &&
+              <button onClick={downloadAllInvoices} className="flex items-center gap-1 text-xs text-slate-400 hover:text-[#C9A227] bg-white/5 hover:bg-[#C9A227]/10 border border-white/8 hover:border-[#C9A227]/25 rounded-lg px-2.5 py-1 transition-all">
                   <Download className="w-3 h-3" /> Invoices
                 </button>
-              )}
+              }
               <button onClick={exportPayments} className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20 rounded-lg px-2.5 py-1 transition-all">
                 <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_20_hrhhn2.png" alt="" className="w-3 h-3 object-contain" /> Export CSV
               </button>
             </div>
           </div>
 
-          {payments.length === 0 ? (
-            <p className="text-sm text-slate-600 text-center py-8">No payments yet</p>
-          ) : (
-            <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
-              {payments.map(p => {
-                const invoice = (customer.invoices || []).find(inv => inv.payment_id === p.id);
-                return (
-                  <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-white/4 transition-colors group">
+          {payments.length === 0 ?
+          <p className="text-sm text-slate-600 text-center py-8">No payments yet</p> :
+
+          <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
+              {payments.map((p) => {
+              const invoice = (customer.invoices || []).find((inv) => inv.payment_id === p.id);
+              return (
+                <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-white/4 transition-colors group">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
                         <CreditCard className="w-3.5 h-3.5 text-emerald-400" />
@@ -347,8 +347,8 @@ export default function CustomerDetail({ currentUser }) {
                       </div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0 ml-2">
-                      {invoice ? (
-                        <div className="flex items-center gap-1">
+                      {invoice ?
+                    <div className="flex items-center gap-1">
                           <a href={invoice.file_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-[#C9A227] hover:underline">
                             <FileText className="w-3.5 h-3.5" />
                             <span className="hidden sm:inline max-w-[70px] truncate">{invoice.file_name}</span>
@@ -356,71 +356,71 @@ export default function CustomerDetail({ currentUser }) {
                           <button onClick={() => removeInvoice(invoice.file_url)} className="text-slate-600 hover:text-red-400 transition-colors ml-0.5">
                             <X className="w-3 h-3" />
                           </button>
-                        </div>
-                      ) : (
-                        <>
-                          <input type="file" accept=".pdf" ref={fileInputRef} className="hidden" onChange={e => handleInvoiceUpload(e, p.id)} />
+                        </div> :
+
+                    <>
+                          <input type="file" accept=".pdf" ref={fileInputRef} className="hidden" onChange={(e) => handleInvoiceUpload(e, p.id)} />
                           <button
-                            onClick={() => { fileInputRef.current.click(); setUploadingFor(p.id); }}
-                            disabled={uploadingFor === p.id}
-                            className="flex items-center gap-1 text-xs text-slate-600 hover:text-[#C9A227] transition-colors opacity-0 group-hover:opacity-100"
-                          >
+                        onClick={() => {fileInputRef.current.click();setUploadingFor(p.id);}}
+                        disabled={uploadingFor === p.id}
+                        className="flex items-center gap-1 text-xs text-slate-600 hover:text-[#C9A227] transition-colors opacity-0 group-hover:opacity-100">
+                        
                             {uploadingFor === p.id ? <span>Uploading...</span> : <><Upload className="w-3.5 h-3.5" /><span className="hidden sm:inline">Invoice</span></>}
                           </button>
                         </>
-                      )}
+                    }
                     </div>
-                  </div>
-                );
-              })}
+                  </div>);
+
+            })}
             </div>
-          )}
+          }
         </div>
       </div>
 
       {/* Onboarding */}
-      {onboardingRequests.length > 0 && (
-        <div className="mt-4 bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
+      {onboardingRequests.length > 0 &&
+      <div className="mt-4 bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
           <h3 className="text-sm font-semibold text-slate-200 mb-3">Onboarding</h3>
 
           <div className="space-y-2">
-            {onboardingRequests.map(req => (
-              <div key={req.id} className="flex items-start gap-3 p-3 rounded-lg bg-white/3 border border-white/6">
+            {onboardingRequests.map((req) =>
+          <div key={req.id} className="flex items-start gap-3 p-3 rounded-lg bg-white/3 border border-white/6">
                 <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 text-sm">📋</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      req.status === "completed" ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25" :
-                      req.status === "expired" ? "bg-red-500/15 text-red-400 border border-red-500/25" :
-                      "bg-amber-500/15 text-amber-400 border border-amber-500/25"
-                    }`}>
+                req.status === "completed" ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25" :
+                req.status === "expired" ? "bg-red-500/15 text-red-400 border border-red-500/25" :
+                "bg-amber-500/15 text-amber-400 border border-amber-500/25"}`
+                }>
                       {req.status === "completed" ? "✅ Completed" : req.status === "expired" ? "⌛ Expired" : "⏳ Pending"}
                     </span>
-                    {req.assigned_model && modelMap[req.assigned_model] && (
-                      <span className="text-xs bg-[#C9A227]/10 text-[#C9A227] border border-[#C9A227]/20 rounded-full px-2 py-0.5">
+                    {req.assigned_model && modelMap[req.assigned_model] &&
+                <span className="text-xs bg-[#C9A227]/10 text-[#C9A227] border border-[#C9A227]/20 rounded-full px-2 py-0.5">
                         {modelMap[req.assigned_model]}
                       </span>
-                    )}
-                    {req.assigned_chatter && (
-                      <span className="text-xs text-slate-500">sent by: {userMap[req.assigned_chatter] || req.assigned_chatter}</span>
-                    )}
+                }
+                    {req.assigned_chatter &&
+                <span className="text-xs text-slate-500">sent by: {userMap[req.assigned_chatter] || req.assigned_chatter}</span>
+                }
                   </div>
                   <div className="mt-1.5 flex gap-3 text-xs text-slate-600 flex-wrap">
                     <span>Created: {req.created_date ? format(new Date(req.created_date), "d. M. yyyy HH:mm") : "—"}</span>
-                     {req.status === "completed" && req.updated_date && (
-                       <span className="text-emerald-500 font-medium">Filled: {format(new Date(req.updated_date), "d. M. yyyy HH:mm")}</span>
-                    )}
+                     {req.status === "completed" && req.updated_date &&
+                <span className="text-emerald-500 font-medium">Filled: {format(new Date(req.updated_date), "d. M. yyyy HH:mm")}</span>
+                }
                   </div>
                 </div>
               </div>
-            ))}
+          )}
           </div>
         </div>
-      )}
+      }
 
-      {payments.map(p => (
-        <input key={p.id} type="file" accept=".pdf" id={`file-input-${p.id}`} className="hidden" onChange={e => handleInvoiceUpload(e, p.id)} />
-      ))}
-    </div>
-  );
+      {payments.map((p) =>
+      <input key={p.id} type="file" accept=".pdf" id={`file-input-${p.id}`} className="hidden" onChange={(e) => handleInvoiceUpload(e, p.id)} />
+      )}
+    </div>);
+
 }
