@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,10 +10,10 @@ import { format } from "date-fns";
 import DatePicker from "@/components/ui-custom/DatePicker";
 
 const statusColors = {
-  completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  pending: "bg-amber-50 text-amber-700 border-amber-100",
-  failed: "bg-red-50 text-red-600 border-red-100",
-  refunded: "bg-gray-50 text-gray-500 border-gray-200",
+  completed: "bg-emerald-950/50 text-emerald-400 border-emerald-700/30",
+  pending: "bg-amber-950/50 text-amber-400 border-amber-700/30",
+  failed: "bg-red-950/50 text-red-400 border-red-700/30",
+  refunded: "bg-slate-800 text-slate-400 border-white/10",
 };
 
 export default function AdminPayments() {
@@ -70,7 +69,7 @@ export default function AdminPayments() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Opravdu smazat tuto platbu?")) return;
+    if (!window.confirm("Delete this payment?")) return;
     await base44.entities.Payment.delete(id);
     setPayments(prev => prev.filter(p => p.id !== id));
   };
@@ -90,62 +89,60 @@ export default function AdminPayments() {
     <div>
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="relative flex-1 min-w-[180px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Hledat platby..." className="pl-10" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search payments..." className="pl-10 bg-[#1e1e1e] border-white/10 text-slate-200 placeholder:text-slate-600" />
         </div>
-        <DatePicker
-          value={dateFilter}
-          onChange={setDateFilter}
-          placeholder="Filtr dle data"
-        />
-        <span className="text-sm text-gray-500">{filtered.length} plateb · <strong>{total.toLocaleString()} Kč</strong></span>
+        <DatePicker value={dateFilter} onChange={setDateFilter} placeholder="Filter by date" />
+        <span className="text-sm text-slate-500">
+          {filtered.length} payments · <strong className="text-slate-200">{total.toLocaleString()} CZK</strong>
+        </span>
       </div>
 
       {loading ? (
-        <div className="text-sm text-gray-400 py-8 text-center">Načítám...</div>
+        <div className="text-sm text-slate-500 py-8 text-center">Loading...</div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3">Zákazník</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">Modelka</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">Datum</th>
-                  <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3">Stav</th>
-                  <th className="text-right text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3">Částka</th>
+                <tr className="border-b border-white/10 bg-[#252525]">
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Customer</th>
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3 hidden md:table-cell">Model</th>
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3 hidden md:table-cell">Date</th>
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Status</th>
+                  <th className="text-right text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Amount</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/5">
                 {filtered.map(p => (
-                  <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
+                  <tr key={p.id} className="hover:bg-white/5 transition-colors">
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                           {p.customer_name?.[0]?.toUpperCase() || "?"}
                         </div>
-                        <span className="text-sm font-medium text-gray-800">{p.customer_name || "—"}</span>
+                        <span className="text-sm font-medium text-slate-200">{p.customer_name || "—"}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-400 hidden md:table-cell">{p.model_name || "—"}</td>
-                    <td className="px-4 py-3 text-sm text-gray-400 hidden md:table-cell">
+                    <td className="px-4 py-3 text-sm text-slate-500 hidden md:table-cell">{p.model_name || "—"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500 hidden md:table-cell">
                       {p.payment_date ? format(new Date(p.payment_date), "d.M.yyyy") : "—"}
                     </td>
                     <td className="px-4 py-3">
-                      <Badge variant="outline" className={statusColors[p.status] || statusColors.completed}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-semibold border ${statusColors[p.status] || statusColors.completed}`}>
                         {p.status || "completed"}
-                      </Badge>
+                      </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
-                      {(p.amount || 0).toLocaleString()} Kč
+                    <td className="px-4 py-3 text-right text-sm font-semibold text-slate-200">
+                      {(p.amount || 0).toLocaleString()} CZK
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1 justify-end">
-                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleEdit(p)}>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 hover:bg-white/10" onClick={() => handleEdit(p)}>
                           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleDelete(p.id)}>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 hover:bg-white/10" onClick={() => handleDelete(p.id)}>
                           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
                         </Button>
                       </div>
@@ -160,75 +157,69 @@ export default function AdminPayments() {
 
       {/* Edit dialog */}
       <Dialog open={!!editing} onOpenChange={() => setEditing(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Upravit platbu</DialogTitle></DialogHeader>
+        <DialogContent className="max-w-md bg-[#1e1e1e] border-white/10">
+          <DialogHeader><DialogTitle className="text-slate-100">Edit Payment</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="relative">
-              <Label>Zákazník</Label>
+              <Label className="text-slate-400">Customer</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   value={customerSearch}
                   onChange={e => { setCustomerSearch(e.target.value); setShowCustomerDropdown(true); }}
                   onFocus={() => setShowCustomerDropdown(true)}
-                  placeholder="Vyhledat zákazníka..."
+                  placeholder="Search customer..."
                   className="pl-10"
                 />
               </div>
               {showCustomerDropdown && (
                 <div className="absolute z-50 w-full mt-1 bg-[#252525] border border-white/10 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                   {filteredCustomers.slice(0, 50).map(c => (
-                    <button
-                      key={c.id}
-                      onClick={() => selectCustomer(c)}
-                      className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm flex items-center gap-3"
-                    >
+                    <button key={c.id} onClick={() => selectCustomer(c)}
+                      className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm flex items-center gap-3">
                       <div className="w-7 h-7 rounded-full bg-amber-900/30 flex items-center justify-center text-xs font-semibold text-[#C9A227]">
                         {c.full_name?.[0]?.toUpperCase()}
                       </div>
                       <div>
                         <p className="font-medium text-slate-200">{c.full_name}</p>
-                        <p className="text-xs text-slate-500">{c.email || "Bez emailu"}</p>
+                        <p className="text-xs text-slate-500">{c.email || "No email"}</p>
                       </div>
                     </button>
                   ))}
                   {filteredCustomers.length === 0 && (
-                    <p className="px-4 py-3 text-sm text-slate-500">Žádný zákazník nenalezen</p>
+                    <p className="px-4 py-3 text-sm text-slate-500">No customer found</p>
                   )}
                 </div>
               )}
             </div>
             <div>
-              <Label>Částka (Kč)</Label>
+              <Label className="text-slate-400">Amount (CZK)</Label>
               <Input type="number" value={editForm.amount || ""} onChange={e => setEditForm(p => ({ ...p, amount: parseFloat(e.target.value) || 0 }))} />
             </div>
             <div>
-              <Label>Datum</Label>
-              <DatePicker
-                value={editForm.payment_date || ""}
-                onChange={v => setEditForm(p => ({ ...p, payment_date: v }))}
-              />
+              <Label className="text-slate-400">Date</Label>
+              <DatePicker value={editForm.payment_date || ""} onChange={v => setEditForm(p => ({ ...p, payment_date: v }))} />
             </div>
             <div>
-              <Label>Stav</Label>
+              <Label className="text-slate-400">Status</Label>
               <Select value={editForm.status || "completed"} onValueChange={v => setEditForm(p => ({ ...p, status: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="completed">Dokončeno</SelectItem>
-                  <SelectItem value="pending">Čeká</SelectItem>
-                  <SelectItem value="failed">Selhalo</SelectItem>
-                  <SelectItem value="refunded">Vráceno</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="failed">Failed</SelectItem>
+                  <SelectItem value="refunded">Refunded</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label>Poznámka</Label>
+              <Label className="text-slate-400">Note</Label>
               <Input value={editForm.note || ""} onChange={e => setEditForm(p => ({ ...p, note: e.target.value }))} />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setEditing(null)}>Zrušit</Button>
+              <Button variant="outline" onClick={() => setEditing(null)} className="border-white/10 text-slate-400">Cancel</Button>
               <Button onClick={handleSave} disabled={saving} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white">
-                {saving ? "Ukládám..." : "Uložit"}
+                {saving ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>
