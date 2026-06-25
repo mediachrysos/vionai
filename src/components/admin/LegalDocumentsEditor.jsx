@@ -7,7 +7,7 @@ import { FileText, Save, CheckCircle, Plus, X, Building2, Bot } from "lucide-rea
 
 const DOC_KEYS = [
   { key: "gdpr", label: "GDPR" },
-  { key: "terms", label: "Obch. podmínky" },
+  { key: "terms", label: "Terms" },
 ];
 
 const COMPANY_ENUM = ["Chrysos Media", "Anza Media"];
@@ -31,11 +31,9 @@ export default function LegalDocumentsEditor() {
       base44.entities.LegalDocument.list(),
       base44.entities.Model.list(),
     ]).then(([docList, modelList]) => {
-      // Docs without company default to Chrysos Media (backwards compat)
       const normalizedDocs = docList.map(d => ({ ...d, company: d.company || "Chrysos Media" }));
       setDocs(normalizedDocs);
       setModels(modelList);
-      // Collect all unique companies from docs + models + defaults
       const fromData = [
         ...docList.map(d => d.company),
         ...modelList.map(m => m.company),
@@ -45,7 +43,6 @@ export default function LegalDocumentsEditor() {
     });
   }, []);
 
-  // Sync form when company/docKey changes
   useEffect(() => {
     const doc = docs.find(d => d.company === activeCompany && d.key === activeDocKey);
     setForm({ title: doc?.title || "", content: doc?.content || "" });
@@ -88,15 +85,14 @@ export default function LegalDocumentsEditor() {
 
   const companyModels = models.filter(m => m.company === activeCompany);
   const unassignedModels = models.filter(m => m.company !== activeCompany);
-  const currentDoc = docs.find(d => d.company === activeCompany && d.key === activeDocKey);
 
   return (
     <div className="flex gap-6 min-h-[500px]">
-      {/* Left panel — companies + models */}
-      <div className="w-64 flex-shrink-0 space-y-3">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Firmy</span>
-          <button onClick={() => setAddingCompany(v => !v)} className="text-gray-400 hover:text-gray-600 transition-colors">
+      {/* Left panel */}
+      <div className="w-60 flex-shrink-0 space-y-2">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Companies</span>
+          <button onClick={() => setAddingCompany(v => !v)} className="text-slate-500 hover:text-slate-300 transition-colors">
             <Plus className="w-4 h-4" />
           </button>
         </div>
@@ -107,14 +103,14 @@ export default function LegalDocumentsEditor() {
               value={newCompanyName}
               onChange={e => setNewCompanyName(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleAddCompany()}
-              placeholder="Název firmy..."
+              placeholder="Company name..."
               className="h-8 text-xs flex-1"
               autoFocus
             />
             <Button onClick={handleAddCompany} disabled={!newCompanyName.trim()} className="h-8 px-2 bg-[#C9A227] hover:bg-[#A8841C] text-white">
               <CheckCircle className="w-3.5 h-3.5" />
             </Button>
-            <button onClick={() => { setAddingCompany(false); setNewCompanyName(""); }} className="text-gray-400 hover:text-gray-600">
+            <button onClick={() => { setAddingCompany(false); setNewCompanyName(""); }} className="text-slate-500 hover:text-slate-300">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -124,41 +120,43 @@ export default function LegalDocumentsEditor() {
           <button
             key={company}
             onClick={() => setActiveCompany(company)}
-            className={`w-full text-left px-3 py-2.5 rounded-lg border text-sm font-medium transition-all ${
+            className={`w-full text-left px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
               activeCompany === company
-                ? "bg-amber-50 border-amber-300 text-amber-800"
-                : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                ? "bg-amber-950/40 border-amber-700/50 text-amber-300"
+                : "bg-[#252525] border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"
             }`}
           >
             <div className="flex items-center gap-2">
               <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
               <span className="truncate">{company}</span>
             </div>
-            <div className="text-[10px] text-gray-400 mt-0.5 pl-5">
-              {models.filter(m => m.company === company).length} modelek
+            <div className="text-[10px] text-slate-600 mt-0.5 pl-5">
+              {models.filter(m => m.company === company).length} models
             </div>
           </button>
         ))}
 
         {/* Models for active company */}
-        <div className="pt-2 border-t border-gray-100">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Modelky — {activeCompany}</span>
+        <div className="pt-3 border-t border-white/10">
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">
+            Models — {activeCompany}
+          </span>
 
           {companyModels.length === 0 && (
-            <p className="text-xs text-gray-400 italic px-1">Žádné modelky přiřazeny</p>
+            <p className="text-xs text-slate-600 italic px-1">No models assigned</p>
           )}
           {companyModels.map(m => (
-            <div key={m.id} className="flex items-center gap-2 py-1 px-1 rounded hover:bg-gray-50 group">
-              <div className="w-6 h-6 rounded overflow-hidden bg-amber-50 flex-shrink-0 flex items-center justify-center border border-amber-100">
+            <div key={m.id} className="flex items-center gap-2 py-1.5 px-1 rounded-lg hover:bg-white/5 group transition-colors">
+              <div className="w-6 h-6 rounded-lg overflow-hidden bg-amber-950/40 flex-shrink-0 flex items-center justify-center border border-amber-700/30">
                 {m.profile_photo
                   ? <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" />
-                  : <Bot className="w-3 h-3 text-amber-400" />}
+                  : <Bot className="w-3 h-3 text-amber-500" />}
               </div>
-              <span className="text-xs text-gray-700 flex-1 truncate">{m.name}</span>
+              <span className="text-xs text-slate-300 flex-1 truncate">{m.name}</span>
               <button
                 onClick={() => handleToggleModel(m)}
                 disabled={savingModel === m.id}
-                className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all"
+                className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -166,22 +164,22 @@ export default function LegalDocumentsEditor() {
           ))}
 
           {unassignedModels.length > 0 && (
-            <div className="mt-2 pt-2 border-t border-dashed border-gray-200">
-              <span className="text-[10px] text-gray-400 block mb-1">Přidat modelku:</span>
+            <div className="mt-2 pt-2 border-t border-dashed border-white/10">
+              <span className="text-[10px] text-slate-600 block mb-1">Add model:</span>
               {unassignedModels.map(m => (
                 <button
                   key={m.id}
                   onClick={() => handleToggleModel(m)}
                   disabled={savingModel === m.id}
-                  className="flex items-center gap-2 py-1 px-1 rounded hover:bg-amber-50 w-full text-left transition-colors group"
+                  className="flex items-center gap-2 py-1.5 px-1 rounded-lg hover:bg-amber-950/20 w-full text-left transition-colors group"
                 >
-                  <div className="w-6 h-6 rounded overflow-hidden bg-gray-100 flex-shrink-0 flex items-center justify-center border border-gray-200">
+                  <div className="w-6 h-6 rounded-lg overflow-hidden bg-[#252525] flex-shrink-0 flex items-center justify-center border border-white/10">
                     {m.profile_photo
                       ? <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" />
-                      : <Bot className="w-3 h-3 text-gray-400" />}
+                      : <Bot className="w-3 h-3 text-slate-500" />}
                   </div>
-                  <span className="text-xs text-gray-400 group-hover:text-amber-700 flex-1 truncate">{m.name}</span>
-                  <Plus className="w-3 h-3 text-gray-300 group-hover:text-amber-500 flex-shrink-0" />
+                  <span className="text-xs text-slate-500 group-hover:text-amber-400 flex-1 truncate">{m.name}</span>
+                  <Plus className="w-3 h-3 text-slate-600 group-hover:text-amber-500 flex-shrink-0" />
                 </button>
               ))}
             </div>
@@ -195,19 +193,19 @@ export default function LegalDocumentsEditor() {
         <div className="flex gap-2">
           {DOC_KEYS.map(t => (
             <button key={t.key} onClick={() => setActiveDocKey(t.key)}
-              className={`text-xs font-semibold px-4 py-2 rounded-lg border transition-all ${
+              className={`text-xs font-semibold px-4 py-2 rounded-xl border transition-all flex items-center gap-1.5 ${
                 activeDocKey === t.key
-                  ? "bg-slate-100 border-slate-300 text-slate-700"
-                  : "bg-white border-gray-200 text-gray-400 hover:border-gray-300"
+                  ? "bg-[#252525] border-white/20 text-slate-200"
+                  : "bg-transparent border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-300"
               }`}>
-              <FileText className="w-3.5 h-3.5 inline mr-1.5" />
+              <FileText className="w-3.5 h-3.5" />
               {t.label}
             </button>
           ))}
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-500 block mb-1">Název dokumentu</label>
+          <label className="text-xs font-medium text-slate-500 block mb-1">Document title</label>
           <Input
             value={form.title}
             onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
@@ -216,16 +214,16 @@ export default function LegalDocumentsEditor() {
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-500 block mb-1">
-            Obsah dokumentu{" "}
-            <span className="text-gray-400 font-normal">(podporuje Markdown: **tučně**, # Nadpis, - odrážka)</span>
+          <label className="text-xs font-medium text-slate-500 block mb-1">
+            Document content{" "}
+            <span className="text-slate-600 font-normal">(Markdown: **bold**, # Heading, - bullet)</span>
           </label>
           <Textarea
             value={form.content}
             onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
             rows={18}
             className="text-xs font-mono resize-y leading-relaxed"
-            placeholder="Zde vložte text dokumentu ve formátu Markdown..."
+            placeholder="Paste document content in Markdown format..."
           />
         </div>
         <div className="flex justify-end">
@@ -238,9 +236,9 @@ export default function LegalDocumentsEditor() {
                 : "bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white"
             }`}>
             {saved ? (
-              <><CheckCircle className="w-4 h-4 mr-1.5" /> Uloženo!</>
-            ) : saving ? "Ukládám..." : (
-              <><Save className="w-4 h-4 mr-1.5" /> Uložit dokument</>
+              <><CheckCircle className="w-4 h-4 mr-1.5" /> Saved!</>
+            ) : saving ? "Saving..." : (
+              <><Save className="w-4 h-4 mr-1.5" /> Save document</>
             )}
           </Button>
         </div>
