@@ -618,7 +618,7 @@ export default function Customers({ currentUser }) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.02 }}
-                        className={`border-b transition-colors cursor-pointer ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/10 border-amber-800/30 hover:from-amber-900/30" : "border-slate-700/30 hover:bg-[#2a2f3d]"}`}
+                        className={`border-b transition-all cursor-pointer group ${c.pay_day_of_month === todayDay ? "bg-gradient-to-r from-amber-900/20 to-yellow-900/10 border-amber-800/30 hover:from-amber-900/30" : "border-slate-700/30 hover:border-[#C9A227]/40 hover:shadow-[inset_3px_0_0_0_#C9A227]"}`}
                         onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}>
                     
                       <td className="px-5 py-3.5">
