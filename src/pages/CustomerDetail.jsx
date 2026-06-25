@@ -167,10 +167,10 @@ export default function CustomerDetail({ currentUser }) {
         <div className="flex-1 min-w-0">
           <h1 className="text-xl font-bold text-slate-100 truncate">{customer.full_name}</h1>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full hidden ${STATUS_STYLES[customer.status] || STATUS_STYLES.active}`}>
-              {customer.status || "active"}
-            </span>
-            {customer.phone && <span className="text-xs text-slate-500 hidden">{customer.phone}</span>}
+            
+
+            
+            
             {customer.email && <span className="text-xs text-slate-500">{customer.email}</span>}
           </div>
         </div>
