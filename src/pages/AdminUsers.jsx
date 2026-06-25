@@ -160,7 +160,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
 
       <Section
         label="Users"
-        icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png"
         badge={pending.length > 0 ? pending.length : null}
         open={openSections.users}
         onToggle={() => toggle("users")}>
@@ -187,15 +186,15 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         }
       </Section>
 
-      <Section label="Payments" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" open={openSections.payments} onToggle={() => toggle("payments")}>
+      <Section label="Payments" open={openSections.payments} onToggle={() => toggle("payments")}>
         <AdminPayments currentUser={currentUser} />
       </Section>
 
-      <Section label="Models" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266697/Chrysos_icon_10_cpk2ha.png" open={openSections.models} onToggle={() => toggle("models")}>
+      <Section label="Models" open={openSections.models} onToggle={() => toggle("models")}>
         <AddModelInline models={models} setModels={setModels} />
       </Section>
 
-      <Section label="Add Customer" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_26_ybydei.png" open={openSections.customers} onToggle={() => toggle("customers")}>
+      <Section label="Add Customer" open={openSections.customers} onToggle={() => toggle("customers")}>
         <AddCustomerInline users={users} onGenerateLink={() => setShowOnboardingModal(true)} />
         <OnboardingLinksList refreshTrigger={onboardingRefresh} models={models} />
       </Section>
@@ -207,19 +206,19 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         users={users}
         onLinkCreated={() => setOnboardingRefresh((p) => p + 1)} />
 
-      <Section label="Bank Accounts" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_9_z1rvej.png" open={openSections.accounts} onToggle={() => toggle("accounts")}>
+      <Section label="Bank Accounts" open={openSections.accounts} onToggle={() => toggle("accounts")}>
         <BankAccountsInline accounts={accounts} setAccounts={setAccounts} />
       </Section>
 
-      <Section label="Monthly Goal" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png" open={openSections.goal} onToggle={() => toggle("goal")}>
+      <Section label="Monthly Goal" open={openSections.goal} onToggle={() => toggle("goal")}>
         <GoalSettingsInline />
       </Section>
 
-      <Section label="Legal Documents (GDPR & Terms)" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774304766/Chrysos_icon_27_fagh7p.png" open={openSections.legal} onToggle={() => toggle("legal")}>
+      <Section label="Legal Documents (GDPR & Terms)" open={openSections.legal} onToggle={() => toggle("legal")}>
         <LegalDocumentsEditor />
       </Section>
 
-      <Section label="Invoice Settings" icon="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_2_jqior6.png" open={openSections.invoices} onToggle={() => toggle("invoices")}>
+      <Section label="Invoice Settings" open={openSections.invoices} onToggle={() => toggle("invoices")}>
         <InvoiceSettingsInline />
       </Section>
 
@@ -227,16 +226,13 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
     </div>);
 }
 
-function Section({ label, icon, badge, open, onToggle, children }) {
+function Section({ label, badge, open, onToggle, children }) {
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors group">
-        <div className="flex items-center gap-3 text-sm font-semibold text-slate-200">
-          <div className="w-8 h-8 rounded-xl bg-[#252525] border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:border-[#C9A227]/30 transition-colors">
-            <img src={icon} alt="" className="w-4 h-4 object-contain" />
-          </div>
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors">
+        <div className="flex items-center gap-2 text-sm font-semibold text-slate-200">
           {label}
           {badge &&
           <span className="bg-amber-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center ml-1">{badge}</span>
