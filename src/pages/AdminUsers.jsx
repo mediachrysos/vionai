@@ -372,14 +372,23 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   };
 
   return (
-    <div className="flex flex-col gap-0 bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden">
-      <div className="flex items-center gap-3 flex-wrap px-4 py-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0">
+    <div className="flex flex-col bg-[#1e1e1e] rounded-xl border border-white/10 overflow-hidden hover:border-white/20 transition-colors">
+      {/* Top row: avatar + info + status + actions */}
+      <div className="flex items-center gap-3 px-4 py-3.5">
+        {/* Avatar */}
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0 shadow-sm">
           <span className="text-sm font-bold text-white">{(user.full_name || user.email || "?")[0].toUpperCase()}</span>
         </div>
+
+        {/* Name + email + nickname */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-200">{user.full_name || "—"}</p>
-          <p className="text-xs text-slate-500">{user.email}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-semibold text-slate-100">{user.full_name || "—"}</p>
+            {nickname && !editingNickname && (
+              <span className="text-xs text-amber-500/80 font-medium">"{nickname}"</span>
+            )}
+          </div>
+          <p className="text-xs text-slate-500 truncate">{user.email}</p>
           {editingNickname ? (
             <div className="flex items-center gap-1 mt-1">
               <input
@@ -400,119 +409,122 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
                 autoFocus
                 placeholder="Nickname..."
               />
-              <button
-                onClick={async () => {
-                  setSavingNickname(true);
-                  await onUpdate(user.id, { nickname: nickname.trim() });
-                  setSavingNickname(false);
-                  setEditingNickname(false);
-                }}
+              <button onClick={async () => { setSavingNickname(true); await onUpdate(user.id, { nickname: nickname.trim() }); setSavingNickname(false); setEditingNickname(false); }}
                 className="text-[10px] bg-amber-900/50 text-amber-300 px-1.5 py-0.5 rounded hover:bg-amber-900/70"
               >{savingNickname ? "..." : "✓"}</button>
               <button onClick={() => { setNickname(user.nickname || ""); setEditingNickname(false); }} className="text-[10px] text-slate-500 hover:text-slate-300">✕</button>
             </div>
           ) : (
-            <button onClick={() => setEditingNickname(true)} className="text-[10px] text-slate-500 hover:text-amber-400 mt-0.5 flex items-center gap-1 transition-colors">
-              {nickname ? <><span className="font-medium text-amber-600">"{nickname}"</span> <span className="opacity-60">✎</span></> : <span className="opacity-60 hover:opacity-100">+ nickname</span>}
+            <button onClick={() => setEditingNickname(true)} className="text-[10px] text-slate-600 hover:text-amber-400 mt-0.5 transition-colors">
+              {nickname ? <span className="opacity-50">✎ edit nickname</span> : <span className="opacity-40 hover:opacity-80">+ nickname</span>}
             </button>
           )}
         </div>
-        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusCfg.color}`}>
+
+        {/* Status badge */}
+        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${statusCfg.color}`}>
           <StatusIcon className="w-3 h-3" />
           {statusCfg.label}
         </span>
-        {/* Multi-role badges */}
-        <div className="flex flex-wrap gap-1">
-          {ALL_ROLES.map(({ value, label }) => {
-            const active = userRoles.includes(value);
+
+        {/* Actions */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {status !== "approved" && (
+            <button onClick={() => onUpdate(user.id, { account_status: "approved" })}
+              className="h-7 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">
+              Approve
+            </button>
+          )}
+          {!isAdmin && (
+            <button onClick={() => setShowPerms(v => !v)}
+              className={`h-7 px-3 text-xs font-semibold rounded-lg border transition-colors flex items-center gap-1 ${showPerms ? "bg-violet-950/50 border-violet-700/40 text-violet-300" : "border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"}`}>
+              {showPerms ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+              Perms
+            </button>
+          )}
+          <button onClick={() => onDelete(user.id, user.full_name || user.email)}
+            className="h-7 px-3 text-xs font-semibold rounded-lg border border-red-900/40 text-red-400 hover:bg-red-950/30 transition-colors">
+            Delete
+          </button>
+        </div>
+      </div>
+
+      {/* Role badges row */}
+      <div className="flex items-center gap-1.5 flex-wrap px-4 pb-3 -mt-1">
+        {ALL_ROLES.map(({ value, label }) => {
+          const active = userRoles.includes(value);
+          return (
+            <button key={value} onClick={() => toggleRole(value)}
+              className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-all ${
+                active
+                  ? "bg-violet-950/50 text-violet-300 border-violet-700/40"
+                  : "bg-[#252525] text-slate-500 border-white/8 hover:border-white/20 hover:text-slate-300"
+              }`}>
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
+      {showPerms && !isAdmin && (
+        <div className="px-4 py-3 border-t border-white/10 bg-[#252525]">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-1.5">
+              <Lock className="w-3 h-3 text-violet-400" />
+              <span className="text-xs font-semibold text-slate-400">Section access</span>
+              <span className="text-[10px] text-slate-600">(empty = default by role)</span>
+            </div>
+            {allowedPages.length > 0 && (
+              <button onClick={() => { setAllowedPages([]); onUpdate(user.id, { allowed_pages: [] }); }}
+                className="text-[10px] text-slate-600 hover:text-red-400 transition-colors">
+                Reset
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {PAGE_OPTIONS.map(({ page, label }) => {
+              const enabled = allowedPages.includes(page);
+              return (
+                <button key={page} onClick={() => togglePage(page)}
+                  className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
+                    enabled
+                      ? "bg-violet-950/50 text-violet-300 border-violet-700/40"
+                      : "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"
+                  }`}>
+                  {enabled && <span className="mr-1 text-violet-400">✓</span>}{label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {models.filter(m => m.status === "active").length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mr-1">Models</span>
+          {models.filter(m => m.status === "active").map(m => {
+            const assigned = assignedIds.includes(m.id);
             return (
-              <button
-                key={value}
-                onClick={() => toggleRole(value)}
-                className={`text-xs px-2 py-1 rounded-full border font-medium transition-all ${
-                  active
-                    ? "bg-violet-950/50 text-violet-300 border-violet-700/40"
-                    : "bg-slate-800 text-slate-500 border-white/10 hover:border-slate-600 hover:text-slate-300"
-                }`}
-              >
-                {label}
+              <button key={m.id} onClick={() => toggleModel(m.id)}
+                className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
+                  assigned
+                    ? "bg-amber-950/50 text-amber-300 border-amber-700/30"
+                    : "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"
+                }`}>
+                {assigned && <span className="mr-1 text-amber-400">✓</span>}{m.name}
               </button>
             );
           })}
         </div>
-        <div className="flex gap-2">
-          {status !== "approved" &&
-          <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 rounded-lg"
-          onClick={() => onUpdate(user.id, { account_status: "approved" })}>Approve</Button>
-          }
-          {!isAdmin &&
-          <Button size="sm" variant="outline"
-          onClick={() => setShowPerms((v) => !v)}
-          className={`h-8 text-xs px-3 rounded-lg ${showPerms ? "bg-violet-950/50 border-violet-700/40 text-violet-300" : "border-white/10 text-slate-500 hover:border-slate-600"}`}>
-              {showPerms ? <Unlock className="w-3 h-3 mr-1" /> : <Lock className="w-3 h-3 mr-1" />}
-              Permissions
-            </Button>
-          }
-          <Button size="sm" variant="outline" className="h-8 text-xs text-red-400 border-red-900/50 hover:bg-red-950/30 px-3 rounded-lg"
-          onClick={() => onDelete(user.id, user.full_name || user.email)}>
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3 h-3 mr-1 object-contain" /> Delete
-          </Button>
-        </div>
-      </div>
+      )}
 
-      {showPerms && !isAdmin &&
-      <div className="px-4 py-3 border-t border-white/10 bg-[#252525]">
-          <div className="flex items-center gap-2 mb-3">
-            <Lock className="w-3.5 h-3.5 text-violet-400" />
-            <span className="text-xs font-semibold text-slate-400">Section access</span>
-            <span className="text-[10px] text-slate-600 ml-1">(empty = default by role)</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {PAGE_OPTIONS.map(({ page, label }) => {
-            const enabled = allowedPages.includes(page);
-            return (
-              <button key={page} onClick={() => togglePage(page)}
-              className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all ${
-              enabled ?
-              "bg-violet-950/50 text-violet-300 border-violet-700/40" :
-              "bg-slate-800 text-slate-500 border-white/10 hover:border-slate-600 hover:text-slate-300"}`
-              }>
-                  {enabled ? "✓ " : ""}{label}
-                </button>);
-            })}
-          </div>
-          {allowedPages.length > 0 &&
-        <button onClick={() => { setAllowedPages([]); onUpdate(user.id, { allowed_pages: [] }); }}
-        className="mt-2 text-[11px] text-slate-600 hover:text-red-400 transition-colors underline">
-              Reset to default
-            </button>
-        }
-        </div>
-      }
-
-      {models.filter((m) => m.status === "active").length > 0 &&
-      <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
-          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Models:</span>
-          {models.filter((m) => m.status === "active").map((m) => {
-          const assigned = assignedIds.includes(m.id);
-          return (
-            <button key={m.id} onClick={() => toggleModel(m.id)}
-            className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
-            assigned ? "bg-amber-950/50 text-amber-300 border-amber-700/30" : "bg-slate-800 text-slate-500 border-white/10 hover:bg-slate-700"}`
-            }>
-                {assigned ? "✓ " : ""}{m.name}
-              </button>);
-          })}
-        </div>
-      }
-
-      {isDesigner && dashboards.length > 0 &&
-        <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-violet-950/20">
-          <span className="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">Social Dashboard:</span>
+      {isDesigner && dashboards.length > 0 && (
+        <div className="flex items-center gap-2.5 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Dashboard</span>
           <select
             value={assignedDashboard?.id || "none"}
             onChange={e => handleDashboardAssign(e.target.value)}
-            className="text-xs h-7 border border-white/10 rounded-lg px-2 bg-slate-800 text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500"
+            className="text-xs h-7 border border-white/10 rounded-lg px-2 bg-[#1e1e1e] text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500"
           >
             <option value="none">— not assigned —</option>
             {dashboards.map(db => (
@@ -522,12 +534,12 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
             ))}
           </select>
           {assignedDashboard && (
-            <span className="text-[10px] text-violet-300 bg-violet-950/50 border border-violet-700/30 px-2 py-0.5 rounded-full">
+            <span className="text-xs text-violet-300 bg-violet-950/50 border border-violet-700/30 px-2.5 py-0.5 rounded-lg font-medium">
               ✓ {assignedDashboard.name}
             </span>
           )}
         </div>
-      }
+      )}
     </div>);
 }
 
