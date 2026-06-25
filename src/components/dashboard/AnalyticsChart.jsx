@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line
 } from "recharts";
-import { ChevronDown, Calendar, TrendingDown } from "lucide-react";
+import { ChevronDown, TrendingDown } from "lucide-react";
 
 const PRESETS = [
   { label: "Last 7 days", days: 7 },
@@ -130,7 +130,6 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
   const [selectedDays, setSelectedDays] = useState(30);
   const [showPresetMenu, setShowPresetMenu] = useState(false);
   const [showModelMenu, setShowModelMenu] = useState(false);
-  const [showDateMenu, setShowDateMenu] = useState(false);
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
   const [useCustom, setUseCustom] = useState(false);
@@ -199,14 +198,14 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         {/* Period preset */}
         <div className="relative">
           <button
-            onClick={() => { setShowPresetMenu(v => !v); setShowDateMenu(false); setShowModelMenu(false); }}
+            onClick={() => { setShowPresetMenu(v => !v); setShowModelMenu(false); }}
             className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
           >
             {activePresetLabel}
             <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${showPresetMenu ? "rotate-180" : ""}`} />
           </button>
           {showPresetMenu && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[190px]">
+            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[220px]">
               {PRESETS.map(p => (
                 <button
                   key={p.days}
@@ -218,36 +217,22 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                   {p.label}
                 </button>
               ))}
-            </div>
-          )}
-        </div>
-
-        {/* Date range picker */}
-        <div className="relative">
-          <button
-            onClick={() => { setShowDateMenu(v => !v); setShowPresetMenu(false); setShowModelMenu(false); }}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
-          >
-            <Calendar className="w-3.5 h-3.5" />
-            {dateRangeLabel}
-            <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${showDateMenu ? "rotate-180" : ""}`} />
-          </button>
-          {showDateMenu && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-3 min-w-[240px]">
-              <p className="text-xs text-slate-400 font-medium mb-2">Custom date</p>
-              <div className="flex gap-2 mb-2">
-                <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
-                  className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
-                <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
-                  className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
-              </div>
-              <button
-                onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowDateMenu(false); } }}
-                disabled={!customFrom || !customTo}
-                className="w-full text-xs font-medium bg-[#C9A227] text-white rounded-lg py-1.5 hover:bg-[#A8841C] disabled:opacity-40 transition-colors"
+              <div className="border-t border-white/10 mt-1 pt-2 px-1">
+                <p className="text-[10px] text-slate-500 font-medium mb-1.5 px-2">Custom range</p>
+                <div className="flex gap-1.5 mb-1.5">
+                  <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
+                    className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
+                  <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
+                    className="flex-1 text-xs border border-slate-600 bg-slate-700/50 text-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#C9A227]" />
+                </div>
+                <button
+                  onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowPresetMenu(false); } }}
+                  disabled={!customFrom || !customTo}
+                  className="w-full text-xs font-medium bg-[#C9A227] text-white rounded-lg py-1.5 hover:bg-[#A8841C] disabled:opacity-40 transition-colors"
                 >
-                 Apply
-              </button>
+                  Apply
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -256,7 +241,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         {models.length > 0 && (
           <div className="relative">
             <button
-              onClick={() => { setShowModelMenu(v => !v); setShowPresetMenu(false); setShowDateMenu(false); }}
+              onClick={() => { setShowModelMenu(v => !v); setShowPresetMenu(false); }}
               className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
             >
               {selectedModel ? selectedModel.name : "All models"}
