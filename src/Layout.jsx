@@ -229,11 +229,14 @@ export default function Layout({ children, currentPageName }) {
       {user && (
         <motion.button
           onClick={() => setShowPaymentForm(true)}
-          whileHover={{ scale: 1.07 }}
-          whileTap={{ scale: 0.95 }}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] shadow-lg shadow-amber-200 flex items-center justify-center text-white hover:shadow-xl hover:shadow-amber-300 transition-shadow"
+          whileHover={{ scale: 1.03, y: -1 }}
+          whileTap={{ scale: 0.97 }}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-2xl bg-[#1e1e1e] border border-[#C9A227]/30 shadow-lg hover:border-[#C9A227]/60 hover:shadow-[0_0_20px_rgba(201,162,39,0.15)] transition-all group"
         >
-          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-6 h-6 object-contain" />
+          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0 shadow-md">
+            <Plus className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-sm font-semibold text-[#C9A227] tracking-wide">Add payment</span>
         </motion.button>
       )}
 
