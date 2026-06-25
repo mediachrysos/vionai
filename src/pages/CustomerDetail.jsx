@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Mail, Phone, Building, CreditCard, Download, FileText, Upload, X } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Building, CreditCard, Download, FileText, Upload, X, CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
@@ -271,6 +271,22 @@ export default function CustomerDetail({ currentUser }) {
 
 
             
+
+            {/* Pay day */}
+            <div className="flex items-center gap-3">
+              <CalendarDays className="w-4 h-4 text-slate-600 flex-shrink-0" />
+              <input
+                type="number"
+                min="1"
+                max="31"
+                defaultValue={customer.pay_day_of_month || ""}
+                onBlur={(e) => {
+                  const val = e.target.value ? parseInt(e.target.value) : null;
+                  if (val !== customer.pay_day_of_month) updateMutation.mutate({ pay_day_of_month: val });
+                }}
+                placeholder="Pay day (1–31)"
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 transition-colors" />
+            </div>
 
             {/* Models */}
             <div className="flex items-start gap-3">
