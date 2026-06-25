@@ -426,7 +426,7 @@ export default function Customers({ currentUser }) {
                     
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-amber-900/40 border border-amber-700/30 flex items-center justify-center text-xs font-bold text-amber-400 flex-shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 flex-shrink-0">
                               {c.full_name?.[0]?.toUpperCase() || "?"}
                             </div>
                             <span className="text-sm font-medium text-slate-200">{c.full_name}</span>
@@ -436,7 +436,7 @@ export default function Customers({ currentUser }) {
                         <td className="px-5 py-3.5 hidden lg:table-cell">
                           {modelNames.length > 0 ?
                       <div className="flex flex-wrap gap-1">
-                              {modelNames.map((n) => <span key={n} className="text-xs bg-amber-900/30 text-amber-400 border border-amber-800/30 rounded-md px-1.5 py-0.5">{n}</span>)}
+                              {modelNames.map((n) => <span key={n} className="inline-flex items-center text-xs font-medium bg-[#C9A227]/15 text-[#C9A227] border border-[#C9A227]/30 rounded-full px-2.5 py-0.5 whitespace-nowrap">{n}</span>)}
                             </div> :
                       <span className="text-slate-600 text-sm">—</span>}
                         </td>
