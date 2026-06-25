@@ -118,43 +118,8 @@ export default function Finance({ currentUser }) {
         }
       </div>
 
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/* Lawyer payout card — visible to admins */}
-      <div className="mt-6">
+      {/* Lawyer payout card — visible to admins */}
+      <div className="mt-2">
         <LawyerPayoutCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
       </div>
 
