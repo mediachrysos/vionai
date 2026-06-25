@@ -208,13 +208,18 @@ export default function Wallet() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={() => {setEditingAccount(null);setShowAccountModal(true);}}>
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-1 object-contain" /> New account
-          </Button>
-          <Button size="sm" onClick={() => setShowTxModal(true)}
-          className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_21_qx0oko.png" alt="" className="w-4 h-4 mr-1 object-contain" /> Add transaction
-          </Button>
+          <button
+            onClick={() => {setEditingAccount(null);setShowAccountModal(true);}}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20 hover:text-slate-100 transition-all"
+          >
+            <Plus className="w-4 h-4" /> New account
+          </button>
+          <button
+            onClick={() => setShowTxModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#d4ad2e] hover:to-[#b8931f] text-white shadow-md shadow-amber-900/30 transition-all"
+          >
+            <Plus className="w-4 h-4" /> Add transaction
+          </button>
         </div>
       </div>
 
