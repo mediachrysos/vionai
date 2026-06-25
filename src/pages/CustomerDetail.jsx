@@ -377,11 +377,10 @@ export default function CustomerDetail({ currentUser }) {
                     <>
                           <input type="file" accept=".pdf" ref={fileInputRef} className="hidden" onChange={(e) => handleInvoiceUpload(e, p.id)} />
                           <button
-                        onClick={() => {fileInputRef.current.click();setUploadingFor(p.id);}}
-                        disabled={uploadingFor === p.id}
-                        className="flex items-center gap-1 text-xs text-slate-600 hover:text-[#C9A227] transition-colors opacity-0 group-hover:opacity-100">
-                        
-                            {uploadingFor === p.id ? <span>Uploading...</span> : <><Upload className="w-3.5 h-3.5" /><span className="hidden sm:inline">Invoice</span></>}
+                          onClick={() => {fileInputRef.current.click();setUploadingFor(p.id);}}
+                          disabled={uploadingFor === p.id}
+                          className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-[#C9A227] bg-white/5 hover:bg-[#C9A227]/10 border border-white/10 hover:border-[#C9A227]/30 rounded-lg px-2.5 py-1 transition-all">
+                           {uploadingFor === p.id ? <span>Uploading...</span> : <><Upload className="w-3 h-3" /><span>Invoice</span></>}
                           </button>
                         </>
                     }
