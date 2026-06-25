@@ -199,9 +199,9 @@ export default function Wallet() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="bg-white/10 rounded-xl w-10 h-10 flex items-center justify-center hidden">
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266694/Chrysos_icon_16_gtkobz.png" alt="" className="w-7 h-7 object-contain" />
-          </div>
+          
+
+          
           <div>
             <h1 className="text-2xl font-bold text-slate-100">Wallet</h1>
             <p className="text-sm text-slate-500">Financial overview and payouts</p>
