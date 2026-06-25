@@ -257,10 +257,10 @@ export default function CustomerDetail({ currentUser }) {
             </div>
 
             {/* Status */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 hidden">
               <span className="w-4 h-4 flex-shrink-0" />
               <Select value={customer.status || "active"} onValueChange={(v) => updateMutation.mutate({ status: v })}>
-                <SelectTrigger className="flex-1 h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-300 px-0">
+                <SelectTrigger className="flex-1 h-7 text-xs bg-transparent border-b border-white/8 border-t-0 border-l-0 border-r-0 rounded-none focus:ring-0 text-slate-300 px-0 hidden">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
