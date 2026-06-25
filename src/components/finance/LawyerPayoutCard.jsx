@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Scale, Calculator, X } from "lucide-react";
 
 const MONTH_NAMES = [
-"Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
-"Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
+"January", "February", "March", "April", "May", "June",
+"July", "August", "September", "October", "November", "December"];
 
 
 function DetailRow({ label, sublabel, value, color = "text-slate-200", prefix = "", highlight = false }) {
@@ -53,7 +53,7 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
               <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_22_vybcot.png" alt="" className="w-5 h-5 object-contain" />
             </div>
             <div>
-              <DialogTitle className="text-white text-base font-semibold">Podíl PD</DialogTitle>
+              <DialogTitle className="text-white text-base font-semibold">PD Share</DialogTitle>
               <p className="text-white/60 text-xs">{monthName}</p>
             </div>
           </div>
@@ -61,24 +61,24 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
 
         <div className="p-5 space-y-3">
           <div className="bg-blue-950/30 rounded-xl px-4 py-3 border border-blue-700/30">
-            <p className="text-xs text-blue-400 font-medium uppercase tracking-wider mb-1">Vzorec výpočtu</p>
-            <p className="text-xs text-blue-300 font-mono">Výplata = (Příjmy − Výdaje) × 10 %</p>
+            <p className="text-xs text-blue-400 font-medium uppercase tracking-wider mb-1">Formula</p>
+            <p className="text-xs text-blue-300 font-mono">Payout = (Income − Expenses) × 10%</p>
           </div>
 
           <div className="border-b border-dashed border-white/10 pb-1">
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Podklady</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Breakdown</p>
             <div className="space-y-2">
-              <DetailRow label="Celkové příjmy" sublabel={`${monthPayments.length} plateb + wallet příjmy`} value={totalIncome} color="text-emerald-400" />
-              <DetailRow label="Celkové výdaje" sublabel="Výdaje + wallet výdaje" value={totalExpenses} color="text-red-400" prefix="− " />
-              <DetailRow label="Hrubý zisk" sublabel="Příjmy − Výdaje" value={grossProfit} color={grossProfit >= 0 ? "text-[#C9A227]" : "text-red-400"} />
+              <DetailRow label="Total income" sublabel={`${monthPayments.length} payments + wallet income`} value={totalIncome} color="text-emerald-400" />
+              <DetailRow label="Total expenses" sublabel="Expenses + wallet expenses" value={totalExpenses} color="text-red-400" prefix="− " />
+              <DetailRow label="Gross profit" sublabel="Income − Expenses" value={grossProfit} color={grossProfit >= 0 ? "text-[#C9A227]" : "text-red-400"} />
             </div>
           </div>
 
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Výsledek</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Result</p>
             <DetailRow
-              label="Výplata pan D."
-              sublabel="10 % z hrubého zisku"
+              label="Mr. D. payout"
+              sublabel="10% of gross profit"
               value={lawyerFee}
               color="text-slate-800"
               highlight />
@@ -87,7 +87,7 @@ function LawyerDetailModal({ open, onClose, monthStr, monthName }) {
 
           {grossProfit <= 0 &&
           <div className="bg-red-950/30 rounded-xl px-4 py-3 border border-red-700/30 text-xs text-red-400">
-              Hrubý zisk je záporný nebo nulový — výplata se nevypočítává.
+              Gross profit is zero or negative — payout is not calculated.
             </div>
           }
         </div>
@@ -145,7 +145,7 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
               <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774300825/Chrysos_icon_22_vybcot.png" alt="" className="w-5 h-5 object-contain" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Podíl PD</h3>
+              <h3 className="text-sm font-semibold text-white">PD Share</h3>
               
             </div>
           </div>
@@ -161,33 +161,32 @@ export default function LawyerPayoutCard({ payments = [], expenses = [], walletT
         </div>
 
         {/* Mini summary */}
-        <div className="grid grid-cols-3 gap-3 mb-3">
-          <div className="bg-green-500 px-3 py-2 rounded-xl">
-            <div className="flex items-center gap-1 mb-0.5">
-              <TrendingUp className="w-3 h-3 text-white/70" />
-              <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Příjmy</p>
+        <div className="grid grid-cols-3 gap-2.5 mb-3">
+          <div className="bg-black/20 backdrop-blur-sm border border-white/10 px-3 py-2.5 rounded-xl">
+            <div className="flex items-center gap-1 mb-1">
+              <TrendingUp className="w-3 h-3 text-emerald-300" />
+              <p className="text-[10px] text-white/60 font-medium uppercase tracking-wider">Income</p>
             </div>
             <p className="text-sm font-bold text-white">{totalIncome.toLocaleString("cs-CZ")} Kč</p>
           </div>
-          <div className="bg-red-500 px-3 py-2 rounded-xl">
-            <div className="flex items-center gap-1 mb-0.5">
-              <TrendingDown className="w-3 h-3 text-white/70" />
-              <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Výdaje</p>
+          <div className="bg-black/20 backdrop-blur-sm border border-white/10 px-3 py-2.5 rounded-xl">
+            <div className="flex items-center gap-1 mb-1">
+              <TrendingDown className="w-3 h-3 text-red-300" />
+              <p className="text-[10px] text-white/60 font-medium uppercase tracking-wider">Expenses</p>
             </div>
             <p className="text-sm font-bold text-white">{totalExpenses.toLocaleString("cs-CZ")} Kč</p>
           </div>
-          {/* Payout highlight */}
-          <div className="bg-yellow-500 px-3 py-2 rounded-xl flex flex-col justify-center">
-            <div className="flex items-center gap-1 mb-0.5">
-              <Calculator className="w-3 h-3 text-white/70" />
-              <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Výplata</p>
+          <div className="bg-white/15 backdrop-blur-sm border border-white/25 px-3 py-2.5 rounded-xl">
+            <div className="flex items-center gap-1 mb-1">
+              <Calculator className="w-3 h-3 text-white/80" />
+              <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Payout</p>
             </div>
             <p className="text-sm font-bold text-white">{lawyerFee.toLocaleString("cs-CZ")} Kč</p>
           </div>
         </div>
 
         <p className="text-xs text-white/50 mt-1 text-center group-hover:text-white/80 transition-colors">
-          Klikněte pro detail výpočtu →
+          Click for calculation detail →
         </p>
       </div>
 

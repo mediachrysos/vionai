@@ -7,8 +7,8 @@ import { getDaysInMonth } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const MONTH_NAMES = [
-  "Leden","Únor","Březen","Duben","Květen","Červen",
-  "Červenec","Srpen","Září","Říjen","Listopad","Prosinec"
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
 ];
 
 function fmt(n) {
@@ -70,7 +70,7 @@ function SummaryRow({ label, totals, chatters, bg = "bg-slate-800/50", textClass
   return (
     <tr className={cn(bg, "border-b-2 border-slate-700/50", stickyTop && `sticky ${stickyTop} z-20`)}>
       <td className={cn("px-3 py-2.5 sticky left-0 z-30", bg, textClass, "text-slate-300")}>{label}</td>
-      {/* Global: Příjmy */}
+      {/* Global: Revenue */}
       <td className={cn("px-3 py-2.5 text-right tabular-nums text-slate-200 bg-indigo-950/20", textClass)}>
         {fmt(totals.totalRevenue)}
       </td>
@@ -108,14 +108,14 @@ function SummaryRow({ label, totals, chatters, bg = "bg-slate-800/50", textClass
 
 function exportCSV(rows, chatters, year, month) {
   const monthName = MONTH_NAMES[month];
-  const headers = ["Datum", "Příjmy", "Ad Spend", "Profit", ...chatters.flatMap(c => [`${c.name} Příjmy`, `${c.name} Ad Spend`, `${c.name} Profit`])];
+  const headers = ["Date", "Revenue", "Ad Spend", "Profit", ...chatters.flatMap(c => [`${c.name} Revenue`, `${c.name} Ad Spend`, `${c.name} Profit`])];
   const csvRows = rows
     .filter(r => r.totalRevenue > 0 || r.globalAdSpend > 0)
     .map(r => [
       r.dateStr, r.totalRevenue, r.globalAdSpend, r.globalProfit,
       ...r.chatterRevenues.flatMap(cr => [cr.revenue, cr.adSpend, cr.profit])
     ]);
-  const totalRow = ["CELKEM",
+  const totalRow = ["TOTAL",
     rows.reduce((s, r) => s + r.totalRevenue, 0),
     rows.reduce((s, r) => s + r.globalAdSpend, 0),
     rows.reduce((s, r) => s + r.globalProfit, 0),
@@ -285,7 +285,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)] overflow-hidden mt-6">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-        <h2 className="text-sm font-semibold text-slate-200">Finanční tabulka</h2>
+        <h2 className="text-sm font-semibold text-slate-200">Finance Table</h2>
         <div className="flex items-center gap-3">
           <button onClick={prevMonth} className="w-7 h-7 rounded-lg hover:bg-slate-700 flex items-center justify-center">
             <ChevronLeft className="w-4 h-4 text-slate-400" />
@@ -298,7 +298,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
           </button>
         </div>
         <div className="flex items-center gap-3">
-          <p className="text-xs text-slate-600 hidden sm:block">Kliknutím upravíte hodnotu</p>
+          <p className="text-xs text-slate-600 hidden sm:block">Click a cell to edit</p>
           <button
             onClick={() => exportCSV(rows, chatters, viewYear, viewMonth)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-transparent hover:border-[#C9A227] hover:text-[#C9A227] text-xs text-slate-500 transition-all"
@@ -315,7 +315,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
             <tr className="bg-[#252525] border-b border-white/10 sticky top-0 z-20">
               <th className="sticky left-0 bg-[#252525] z-10 px-3 py-2" rowSpan={2}></th>
               <th colSpan={3} className="text-center px-3 py-2 font-semibold text-slate-400 border-b border-white/10 bg-[#252525]">
-                Celkové
+                Global
               </th>
               <th className="bg-slate-700 w-px px-0" rowSpan={2}></th>
               {chatters.map(c => (
@@ -325,12 +325,12 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
               ))}
             </tr>
             <tr className="bg-[#252525] border-b border-white/10 sticky top-[36px] z-20">
-              <th className="text-right px-3 py-2 font-medium text-slate-400 bg-indigo-950/20 min-w-[90px]">Příjmy</th>
+              <th className="text-right px-3 py-2 font-medium text-slate-400 bg-indigo-950/20 min-w-[90px]">Revenue</th>
               <th className="text-right px-3 py-2 font-medium text-rose-400 bg-rose-950/20 min-w-[90px]">Ad Spend</th>
               <th className="text-right px-3 py-2 font-medium text-emerald-400 bg-emerald-950/20 min-w-[90px]">Profit</th>
               {chatters.map(c => (
                 <React.Fragment key={c.email}>
-                  <th className="text-right px-3 py-2 font-medium text-amber-400 bg-amber-950/10 min-w-[90px]">Příjmy</th>
+                  <th className="text-right px-3 py-2 font-medium text-amber-400 bg-amber-950/10 min-w-[90px]">Revenue</th>
                   <th className="text-right px-3 py-2 font-medium text-rose-400 bg-rose-950/10 min-w-[90px]">Ad Spend</th>
                   <th className="text-right px-3 py-2 font-medium text-emerald-400 bg-emerald-950/10 min-w-[90px]">Profit</th>
                 </React.Fragment>
@@ -339,9 +339,9 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
           </thead>
           <thead>
             {/* TOTALS ROW */}
-            <SummaryRow label="CELKEM" totals={totals} chatters={chatters} bg="bg-amber-950/20" textClass="text-xs font-bold" stickyTop="top-[72px]" />
+            <SummaryRow label="TOTAL" totals={totals} chatters={chatters} bg="bg-amber-950/20" textClass="text-xs font-bold" stickyTop="top-[72px]" />
             {/* AVERAGE ROW */}
-            <SummaryRow label="PRŮMĚR / den" totals={averages} chatters={chatters} bg="bg-slate-800/50" textClass="text-xs font-medium" stickyTop="top-[105px]" />
+            <SummaryRow label="AVG / day" totals={averages} chatters={chatters} bg="bg-slate-800/50" textClass="text-xs font-medium" stickyTop="top-[105px]" />
           </thead>
           <tbody>
             {rows.map(row => {
@@ -361,7 +361,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                     isToday ? "bg-amber-950/30 text-[#C9A227]" : "bg-[#1e1e1e] text-slate-500"
                   )}>
                     {String(row.day).padStart(2, "0")}.{String(viewMonth + 1).padStart(2, "0")}.
-                    {isToday && <span className="ml-1 text-[10px] text-amber-400">dnes</span>}
+                    {isToday && <span className="ml-1 text-[10px] text-amber-400">today</span>}
                   </td>
 
                   {/* Global Příjmy — read-only sum */}
