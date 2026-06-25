@@ -178,7 +178,7 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-emerald-950/40">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-emerald-900/25 border border-emerald-700/20">
           <div className="flex items-center gap-3">
             
 
@@ -188,10 +188,10 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
               <p className="text-xs text-slate-500">Payments + manual income</p>
             </div>
           </div>
-          <p className="text-base font-bold text-emerald-700">{totalIncome.toLocaleString()}</p>
+          <p className="text-base font-bold text-emerald-400">{totalIncome.toLocaleString()}</p>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-950/40">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-900/20 border border-red-700/20">
           <div className="flex items-center gap-3">
             
 
@@ -201,17 +201,14 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
               <p className="text-xs text-slate-500">Expenses + manual expenses</p>
             </div>
           </div>
-          <p className="text-base font-bold text-red-600">- {totalExpenses.toLocaleString()}</p>
+          <p className="text-base font-bold text-red-400">- {totalExpenses.toLocaleString()}</p>
         </div>
 
         <div className="border-t border-dashed border-white/10 my-1" />
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-950/30">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-700/20">
           <div className="flex items-center gap-3">
-            
-
-            
-            <p className="text-sm font-semibold text-slate-200">Gross profit</p>
+            <p className="text-sm font-semibold text-slate-100">Gross profit</p>
           </div>
           <p className={`text-base font-bold ${grossProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>
             {grossProfit.toLocaleString()}
@@ -224,8 +221,8 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
         <div className="border-t border-dashed border-white/10 my-1" />
 
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-950/30">
-          <p className="text-sm font-semibold text-slate-200">Net profit</p>
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-700/20">
+          <p className="text-sm font-semibold text-slate-100">Net profit</p>
           <p className={`text-base font-bold ${netProfit >= 0 ? "text-[#C9A227]" : "text-red-600"}`}>{netProfit.toLocaleString()}</p>
         </div>
 
