@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Save, Upload, Palette, Building2, DollarSign, Target, Layers, Link } from "lucide-react";
+import { applyBrandColor } from "@/lib/WorkspaceContext";
 
 const CURRENCIES = ["CZK", "EUR", "USD", "GBP", "PLN", "HUF", "RON", "MAD"];
 
@@ -81,7 +82,12 @@ export default function Settings({ currentUser }) {
     else setUploadingOnbLogo(false);
   };
 
-  const set = (field, value) => setSettings(s => ({ ...s, [field]: value }));
+  const set = (field, value) => {
+    setSettings(s => ({ ...s, [field]: value }));
+    if (field === "brand_color" && value && value.length === 7) {
+      applyBrandColor(value);
+    }
+  };
 
   if (!settings) {
     return (

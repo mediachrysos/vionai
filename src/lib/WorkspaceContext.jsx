@@ -3,15 +3,48 @@ import { base44 } from "@/api/base44Client";
 
 const WorkspaceContext = createContext();
 
-function applyBrandColor(color) {
+export function applyBrandColor(color) {
   if (!color) return;
+  // Inject a <style> tag that overrides all hardcoded #C9A227 usages via CSS variables
+  let styleEl = document.getElementById("brand-color-override");
+  if (!styleEl) {
+    styleEl = document.createElement("style");
+    styleEl.id = "brand-color-override";
+    document.head.appendChild(styleEl);
+  }
+  // Darken the color slightly for hover states
+  styleEl.textContent = `
+    :root { --brand: ${color}; }
+    [style*="background-color: rgb"] { }
+  `;
+  // Patch all CSS variables used for the brand color
   document.documentElement.style.setProperty("--brand-color", color);
-  // Also update the CSS custom prop used by Tailwind primary
   const hsl = hexToHsl(color);
-  if (hsl) document.documentElement.style.setProperty("--primary", hsl);
+  if (hsl) {
+    document.documentElement.style.setProperty("--primary", hsl);
+    document.documentElement.style.setProperty("--ring", hsl);
+  }
+  // Also patch inline usages via a dynamic stylesheet
+  styleEl.textContent = `
+    :root { --brand: ${color}; --brand-color: ${color}; }
+    .bg-\\[\\#C9A227\\] { background-color: ${color} !important; }
+    .hover\\:bg-\\[\\#C9A227\\]:hover { background-color: ${color} !important; }
+    .text-\\[\\#C9A227\\] { color: ${color} !important; }
+    .border-\\[\\#C9A227\\] { border-color: ${color} !important; }
+    .bg-\\[\\#A8841C\\] { background-color: ${color} !important; }
+    .hover\\:bg-\\[\\#A8841C\\]:hover { background-color: ${color} !important; }
+    .border-t-\\[\\#C9A227\\] { border-top-color: ${color} !important; }
+    .from-\\[\\#C9A227\\] { --tw-gradient-from: ${color} !important; }
+    .to-\\[\\#A8841C\\] { --tw-gradient-to: ${color} !important; }
+    .bg-\\[\\#C9A227\\]\\/10 { background-color: ${color}1a !important; }
+    .bg-\\[\\#C9A227\\]\\/20 { background-color: ${color}33 !important; }
+    .hover\\:border-\\[\\#C9A227\\]\\/40:hover { border-color: ${color}66 !important; }
+    .focus\\:border-\\[\\#C9A227\\]\\/40:focus { border-color: ${color}66 !important; }
+  `;
 }
 
 function hexToHsl(hex) {
+  if (!hex || hex.length < 7) return null;
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
   const b = parseInt(hex.slice(5, 7), 16) / 255;
