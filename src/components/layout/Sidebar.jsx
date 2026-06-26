@@ -19,7 +19,7 @@ const allPages = [
   { name: "Admin Portal", icon: Settings, page: "AdminUsers" },
 ];
 
-const adminOnlyPages = [
+const adminSubPages = [
   { name: "Settings", icon: SlidersHorizontal, page: "AppSettings" },
 ];
 
@@ -39,7 +39,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
 
   let items;
   if (isAdmin) {
-    items = [...allPages, ...adminOnlyPages];
+    items = [...allPages];
   } else if (user?.allowed_pages?.length > 0) {
     items = allPages.filter(p => user.allowed_pages.includes(p.page));
   } else {
@@ -93,31 +93,58 @@ export default function Sidebar({ currentPage, user, onLogout }) {
         {items.map((item) => {
           const isActive = currentPage === item.page ||
             (item.page === "Dashboard" && currentPage === "Home");
+          const isAdminParent = item.page === "AdminUsers";
+          const subItems = (isAdmin && isAdminParent) ? adminSubPages : [];
+          const isSubActive = subItems.some(s => s.page === currentPage);
           const Icon = item.icon;
           return (
-            <Link
-              key={item.name}
-              to={createPageUrl(item.page)}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "relative flex items-center gap-3 py-1 rounded-lg text-sm font-medium transition-all duration-150",
-                isActive ? "text-white" : "text-slate-400 hover:text-slate-200",
-                (expanded || forMobile) ? "px-3" : "px-0 justify-center"
+            <div key={item.name}>
+              <Link
+                to={createPageUrl(item.page)}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "relative flex items-center gap-3 py-1 rounded-lg text-sm font-medium transition-all duration-150",
+                  isActive ? "text-white" : "text-slate-400 hover:text-slate-200",
+                  (expanded || forMobile) ? "px-3" : "px-0 justify-center"
+                )}
+              >
+                <span className={cn(
+                  "flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0 transition-colors",
+                  (isActive || isSubActive) ? "bg-white/10" : "hover:bg-white/5"
+                )}>
+                  <Icon className={cn("w-5 h-5", (isActive || isSubActive) ? "text-[#C9A227]" : "text-slate-500")} />
+                </span>
+                <span className={cn(
+                  "whitespace-nowrap transition-all duration-200",
+                  (expanded || forMobile) ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
+                )}>
+                  {item.name}
+                </span>
+              </Link>
+              {/* Sub-items (only visible when expanded) */}
+              {subItems.length > 0 && (expanded || forMobile) && (
+                <div className="ml-[48px] mt-0.5 space-y-0.5">
+                  {subItems.map((sub) => {
+                    const isSubItemActive = currentPage === sub.page;
+                    const SubIcon = sub.icon;
+                    return (
+                      <Link
+                        key={sub.name}
+                        to={createPageUrl(sub.page)}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-150",
+                          isSubItemActive ? "text-[#C9A227] bg-white/5" : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                        )}
+                      >
+                        <SubIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>{sub.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
               )}
-            >
-              <span className={cn(
-                "flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0 transition-colors",
-                isActive ? "bg-white/10" : "hover:bg-white/5"
-              )}>
-                <Icon className={cn("w-5 h-5", isActive ? "text-[#C9A227]" : "text-slate-500")} />
-              </span>
-              <span className={cn(
-                "whitespace-nowrap transition-all duration-200",
-                (expanded || forMobile) ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
-              )}>
-                {item.name}
-              </span>
-            </Link>
+            </div>
           );
         })}
       </nav>
