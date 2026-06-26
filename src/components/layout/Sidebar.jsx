@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
-  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock, SlidersHorizontal
+  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/ThemeContext";
@@ -17,10 +17,6 @@ const allPages = [
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
   { name: "Chatting Space", icon: MessageSquare, page: "ChatterPortal" },
   { name: "Admin Portal", icon: Settings, page: "AdminUsers" },
-];
-
-const adminSubPages = [
-  { name: "Settings", icon: SlidersHorizontal, page: "AppSettings" },
 ];
 
 const defaultLawyerPages = ["Finance"];
@@ -93,9 +89,6 @@ export default function Sidebar({ currentPage, user, onLogout }) {
         {items.map((item) => {
           const isActive = currentPage === item.page ||
             (item.page === "Dashboard" && currentPage === "Home");
-          const isAdminParent = item.page === "AdminUsers";
-          const subItems = (isAdmin && isAdminParent) ? adminSubPages : [];
-          const isSubActive = subItems.some(s => s.page === currentPage);
           const Icon = item.icon;
           return (
             <div key={item.name}>
@@ -110,9 +103,9 @@ export default function Sidebar({ currentPage, user, onLogout }) {
               >
                 <span className={cn(
                   "flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0 transition-colors",
-                  (isActive || isSubActive) ? "bg-white/10" : "hover:bg-white/5"
+                  isActive ? "bg-white/10" : "hover:bg-white/5"
                 )}>
-                  <Icon className={cn("w-5 h-5", (isActive || isSubActive) ? "text-[#C9A227]" : "text-slate-500")} />
+                  <Icon className={cn("w-5 h-5", isActive ? "text-[#C9A227]" : "text-slate-500")} />
                 </span>
                 <span className={cn(
                   "whitespace-nowrap transition-all duration-200",
@@ -121,29 +114,6 @@ export default function Sidebar({ currentPage, user, onLogout }) {
                   {item.name}
                 </span>
               </Link>
-              {/* Sub-items (only visible when expanded) */}
-              {subItems.length > 0 && (expanded || forMobile) && (
-                <div className="ml-[48px] mt-0.5 space-y-0.5">
-                  {subItems.map((sub) => {
-                    const isSubItemActive = currentPage === sub.page;
-                    const SubIcon = sub.icon;
-                    return (
-                      <Link
-                        key={sub.name}
-                        to={createPageUrl(sub.page)}
-                        onClick={() => setMobileOpen(false)}
-                        className={cn(
-                          "flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-150",
-                          isSubItemActive ? "text-[#C9A227] bg-white/5" : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
-                        )}
-                      >
-                        <SubIcon className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span>{sub.name}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           );
         })}
