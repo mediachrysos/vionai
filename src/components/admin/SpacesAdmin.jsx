@@ -73,6 +73,22 @@ export default function SpacesAdmin() {
     setSpaces((p) => p.map((s) => s.id === space.id ? { ...s, invite_code: newCode } : s));
   };
 
+  const createAdminSpace = async () => {
+    const name = window.prompt("Space name (e.g. your agency name):");
+    if (!name) return;
+    const me = await base44.auth.me();
+    const inviteCode = generateCode();
+    const space = await base44.entities.Space.create({
+      name,
+      owner_email: me.email,
+      owner_name: me.full_name,
+      invite_code: inviteCode,
+      status: "active",
+      member_count: 1,
+    });
+    setSpaces((p) => [space, ...p]);
+  };
+
   const copyCode = (code, id) => {
     navigator.clipboard.writeText(code);
     setCopiedId(id);
@@ -123,6 +139,16 @@ export default function SpacesAdmin() {
       {requests.length === 0 && (
         <p className="text-xs text-slate-600 italic">No pending space requests.</p>
       )}
+
+      {/* Create Admin Space */}
+      <div className="flex justify-end">
+        <button
+          onClick={createAdminSpace}
+          className="h-8 px-4 text-xs font-semibold bg-[#C9A227]/10 border border-[#C9A227]/30 text-[#C9A227] hover:bg-[#C9A227]/20 rounded-lg transition-colors flex items-center gap-1.5"
+        >
+          <Building2 className="w-3 h-3" /> Create Admin Space
+        </button>
+      </div>
 
       {/* Active Spaces */}
       {spaces.length > 0 && (
