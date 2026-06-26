@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
-  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock
+  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock, SlidersHorizontal
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/ThemeContext";
@@ -17,6 +17,10 @@ const allPages = [
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
   { name: "Chatting Space", icon: MessageSquare, page: "ChatterPortal" },
   { name: "Admin Portal", icon: Settings, page: "AdminUsers" },
+];
+
+const adminOnlyPages = [
+  { name: "Settings", icon: SlidersHorizontal, page: "AppSettings" },
 ];
 
 const defaultLawyerPages = ["Finance"];
@@ -35,7 +39,7 @@ export default function Sidebar({ currentPage, user, onLogout }) {
 
   let items;
   if (isAdmin) {
-    items = allPages;
+    items = [...allPages, ...adminOnlyPages];
   } else if (user?.allowed_pages?.length > 0) {
     items = allPages.filter(p => user.allowed_pages.includes(p.page));
   } else {

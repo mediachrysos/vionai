@@ -1,0 +1,66 @@
+{
+  "name": "WorkspaceSettings",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string",
+      "description": "Company / agency name"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL of the company logo"
+    },
+    "brand_color": {
+      "type": "string",
+      "default": "#C9A227",
+      "description": "Primary brand color (hex)"
+    },
+    "currency": {
+      "type": "string",
+      "default": "CZK",
+      "description": "Currency symbol used in dashboard (e.g. CZK, EUR, USD)"
+    },
+    "commission_percentage": {
+      "type": "number",
+      "default": 30,
+      "description": "Default commission % taken from model revenue"
+    },
+    "monthly_goal": {
+      "type": "number",
+      "default": 0,
+      "description": "Monthly revenue goal"
+    },
+    "has_graphic_space": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this workspace uses the Graphic Space module"
+    },
+    "onboarding_logo_url": {
+      "type": "string",
+      "description": "Logo shown in customer onboarding link (can differ from main logo)"
+    },
+    "onboarding_company_name": {
+      "type": "string",
+      "description": "Company name shown in customer onboarding link"
+    }
+  },
+  "required": [],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
