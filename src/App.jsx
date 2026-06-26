@@ -13,6 +13,7 @@ import CustomerScraper from './pages/CustomerScraper';
 import RequestSpace from './pages/RequestSpace';
 import JoinSpace from './pages/JoinSpace';
 import Landing from './pages/Landing';
+import SuperAdminSpaces from './pages/SuperAdminSpaces';
 import ChattersPerformance from './pages/ChattersPerformance';
 import ChatterDetail from './pages/ChatterDetail';
 import Settings from './pages/Settings';
@@ -98,6 +99,7 @@ function App() {
                 <Route path="/ChattersPerformance" element={<LayoutWrapper currentPageName="ChattersPerformance"><ChattersPerformance /></LayoutWrapper>} />
                 <Route path="/ChatterDetail" element={<LayoutWrapper currentPageName="ChatterDetail"><ChatterDetail /></LayoutWrapper>} />
                 <Route path="/AppSettings" element={<LayoutWrapper currentPageName="AppSettings"><Settings /></LayoutWrapper>} />
+                <Route path="/SuperAdminSpaces" element={<LayoutWrapper currentPageName="SuperAdminSpaces"><SuperAdminSpaces /></LayoutWrapper>} />
                 {/* Všechny ostatní stránky vyžadují auth */}
                 <Route path="*" element={<AuthenticatedApp />} />
               </Routes>
