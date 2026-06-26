@@ -1,0 +1,58 @@
+{
+  "name": "SpaceRequest",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "description": "Applicant full name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Applicant email"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Agency / company name"
+    },
+    "message": {
+      "type": "string",
+      "description": "Optional message from applicant"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Status of the request"
+    },
+    "created_space_id": {
+      "type": "string",
+      "description": "ID of the Space created after approval"
+    }
+  },
+  "required": [
+    "full_name",
+    "email"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

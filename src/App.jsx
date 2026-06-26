@@ -10,6 +10,8 @@ import { WorkspaceProvider } from '@/lib/WorkspaceContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CustomerOnboarding from './pages/CustomerOnboarding';
 import CustomerScraper from './pages/CustomerScraper';
+import RequestSpace from './pages/RequestSpace';
+import JoinSpace from './pages/JoinSpace';
 import ChattersPerformance from './pages/ChattersPerformance';
 import ChatterDetail from './pages/ChatterDetail';
 import Settings from './pages/Settings';
@@ -82,8 +84,10 @@ function App() {
           <QueryClientProvider client={queryClientInstance}>
             <Router>
               <Routes>
-                {/* Veřejná stránka — bez přihlášení */}
+                {/* Veřejné stránky — bez přihlášení */}
                 <Route path="/CustomerOnboarding" element={<CustomerOnboarding />} />
+                <Route path="/RequestSpace" element={<RequestSpace />} />
+                <Route path="/JoinSpace" element={<JoinSpace />} />
                 {/* Nové stránky */}
                 <Route path="/CustomerScraper" element={<LayoutWrapper currentPageName="CustomerScraper"><CustomerScraper /></LayoutWrapper>} />
                 <Route path="/CustomerDetail" element={<LayoutWrapper currentPageName="CustomerDetail"><CustomerDetail /></LayoutWrapper>} />

@@ -48,6 +48,10 @@
     "nickname": {
       "type": "string",
       "description": "P\u0159ezd\u00edvka u\u017eivatele zobrazovan\u00e1 v aplikaci"
+    },
+    "space_id": {
+      "type": "string",
+      "description": "ID of the Space this user belongs to"
     }
   },
   "required": [
