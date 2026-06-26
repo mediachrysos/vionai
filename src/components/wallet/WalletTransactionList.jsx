@@ -3,6 +3,7 @@ import { format, subDays, startOfMonth, endOfMonth, startOfYear } from "date-fns
 import { ArrowUpCircle, ArrowDownCircle, FileText, CalendarDays, ChevronDown, Filter, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useWorkspace } from "@/lib/WorkspaceContext";
 
 const PRESETS = [
   { key: "last7",    label: "Last 7 days" },
@@ -30,6 +31,7 @@ function formatRange(preset) {
 }
 
 export default function WalletTransactionList({ transactions, typeFilter, onTypeFilterChange, onSelect, onDelete }) {
+  const { currency } = useWorkspace();
   const [preset, setPreset] = useState("last30");
   const [showPresetPicker, setShowPresetPicker] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -168,7 +170,7 @@ export default function WalletTransactionList({ transactions, typeFilter, onType
               </div>
               <div className="flex items-center gap-2 flex-shrink-0 ml-3">
                 <p className={`text-base font-bold ${isIncome ? "text-emerald-400" : "text-red-400"}`}>
-                   {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString()}
+                   {isIncome ? "+" : "–"}{(tx.amount || 0).toLocaleString()} {currency}
                  </p>
                  {isDeletable && (
                    <button

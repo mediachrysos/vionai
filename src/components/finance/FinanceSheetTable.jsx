@@ -5,15 +5,16 @@ import { usePayments } from "@/hooks/usePayments";
 import { ChevronLeft, ChevronRight, Check, X, Plus, Download } from "lucide-react";
 import { getDaysInMonth } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useWorkspace } from "@/lib/WorkspaceContext";
 
 const MONTH_NAMES = [
   "January","February","March","April","May","June",
   "July","August","September","October","November","December"
 ];
 
-function fmt(n) {
+function fmt(n, currency = "") {
   if (!n && n !== 0) return "—";
-  return n.toLocaleString("en-US").replace(/,/g, " ") + "Kč";
+  return n.toLocaleString("en-US").replace(/,/g, " ") + (currency ? ` ${currency}` : "");
 }
 
 function EditableCell({ value, onSave, canCreate = false, highlight = "" }) {
@@ -66,23 +67,24 @@ function EditableCell({ value, onSave, canCreate = false, highlight = "" }) {
   );
 }
 
-function SummaryRow({ label, totals, chatters, bg = "bg-slate-800/50", textClass = "text-xs font-bold", stickyTop = "" }) {
+function SummaryRow({ label, totals, chatters, bg = "bg-slate-800/50", textClass = "text-xs font-bold", stickyTop = "", currency = "" }) {
+  const f = (n) => fmt(n, currency);
   return (
     <tr className={cn(bg, "border-b-2 border-slate-700/50", stickyTop && `sticky ${stickyTop} z-20`)}>
       <td className={cn("px-3 py-2.5 sticky left-0 z-30", bg, textClass, "text-slate-300")}>{label}</td>
       {/* Global: Revenue */}
       <td className={cn("px-3 py-2.5 text-right tabular-nums text-slate-200 bg-indigo-950/20", textClass)}>
-        {fmt(totals.totalRevenue)}
+        {f(totals.totalRevenue)}
       </td>
       {/* Global: Ad Spend */}
       <td className={cn("px-3 py-2.5 text-right tabular-nums text-rose-400 bg-rose-950/20", textClass)}>
-        {fmt(totals.adSpend)}
+        {f(totals.adSpend)}
       </td>
       {/* Global: Profit */}
       <td className={cn("px-3 py-2.5 text-right tabular-nums bg-emerald-950/20", textClass,
         totals.profit >= 0 ? "text-emerald-400" : "text-red-400"
       )}>
-        {fmt(totals.profit)}
+        {f(totals.profit)}
       </td>
       {/* Divider */}
       <td className="px-1 bg-slate-700 w-px"></td>
@@ -90,15 +92,15 @@ function SummaryRow({ label, totals, chatters, bg = "bg-slate-800/50", textClass
       {chatters.map((c, ci) => (
         <React.Fragment key={c.email}>
           <td className={cn("px-3 py-2.5 text-right tabular-nums text-amber-400", textClass)}>
-            {fmt(totals.chatterRevenues[ci]?.revenue || 0)}
+            {f(totals.chatterRevenues[ci]?.revenue || 0)}
           </td>
           <td className={cn("px-3 py-2.5 text-right tabular-nums text-rose-400", textClass)}>
-            {fmt(totals.chatterRevenues[ci]?.adSpend || 0)}
+            {f(totals.chatterRevenues[ci]?.adSpend || 0)}
           </td>
           <td className={cn("px-3 py-2.5 text-right tabular-nums", textClass,
             (totals.chatterRevenues[ci]?.profit || 0) >= 0 ? "text-emerald-400" : "text-red-400"
           )}>
-            {fmt(totals.chatterRevenues[ci]?.profit || 0)}
+            {f(totals.chatterRevenues[ci]?.profit || 0)}
           </td>
         </React.Fragment>
       ))}
@@ -134,6 +136,8 @@ function exportCSV(rows, chatters, year, month) {
 }
 
 export default function FinanceSheetTable({ currentUser = null, showAll = true, myModelIds = [] }) {
+  const { currency } = useWorkspace();
+  const f = (n) => fmt(n, currency);
   const qc = useQueryClient();
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
@@ -339,9 +343,9 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
           </thead>
           <thead>
             {/* TOTALS ROW */}
-            <SummaryRow label="TOTAL" totals={totals} chatters={chatters} bg="bg-amber-950/20" textClass="text-xs font-bold" stickyTop="top-[72px]" />
+            <SummaryRow label="TOTAL" totals={totals} chatters={chatters} bg="bg-amber-950/20" textClass="text-xs font-bold" stickyTop="top-[72px]" currency={currency} />
             {/* AVERAGE ROW */}
-            <SummaryRow label="AVG / day" totals={averages} chatters={chatters} bg="bg-slate-800/50" textClass="text-xs font-medium" stickyTop="top-[105px]" />
+            <SummaryRow label="AVG / day" totals={averages} chatters={chatters} bg="bg-slate-800/50" textClass="text-xs font-medium" stickyTop="top-[105px]" currency={currency} />
           </thead>
           <tbody>
             {rows.map(row => {
@@ -366,7 +370,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
 
                   {/* Global Příjmy — read-only sum */}
                   <td className="px-3 py-2 bg-indigo-950/10 text-right tabular-nums text-slate-300 font-medium">
-                    {row.totalRevenue > 0 ? fmt(row.totalRevenue) : <span className="text-slate-700">—</span>}
+                    {row.totalRevenue > 0 ? f(row.totalRevenue) : <span className="text-slate-700">—</span>}
                   </td>
 
                   {/* Global Ad Spend — editable */}
@@ -382,7 +386,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                   <td className={cn("px-3 py-2 text-right tabular-nums font-semibold bg-emerald-950/10",
                     !hasData ? "text-slate-700" : row.globalProfit >= 0 ? "text-emerald-400" : "text-red-400"
                   )}>
-                    {hasData ? fmt(row.globalProfit) : "—"}
+                    {hasData ? f(row.globalProfit) : "—"}
                   </td>
 
                   {/* Divider */}
@@ -403,7 +407,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                             />
                           ) : (
                             <div className="text-right tabular-nums text-slate-400">
-                              {cr.revenue > 0 ? fmt(cr.revenue) : <span className="text-slate-700">—</span>}
+                              {cr.revenue > 0 ? f(cr.revenue) : <span className="text-slate-700">—</span>}
                             </div>
                           )}
                         </td>
@@ -419,7 +423,7 @@ export default function FinanceSheetTable({ currentUser = null, showAll = true, 
                         <td className={cn("px-3 py-2 text-right tabular-nums bg-emerald-950/10",
                           !chatterHasData ? "text-slate-700" : cr.profit >= 0 ? "text-emerald-400" : "text-red-400"
                         )}>
-                          {chatterHasData ? fmt(cr.profit) : "—"}
+                          {chatterHasData ? f(cr.profit) : "—"}
                         </td>
                       </React.Fragment>
                     );

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import RangePicker, { PRESETS } from "./RangePicker";
+import { useWorkspace } from "@/lib/WorkspaceContext";
 
 function getDefaultRange() {
   const to = new Date().toISOString().split("T")[0];
@@ -26,6 +27,7 @@ function buildChartData(payments, from, to) {
 }
 
 export default function RevenueChart({ payments }) {
+  const { currency } = useWorkspace();
   const [range, setRange] = useState(getDefaultRange());
   const [activePreset, setActivePreset] = useState("Last 7 days");
 
@@ -70,7 +72,7 @@ export default function RevenueChart({ payments }) {
             <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={v => `${v.toLocaleString()}`} />
             <Tooltip
               contentStyle={{ borderRadius: 12, border: "1px solid #333", background: "#1e1e1e", color: "#e2e8f0", boxShadow: "0 8px 24px rgba(0,0,0,0.4)", fontSize: 12, padding: "8px 12px" }}
-              formatter={(v) => [`${v.toLocaleString()}`, "Revenue"]}
+              formatter={(v) => [`${v.toLocaleString()} ${currency}`, "Revenue"]}
               labelStyle={{ color: "#C9A227", fontWeight: 600 }}
             />
             <Area type="monotone" dataKey="revenue" stroke="url(#lineGrad)" strokeWidth={3} fill="url(#revGrad)" dot={false} activeDot={{ r: 5, fill: "#C9A227", strokeWidth: 2, stroke: "#fff" }} />
