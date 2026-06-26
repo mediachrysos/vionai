@@ -15,6 +15,7 @@ import EmptyState from "../components/ui-custom/EmptyState";
 import PaymentFormModal from "../components/payments/PaymentFormModal";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 import PaymentInvoiceActions from "../components/invoices/PaymentInvoiceActions";
+import { useWorkspace } from "@/lib/WorkspaceContext";
 
 const statusColors = {
   completed: "bg-emerald-950/50 text-emerald-400 border-emerald-700/30",
@@ -24,6 +25,7 @@ const statusColors = {
 };
 
 export default function Payments({ currentUser }) {
+  const { currency } = useWorkspace();
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
@@ -53,7 +55,7 @@ export default function Payments({ currentUser }) {
   });
 
   const handleDelete = (p) => {
-    if (window.confirm(`Are you sure you want to delete the payment from "${p.customer_name || "?"}" (${(p.amount || 0).toLocaleString()} CZK)?`)) {
+    if (window.confirm(`Are you sure you want to delete the payment from "${p.customer_name || "?"}" (${(p.amount || 0).toLocaleString()} ${currency})?`)) {
       deleteMutation.mutate(p.id);
     }
   };
@@ -117,7 +119,7 @@ export default function Payments({ currentUser }) {
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
       <MonthlyGoalBar />
-      <PageHeader title="Payments" subtitle={`${payments.length} total · ${totalAmount.toLocaleString()} CZK`}>
+      <PageHeader title="Payments" subtitle={`${payments.length} total · ${totalAmount.toLocaleString()} ${currency}`}>
         <Button onClick={() => setShowForm(true)} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] text-white shadow-sm shadow-amber-200">
           <Plus className="w-4 h-4 mr-2" /> Add payment
         </Button>
@@ -195,7 +197,7 @@ export default function Payments({ currentUser }) {
                       </Badge>
                     </td>
                     <td className="px-5 py-3.5 text-right text-sm font-semibold text-slate-100">
-                      {(p.amount || 0).toLocaleString()} CZK
+                      {(p.amount || 0).toLocaleString()} {currency}
                     </td>
                     <td className="px-5 py-3.5">
                       <PaymentInvoiceActions payment={p} onInvoiceCreated={() => qc.invalidateQueries({ queryKey: ["invoices"] })} />

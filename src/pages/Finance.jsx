@@ -11,8 +11,10 @@ import FinanceSheetTable from "../components/finance/FinanceSheetTable";
 import AdSpendROIWidget from "../components/finance/AdSpendROIWidget";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
 import LawyerPayoutCard from "../components/finance/LawyerPayoutCard";
+import { useWorkspace } from "@/lib/WorkspaceContext";
 
 export default function Finance({ currentUser }) {
+  const { currency } = useWorkspace();
   const { showAll, toggle } = useChatterFilter();
   const isAdmin = currentUser?.role === "admin";
   const isLawyer = currentUser?.role === "lawyer";
