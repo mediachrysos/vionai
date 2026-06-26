@@ -202,15 +202,24 @@ export default function Layout({ children, currentPageName }) {
   // Pending approval (skip for admins) — new users without account_status set are also pending
   const userRoles = user?.roles?.length > 0 ? user.roles : (user?.role ? [user.role] : []);
   if ((user?.account_status === "pending" || !user?.account_status) && !userRoles.includes("admin")) {
+    // If user has no space_id yet, redirect them to join a space first
+    if (!user?.space_id) {
+      if (window.location.pathname !== "/JoinSpace" && window.location.pathname !== "/RequestSpace") {
+        window.location.replace("/JoinSpace");
+        return null;
+      }
+      return <>{children}</>;
+    }
+    // User has a space but is still pending admin approval
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
+      <div className="h-screen flex items-center justify-center bg-[#1a1a1a]">
         <div className="text-center max-w-sm p-8">
-          <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-full bg-amber-950/50 border border-amber-700/30 flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">⏳</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Pending Approval</h2>
-          <p className="text-sm text-gray-500 mb-4">Your account is waiting for administrator approval. Once approved, you will have full access.</p>
-          <button onClick={handleLogout} className="text-xs text-gray-400 hover:text-gray-600 underline">Log out</button>
+          <h2 className="text-lg font-semibold text-slate-100 mb-2">Pending Approval</h2>
+          <p className="text-sm text-slate-400 mb-4">Your account is waiting for administrator approval. Once approved, you will have full access.</p>
+          <button onClick={handleLogout} className="text-xs text-slate-500 hover:text-slate-300 underline">Log out</button>
         </div>
       </div>
     );
