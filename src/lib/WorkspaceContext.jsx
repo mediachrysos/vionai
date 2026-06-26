@@ -27,19 +27,59 @@ export function applyBrandColor(color) {
   // Also patch inline usages via a dynamic stylesheet
   styleEl.textContent = `
     :root { --brand: ${color}; --brand-color: ${color}; }
+
+    /* Backgrounds */
     .bg-\\[\\#C9A227\\] { background-color: ${color} !important; }
     .hover\\:bg-\\[\\#C9A227\\]:hover { background-color: ${color} !important; }
-    .text-\\[\\#C9A227\\] { color: ${color} !important; }
-    .border-\\[\\#C9A227\\] { border-color: ${color} !important; }
     .bg-\\[\\#A8841C\\] { background-color: ${color} !important; }
     .hover\\:bg-\\[\\#A8841C\\]:hover { background-color: ${color} !important; }
-    .border-t-\\[\\#C9A227\\] { border-top-color: ${color} !important; }
-    .from-\\[\\#C9A227\\] { --tw-gradient-from: ${color} !important; }
-    .to-\\[\\#A8841C\\] { --tw-gradient-to: ${color} !important; }
     .bg-\\[\\#C9A227\\]\\/10 { background-color: ${color}1a !important; }
     .bg-\\[\\#C9A227\\]\\/20 { background-color: ${color}33 !important; }
+    .bg-\\[\\#C9A227\\]\\/30 { background-color: ${color}4d !important; }
+
+    /* Text */
+    .text-\\[\\#C9A227\\] { color: ${color} !important; }
+    .hover\\:text-\\[\\#C9A227\\]:hover { color: ${color} !important; }
+
+    /* Borders */
+    .border-\\[\\#C9A227\\] { border-color: ${color} !important; }
+    .border-t-\\[\\#C9A227\\] { border-top-color: ${color} !important; }
+    .border-\\[\\#C9A227\\]\\/30 { border-color: ${color}4d !important; }
+    .border-\\[\\#C9A227\\]\\/40 { border-color: ${color}66 !important; }
+    .border-\\[\\#C9A227\\]\\/60 { border-color: ${color}99 !important; }
     .hover\\:border-\\[\\#C9A227\\]\\/40:hover { border-color: ${color}66 !important; }
+    .hover\\:border-\\[\\#C9A227\\]\\/60:hover { border-color: ${color}99 !important; }
     .focus\\:border-\\[\\#C9A227\\]\\/40:focus { border-color: ${color}66 !important; }
+
+    /* Gradients */
+    .from-\\[\\#C9A227\\] { --tw-gradient-from: ${color} !important; }
+    .to-\\[\\#A8841C\\] { --tw-gradient-to: ${color} !important; }
+    .from-\\[\\#C9A227\\]\\/20 { --tw-gradient-from: ${color}33 !important; }
+
+    /* Shadows/glow */
+    .shadow-\\[0_0_20px_rgba\\(201\\,162\\,39\\,0\\.15\\)\\] { box-shadow: 0 0 20px ${color}26 !important; }
+    .hover\\:shadow-\\[0_0_20px_rgba\\(201\\,162\\,39\\,0\\.15\\)\\]:hover { box-shadow: 0 0 20px ${color}26 !important; }
+
+    /* Recharts SVG — chart lines and fills */
+    .recharts-line-curve[stroke="#C9A227"],
+    .recharts-area-curve[stroke="#C9A227"],
+    path[stroke="#C9A227"],
+    circle[stroke="#C9A227"],
+    line[stroke="#C9A227"] { stroke: ${color} !important; }
+
+    path[fill="#C9A227"],
+    circle[fill="#C9A227"],
+    rect[fill="#C9A227"] { fill: ${color} !important; }
+
+    stop[stop-color="#C9A227"] { stop-color: ${color} !important; }
+    stop[stop-color="rgba(201, 162, 39"] { stop-color: ${color} !important; }
+
+    /* Progress bar */
+    .bg-gradient-to-r.from-\\[\\#C9A227\\] { background: linear-gradient(to right, ${color}, ${color}cc) !important; }
+
+    /* Ring/outline */
+    .ring-\\[\\#C9A227\\] { --tw-ring-color: ${color} !important; }
+    .outline-\\[\\#C9A227\\] { outline-color: ${color} !important; }
   `;
 }
 
