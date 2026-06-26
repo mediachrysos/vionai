@@ -80,6 +80,24 @@ export function applyBrandColor(color) {
     /* Ring/outline */
     .ring-\\[\\#C9A227\\] { --tw-ring-color: ${color} !important; }
     .outline-\\[\\#C9A227\\] { outline-color: ${color} !important; }
+
+    /* Amber utility classes (used for badges, avatars, tags, sidebar active icon) */
+    .text-amber-400, .text-amber-500, .text-amber-300, .text-amber-600 { color: ${color} !important; }
+    .bg-amber-500\\/10, .bg-amber-400\\/10, .bg-amber-500\\/20 { background-color: ${color}1a !important; }
+    .bg-amber-500\\/30 { background-color: ${color}4d !important; }
+    .bg-amber-500 { background-color: ${color} !important; }
+    .bg-amber-400 { background-color: ${color} !important; }
+    .border-amber-500\\/30, .border-amber-400\\/30, .border-amber-700\\/30 { border-color: ${color}4d !important; }
+    .border-amber-500\\/40, .border-amber-400\\/40 { border-color: ${color}66 !important; }
+    .border-amber-500, .border-amber-400 { border-color: ${color} !important; }
+    .bg-amber-950\\/10, .bg-amber-950\\/20, .bg-amber-950\\/30 { background-color: ${color}1a !important; }
+    .bg-amber-700\\/20 { background-color: ${color}33 !important; }
+    .hover\\:bg-amber-500\\/20:hover { background-color: ${color}33 !important; }
+    .fill-amber-400, .fill-amber-500 { fill: ${color} !important; }
+    .stroke-amber-400, .stroke-amber-500 { stroke: ${color} !important; }
+
+    /* Primary button (uses hsl --primary which may not update inline) */
+    button.bg-primary, a.bg-primary { background-color: ${color} !important; }
   `;
 }
 
