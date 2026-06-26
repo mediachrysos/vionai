@@ -12,6 +12,7 @@ import CustomerOnboarding from './pages/CustomerOnboarding';
 import CustomerScraper from './pages/CustomerScraper';
 import RequestSpace from './pages/RequestSpace';
 import JoinSpace from './pages/JoinSpace';
+import Landing from './pages/Landing';
 import ChattersPerformance from './pages/ChattersPerformance';
 import ChatterDetail from './pages/ChatterDetail';
 import Settings from './pages/Settings';
@@ -44,7 +45,7 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
+      // Redirect to login — user tried to access a protected page
       navigateToLogin();
       return null;
     }
@@ -53,9 +54,9 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
+      <Route path="/Dashboard" element={
+        <LayoutWrapper currentPageName="Dashboard">
+          <Pages.Dashboard />
         </LayoutWrapper>
       } />
       {Object.entries(Pages).map(([path, Page]) => (
@@ -85,6 +86,7 @@ function App() {
             <Router>
               <Routes>
                 {/* Veřejné stránky — bez přihlášení */}
+                <Route path="/" element={<Landing />} />
                 <Route path="/CustomerOnboarding" element={<CustomerOnboarding />} />
                 <Route path="/RequestSpace" element={<RequestSpace />} />
                 <Route path="/JoinSpace" element={<JoinSpace />} />
