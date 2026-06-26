@@ -3,8 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import confetti from "canvas-confetti";
 import { usePayments } from "@/hooks/usePayments";
+import { useWorkspace } from "@/lib/WorkspaceContext";
 
 export default function MonthlyGoalBar() {
+  const { currency } = useWorkspace();
   const { data: payments = [] } = usePayments();
 
   const { data: goals = [] } = useQuery({
@@ -79,8 +81,8 @@ export default function MonthlyGoalBar() {
         </div>
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <span className="text-lg font-bold text-white">{monthRev.toLocaleString("cs-CZ")}</span>
-            <span className="text-sm text-slate-500 ml-1">/ {goal.toLocaleString("cs-CZ")}</span>
+            <span className="text-lg font-bold text-white">{monthRev.toLocaleString("cs-CZ")} {currency}</span>
+            <span className="text-sm text-slate-500 ml-1">/ {goal.toLocaleString("cs-CZ")} {currency}</span>
           </div>
           <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-[#C9A227]/40 bg-[#C9A227]/10">
             <span className="text-xs font-bold text-[#C9A227]">{pct}%</span>
@@ -111,18 +113,18 @@ export default function MonthlyGoalBar() {
         {!reached ? (
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-slate-500 uppercase tracking-wider">Daily needed</span>
-            <span className="text-xs font-semibold text-[#C9A227]">{dailyNeeded.toLocaleString("cs-CZ")}</span>
+            <span className="text-xs font-semibold text-[#C9A227]">{dailyNeeded.toLocaleString("cs-CZ")} {currency}</span>
           </div>
         ) : (
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-slate-500 uppercase tracking-wider">Above goal</span>
-            <span className="text-xs font-semibold text-emerald-400">+{(monthRev - goal).toLocaleString("cs-CZ")}</span>
+            <span className="text-xs font-semibold text-emerald-400">+{(monthRev - goal).toLocaleString("cs-CZ")} {currency}</span>
           </div>
         )}
         <div className="w-px h-3 bg-white/10" />
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] text-slate-500 uppercase tracking-wider">Remaining</span>
-          <span className="text-xs font-semibold text-slate-200">{remaining.toLocaleString("cs-CZ")}</span>
+          <span className="text-xs font-semibold text-slate-200">{remaining.toLocaleString("cs-CZ")} {currency}</span>
         </div>
       </div>
     </div>

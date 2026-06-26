@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
+import { WorkspaceProvider } from '@/lib/WorkspaceContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CustomerOnboarding from './pages/CustomerOnboarding';
 import CustomerScraper from './pages/CustomerScraper';
@@ -76,27 +77,29 @@ function App() {
 
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <Routes>
-              {/* Veřejná stránka — bez přihlášení */}
-              <Route path="/CustomerOnboarding" element={<CustomerOnboarding />} />
-              {/* Nové stránky */}
-              <Route path="/CustomerScraper" element={<LayoutWrapper currentPageName="CustomerScraper"><CustomerScraper /></LayoutWrapper>} />
-              <Route path="/CustomerDetail" element={<LayoutWrapper currentPageName="CustomerDetail"><CustomerDetail /></LayoutWrapper>} />
-              <Route path="/SocialMediaContent" element={<LayoutWrapper currentPageName="SocialMediaContent"><SocialMediaContent /></LayoutWrapper>} />
-              <Route path="/LookAlikeAudience" element={<LayoutWrapper currentPageName="LookAlikeAudience"><LookAlikeAudience /></LayoutWrapper>} />
-              <Route path="/ChattersPerformance" element={<LayoutWrapper currentPageName="ChattersPerformance"><ChattersPerformance /></LayoutWrapper>} />
-              <Route path="/ChatterDetail" element={<LayoutWrapper currentPageName="ChatterDetail"><ChatterDetail /></LayoutWrapper>} />
-              <Route path="/AppSettings" element={<LayoutWrapper currentPageName="AppSettings"><Settings /></LayoutWrapper>} />
-              {/* Všechny ostatní stránky vyžadují auth */}
-              <Route path="*" element={<AuthenticatedApp />} />
-            </Routes>
-          </Router>
-          <Toaster />
-        </QueryClientProvider>
-      </AuthProvider>
+      <WorkspaceProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClientInstance}>
+            <Router>
+              <Routes>
+                {/* Veřejná stránka — bez přihlášení */}
+                <Route path="/CustomerOnboarding" element={<CustomerOnboarding />} />
+                {/* Nové stránky */}
+                <Route path="/CustomerScraper" element={<LayoutWrapper currentPageName="CustomerScraper"><CustomerScraper /></LayoutWrapper>} />
+                <Route path="/CustomerDetail" element={<LayoutWrapper currentPageName="CustomerDetail"><CustomerDetail /></LayoutWrapper>} />
+                <Route path="/SocialMediaContent" element={<LayoutWrapper currentPageName="SocialMediaContent"><SocialMediaContent /></LayoutWrapper>} />
+                <Route path="/LookAlikeAudience" element={<LayoutWrapper currentPageName="LookAlikeAudience"><LookAlikeAudience /></LayoutWrapper>} />
+                <Route path="/ChattersPerformance" element={<LayoutWrapper currentPageName="ChattersPerformance"><ChattersPerformance /></LayoutWrapper>} />
+                <Route path="/ChatterDetail" element={<LayoutWrapper currentPageName="ChatterDetail"><ChatterDetail /></LayoutWrapper>} />
+                <Route path="/AppSettings" element={<LayoutWrapper currentPageName="AppSettings"><Settings /></LayoutWrapper>} />
+                {/* Všechny ostatní stránky vyžadují auth */}
+                <Route path="*" element={<AuthenticatedApp />} />
+              </Routes>
+            </Router>
+            <Toaster />
+          </QueryClientProvider>
+        </AuthProvider>
+      </WorkspaceProvider>
     </ThemeProvider>
   )
 }

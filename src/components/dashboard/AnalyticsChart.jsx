@@ -4,6 +4,7 @@ import {
 } from "recharts";
 import { ChevronDown, TrendingDown } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
+import { useWorkspace } from "@/lib/WorkspaceContext";
 
 const PRESETS = [
   { label: "Last 7 days", days: 7 },
@@ -128,6 +129,7 @@ const MiniSparkline = ({ data, dataKey, color }) => (
 );
 
 export default function AnalyticsChart({ payments = [], adSpends = [], models = [] }) {
+  const { currency } = useWorkspace();
   const [selectedDays, setSelectedDays] = useState(30);
   const [showPresetMenu, setShowPresetMenu] = useState(false);
   const [showModelMenu, setShowModelMenu] = useState(false);
@@ -276,7 +278,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         {/* Earnings card */}
         <div className="bg-[#252525] rounded-xl p-4 border border-white/10">
           <p className="text-sm text-slate-400 font-medium mb-1">Earnings</p>
-          <p className="text-2xl font-bold text-white">{fmt(totalGross)}</p>
+          <p className="text-2xl font-bold text-white">{fmt(totalGross)} <span className="text-base font-medium text-slate-400">{currency}</span></p>
           <p className="text-xs text-slate-500 mb-3">{dateRangeLabel}</p>
           <MiniSparkline data={data} dataKey="gross" color="#C9A227" />
         </div>
@@ -285,7 +287,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         <div className="bg-[#252525] rounded-xl p-4 border border-white/10">
           <p className="text-sm text-slate-400 font-medium mb-1">This month</p>
           <div className="flex items-start gap-2">
-            <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)}</p>
+            <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)} <span className="text-base font-medium text-slate-400">{currency}</span></p>
             {monthDiff !== 0 && (
               <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md ${monthDiff < 0 ? "bg-red-900/50 text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
                 {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString()}
@@ -347,11 +349,11 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         <div className="flex gap-4 mt-3 pt-3 border-t border-white/10">
           <div>
             <p className="text-xs text-slate-500">Gross</p>
-               <p className="text-sm font-bold text-slate-200">{fmt(totalGross)}</p>
+               <p className="text-sm font-bold text-slate-200">{fmt(totalGross)} {currency}</p>
              </div>
              <div>
                <p className="text-xs text-slate-500">Net (after ad spend)</p>
-            <p className="text-sm font-bold text-[#C9A227]">{fmt(totalNet)}</p>
+            <p className="text-sm font-bold text-[#C9A227]">{fmt(totalNet)} {currency}</p>
           </div>
         </div>
       </div>
