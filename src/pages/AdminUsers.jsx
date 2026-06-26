@@ -14,6 +14,7 @@ import OnboardingLinkModal from "../components/customers/OnboardingLinkModal";
 import OnboardingLinksList from "../components/customers/OnboardingLinksList";
 import AdminPayments from "../components/admin/AdminPayments";
 import ChatterRulesAdmin from "../components/chatting/ChatterRulesAdmin";
+import SettingsInline from "../components/admin/SettingsInline";
 
 function GoalDatePicker({ value, onChange, placeholder }) {
   const [open, setOpen] = useState(false);
@@ -75,7 +76,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   const [onboardingRefresh, setOnboardingRefresh] = useState(0);
   const [dashboards, setDashboards] = useState([]);
 
-  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false, invoices: false, chatterRules: false });
+  const [openSections, setOpenSections] = useState({ users: true, payments: false, models: false, customers: false, accounts: false, goal: false, legal: false, invoices: false, chatterRules: false, appSettings: false });
 
   const toggle = (key) => setOpenSections((p) => ({ ...p, [key]: !p[key] }));
 
@@ -223,6 +224,10 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       </Section>
 
       <ChatterRulesAdmin />
+
+      <Section label="App Settings" open={openSections.appSettings} onToggle={() => toggle("appSettings")}>
+        <SettingsInline />
+      </Section>
     </div>);
 }
 
