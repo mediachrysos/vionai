@@ -37,6 +37,10 @@
       "type": "string",
       "description": "Internal notes"
     },
+    "sent_content": {
+      "type": "string",
+      "description": "Content already sent to this customer"
+    },
     "tags": {
       "type": "array",
       "items": {

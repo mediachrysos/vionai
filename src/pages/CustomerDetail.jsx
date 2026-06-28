@@ -313,6 +313,44 @@ export default function CustomerDetail({ currentUser }) {
 
             
 
+            {/* Assigned models */}
+            <div className="flex items-start gap-3">
+              <span className="w-4 h-4 flex-shrink-0 mt-2 text-slate-600">🎭</span>
+              <div className="flex-1">
+                <p className="text-xs text-slate-500 mb-1.5">Assigned models</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {models.map((m) => {
+                    const selected = (customer.assigned_models || []).includes(m.id);
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => toggleModel(m.id)}
+                        className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
+                          selected
+                            ? "bg-[#C9A227]/15 border-[#C9A227]/40 text-[#C9A227]"
+                            : "bg-white/4 border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-400"
+                        }`}
+                      >
+                        {m.name}
+                      </button>
+                    );
+                  })}
+                  {models.length === 0 && <span className="text-xs text-slate-600">No models available</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* Sent content */}
+            <div className="flex items-start gap-3">
+              <span className="w-4 h-4 flex-shrink-0" />
+              <textarea
+                defaultValue={customer.sent_content || ""}
+                onBlur={(e) => handleFieldBlur("sent_content", e.target.value)}
+                placeholder="Content already sent (e.g. video pack 1, photo set 3...)"
+                rows={2}
+                className="flex-1 bg-transparent border-b border-white/8 focus:border-[#C9A227]/50 outline-none text-sm text-slate-300 placeholder-slate-600 py-1 resize-none transition-colors" />
+            </div>
+
             {/* Notes */}
             <div className="flex items-start gap-3">
               <span className="w-4 h-4 flex-shrink-0" />

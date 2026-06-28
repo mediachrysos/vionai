@@ -239,6 +239,19 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             </div>
           </div>
 
+          {/* Content name */}
+          {mode === "payment" && (
+            <div>
+              <Label>Content sent (optional)</Label>
+              <Input
+                value={form.service_type}
+                onChange={(e) => setForm((prev) => ({ ...prev, service_type: e.target.value }))}
+                placeholder="e.g. video pack 1, photo set 3..."
+                className="mt-1"
+              />
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Target account</Label>
