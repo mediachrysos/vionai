@@ -12,6 +12,7 @@ import WalletTransactionList from "@/components/wallet/WalletTransactionList";
 import AccountBreakdownSection from "@/components/wallet/AccountBreakdownSection";
 import WalletTransactionDetailModal from "@/components/wallet/WalletTransactionDetailModal";
 import SubscriptionsSection from "@/components/wallet/SubscriptionsSection";
+import CollapsibleSection from "@/components/ui-custom/CollapsibleSection";
 import { useWorkspace } from "@/lib/WorkspaceContext";
 
 export default function Wallet() {
@@ -275,22 +276,27 @@ export default function Wallet() {
         <WaterfallCard payments={payments} expenses={expenses} walletTxs={walletTxs} />
 
         {/* Subscriptions */}
-        <SubscriptionsSection accounts={accounts} />
+        <CollapsibleSection title="Subscriptions">
+          <SubscriptionsSection accounts={accounts} />
+        </CollapsibleSection>
 
         {/* Per-account breakdown by day/week/month */}
-        <AccountBreakdownSection accounts={accounts} payments={payments} walletTxs={walletTxs} />
+        <CollapsibleSection title="Account breakdown">
+          <AccountBreakdownSection accounts={accounts} payments={payments} walletTxs={walletTxs} />
+        </CollapsibleSection>
 
         {/* Transactions - full width */}
-        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
-          <h3 className="text-sm font-semibold text-slate-200 mb-3">Transaction history</h3>
-          <WalletTransactionList
-            transactions={allTransactions}
-            typeFilter={txFilter}
-            onTypeFilterChange={setTxFilter}
-            onSelect={setSelectedTx}
-            onDelete={(tx) => deleteTxMutation.mutate(tx)} />
-          
-        </div>
+        <CollapsibleSection title="Transaction history">
+          <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
+            <h3 className="text-sm font-semibold text-slate-200 mb-3">Transaction history</h3>
+            <WalletTransactionList
+              transactions={allTransactions}
+              typeFilter={txFilter}
+              onTypeFilterChange={setTxFilter}
+              onSelect={setSelectedTx}
+              onDelete={(tx) => deleteTxMutation.mutate(tx)} />
+          </div>
+        </CollapsibleSection>
       </div>
 
       {/* Modals */}
