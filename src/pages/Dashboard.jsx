@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import DesignerPayoutAlert from "../components/dashboard/DesignerPayoutAlert";
 import AnalyticsChart from "../components/dashboard/AnalyticsChart";
+import TotalIncomeCard from "../components/dashboard/TotalIncomeCard";
 
 export default function Dashboard({ currentUser }) {
   const { data: payments = [] } = usePayments();
@@ -28,6 +29,7 @@ export default function Dashboard({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <TotalIncomeCard />
       <MonthlyGoalBar />
       {isAdmin && <DesignerPayoutAlert />}
 
