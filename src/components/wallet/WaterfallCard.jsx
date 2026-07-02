@@ -61,11 +61,11 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
 
   const totalIncome =
   monthPayments.reduce((s, p) => s + (p.amount || 0), 0) +
-  monthWalletTxs.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
+  monthWalletTxs.filter((t) => t.type === "income" && t.category !== "Firemní rezerva").reduce((s, t) => s + (t.amount || 0), 0);
 
   const totalExpenses =
   monthExpenses.reduce((s, e) => s + (e.amount || 0), 0) +
-  monthWalletTxs.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
+  monthWalletTxs.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.category !== "Firemní rezerva" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
 
   const grossProfit = totalIncome - totalExpenses;
   const lawyerFee = Math.max(0, grossProfit) * 0.10;
@@ -122,8 +122,8 @@ export default function WaterfallCard({ payments = [], expenses = [], walletTxs 
       const d = t.transaction_date || t.created_date?.split("T")[0] || "";
       return d.startsWith(mStr);
     });
-    const inc = mp.reduce((s, p) => s + (p.amount || 0), 0) + mw.filter((t) => t.type === "income").reduce((s, t) => s + (t.amount || 0), 0);
-    const exp = me.reduce((s, e) => s + (e.amount || 0), 0) + mw.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
+    const inc = mp.reduce((s, p) => s + (p.amount || 0), 0) + mw.filter((t) => t.type === "income" && t.category !== "Firemní rezerva").reduce((s, t) => s + (t.amount || 0), 0);
+    const exp = me.reduce((s, e) => s + (e.amount || 0), 0) + mw.filter((t) => t.type === "expense" && t.category !== "Výplata" && t.category !== "Firemní rezerva" && t.type !== "transfer").reduce((s, t) => s + (t.amount || 0), 0);
     const gp = inc - exp;
     return gp - Math.max(0, gp) * 0.10; // netProfit
   };

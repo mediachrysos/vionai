@@ -76,8 +76,8 @@ export default function Wallet() {
     const manualTxs = walletTxs.map((t) => ({
       ...t,
       source: "Wallet",
-      // transfers and "Výplata" category are neutral — don't count as income/expense
-      type: t.type === "transfer" ? "transfer" : (t.category === "Výplata" || t.category === "Payout") ? "neutral" : t.type
+      // transfers, "Výplata" and "Firemní rezerva" categories are neutral — don't count as income/expense
+      type: t.type === "transfer" ? "transfer" : (t.category === "Výplata" || t.category === "Payout" || t.category === "Firemní rezerva") ? "neutral" : t.type
     }));
 
     return [...paymentTxs, ...expenseTxs, ...manualTxs].sort((a, b) => {

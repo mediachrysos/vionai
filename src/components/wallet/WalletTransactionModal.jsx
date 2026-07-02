@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { Upload, FileText, X } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
@@ -13,12 +14,13 @@ import DatePicker from "@/components/ui-custom/DatePicker";
 const AD_SPEND_CATEGORY = "Facebook Ads";
 
 const PRESET_CATEGORIES = ["Lawyer Payout", "Facebook Ads", "Software", "Transfer fee", "Bank fee"];
+const RESERVE_CATEGORY = "Firemní rezerva";
 
 export default function WalletTransactionModal({ open, onClose, onSave, onTransfer, accounts }) {
   const [form, setForm] = useState({
     title: "", amount: "", type: "income", category: "", account_id: "", account_name: "",
     transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "",
-    model_id: "", model_name: "", _payout: false,
+    model_id: "", model_name: "", _payout: false, _reserve: false,
   });
   const [transferForm, setTransferForm] = useState({ from_account_id: "", to_account_id: "", amount: "", transaction_date: new Date().toISOString().split("T")[0], note: "" });
   const [mode, setMode] = useState("tx"); // "tx" | "transfer"
@@ -45,7 +47,7 @@ export default function WalletTransactionModal({ open, onClose, onSave, onTransf
 
   useEffect(() => {
     if (open) {
-      setForm({ title: "", amount: "", type: "income", category: "", account_id: "", account_name: "", transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "", model_id: "", model_name: "", _payout: false });
+      setForm({ title: "", amount: "", type: "income", category: "", account_id: "", account_name: "", transaction_date: new Date().toISOString().split("T")[0], note: "", invoice_url: "", invoice_name: "", model_id: "", model_name: "", _payout: false, _reserve: false });
       setTransferForm({ from_account_id: "", to_account_id: "", amount: "", transaction_date: new Date().toISOString().split("T")[0], note: "" });
       setCategoryMode("select");
       setMode("tx");
@@ -173,6 +175,21 @@ export default function WalletTransactionModal({ open, onClose, onSave, onTransf
             <div className="mt-1">
               <DatePicker value={form.transaction_date} onChange={v => setForm(p => ({ ...p, transaction_date: v }))} />
             </div>
+          </div>
+
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50">
+            <Checkbox
+              id="reserve-checkbox"
+              checked={form._reserve}
+              onCheckedChange={(checked) => setForm(p => ({
+                ...p,
+                _reserve: checked,
+                category: checked ? RESERVE_CATEGORY : (p.category === RESERVE_CATEGORY ? "" : p.category),
+              }))}
+            />
+            <Label htmlFor="reserve-checkbox" className="text-xs text-blue-700 cursor-pointer">
+              Z firemní rezervy (nezapočítávat do výplaty)
+            </Label>
           </div>
 
           <div>
