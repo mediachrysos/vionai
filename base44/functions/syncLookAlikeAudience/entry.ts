@@ -19,18 +19,10 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Allow both authenticated users and automation (service role)
-    let base44Client = base44;
-    let isAutomation = false;
-    try {
-      const user = await base44.auth.me();
-      if (user?.role !== 'admin') {
-        return Response.json({ error: 'Forbidden' }, { status: 403 });
-      }
-    } catch (_) {
-      // Called from automation without user context — use service role
-      isAutomation = true;
-      base44Client = base44.asServiceRole;
+    // Require an authenticated admin user — no unauthenticated fallback
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const sr = base44.asServiceRole;
