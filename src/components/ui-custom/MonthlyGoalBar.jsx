@@ -66,6 +66,10 @@ export default function MonthlyGoalBar() {
   const daysLeft = Math.max(0, Math.ceil((endDate - today) / (1000 * 60 * 60 * 24)) + 1);
   const remaining = Math.max(0, goal - monthRev);
   const dailyNeeded = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
+  const todayStr = today.toISOString().split("T")[0];
+  const todayRev = payments
+    .filter((p) => (p.payment_date || p.created_date?.split("T")[0]) === todayStr)
+    .reduce((s, p) => s + (p.amount || 0), 0);
 
   return (
     <div className="w-full bg-[#1a1a1a] border border-white/8 rounded-2xl px-6 py-4 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
@@ -111,10 +115,17 @@ export default function MonthlyGoalBar() {
         </div>
         <div className="w-px h-3 bg-white/10" />
         {!reached ? (
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-slate-500 uppercase tracking-wider">Daily needed</span>
-            <span className="text-xs font-semibold text-[#C9A227]">{dailyNeeded.toLocaleString("cs-CZ")} {currency}</span>
-          </div>
+          <>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Today</span>
+              <span className="text-xs font-semibold text-slate-200">{todayRev.toLocaleString("cs-CZ")} {currency}</span>
+            </div>
+            <div className="w-px h-3 bg-white/10" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Daily needed</span>
+              <span className="text-xs font-semibold text-[#C9A227]">{dailyNeeded.toLocaleString("cs-CZ")} {currency}</span>
+            </div>
+          </>
         ) : (
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-slate-500 uppercase tracking-wider">Above goal</span>
