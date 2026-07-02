@@ -115,17 +115,12 @@ export default function MonthlyGoalBar() {
         </div>
         <div className="w-px h-3 bg-white/10" />
         {!reached ? (
-          <>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Today</span>
-              <span className="text-xs font-semibold text-slate-200">{todayRev.toLocaleString("cs-CZ")} {currency}</span>
-            </div>
-            <div className="w-px h-3 bg-white/10" />
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Daily needed</span>
-              <span className="text-xs font-semibold text-[#C9A227]">{dailyNeeded.toLocaleString("cs-CZ")} {currency}</span>
-            </div>
-          </>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider">Daily needed</span>
+            <span className="text-xs font-semibold text-slate-200">{todayRev.toLocaleString("cs-CZ")} {currency}</span>
+            <span className="text-xs text-slate-500">/</span>
+            <span className="text-xs font-semibold text-[#C9A227]">{dailyNeeded.toLocaleString("cs-CZ")} {currency}</span>
+          </div>
         ) : (
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-slate-500 uppercase tracking-wider">Above goal</span>
