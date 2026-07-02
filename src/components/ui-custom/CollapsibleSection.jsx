@@ -17,15 +17,18 @@ export default function CollapsibleSection({ title, children }) {
   }
 
   return (
-    <div className="relative">
+    <div>
       <button
         onClick={() => setOpen(false)}
-        className="absolute top-5 right-5 z-10 text-slate-500 hover:text-slate-300 transition-colors"
+        className="w-full flex items-center justify-between bg-[#1e1e1e] rounded-t-2xl border border-b-0 border-white/10 px-5 py-2 hover:bg-white/5 transition-colors text-left"
         title="Collapse"
       >
-        <ChevronUp className="w-4 h-4" />
+        <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
+        <ChevronUp className="w-4 h-4 text-slate-500" />
       </button>
-      {children}
+      <div className="[&>*]:rounded-t-none">
+        {children}
+      </div>
     </div>
   );
 }
