@@ -23,6 +23,11 @@ export default function Dashboard({ currentUser }) {
     queryFn: () => base44.entities.AdSpend.list(),
     staleTime: 60000,
   });
+  const { data: walletTxs = [] } = useQuery({
+    queryKey: ["walletTransactions"],
+    queryFn: () => base44.entities.WalletTransaction.list("-transaction_date", 5000),
+    staleTime: 60000,
+  });
 
   const isAdmin = currentUser?.role === "admin";
 
@@ -33,7 +38,7 @@ export default function Dashboard({ currentUser }) {
 
       {/* Analytics chart */}
       <div className="mt-4">
-        <AnalyticsChart payments={payments} adSpends={adSpends} models={models} />
+        <AnalyticsChart payments={payments} adSpends={adSpends} models={models} walletTxs={walletTxs} />
       </div>
     </div>
   );

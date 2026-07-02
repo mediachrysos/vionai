@@ -30,7 +30,12 @@ function fmtShort(v) {
 
 function toDateStr(d) { return d.toISOString().split("T")[0]; }
 
-function buildDailyData(payments, adSpends, from, to) {
+const NEUTRAL_CATEGORIES = ["Výplata Majitelé", "Výplata", "Payout", "Firemní rezerva"];
+function isWalletIncome(t) {
+  return t.type === "income" && !NEUTRAL_CATEGORIES.includes(t.category);
+}
+
+function buildDailyData(payments, adSpends, from, to, walletTxs = []) {
   const start = new Date(from);
   const end = new Date(to);
   const diffDays = Math.round((end - start) / 86400000);
@@ -49,6 +54,13 @@ function buildDailyData(payments, adSpends, from, to) {
       if (!pd || pd < from || pd > to) return;
       const key = pd.slice(0, 7);
       if (bucket[key]) bucket[key].gross += p.amount || 0;
+    });
+    walletTxs.forEach(t => {
+      if (!isWalletIncome(t)) return;
+      const pd = t.transaction_date;
+      if (!pd || pd < from || pd > to) return;
+      const key = pd.slice(0, 7);
+      if (bucket[key]) bucket[key].gross += t.amount || 0;
     });
     adSpends.forEach(a => {
       const pd = a.date;
@@ -77,6 +89,16 @@ function buildDailyData(payments, adSpends, from, to) {
       const key = toDateStr(ws);
       if (bucket[key]) bucket[key].gross += p.amount || 0;
     });
+    walletTxs.forEach(t => {
+      if (!isWalletIncome(t)) return;
+      const pd = t.transaction_date;
+      if (!pd || pd < from || pd > to) return;
+      const d = new Date(pd);
+      const ws = new Date(d);
+      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      const key = toDateStr(ws);
+      if (bucket[key]) bucket[key].gross += t.amount || 0;
+    });
     adSpends.forEach(a => {
       const pd = a.date;
       if (!pd || pd < from || pd > to) return;
@@ -94,7 +116,9 @@ function buildDailyData(payments, adSpends, from, to) {
     const result = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const dateStr = toDateStr(d);
-      const gross = payments.filter(p => p.status !== "failed" && p.status !== "refunded" && (p.payment_date || p.created_date?.split("T")[0]) === dateStr).reduce((s, p) => s + (p.amount || 0), 0);
+      const paymentGross = payments.filter(p => p.status !== "failed" && p.status !== "refunded" && (p.payment_date || p.created_date?.split("T")[0]) === dateStr).reduce((s, p) => s + (p.amount || 0), 0);
+      const walletGross = walletTxs.filter(t => isWalletIncome(t) && t.transaction_date === dateStr).reduce((s, t) => s + (t.amount || 0), 0);
+      const gross = paymentGross + walletGross;
       const adSpend = adSpends.filter(a => a.date === dateStr).reduce((s, a) => s + (a.amount || 0), 0);
       result.push({
         date: d.toLocaleDateString("cs", { day: "numeric", month: "short" }),
@@ -131,7 +155,7 @@ const MiniSparkline = ({ data, dataKey, color }) => (
   </ResponsiveContainer>
 );
 
-export default function AnalyticsChart({ payments = [], adSpends = [], models = [] }) {
+export default function AnalyticsChart({ payments = [], adSpends = [], models = [], walletTxs = [] }) {
   const { currency } = useWorkspace();
   const [selectedDays, setSelectedDays] = useState(30);
   const [showPresetMenu, setShowPresetMenu] = useState(false);
@@ -146,13 +170,16 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
     if (useCustom && customFrom && customTo) return { from: customFrom, to: customTo };
     const toDate = new Date();
     if (selectedDays === null) {
-      const dates = payments.map(p => p.payment_date || p.created_date?.split("T")[0]).filter(Boolean);
+      const dates = [
+        ...payments.map(p => p.payment_date || p.created_date?.split("T")[0]),
+        ...walletTxs.map(t => t.transaction_date),
+      ].filter(Boolean);
       const earliest = dates.length ? dates.reduce((a, b) => (a < b ? a : b)) : toDateStr(toDate);
       return { from: earliest, to: toDateStr(toDate) };
     }
     const fromDate = new Date(Date.now() - (selectedDays - 1) * 86400000);
     return { from: toDateStr(fromDate), to: toDateStr(toDate) };
-  }, [selectedDays, useCustom, customFrom, customTo, payments]);
+  }, [selectedDays, useCustom, customFrom, customTo, payments, walletTxs]);
 
   // Filter payments by model
   const filteredPayments = useMemo(() =>
@@ -165,7 +192,10 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
     [adSpends, selectedModelId]
   );
 
-  const data = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, from, to), [filteredPayments, filteredAdSpends, from, to]);
+  // Manual wallet income isn't tied to a specific model, so only include it in the "all models" view
+  const filteredWalletTxs = selectedModelId === "all" ? walletTxs : [];
+
+  const data = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, from, to, filteredWalletTxs), [filteredPayments, filteredAdSpends, from, to, filteredWalletTxs]);
 
   const totalGross = useMemo(() => data.reduce((s, d) => s + d.gross, 0), [data]);
   const totalNet = useMemo(() => data.reduce((s, d) => s + d.net, 0), [data]);
@@ -175,7 +205,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
   }, []);
-  const thisMonthData = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, thisMonthFrom, toDateStr(new Date())), [filteredPayments, filteredAdSpends, thisMonthFrom]);
+  const thisMonthData = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, thisMonthFrom, toDateStr(new Date()), filteredWalletTxs), [filteredPayments, filteredAdSpends, thisMonthFrom, filteredWalletTxs]);
   const thisMonthGross = useMemo(() => thisMonthData.reduce((s, d) => s + d.gross, 0), [thisMonthData]);
   const thisMonthNet = useMemo(() => thisMonthData.reduce((s, d) => s + d.net, 0), [thisMonthData]);
 
@@ -190,7 +220,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
     const last = new Date(now.getFullYear(), now.getMonth(), 0);
     return toDateStr(last);
   }, []);
-  const prevMonthData = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, prevMonthFrom, prevMonthTo), [filteredPayments, filteredAdSpends, prevMonthFrom, prevMonthTo]);
+  const prevMonthData = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, prevMonthFrom, prevMonthTo, filteredWalletTxs), [filteredPayments, filteredAdSpends, prevMonthFrom, prevMonthTo, filteredWalletTxs]);
   const prevMonthGross = useMemo(() => prevMonthData.reduce((s, d) => s + d.gross, 0), [prevMonthData]);
   const monthDiff = thisMonthGross - prevMonthGross;
 
