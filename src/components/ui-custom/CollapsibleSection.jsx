@@ -20,10 +20,9 @@ export default function CollapsibleSection({ title, children }) {
     <div>
       <button
         onClick={() => setOpen(false)}
-        className="w-full flex items-center justify-between bg-[#1e1e1e] rounded-t-2xl border border-b-0 border-white/10 px-5 py-2 hover:bg-white/5 transition-colors text-left"
+        className="w-full flex items-center justify-center bg-[#1e1e1e] rounded-t-2xl border border-b-0 border-white/10 px-5 py-1.5 hover:bg-white/5 transition-colors"
         title="Collapse"
       >
-        <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
         <ChevronUp className="w-4 h-4 text-slate-500" />
       </button>
       <div className="[&>*]:rounded-t-none">
