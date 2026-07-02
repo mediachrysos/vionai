@@ -63,8 +63,8 @@ export default function RangePicker({ range, activePreset, onPreset, onDateChang
           <div className="border-t border-white/10 pt-3">
             <p className="text-[10px] text-slate-600 font-semibold uppercase tracking-wider mb-2">Custom range</p>
             <div className="flex flex-col gap-2">
-              <DatePicker value={range.from} onChange={v => { onDateChange("from", v); }} placeholder="Od" />
-              <DatePicker value={range.to} onChange={v => { onDateChange("to", v); }} placeholder="Do" />
+              <DatePicker value={range.from} onChange={v => { onDateChange("from", v); }} placeholder="From" />
+              <DatePicker value={range.to} onChange={v => { onDateChange("to", v); }} placeholder="To" />
             </div>
           </div>
         </div>
