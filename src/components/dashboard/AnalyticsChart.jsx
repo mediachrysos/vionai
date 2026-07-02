@@ -44,7 +44,8 @@ function buildDailyData(payments, adSpends, from, to, walletTxs = []) {
 
   if (diffDays > 90) {
     // monthly
-    for (let d = new Date(start); d <= end; d.setMonth(d.getMonth() + 1)) {
+    // Iterate using day-of-month 1 to avoid Date rollover skipping months (e.g. Jan 31 + 1 month -> Mar 3)
+    for (let d = new Date(start.getFullYear(), start.getMonth(), 1); d <= end; d.setMonth(d.getMonth() + 1)) {
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       if (!bucket[key]) bucket[key] = { gross: 0, adSpend: 0, label: d.toLocaleDateString("cs", { month: "short", year: "2-digit" }) };
     }
