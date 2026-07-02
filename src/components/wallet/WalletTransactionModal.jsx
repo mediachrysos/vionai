@@ -146,19 +146,24 @@ export default function WalletTransactionModal({ open, onClose, onSave, onTransf
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-gray-500">Type</Label>
-              <Select value={form._payout ? "payout" : form.type} onValueChange={v => {
-                setForm(p => ({
-                  ...p,
-                  type: v === "payout" ? "expense" : v,
-                  category: v === "payout" ? "Payout" : (p.category === "Payout" ? "" : p.category),
-                  _payout: v === "payout",
-                }));
-              }}>
+              <Select
+                value={form.category === "Výplata Majitelé" ? "owner_payout" : form.category === "Výplata zaměstnanci" ? "employee_payout" : form.type}
+                onValueChange={v => {
+                  const isPayout = v === "owner_payout" || v === "employee_payout";
+                  setForm(p => ({
+                    ...p,
+                    type: isPayout ? "expense" : v,
+                    category: v === "owner_payout" ? "Výplata Majitelé" : v === "employee_payout" ? "Výplata zaměstnanci" : (p.category === "Výplata Majitelé" || p.category === "Výplata zaměstnanci" ? "" : p.category),
+                    _payout: isPayout,
+                  }));
+                }}
+              >
                 <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="income">Income</SelectItem>
                   <SelectItem value="expense">Expense</SelectItem>
-                  <SelectItem value="payout">Payout</SelectItem>
+                  <SelectItem value="owner_payout">Výplata Majitelé</SelectItem>
+                  <SelectItem value="employee_payout">Výplata zaměstnanci</SelectItem>
                 </SelectContent>
               </Select>
             </div>
