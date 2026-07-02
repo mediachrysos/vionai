@@ -12,7 +12,7 @@ import DatePicker from "@/components/ui-custom/DatePicker";
 
 const AD_SPEND_CATEGORY = "Facebook Ads";
 
-const PRESET_CATEGORIES = ["Lawyer Payout", "Facebook Ads", "Software", "Transfer fee", "Bank fee", "Firemní rezerva"];
+const PRESET_CATEGORIES = ["Lawyer Payout", "Facebook Ads", "Software", "Transfer fee", "Bank fee", "Firemní rezerva", "Výplata Majitelé", "Výplata zaměstnanci"];
 
 export default function WalletTransactionModal({ open, onClose, onSave, onTransfer, accounts }) {
   const [form, setForm] = useState({
