@@ -57,7 +57,7 @@ export default function ModelDetail({ currentUser }) {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Model.update(id, data),
-    onSuccess: () => {qc.invalidateQueries({ queryKey: ["model", id] });setEditMode(false);}
+    onSuccess: () => {qc.invalidateQueries({ queryKey: ["model", id] });qc.invalidateQueries({ queryKey: ["models"] });setEditMode(false);}
   });
 
   useEffect(() => {
