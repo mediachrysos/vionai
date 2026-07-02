@@ -197,8 +197,21 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
 
   const data = useMemo(() => buildDailyData(filteredPayments, filteredAdSpends, from, to, filteredWalletTxs), [filteredPayments, filteredAdSpends, from, to, filteredWalletTxs]);
 
-  const totalGross = useMemo(() => data.reduce((s, d) => s + d.gross, 0), [data]);
-  const totalNet = useMemo(() => data.reduce((s, d) => s + d.net, 0), [data]);
+  // For "All time" (no custom range), sum every eligible record directly instead of relying on
+  // date-bucketed data — this guarantees it matches the Wallet's Total Income exactly, even if some
+  // records have missing/inconsistently formatted dates that would otherwise fall outside the bucketed range.
+  const isAllTime = selectedDays === null && !useCustom;
+  const allTimeGross = useMemo(() => {
+    const paymentSum = filteredPayments.filter(p => p.status !== "failed" && p.status !== "refunded").reduce((s, p) => s + (p.amount || 0), 0);
+    const walletSum = filteredWalletTxs.filter(isWalletIncome).reduce((s, t) => s + (t.amount || 0), 0);
+    return paymentSum + walletSum;
+  }, [filteredPayments, filteredWalletTxs]);
+  const allTimeAdSpend = useMemo(() => filteredAdSpends.reduce((s, a) => s + (a.amount || 0), 0), [filteredAdSpends]);
+
+  const dataGross = useMemo(() => data.reduce((s, d) => s + d.gross, 0), [data]);
+  const dataNet = useMemo(() => data.reduce((s, d) => s + d.net, 0), [data]);
+  const totalGross = isAllTime ? allTimeGross : dataGross;
+  const totalNet = isAllTime ? Math.max(0, allTimeGross - allTimeAdSpend) : dataNet;
 
   // This month stats
   const thisMonthFrom = useMemo(() => {
