@@ -9,6 +9,7 @@ import WalletAccountModal from "@/components/wallet/WalletAccountModal";
 import WalletTransactionModal from "@/components/wallet/WalletTransactionModal";
 import WaterfallCard from "@/components/wallet/WaterfallCard";
 import WalletTransactionList from "@/components/wallet/WalletTransactionList";
+import AccountBreakdownSection from "@/components/wallet/AccountBreakdownSection";
 import WalletTransactionDetailModal from "@/components/wallet/WalletTransactionDetailModal";
 import SubscriptionsSection from "@/components/wallet/SubscriptionsSection";
 import { useWorkspace } from "@/lib/WorkspaceContext";
@@ -275,6 +276,9 @@ export default function Wallet() {
 
         {/* Subscriptions */}
         <SubscriptionsSection accounts={accounts} />
+
+        {/* Per-account breakdown by day/week/month */}
+        <AccountBreakdownSection accounts={accounts} payments={payments} walletTxs={walletTxs} />
 
         {/* Transactions - full width */}
         <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
