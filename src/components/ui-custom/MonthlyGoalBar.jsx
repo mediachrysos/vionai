@@ -66,7 +66,7 @@ export default function MonthlyGoalBar() {
   const daysLeft = Math.max(0, Math.ceil((endDate - today) / (1000 * 60 * 60 * 24)) + 1);
   const remaining = Math.max(0, goal - monthRev);
   const dailyNeeded = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
   const todayRev = payments
     .filter((p) => (p.payment_date || p.created_date?.split("T")[0]) === todayStr)
     .reduce((s, p) => s + (p.amount || 0), 0);
