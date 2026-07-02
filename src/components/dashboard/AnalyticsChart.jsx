@@ -13,6 +13,7 @@ const PRESETS = [
   { label: "Last 90 days", days: 90 },
   { label: "6 months", days: 180 },
   { label: "12 months", days: 365 },
+  { label: "All time", days: null },
 ];
 
 function fmt(v) {
@@ -43,6 +44,7 @@ function buildDailyData(payments, adSpends, from, to) {
       if (!bucket[key]) bucket[key] = { gross: 0, adSpend: 0, label: d.toLocaleDateString("cs", { month: "short", year: "2-digit" }) };
     }
     payments.forEach(p => {
+      if (p.status === "failed" || p.status === "refunded") return;
       const pd = p.payment_date || p.created_date?.split("T")[0];
       if (!pd || pd < from || pd > to) return;
       const key = pd.slice(0, 7);
@@ -66,6 +68,7 @@ function buildDailyData(payments, adSpends, from, to) {
       if (!bucket[key]) bucket[key] = { gross: 0, adSpend: 0, label: ws.toLocaleDateString("cs", { day: "numeric", month: "short" }) };
     }
     payments.forEach(p => {
+      if (p.status === "failed" || p.status === "refunded") return;
       const pd = p.payment_date || p.created_date?.split("T")[0];
       if (!pd || pd < from || pd > to) return;
       const d = new Date(pd);
@@ -91,7 +94,7 @@ function buildDailyData(payments, adSpends, from, to) {
     const result = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const dateStr = toDateStr(d);
-      const gross = payments.filter(p => (p.payment_date || p.created_date?.split("T")[0]) === dateStr).reduce((s, p) => s + (p.amount || 0), 0);
+      const gross = payments.filter(p => p.status !== "failed" && p.status !== "refunded" && (p.payment_date || p.created_date?.split("T")[0]) === dateStr).reduce((s, p) => s + (p.amount || 0), 0);
       const adSpend = adSpends.filter(a => a.date === dateStr).reduce((s, a) => s + (a.amount || 0), 0);
       result.push({
         date: d.toLocaleDateString("cs", { day: "numeric", month: "short" }),
@@ -142,9 +145,14 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
   const { from, to } = useMemo(() => {
     if (useCustom && customFrom && customTo) return { from: customFrom, to: customTo };
     const toDate = new Date();
+    if (selectedDays === null) {
+      const dates = payments.map(p => p.payment_date || p.created_date?.split("T")[0]).filter(Boolean);
+      const earliest = dates.length ? dates.reduce((a, b) => (a < b ? a : b)) : toDateStr(toDate);
+      return { from: earliest, to: toDateStr(toDate) };
+    }
     const fromDate = new Date(Date.now() - (selectedDays - 1) * 86400000);
     return { from: toDateStr(fromDate), to: toDateStr(toDate) };
-  }, [selectedDays, useCustom, customFrom, customTo]);
+  }, [selectedDays, useCustom, customFrom, customTo, payments]);
 
   // Filter payments by model
   const filteredPayments = useMemo(() =>
