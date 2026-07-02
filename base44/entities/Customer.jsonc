@@ -106,9 +106,7 @@
         },
         {
           "data.assigned_models": {
-            "$in": [
-              "{{user.assigned_model_ids}}"
-            ]
+            "$in": "{{user.data.assigned_model_ids}}"
           }
         }
       ]
@@ -125,9 +123,7 @@
         },
         {
           "data.assigned_models": {
-            "$in": [
-              "{{user.assigned_model_ids}}"
-            ]
+            "$in": "{{user.data.assigned_model_ids}}"
           }
         }
       ]

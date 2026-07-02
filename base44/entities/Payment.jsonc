@@ -87,9 +87,7 @@
         },
         {
           "data.model_id": {
-            "$in": [
-              "{{user.assigned_model_ids}}"
-            ]
+            "$in": "{{user.data.assigned_model_ids}}"
           }
         },
         {
