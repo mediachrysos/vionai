@@ -1,5 +1,5 @@
 import React from "react";
-import { Wallet } from "lucide-react";
+import { Wallet, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs = [], payments = [] }) {
@@ -29,10 +29,10 @@ export default function WalletAccountCard({ account, onEdit, onDelete, walletTxs
         </div>
         <div className="flex gap-1">
           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onEdit(account)}>
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_24_aobpbn.png" alt="edit" className="w-3.5 h-3.5 object-contain" />
+            <Pencil className="w-3.5 h-3.5 text-slate-400" />
           </Button>
           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onDelete(account)}>
-            <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774303157/Chrysos_icon_25_qzhwnb.png" alt="delete" className="w-3.5 h-3.5 object-contain" />
+            <Trash2 className="w-3.5 h-3.5 text-slate-400" />
           </Button>
         </div>
       </div>
