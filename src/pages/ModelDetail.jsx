@@ -53,6 +53,7 @@ export default function ModelDetail({ currentUser }) {
     return result;
   }, [payments, allCustomers]);
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
+  const { data: bankAccounts = [] } = useQuery({ queryKey: ["bankAccounts"], queryFn: () => base44.entities.BankAccount.filter({ is_active: true }) });
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Model.update(id, data),
@@ -60,7 +61,7 @@ export default function ModelDetail({ currentUser }) {
   });
 
   useEffect(() => {
-    if (model) setEditForm({ name: model.name, status: model.status, notes: model.notes || "", story: model.story || "", assigned_chatters: model.assigned_chatters || [], profile_photo: model.profile_photo || "" });
+    if (model) setEditForm({ name: model.name, status: model.status, notes: model.notes || "", story: model.story || "", assigned_chatters: model.assigned_chatters || [], profile_photo: model.profile_photo || "", assigned_bank_account_id: model.assigned_bank_account_id || "" });
   }, [model]);
 
   const handlePhotoUpload = async (e) => {
@@ -146,6 +147,18 @@ export default function ModelDetail({ currentUser }) {
             <div>
               <Label>Interní poznámky</Label>
               <Textarea value={editForm.notes} onChange={(e) => setEditForm((prev) => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Interní poznámky..." />
+            </div>
+
+            <div>
+              <Label>Bankovní účet</Label>
+              <p className="text-xs text-slate-500 mb-2">Při Add payment půjde pro tuto modelku vybrat pouze tento účet</p>
+              <Select value={editForm.assigned_bank_account_id || "none"} onValueChange={(v) => setEditForm((prev) => ({ ...prev, assigned_bank_account_id: v === "none" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Vyberte účet" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Bez omezení</SelectItem>
+                  {bankAccounts.map((a) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
