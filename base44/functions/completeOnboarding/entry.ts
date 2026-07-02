@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
       return Response.json({ docs });
     }
 
-    if (!token) {
+    if (!token || typeof token !== 'string') {
       return Response.json({ error: "Chybí token." }, { status: 400 });
     }
 
