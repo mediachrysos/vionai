@@ -5,10 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useWorkspace } from "@/lib/WorkspaceContext";
 
 const GRANULARITIES = [
-  { key: "day", label: "Day" },
-  { key: "week", label: "Week" },
-  { key: "month", label: "Month" }
-];
+{ key: "day", label: "Day" },
+{ key: "week", label: "Week" },
+{ key: "month", label: "Month" }];
+
 
 function getPeriodKey(dateStr, granularity) {
   const d = parseISO(dateStr);
@@ -84,7 +84,7 @@ export default function AccountBreakdownSection({ accounts, payments, walletTxs 
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.3)] p-5">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-          <Landmark className="w-4 h-4 text-[#C9A227]" /> Account breakdown
+          <Landmark className="w-4 h-4 text-[#C9A227] hidden" /> Account breakdown
         </h3>
         <div className="flex items-center gap-2">
           <Select value={accountId} onValueChange={setAccountId}>
