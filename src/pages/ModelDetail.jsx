@@ -61,7 +61,7 @@ export default function ModelDetail({ currentUser }) {
   });
 
   useEffect(() => {
-    if (model) setEditForm({ name: model.name, status: model.status, notes: model.notes || "", story: model.story || "", assigned_chatters: model.assigned_chatters || [], profile_photo: model.profile_photo || "", assigned_bank_account_id: model.assigned_bank_account_id || "" });
+    if (model) setEditForm({ name: model.name, status: model.status, notes: model.notes || "", story: model.story || "", assigned_chatters: model.assigned_chatters || [], profile_photo: model.profile_photo || "", assigned_bank_account_ids: model.assigned_bank_account_ids || [] });
   }, [model]);
 
   const handlePhotoUpload = async (e) => {
@@ -71,6 +71,15 @@ export default function ModelDetail({ currentUser }) {
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     setEditForm((prev) => ({ ...prev, profile_photo: file_url }));
     setUploading(false);
+  };
+
+  const toggleBankAccount = (accId) => {
+    setEditForm((prev) => ({
+      ...prev,
+      assigned_bank_account_ids: prev.assigned_bank_account_ids.includes(accId) ?
+      prev.assigned_bank_account_ids.filter((id) => id !== accId) :
+      [...prev.assigned_bank_account_ids, accId]
+    }));
   };
 
   const toggleChatter = (email) => {
@@ -150,15 +159,23 @@ export default function ModelDetail({ currentUser }) {
             </div>
 
             <div>
-              <Label>Bankovní účet</Label>
-              <p className="text-xs text-slate-500 mb-2">Při Add payment půjde pro tuto modelku vybrat pouze tento účet</p>
-              <Select value={editForm.assigned_bank_account_id || "none"} onValueChange={(v) => setEditForm((prev) => ({ ...prev, assigned_bank_account_id: v === "none" ? "" : v }))}>
-                <SelectTrigger><SelectValue placeholder="Vyberte účet" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Bez omezení</SelectItem>
-                  {bankAccounts.map((a) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <Label>Bankovní účty</Label>
+              <p className="text-xs text-slate-500 mb-3">Klikni na účet pro povolení / zakázání. Nic vybráno = povoleny všechny účty.</p>
+              <div className="flex flex-wrap gap-2">
+                {bankAccounts.map((a) =>
+              <button
+                key={a.id}
+                type="button"
+                onClick={() => toggleBankAccount(a.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                editForm.assigned_bank_account_ids?.includes(a.id) ?
+                "bg-[#C9A227] text-white" :
+                "bg-slate-800 text-slate-400 border border-white/10 hover:bg-slate-700"}`
+                }>
+                    {a.name} {editForm.assigned_bank_account_ids?.includes(a.id) && <X className="w-3 h-3 inline ml-1" />}
+                  </button>
+              )}
+              </div>
             </div>
 
             <div>

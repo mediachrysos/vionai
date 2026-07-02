@@ -36,9 +36,12 @@
       "type": "string",
       "description": "URL of profile photo"
     },
-    "assigned_bank_account_id": {
-      "type": "string",
-      "description": "ID of the BankAccount this model is linked to \u2014 payments for this model can only go to this account"
+    "assigned_bank_account_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of BankAccounts allowed for this model \u2014 Add payment will only offer these accounts. Empty = all accounts allowed"
     },
     "assigned_chatters": {
       "type": "array",

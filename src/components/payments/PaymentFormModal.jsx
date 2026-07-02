@@ -90,9 +90,9 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
       model_id: c.assigned_model || prev.model_id,
       model_name: modelMatch?.name || prev.model_name,
       chatter_email: c.assigned_chatter || prev.chatter_email,
-      bank_account_id: modelMatch?.assigned_bank_account_id || prev.bank_account_id,
-      account_name: modelMatch?.assigned_bank_account_id
-        ? bankAccounts.find((a) => a.id === modelMatch.assigned_bank_account_id)?.name || prev.account_name
+      bank_account_id: modelMatch?.assigned_bank_account_ids?.length === 1 ? modelMatch.assigned_bank_account_ids[0] : prev.bank_account_id,
+      account_name: modelMatch?.assigned_bank_account_ids?.length === 1
+        ? bankAccounts.find((a) => a.id === modelMatch.assigned_bank_account_ids[0])?.name || prev.account_name
         : prev.account_name
     }));
     setCustomerSearch(c.full_name);
@@ -101,18 +101,20 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
 
   const handleModelChange = (modelId) => {
     const m = models.find((x) => x.id === modelId);
+    const allowedIds = m?.assigned_bank_account_ids || [];
+    const singleAllowed = allowedIds.length === 1 ? bankAccounts.find((a) => a.id === allowedIds[0]) : null;
     setForm((prev) => ({
       ...prev,
       model_id: modelId,
       model_name: m?.name || "",
-      bank_account_id: m?.assigned_bank_account_id || "",
-      account_name: m?.assigned_bank_account_id ? bankAccounts.find((a) => a.id === m.assigned_bank_account_id)?.name || "" : "",
+      bank_account_id: singleAllowed ? singleAllowed.id : "",
+      account_name: singleAllowed ? singleAllowed.name : "",
     }));
   };
 
   const selectedModel = models.find((m) => m.id === form.model_id);
-  const allowedBankAccounts = selectedModel?.assigned_bank_account_id
-    ? bankAccounts.filter((a) => a.id === selectedModel.assigned_bank_account_id)
+  const allowedBankAccounts = selectedModel?.assigned_bank_account_ids?.length > 0
+    ? bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id))
     : bankAccounts;
 
   const handleSubmit = async () => {
@@ -272,7 +274,6 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               <Label>Target account</Label>
             <Select
               value={form.bank_account_id}
-              disabled={!!selectedModel?.assigned_bank_account_id}
               onValueChange={(v) => {
                 const acc = bankAccounts.find((a) => a.id === v);
                 setForm((prev) => ({ ...prev, bank_account_id: v, account_name: acc?.name || "" }));
@@ -284,9 +285,6 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 )}
               </SelectContent>
             </Select>
-            {selectedModel?.assigned_bank_account_id &&
-              <p className="text-xs text-slate-500 mt-1">Účet je uzamčen podle přiřazené modelky</p>
-            }
             </div>
             <div>
               <Label>Payment date</Label>
