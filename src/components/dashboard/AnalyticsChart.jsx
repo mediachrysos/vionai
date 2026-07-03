@@ -341,7 +341,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           <div className="flex items-start gap-2">
             <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)} <span className="text-base font-medium text-slate-400">{currency}</span></p>
             {monthDiff !== 0 &&
-            <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md bg-[hsl(var(--foreground))] ${monthDiff < 0 ? "text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
+            <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md bg-[hsl(var(--card-foreground))] ${monthDiff < 0 ? "bg-red-900/50 text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
                 {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString()}
               </span>
             }
