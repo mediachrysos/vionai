@@ -151,9 +151,9 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-4">
       <div className="flex items-center gap-3 mb-2">
-        <div className="bg-slate-800 rounded-xl w-9 h-9 flex items-center justify-center shadow-sm shadow-amber-200 hidden">
-          <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" />
-        </div>
+        
+
+        
         <div>
           <h1 className="text-xl font-bold text-slate-100">Admin Portal</h1>
           <p className="text-sm text-slate-500">Manage users, payments and permissions</p>
