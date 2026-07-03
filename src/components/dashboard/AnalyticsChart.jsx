@@ -1,20 +1,20 @@
 import React, { useState, useMemo } from "react";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line
-} from "recharts";
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from
+"recharts";
 import { ChevronDown, TrendingDown } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 import { useWorkspace } from "@/lib/WorkspaceContext";
 
 const PRESETS = [
-  { label: "Last 7 days", days: 7 },
-  { label: "Last 14 days", days: 14 },
-  { label: "Last 30 days", days: 30 },
-  { label: "Last 90 days", days: 90 },
-  { label: "6 months", days: 180 },
-  { label: "12 months", days: 365 },
-  { label: "All time", days: null },
-];
+{ label: "Last 7 days", days: 7 },
+{ label: "Last 14 days", days: 14 },
+{ label: "Last 30 days", days: 30 },
+{ label: "Last 90 days", days: 90 },
+{ label: "6 months", days: 180 },
+{ label: "12 months", days: 365 },
+{ label: "All time", days: null }];
+
 
 function fmt(v) {
   if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
@@ -28,7 +28,7 @@ function fmtShort(v) {
   return String(v);
 }
 
-function toDateStr(d) { return d.toISOString().split("T")[0]; }
+function toDateStr(d) {return d.toISOString().split("T")[0];}
 
 const NEUTRAL_CATEGORIES = ["Výplata Majitelé", "Výplata", "Payout", "Firemní rezerva"];
 function isWalletIncome(t) {
@@ -49,21 +49,21 @@ function buildDailyData(payments, adSpends, from, to, walletTxs = []) {
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       if (!bucket[key]) bucket[key] = { gross: 0, adSpend: 0, label: d.toLocaleDateString("cs", { month: "short", year: "2-digit" }) };
     }
-    payments.forEach(p => {
+    payments.forEach((p) => {
       if (p.status === "failed" || p.status === "refunded") return;
       const pd = p.payment_date || p.created_date?.split("T")[0];
       if (!pd || pd < from || pd > to) return;
       const key = pd.slice(0, 7);
       if (bucket[key]) bucket[key].gross += p.amount || 0;
     });
-    walletTxs.forEach(t => {
+    walletTxs.forEach((t) => {
       if (!isWalletIncome(t)) return;
       const pd = t.transaction_date;
       if (!pd || pd < from || pd > to) return;
       const key = pd.slice(0, 7);
       if (bucket[key]) bucket[key].gross += t.amount || 0;
     });
-    adSpends.forEach(a => {
+    adSpends.forEach((a) => {
       const pd = a.date;
       if (!pd || pd < from || pd > to) return;
       const key = pd.slice(0, 7);
@@ -76,36 +76,36 @@ function buildDailyData(payments, adSpends, from, to, walletTxs = []) {
     // weekly
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const ws = new Date(d);
-      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      ws.setDate(d.getDate() - (d.getDay() + 6) % 7);
       const key = toDateStr(ws);
       if (!bucket[key]) bucket[key] = { gross: 0, adSpend: 0, label: ws.toLocaleDateString("cs", { day: "numeric", month: "short" }) };
     }
-    payments.forEach(p => {
+    payments.forEach((p) => {
       if (p.status === "failed" || p.status === "refunded") return;
       const pd = p.payment_date || p.created_date?.split("T")[0];
       if (!pd || pd < from || pd > to) return;
       const d = new Date(pd);
       const ws = new Date(d);
-      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      ws.setDate(d.getDate() - (d.getDay() + 6) % 7);
       const key = toDateStr(ws);
       if (bucket[key]) bucket[key].gross += p.amount || 0;
     });
-    walletTxs.forEach(t => {
+    walletTxs.forEach((t) => {
       if (!isWalletIncome(t)) return;
       const pd = t.transaction_date;
       if (!pd || pd < from || pd > to) return;
       const d = new Date(pd);
       const ws = new Date(d);
-      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      ws.setDate(d.getDate() - (d.getDay() + 6) % 7);
       const key = toDateStr(ws);
       if (bucket[key]) bucket[key].gross += t.amount || 0;
     });
-    adSpends.forEach(a => {
+    adSpends.forEach((a) => {
       const pd = a.date;
       if (!pd || pd < from || pd > to) return;
       const d = new Date(pd);
       const ws = new Date(d);
-      ws.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      ws.setDate(d.getDate() - (d.getDay() + 6) % 7);
       const key = toDateStr(ws);
       if (bucket[key]) bucket[key].adSpend += a.amount || 0;
     });
@@ -117,14 +117,14 @@ function buildDailyData(payments, adSpends, from, to, walletTxs = []) {
     const result = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const dateStr = toDateStr(d);
-      const paymentGross = payments.filter(p => p.status !== "failed" && p.status !== "refunded" && (p.payment_date || p.created_date?.split("T")[0]) === dateStr).reduce((s, p) => s + (p.amount || 0), 0);
-      const walletGross = walletTxs.filter(t => isWalletIncome(t) && t.transaction_date === dateStr).reduce((s, t) => s + (t.amount || 0), 0);
+      const paymentGross = payments.filter((p) => p.status !== "failed" && p.status !== "refunded" && (p.payment_date || p.created_date?.split("T")[0]) === dateStr).reduce((s, p) => s + (p.amount || 0), 0);
+      const walletGross = walletTxs.filter((t) => isWalletIncome(t) && t.transaction_date === dateStr).reduce((s, t) => s + (t.amount || 0), 0);
       const gross = paymentGross + walletGross;
-      const adSpend = adSpends.filter(a => a.date === dateStr).reduce((s, a) => s + (a.amount || 0), 0);
+      const adSpend = adSpends.filter((a) => a.date === dateStr).reduce((s, a) => s + (a.amount || 0), 0);
       result.push({
         date: d.toLocaleDateString("cs", { day: "numeric", month: "short" }),
         gross,
-        net: Math.max(0, gross - adSpend),
+        net: Math.max(0, gross - adSpend)
       });
     }
     return result;
@@ -133,28 +133,28 @@ function buildDailyData(payments, adSpends, from, to, walletTxs = []) {
 
 const CustomTooltip = ({ active, payload, label, mode }) => {
   if (!active || !payload?.length) return null;
-  const val = mode === "net" ? payload.find(p => p.dataKey === "net") : payload.find(p => p.dataKey === "gross");
+  const val = mode === "net" ? payload.find((p) => p.dataKey === "net") : payload.find((p) => p.dataKey === "gross");
   return (
     <div className="bg-[#252525] border border-white/10 rounded-xl shadow-2xl px-4 py-3 text-sm">
       <p className="text-slate-400 font-medium mb-1">{label}</p>
       <p className="font-bold text-white">{fmt(val?.value || 0)}</p>
-      {payload.find(p => p.dataKey === "gross") && payload.find(p => p.dataKey === "net") && (
-        <div className="mt-1 space-y-0.5 text-xs text-slate-500">
-          <p>Gross: {fmt(payload.find(p => p.dataKey === "gross")?.value || 0)}</p>
-          <p>Net: {fmt(payload.find(p => p.dataKey === "net")?.value || 0)}</p>
+      {payload.find((p) => p.dataKey === "gross") && payload.find((p) => p.dataKey === "net") &&
+      <div className="mt-1 space-y-0.5 text-xs text-slate-500">
+          <p>Gross: {fmt(payload.find((p) => p.dataKey === "gross")?.value || 0)}</p>
+          <p>Net: {fmt(payload.find((p) => p.dataKey === "net")?.value || 0)}</p>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 };
 
-const MiniSparkline = ({ data, dataKey, color }) => (
-  <ResponsiveContainer width="100%" height={50}>
+const MiniSparkline = ({ data, dataKey, color }) =>
+<ResponsiveContainer width="100%" height={50}>
     <LineChart data={data} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
       <Line type="monotone" dataKey={dataKey} stroke={color} strokeWidth={1.5} dot={false} />
     </LineChart>
-  </ResponsiveContainer>
-);
+  </ResponsiveContainer>;
+
 
 export default function AnalyticsChart({ payments = [], adSpends = [], models = [], walletTxs = [] }) {
   const { currency } = useWorkspace();
@@ -172,10 +172,10 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
     const toDate = new Date();
     if (selectedDays === null) {
       const dates = [
-        ...payments.map(p => p.payment_date || p.created_date?.split("T")[0]),
-        ...walletTxs.map(t => t.transaction_date),
-      ].filter(Boolean);
-      const earliest = dates.length ? dates.reduce((a, b) => (a < b ? a : b)) : toDateStr(toDate);
+      ...payments.map((p) => p.payment_date || p.created_date?.split("T")[0]),
+      ...walletTxs.map((t) => t.transaction_date)].
+      filter(Boolean);
+      const earliest = dates.length ? dates.reduce((a, b) => a < b ? a : b) : toDateStr(toDate);
       return { from: earliest, to: toDateStr(toDate) };
     }
     const fromDate = new Date(Date.now() - (selectedDays - 1) * 86400000);
@@ -184,13 +184,13 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
 
   // Filter payments by model
   const filteredPayments = useMemo(() =>
-    selectedModelId === "all" ? payments : payments.filter(p => p.model_id === selectedModelId),
-    [payments, selectedModelId]
+  selectedModelId === "all" ? payments : payments.filter((p) => p.model_id === selectedModelId),
+  [payments, selectedModelId]
   );
 
   const filteredAdSpends = useMemo(() =>
-    selectedModelId === "all" ? adSpends : adSpends.filter(a => a.model_id === selectedModelId),
-    [adSpends, selectedModelId]
+  selectedModelId === "all" ? adSpends : adSpends.filter((a) => a.model_id === selectedModelId),
+  [adSpends, selectedModelId]
   );
 
   // Manual wallet income isn't tied to a specific model, so only include it in the "all models" view
@@ -203,7 +203,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
   // records have missing/inconsistently formatted dates that would otherwise fall outside the bucketed range.
   const isAllTime = selectedDays === null && !useCustom;
   const allTimeGross = useMemo(() => {
-    const paymentSum = filteredPayments.filter(p => p.status !== "failed" && p.status !== "refunded").reduce((s, p) => s + (p.amount || 0), 0);
+    const paymentSum = filteredPayments.filter((p) => p.status !== "failed" && p.status !== "refunded").reduce((s, p) => s + (p.amount || 0), 0);
     const walletSum = filteredWalletTxs.filter(isWalletIncome).reduce((s, t) => s + (t.amount || 0), 0);
     return paymentSum + walletSum;
   }, [filteredPayments, filteredWalletTxs]);
@@ -238,11 +238,11 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
   const prevMonthGross = useMemo(() => prevMonthData.reduce((s, d) => s + d.gross, 0), [prevMonthData]);
   const monthDiff = thisMonthGross - prevMonthGross;
 
-  const activePresetLabel = useCustom
-    ? `${customFrom} – ${customTo}`
-    : PRESETS.find(p => p.days === selectedDays)?.label || `${selectedDays} days`;
+  const activePresetLabel = useCustom ?
+  `${customFrom} – ${customTo}` :
+  PRESETS.find((p) => p.days === selectedDays)?.label || `${selectedDays} days`;
 
-  const selectedModel = models.find(m => m.id === selectedModelId);
+  const selectedModel = models.find((m) => m.id === selectedModelId);
   const dateRangeLabel = `${new Date(from).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })} – ${new Date(to).toLocaleDateString("cs", { day: "numeric", month: "short", year: "numeric" })}`;
   const thisMonthLabel = new Date().toLocaleDateString("cs", { month: "long", year: "numeric" });
 
@@ -253,76 +253,76 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         {/* Period preset */}
         <div className="relative">
           <button
-            onClick={() => { setShowPresetMenu(v => !v); setShowModelMenu(false); }}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
-          >
+            onClick={() => {setShowPresetMenu((v) => !v);setShowModelMenu(false);}}
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]">
+            
             {activePresetLabel}
             <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${showPresetMenu ? "rotate-180" : ""}`} />
           </button>
-          {showPresetMenu && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[220px]">
+          {showPresetMenu &&
+          <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[220px]">
               <div className="grid grid-cols-2 gap-1">
-                {PRESETS.map(p => (
-                  <button
-                    key={p.days}
-                    onClick={() => { setSelectedDays(p.days); setUseCustom(false); setShowPresetMenu(false); }}
-                    className={`text-center text-xs px-2 py-2 rounded-lg transition-all whitespace-nowrap ${
-                      !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"
-                    }`}
-                  >
+                {PRESETS.map((p) =>
+              <button
+                key={p.days}
+                onClick={() => {setSelectedDays(p.days);setUseCustom(false);setShowPresetMenu(false);}}
+                className={`text-center text-xs px-2 py-2 rounded-lg transition-all whitespace-nowrap ${
+                !useCustom && selectedDays === p.days ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`
+                }>
+                
                     {p.label}
                   </button>
-                ))}
+              )}
               </div>
               <div className="border-t border-white/10 mt-1 pt-2 px-1">
                 <p className="text-[10px] text-slate-500 font-medium mb-1.5 px-2">Custom range</p>
                 <div className="flex flex-col gap-1.5 mb-1.5">
-                  <DatePicker value={customFrom} onChange={v => setCustomFrom(v)} placeholder="Od" />
-                  <DatePicker value={customTo} onChange={v => setCustomTo(v)} placeholder="Do" />
+                  <DatePicker value={customFrom} onChange={(v) => setCustomFrom(v)} placeholder="Od" />
+                  <DatePicker value={customTo} onChange={(v) => setCustomTo(v)} placeholder="Do" />
                 </div>
                 <button
-                  onClick={() => { if (customFrom && customTo) { setUseCustom(true); setShowPresetMenu(false); } }}
-                  disabled={!customFrom || !customTo}
-                  className="w-full text-xs font-medium bg-[#C9A227] text-white rounded-lg py-1.5 hover:bg-[#A8841C] disabled:opacity-40 transition-colors"
-                >
+                onClick={() => {if (customFrom && customTo) {setUseCustom(true);setShowPresetMenu(false);}}}
+                disabled={!customFrom || !customTo}
+                className="w-full text-xs font-medium bg-[#C9A227] text-white rounded-lg py-1.5 hover:bg-[#A8841C] disabled:opacity-40 transition-colors">
+                
                   Apply
                 </button>
               </div>
             </div>
-          )}
+          }
         </div>
 
         {/* Model filter */}
-        {models.length > 0 && (
-          <div className="relative">
+        {models.length > 0 &&
+        <div className="relative">
             <button
-              onClick={() => { setShowModelMenu(v => !v); setShowPresetMenu(false); }}
-              className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]"
-            >
+            onClick={() => {setShowModelMenu((v) => !v);setShowPresetMenu(false);}}
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-200 bg-white/8 hover:bg-white/12 border border-white/12 rounded-xl px-3.5 py-2 transition-all shadow-sm hover:shadow-md hover:border-[#C9A227]/40 hover:text-[#C9A227]">
+            
               {selectedModel ? selectedModel.name : "All models"}
               <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${showModelMenu ? "rotate-180" : ""}`} />
             </button>
-            {showModelMenu && (
-              <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
+            {showModelMenu &&
+          <div className="absolute left-0 top-full mt-1.5 z-50 bg-[#252525] border border-white/10 rounded-xl shadow-2xl p-2 min-w-[180px] max-h-60 overflow-y-auto">
                 <button
-                  onClick={() => { setSelectedModelId("all"); setShowModelMenu(false); }}
-                  className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === "all" ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}
-                >
+              onClick={() => {setSelectedModelId("all");setShowModelMenu(false);}}
+              className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === "all" ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}>
+              
                   All models
                 </button>
-                {models.map(m => (
-                  <button
-                    key={m.id}
-                    onClick={() => { setSelectedModelId(m.id); setShowModelMenu(false); }}
-                    className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === m.id ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}
-                  >
+                {models.map((m) =>
+            <button
+              key={m.id}
+              onClick={() => {setSelectedModelId(m.id);setShowModelMenu(false);}}
+              className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${selectedModelId === m.id ? "bg-[#C9A227] text-white font-medium" : "text-slate-300 hover:bg-slate-700/50"}`}>
+              
                     {m.name}
                   </button>
-                ))}
-              </div>
             )}
+              </div>
+          }
           </div>
-        )}
+        }
       </div>
 
       {/* Two summary cards */}
@@ -340,11 +340,11 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           <p className="text-sm text-slate-400 font-medium mb-1">This month</p>
           <div className="flex items-start gap-2">
             <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)} <span className="text-base font-medium text-slate-400">{currency}</span></p>
-            {monthDiff !== 0 && (
-              <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md ${monthDiff < 0 ? "bg-red-900/50 text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
+            {monthDiff !== 0 &&
+            <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md bg-[hsl(var(--foreground))] ${monthDiff < 0 ? "text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
                 {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString()}
               </span>
-            )}
+            }
           </div>
           <p className="text-xs text-slate-500 mb-3">{thisMonthLabel}</p>
           <MiniSparkline data={thisMonthData} dataKey="gross" color="#C9A227" />
@@ -358,14 +358,14 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           <div className="flex items-center gap-1 bg-slate-800 rounded-full p-1">
             <button
               onClick={() => setChartMode("net")}
-              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "net" ? "bg-[#C9A227] text-white shadow-sm" : "text-slate-400 hover:text-slate-200"}`}
-            >
+              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "net" ? "bg-[#C9A227] text-white shadow-sm" : "text-slate-400 hover:text-slate-200"}`}>
+              
               Net
             </button>
             <button
               onClick={() => setChartMode("gross")}
-              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "gross" ? "bg-[#C9A227] text-white shadow-sm" : "text-slate-400 hover:text-slate-200"}`}
-            >
+              className={`text-xs font-semibold px-3 py-1 rounded-full transition-all ${chartMode === "gross" ? "bg-[#C9A227] text-white shadow-sm" : "text-slate-400 hover:text-slate-200"}`}>
+              
               Gross
             </button>
           </div>
@@ -391,8 +391,8 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
                 strokeWidth={2}
                 fill="url(#chartGrad)"
                 dot={false}
-                activeDot={{ r: 4, fill: "#C9A227", strokeWidth: 2, stroke: "#0F172A" }}
-              />
+                activeDot={{ r: 4, fill: "#C9A227", strokeWidth: 2, stroke: "#0F172A" }} />
+              
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -409,6 +409,6 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
