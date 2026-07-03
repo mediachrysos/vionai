@@ -26,24 +26,24 @@ function GoalDatePicker({ value, onChange, placeholder }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="w-full flex items-center gap-2 h-9 px-3 rounded-md border border-white/10 bg-slate-800 text-sm hover:bg-slate-700 transition-colors"
-        >
+          className="w-full flex items-center gap-2 h-9 px-3 rounded-md border border-white/10 bg-slate-800 text-sm hover:bg-slate-700 transition-colors">
+          
           <img
             src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266696/Chrysos_icon_7_ubsz30.png"
             alt=""
-            className="w-4 h-4 object-contain flex-shrink-0"
-          />
+            className="w-4 h-4 object-contain flex-shrink-0" />
+          
           <span className={`flex-1 text-left ${selected ? "text-slate-200 font-medium" : "text-slate-500"}`}>
             {selected ? format(selected, "d. M. yyyy") : placeholder || "Select date"}
           </span>
-          {value && (
-            <span
-              onClick={(e) => { e.stopPropagation(); onChange(""); }}
-              className="text-gray-300 hover:text-gray-500 transition-colors"
-            >
+          {value &&
+          <span
+            onClick={(e) => {e.stopPropagation();onChange("");}}
+            className="text-gray-300 hover:text-gray-500 transition-colors">
+            
               <X className="w-3 h-3" />
             </span>
-          )}
+          }
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 z-50" align="start">
@@ -54,11 +54,11 @@ function GoalDatePicker({ value, onChange, placeholder }) {
             if (date) onChange(format(date, "yyyy-MM-dd"));
             setOpen(false);
           }}
-          initialFocus
-        />
+          initialFocus />
+        
       </PopoverContent>
-    </Popover>
-  );
+    </Popover>);
+
 }
 
 const statusConfig = {
@@ -100,11 +100,11 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
     // Small delay to avoid rate limit conflicts with layout-level fetches
     const timer = setTimeout(async () => {
       const [u, m, a, db] = await Promise.all([
-        base44.entities.User.list("-created_date", 100),
-        base44.entities.Model.list(),
-        base44.entities.BankAccount.list("-created_date", 100),
-        base44.entities.SocialDashboard.list("order", 50),
-      ]);
+      base44.entities.User.list("-created_date", 100),
+      base44.entities.Model.list(),
+      base44.entities.BankAccount.list("-created_date", 100),
+      base44.entities.SocialDashboard.list("order", 50)]
+      );
       setUsers(u);
       setModels(m);
       setAccounts(a);
@@ -113,7 +113,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
     }, 600);
 
     const unsub = base44.entities.User.subscribe(() => loadUsers());
-    return () => { clearTimeout(timer); unsub(); };
+    return () => {clearTimeout(timer);unsub();};
   }, [currentUser]);
 
   const updateUser = async (userId, changes) => {
@@ -151,7 +151,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-4">
       <div className="flex items-center gap-3 mb-2">
-        <div className="bg-slate-800 rounded-xl w-9 h-9 flex items-center justify-center shadow-sm shadow-amber-200">
+        <div className="bg-slate-800 rounded-xl w-9 h-9 flex items-center justify-center shadow-sm shadow-amber-200 hidden">
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266698/Chrysos_icon_11_zdpyp3.png" alt="" className="w-5 h-5 object-contain" />
         </div>
         <div>
@@ -262,25 +262,25 @@ const PAGE_OPTIONS = [
 { page: "SocialMediaContent", label: "Graphic Space" },
 { page: "ChatterPortal", label: "Chatting Space" },
 { page: "AdminUsers", label: "Admin Portal" },
-{ page: "CustomerScraper", label: "Customer Scraper" },
-];
+{ page: "CustomerScraper", label: "Customer Scraper" }];
+
 
 const ALL_ROLES = [
-  { value: "admin", label: "👑 Admin" },
-  { value: "chatter", label: "💬 Chatter" },
-  { value: "lawyer", label: "⚖️ Lawyer" },
-  { value: "grafik", label: "🎨 Designer" },
-  { value: "user", label: "👤 User" },
-];
+{ value: "admin", label: "👑 Admin" },
+{ value: "chatter", label: "💬 Chatter" },
+{ value: "lawyer", label: "⚖️ Lawyer" },
+{ value: "grafik", label: "🎨 Designer" },
+{ value: "user", label: "👤 User" }];
+
 
 function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboards }) {
   const [showPerms, setShowPerms] = useState(false);
   const [allowedPages, setAllowedPages] = useState(user.allowed_pages || []);
   const [assignedIds, setAssignedIds] = useState(
-    (user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : [])).filter(id => id != null && id !== "")
+    (user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : [])).filter((id) => id != null && id !== "")
   );
   const [userRoles, setUserRoles] = useState(
-    user.roles?.length > 0 ? user.roles : (user.role ? [user.role] : ["user"])
+    user.roles?.length > 0 ? user.roles : user.role ? [user.role] : ["user"]
   );
   const [nickname, setNickname] = useState(user.nickname || "");
   const [editingNickname, setEditingNickname] = useState(false);
@@ -294,7 +294,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   const toggleRole = (roleVal) => {
     let next;
     if (userRoles.includes(roleVal)) {
-      next = userRoles.filter(r => r !== roleVal);
+      next = userRoles.filter((r) => r !== roleVal);
       if (next.length === 0) next = ["user"]; // always at least one role
     } else {
       next = [...userRoles, roleVal];
@@ -312,7 +312,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
         }
       } else {
         // Remove ChatterPortal when chatter role removed
-        newAllowedPages = newAllowedPages.filter(p => p !== "ChatterPortal");
+        newAllowedPages = newAllowedPages.filter((p) => p !== "ChatterPortal");
         setAllowedPages(newAllowedPages);
       }
     }
@@ -321,21 +321,21 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
     onUpdate(user.id, { roles: next, role: next[0], allowed_pages: newAllowedPages });
   };
 
-  const assignedDashboard = dashboards.find(d => d.designer_email === user.email);
+  const assignedDashboard = dashboards.find((d) => d.designer_email === user.email);
 
   const handleDashboardAssign = async (dashboardId) => {
     // Unassign from current dashboard if any
     if (assignedDashboard) {
       await base44.entities.SocialDashboard.update(assignedDashboard.id, {
         designer_email: "",
-        designer_name: "",
+        designer_name: ""
       });
     }
     // Assign to new dashboard (if not "none")
     if (dashboardId && dashboardId !== "none") {
       await base44.entities.SocialDashboard.update(dashboardId, {
         designer_email: user.email,
-        designer_name: user.full_name || user.email,
+        designer_name: user.full_name || user.email
       });
     }
     // Refresh dashboards
@@ -345,9 +345,9 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
 
   const toggleModel = async (modelId) => {
     const isAdding = !assignedIds.includes(modelId);
-    const next = isAdding
-      ? [...assignedIds, modelId]
-      : assignedIds.filter((id) => id !== modelId);
+    const next = isAdding ?
+    [...assignedIds, modelId] :
+    assignedIds.filter((id) => id !== modelId);
     setAssignedIds(next);
     await onUpdate(user.id, { assigned_model_ids: next });
 
@@ -355,7 +355,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
     if (isAdding) {
       const customers = await base44.entities.Customer.list("-created_date", 5000);
       const toUpdate = customers.filter((c) =>
-        Array.isArray(c.assigned_models) && c.assigned_models.includes(modelId)
+      Array.isArray(c.assigned_models) && c.assigned_models.includes(modelId)
       );
       // Batch updates in groups of 5 to avoid rate limit
       const batchSize = 5;
@@ -363,11 +363,11 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
         const batch = toUpdate.slice(i, i + batchSize);
         await Promise.all(
           batch.map((c) =>
-            base44.entities.Customer.update(c.id, { assigned_chatter: user.email })
+          base44.entities.Customer.update(c.id, { assigned_chatter: user.email })
           )
         );
         if (i + batchSize < toUpdate.length) {
-          await new Promise(resolve => setTimeout(resolve, 200));
+          await new Promise((resolve) => setTimeout(resolve, 200));
         }
       }
     }
@@ -394,41 +394,41 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-semibold text-slate-100">{user.full_name || "—"}</p>
-            {nickname && !editingNickname && (
-              <span className="text-xs text-amber-500/80 font-medium">"{nickname}"</span>
-            )}
+            {nickname && !editingNickname &&
+            <span className="text-xs text-amber-500/80 font-medium">"{nickname}"</span>
+            }
           </div>
           <p className="text-xs text-slate-500 truncate">{user.email}</p>
-          {editingNickname ? (
-            <div className="flex items-center gap-1 mt-1">
+          {editingNickname ?
+          <div className="flex items-center gap-1 mt-1">
               <input
-                className="text-xs border border-white/10 bg-slate-800 text-slate-200 rounded px-2 py-0.5 h-6 w-32 focus:outline-none focus:ring-1 focus:ring-amber-400"
-                value={nickname}
-                onChange={e => setNickname(e.target.value)}
-                onKeyDown={async e => {
-                  if (e.key === "Enter") {
-                    setSavingNickname(true);
-                    await onUpdate(user.id, { nickname: nickname.trim() });
-                    setSavingNickname(false);
-                    setEditingNickname(false);
-                  } else if (e.key === "Escape") {
-                    setNickname(user.nickname || "");
-                    setEditingNickname(false);
-                  }
-                }}
-                autoFocus
-                placeholder="Nickname..."
-              />
-              <button onClick={async () => { setSavingNickname(true); await onUpdate(user.id, { nickname: nickname.trim() }); setSavingNickname(false); setEditingNickname(false); }}
-                className="text-[10px] bg-amber-900/50 text-amber-300 px-1.5 py-0.5 rounded hover:bg-amber-900/70"
-              >{savingNickname ? "..." : "✓"}</button>
-              <button onClick={() => { setNickname(user.nickname || ""); setEditingNickname(false); }} className="text-[10px] text-slate-500 hover:text-slate-300">✕</button>
-            </div>
-          ) : (
-            <button onClick={() => setEditingNickname(true)} className="text-[10px] text-slate-600 hover:text-amber-400 mt-0.5 transition-colors">
+              className="text-xs border border-white/10 bg-slate-800 text-slate-200 rounded px-2 py-0.5 h-6 w-32 focus:outline-none focus:ring-1 focus:ring-amber-400"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              onKeyDown={async (e) => {
+                if (e.key === "Enter") {
+                  setSavingNickname(true);
+                  await onUpdate(user.id, { nickname: nickname.trim() });
+                  setSavingNickname(false);
+                  setEditingNickname(false);
+                } else if (e.key === "Escape") {
+                  setNickname(user.nickname || "");
+                  setEditingNickname(false);
+                }
+              }}
+              autoFocus
+              placeholder="Nickname..." />
+            
+              <button onClick={async () => {setSavingNickname(true);await onUpdate(user.id, { nickname: nickname.trim() });setSavingNickname(false);setEditingNickname(false);}}
+            className="text-[10px] bg-amber-900/50 text-amber-300 px-1.5 py-0.5 rounded hover:bg-amber-900/70">
+              {savingNickname ? "..." : "✓"}</button>
+              <button onClick={() => {setNickname(user.nickname || "");setEditingNickname(false);}} className="text-[10px] text-slate-500 hover:text-slate-300">✕</button>
+            </div> :
+
+          <button onClick={() => setEditingNickname(true)} className="text-[10px] text-slate-600 hover:text-amber-400 mt-0.5 transition-colors">
               {nickname ? <span className="opacity-50">✎ edit nickname</span> : <span className="opacity-40 hover:opacity-80">+ nickname</span>}
             </button>
-          )}
+          }
         </div>
 
         {/* Status badge */}
@@ -439,21 +439,21 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
 
         {/* Actions */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          {status !== "approved" && (
-            <button onClick={() => onUpdate(user.id, { account_status: "approved" })}
-              className="h-7 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">
+          {status !== "approved" &&
+          <button onClick={() => onUpdate(user.id, { account_status: "approved" })}
+          className="h-7 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">
               Approve
             </button>
-          )}
-          {!isAdmin && (
-            <button onClick={() => setShowPerms(v => !v)}
-              className={`h-7 px-3 text-xs font-semibold rounded-lg border transition-colors flex items-center gap-1 ${showPerms ? "bg-violet-950/50 border-violet-700/40 text-violet-300" : "border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"}`}>
+          }
+          {!isAdmin &&
+          <button onClick={() => setShowPerms((v) => !v)}
+          className={`h-7 px-3 text-xs font-semibold rounded-lg border transition-colors flex items-center gap-1 ${showPerms ? "bg-violet-950/50 border-violet-700/40 text-violet-300" : "border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"}`}>
               {showPerms ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
               Perms
             </button>
-          )}
+          }
           <button onClick={() => onDelete(user.id, user.full_name || user.email)}
-            className="h-7 px-3 text-xs font-semibold rounded-lg border border-red-900/40 text-red-400 hover:bg-red-950/30 transition-colors">
+          className="h-7 px-3 text-xs font-semibold rounded-lg border border-red-900/40 text-red-400 hover:bg-red-950/30 transition-colors">
             Delete
           </button>
         </div>
@@ -465,91 +465,91 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
           const active = userRoles.includes(value);
           return (
             <button key={value} onClick={() => toggleRole(value)}
-              className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-all ${
-                active
-                  ? "bg-violet-950/50 text-violet-300 border-violet-700/40"
-                  : "bg-[#252525] text-slate-500 border-white/8 hover:border-white/20 hover:text-slate-300"
-              }`}>
+            className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-all ${
+            active ?
+            "bg-violet-950/50 text-violet-300 border-violet-700/40" :
+            "bg-[#252525] text-slate-500 border-white/8 hover:border-white/20 hover:text-slate-300"}`
+            }>
               {label}
-            </button>
-          );
+            </button>);
+
         })}
       </div>
 
-      {showPerms && !isAdmin && (
-        <div className="px-4 py-3 border-t border-white/10 bg-[#252525]">
+      {showPerms && !isAdmin &&
+      <div className="px-4 py-3 border-t border-white/10 bg-[#252525]">
           <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-1.5">
               <Lock className="w-3 h-3 text-violet-400" />
               <span className="text-xs font-semibold text-slate-400">Section access</span>
               <span className="text-[10px] text-slate-600">(empty = default by role)</span>
             </div>
-            {allowedPages.length > 0 && (
-              <button onClick={() => { setAllowedPages([]); onUpdate(user.id, { allowed_pages: [] }); }}
-                className="text-[10px] text-slate-600 hover:text-red-400 transition-colors">
+            {allowedPages.length > 0 &&
+          <button onClick={() => {setAllowedPages([]);onUpdate(user.id, { allowed_pages: [] });}}
+          className="text-[10px] text-slate-600 hover:text-red-400 transition-colors">
                 Reset
               </button>
-            )}
+          }
           </div>
           <div className="flex flex-wrap gap-1.5">
             {PAGE_OPTIONS.map(({ page, label }) => {
-              const enabled = allowedPages.includes(page);
-              return (
-                <button key={page} onClick={() => togglePage(page)}
-                  className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
-                    enabled
-                      ? "bg-violet-950/50 text-violet-300 border-violet-700/40"
-                      : "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"
-                  }`}>
+            const enabled = allowedPages.includes(page);
+            return (
+              <button key={page} onClick={() => togglePage(page)}
+              className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
+              enabled ?
+              "bg-violet-950/50 text-violet-300 border-violet-700/40" :
+              "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"}`
+              }>
                   {enabled && <span className="mr-1 text-violet-400">✓</span>}{label}
-                </button>
-              );
-            })}
+                </button>);
+
+          })}
           </div>
         </div>
-      )}
+      }
 
-      {models.filter(m => m.status === "active").length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
+      {models.filter((m) => m.status === "active").length > 0 &&
+      <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
           <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mr-1">Models</span>
-          {models.filter(m => m.status === "active").map(m => {
-            const assigned = assignedIds.includes(m.id);
-            return (
-              <button key={m.id} onClick={() => toggleModel(m.id)}
-                className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
-                  assigned
-                    ? "bg-amber-950/50 text-amber-300 border-amber-700/30"
-                    : "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"
-                }`}>
+          {models.filter((m) => m.status === "active").map((m) => {
+          const assigned = assignedIds.includes(m.id);
+          return (
+            <button key={m.id} onClick={() => toggleModel(m.id)}
+            className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
+            assigned ?
+            "bg-amber-950/50 text-amber-300 border-amber-700/30" :
+            "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"}`
+            }>
                 {assigned && <span className="mr-1 text-amber-400">✓</span>}{m.name}
-              </button>
-            );
-          })}
-        </div>
-      )}
+              </button>);
 
-      {isDesigner && dashboards.length > 0 && (
-        <div className="flex items-center gap-2.5 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
+        })}
+        </div>
+      }
+
+      {isDesigner && dashboards.length > 0 &&
+      <div className="flex items-center gap-2.5 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
           <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Dashboard</span>
           <select
-            value={assignedDashboard?.id || "none"}
-            onChange={e => handleDashboardAssign(e.target.value)}
-            className="text-xs h-7 border border-white/10 rounded-lg px-2 bg-[#1e1e1e] text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500"
-          >
+          value={assignedDashboard?.id || "none"}
+          onChange={(e) => handleDashboardAssign(e.target.value)}
+          className="text-xs h-7 border border-white/10 rounded-lg px-2 bg-[#1e1e1e] text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500">
+          
             <option value="none">— not assigned —</option>
-            {dashboards.map(db => (
-              <option key={db.id} value={db.id}>
+            {dashboards.map((db) =>
+          <option key={db.id} value={db.id}>
                 {db.name}{db.designer_email && db.designer_email !== user.email ? ` (${db.designer_name || db.designer_email})` : ""}
               </option>
-            ))}
+          )}
           </select>
-          {assignedDashboard && (
-            <span className="text-xs text-violet-300 bg-violet-950/50 border border-violet-700/30 px-2.5 py-0.5 rounded-lg font-medium">
+          {assignedDashboard &&
+        <span className="text-xs text-violet-300 bg-violet-950/50 border border-violet-700/30 px-2.5 py-0.5 rounded-lg font-medium">
               ✓ {assignedDashboard.name}
             </span>
-          )}
+        }
         </div>
-      )}
+      }
     </div>);
 }
 
@@ -579,7 +579,7 @@ function AddModelInline({ models, setModels }) {
     e.preventDefault();
     if (!window.confirm(`Delete model "${m.name}"?`)) return;
     await base44.entities.Model.delete(m.id);
-    setModels((prev) => prev.filter(x => x.id !== m.id));
+    setModels((prev) => prev.filter((x) => x.id !== m.id));
   };
 
   // Revenue per model
@@ -592,7 +592,7 @@ function AddModelInline({ models, setModels }) {
     }
   });
 
-  const filtered = models.filter(m => !search || m.name?.toLowerCase().includes(search.toLowerCase()));
+  const filtered = models.filter((m) => !search || m.name?.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="space-y-4">
@@ -620,23 +620,23 @@ function AddModelInline({ models, setModels }) {
       </div>
 
       {/* Search */}
-      {models.length > 3 && (
-        <div className="relative max-w-sm">
+      {models.length > 3 &&
+      <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search models..." className="pl-10 h-9" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search models..." className="pl-10 h-9" />
         </div>
-      )}
+      }
 
       {/* Models list */}
-      {filtered.length > 0 && (
-        <div className="space-y-2">
-          {filtered.map((m) => (
-            <Link key={m.id} to={`${createPageUrl("ModelDetail")}?id=${m.id}`} className="group block">
+      {filtered.length > 0 &&
+      <div className="space-y-2">
+          {filtered.map((m) =>
+        <Link key={m.id} to={`${createPageUrl("ModelDetail")}?id=${m.id}`} className="group block">
               <div className="bg-[#1e1e1e] rounded-xl border border-white/10 p-4 hover:border-[#C9A227]/30 hover:shadow-sm transition-all flex items-center gap-4">
                 <div className="w-10 h-10 rounded-lg overflow-hidden bg-amber-950/30 flex items-center justify-center border border-amber-700/30 flex-shrink-0">
-                  {m.profile_photo
-                    ? <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" />
-                    : <Bot className="w-5 h-5 text-[#C9A227]" />}
+                  {m.profile_photo ?
+              <img src={m.profile_photo} alt={m.name} className="w-full h-full object-cover" /> :
+              <Bot className="w-5 h-5 text-[#C9A227]" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-200">{m.name}</p>
@@ -658,11 +658,11 @@ function AddModelInline({ models, setModels }) {
                 </button>
               </div>
             </Link>
-          ))}
+        )}
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
 
 function AddCustomerInline({ users, onGenerateLink }) {
@@ -836,72 +836,72 @@ function InvoiceSettingsInline() {
     <div className="space-y-3">
       <div>
         <label className="text-xs font-semibold text-slate-400 block mb-1">Company name *</label>
-        <Input 
-          value={settings.company_name || ""} 
+        <Input
+          value={settings.company_name || ""}
           onChange={(e) => setSettings({ ...settings, company_name: e.target.value })}
           placeholder="Your Company Ltd."
-          className="h-9" 
-        />
+          className="h-9" />
+        
       </div>
       <div>
         <label className="text-xs font-semibold text-slate-400 block mb-1">Company address</label>
-        <Input 
-          value={settings.company_address || ""} 
+        <Input
+          value={settings.company_address || ""}
           onChange={(e) => setSettings({ ...settings, company_address: e.target.value })}
           placeholder="Street 123, City"
-          className="h-9" 
-        />
+          className="h-9" />
+        
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-semibold text-slate-400 block mb-1">IČO</label>
-          <Input 
-            value={settings.ico || ""} 
+          <Input
+            value={settings.ico || ""}
             onChange={(e) => setSettings({ ...settings, ico: e.target.value })}
             placeholder="12345678"
-            className="h-9" 
-          />
+            className="h-9" />
+          
         </div>
         <div>
           <label className="text-xs font-semibold text-slate-400 block mb-1">DIČ</label>
-          <Input 
-            value={settings.dic || ""} 
+          <Input
+            value={settings.dic || ""}
             onChange={(e) => setSettings({ ...settings, dic: e.target.value })}
             placeholder="CZ12345678"
-            className="h-9" 
-          />
+            className="h-9" />
+          
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-semibold text-slate-400 block mb-1">Email</label>
-          <Input 
+          <Input
             type="email"
-            value={settings.email || ""} 
+            value={settings.email || ""}
             onChange={(e) => setSettings({ ...settings, email: e.target.value })}
             placeholder="info@example.com"
-            className="h-9" 
-          />
+            className="h-9" />
+          
         </div>
         <div>
           <label className="text-xs font-semibold text-slate-400 block mb-1">Phone</label>
-          <Input 
-            value={settings.phone || ""} 
+          <Input
+            value={settings.phone || ""}
             onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
             placeholder="+420 123 456 789"
-            className="h-9" 
-          />
+            className="h-9" />
+          
         </div>
       </div>
-      <Button 
+      <Button
         onClick={handleSave}
         disabled={saving || !settings.company_name}
-        className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 text-sm font-semibold text-white px-6"
-      >
+        className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:from-[#A8841C] hover:to-[#8a6c16] h-9 text-sm font-semibold text-white px-6">
+        
         {done ? "✓ Saved!" : saving ? "Saving..." : "Save settings"}
       </Button>
-    </div>
-  );
+    </div>);
+
 }
 
 function BankAccountsInline({ accounts, setAccounts }) {
@@ -965,7 +965,7 @@ function BankAccountsInline({ accounts, setAccounts }) {
       <div className="space-y-2">
           {accounts.map((a) =>
         <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-white/10 bg-[#1e1e1e] hover:bg-white/5">
-              <label className="relative cursor-pointer flex-shrink-0 group"                title="Upload photo">
+              <label className="relative cursor-pointer flex-shrink-0 group" title="Upload photo">
                 <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/10 bg-slate-800 flex items-center justify-center">
                   {a.profile_photo ?
               <img src={a.profile_photo} alt={a.name} className="w-full h-full object-cover" /> :
