@@ -168,18 +168,20 @@ export default function Customers({ currentUser }) {
 
   const [laModelFilter, setLaModelFilter] = useState("all");
 
+  const normalizeName = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
+
   const customerModelMap = useMemo(() => {
     const map = {};
     customers.forEach((c) => {
       if (!c.full_name) return;
-      map[c.full_name.trim().toLowerCase()] = c.assigned_models || [];
+      map[normalizeName(c.full_name)] = c.assigned_models || [];
     });
     return map;
   }, [customers]);
 
   const getAudienceModelIds = (a) => {
-    const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
-    const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+    const key = normalizeName(`${a.first_name || ""} ${a.last_name || ""}`);
+    const keyRev = normalizeName(`${a.last_name || ""} ${a.first_name || ""}`);
     return customerModelMap[key] || customerModelMap[keyRev] || [];
   };
 
