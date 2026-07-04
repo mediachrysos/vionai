@@ -159,14 +159,6 @@ export default function Customers({ currentUser }) {
     return map;
   }, [allPayments]);
 
-  const filteredAudience = useMemo(() => {
-    const q = laSearch.toLowerCase();
-    return audienceByModel.filter((a) => {
-      const fullName = `${a.first_name || ""} ${a.last_name || ""}`.toLowerCase();
-      return !q || fullName.includes(q) || (a.phone || "").includes(q);
-    });
-  }, [audienceByModel, laSearch]);
-
   const getAudienceTotal = (a) => {
     const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
     const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
@@ -195,6 +187,14 @@ export default function Customers({ currentUser }) {
     if (laModelFilter === "all") return audience;
     return audience.filter((a) => getAudienceModelIds(a).includes(laModelFilter));
   }, [audience, laModelFilter, customerModelMap]);
+
+  const filteredAudience = useMemo(() => {
+    const q = laSearch.toLowerCase();
+    return audienceByModel.filter((a) => {
+      const fullName = `${a.first_name || ""} ${a.last_name || ""}`.toLowerCase();
+      return !q || fullName.includes(q) || (a.phone || "").includes(q);
+    });
+  }, [audienceByModel, laSearch]);
 
   const handleSync = async () => {
     setSyncing(true);
