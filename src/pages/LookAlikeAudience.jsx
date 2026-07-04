@@ -34,6 +34,18 @@ export default function LookAlikeAudience() {
     queryFn: () => base44.entities.Payment.list("-created_date", 1000),
   });
 
+  const { data: customers = [] } = useQuery({
+    queryKey: ["customers"],
+    queryFn: () => base44.entities.Customer.list("-created_date", 5000),
+  });
+
+  const { data: models = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+  });
+
+  const [selectedModel, setSelectedModel] = useState("all");
+
   // Build a map: normalized full name -> total from payments DB
   const paymentTotals = useMemo(() => {
     const map = {};
@@ -45,13 +57,35 @@ export default function LookAlikeAudience() {
     return map;
   }, [allPayments]);
 
+  // Build a map: normalized full name -> array of assigned model ids (from customer records)
+  const customerModelMap = useMemo(() => {
+    const map = {};
+    customers.forEach((c) => {
+      if (!c.full_name) return;
+      const key = c.full_name.trim().toLowerCase();
+      map[key] = c.assigned_models || [];
+    });
+    return map;
+  }, [customers]);
+
+  const getModelIds = (a) => {
+    const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
+    const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+    return customerModelMap[key] || customerModelMap[keyRev] || [];
+  };
+
+  const byModel = useMemo(() => {
+    if (selectedModel === "all") return audience;
+    return audience.filter((a) => getModelIds(a).includes(selectedModel));
+  }, [audience, selectedModel, customerModelMap]);
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return audience.filter((a) => {
+    return byModel.filter((a) => {
       const fullName = `${a.first_name || ""} ${a.last_name || ""}`.toLowerCase();
       return !q || fullName.includes(q) || (a.phone || "").includes(q);
     });
-  }, [audience, search]);
+  }, [byModel, search]);
 
   const getTotal = (a) => {
     const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
@@ -77,7 +111,8 @@ export default function LookAlikeAudience() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "look-alike-audience.csv";
+    const modelLabel = selectedModel === "all" ? "all" : (models.find((m) => m.id === selectedModel)?.name || "model").replace(/\s+/g, "-").toLowerCase();
+    a.download = `look-alike-audience-${modelLabel}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -87,7 +122,7 @@ export default function LookAlikeAudience() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-100">Look-alike Audience</h1>
-          <p className="text-sm text-slate-500 mt-1">{audience.length} kontaktů</p>
+          <p className="text-sm text-slate-500 mt-1">{byModel.length} kontaktů</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -108,6 +143,37 @@ export default function LookAlikeAudience() {
             Export .csv
           </Button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        <button
+          type="button"
+          onClick={() => setSelectedModel("all")}
+          className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${
+            selectedModel === "all"
+              ? "bg-[#C9A227] text-white border-[#C9A227]"
+              : "text-slate-400 border-white/10 hover:bg-white/5"
+          }`}
+        >
+          Celkem ({audience.length})
+        </button>
+        {models.map((m) => {
+          const count = audience.filter((a) => getModelIds(a).includes(m.id)).length;
+          return (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setSelectedModel(m.id)}
+              className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${
+                selectedModel === m.id
+                  ? "bg-[#C9A227] text-white border-[#C9A227]"
+                  : "text-slate-400 border-white/10 hover:bg-white/5"
+              }`}
+            >
+              {m.name} ({count})
+            </button>
+          );
+        })}
       </div>
 
       <div className="relative mb-5">
