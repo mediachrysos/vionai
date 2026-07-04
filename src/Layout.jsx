@@ -4,6 +4,7 @@ import Sidebar from "./components/layout/Sidebar";
 import { AnimatePresence, motion } from "framer-motion";
 import { CreditCard, X, Plus, UserPlus, ImagePlay } from "lucide-react";
 import PaymentFormModal from "./components/payments/PaymentFormModal";
+import GlobalLoadingIndicator from "./components/layout/GlobalLoadingIndicator";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 function speakAlert(text) {
@@ -228,6 +229,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="flex min-h-screen bg-[#1a1a1a]">
       <Sidebar currentPage={currentPageName} user={user} onLogout={handleLogout} />
+      <GlobalLoadingIndicator />
       <main className="flex-1 min-w-0">
         <div className="page-transition">
           {React.cloneElement(children, { currentUser: user })}
