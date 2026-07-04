@@ -161,11 +161,11 @@ export default function Customers({ currentUser }) {
 
   const filteredAudience = useMemo(() => {
     const q = laSearch.toLowerCase();
-    return audience.filter((a) => {
+    return audienceByModel.filter((a) => {
       const fullName = `${a.first_name || ""} ${a.last_name || ""}`.toLowerCase();
       return !q || fullName.includes(q) || (a.phone || "").includes(q);
     });
-  }, [audience, laSearch]);
+  }, [audienceByModel, laSearch]);
 
   const getAudienceTotal = (a) => {
     const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
@@ -173,6 +173,28 @@ export default function Customers({ currentUser }) {
     const fromPayments = paymentTotals[key] || paymentTotals[keyRev] || 0;
     return fromPayments > 0 ? fromPayments : a.total_czk || 0;
   };
+
+  const [laModelFilter, setLaModelFilter] = useState("all");
+
+  const customerModelMap = useMemo(() => {
+    const map = {};
+    customers.forEach((c) => {
+      if (!c.full_name) return;
+      map[c.full_name.trim().toLowerCase()] = c.assigned_models || [];
+    });
+    return map;
+  }, [customers]);
+
+  const getAudienceModelIds = (a) => {
+    const key = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
+    const keyRev = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+    return customerModelMap[key] || customerModelMap[keyRev] || [];
+  };
+
+  const audienceByModel = useMemo(() => {
+    if (laModelFilter === "all") return audience;
+    return audience.filter((a) => getAudienceModelIds(a).includes(laModelFilter));
+  }, [audience, laModelFilter, customerModelMap]);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -196,7 +218,9 @@ export default function Customers({ currentUser }) {
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;a.download = "look-alike-audience.csv";a.click();
+    a.href = url;
+    const modelLabel = laModelFilter === "all" ? "all" : (modelMap[laModelFilter] || "model").replace(/\s+/g, "-").toLowerCase();
+    a.download = `look-alike-audience-${modelLabel}.csv`;a.click();
     URL.revokeObjectURL(url);
   };
   // --- end Look-alike ---
@@ -487,7 +511,7 @@ export default function Customers({ currentUser }) {
       {activeTab === "lookalike" &&
       <div>
           <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-slate-500">{audience.length} contacts</p>
+            <p className="text-sm text-slate-500">{audienceByModel.length} contacts</p>
             <div className="flex gap-2">
               <Button variant="outline" onClick={handleSync} disabled={syncing} className="border-white/10 text-slate-300 hover:bg-white/5 gap-2">
                 <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} /> Sync
@@ -496,6 +520,26 @@ export default function Customers({ currentUser }) {
                 <Download className="w-4 h-4" /> Export .csv
               </Button>
             </div>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => setLaModelFilter("all")}
+              className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${laModelFilter === "all" ? "bg-[#C9A227] text-white border-[#C9A227]" : "text-slate-400 border-white/10 hover:bg-white/5"}`}>
+              Total ({audience.length})
+            </button>
+            {models.map((m) => {
+              const count = audience.filter((a) => getAudienceModelIds(a).includes(m.id)).length;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setLaModelFilter(m.id)}
+                  className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${laModelFilter === m.id ? "bg-[#C9A227] text-white border-[#C9A227]" : "text-slate-400 border-white/10 hover:bg-white/5"}`}>
+                  {m.name} ({count})
+                </button>
+              );
+            })}
           </div>
           <div className="relative mb-5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
