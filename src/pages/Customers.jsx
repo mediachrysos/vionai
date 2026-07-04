@@ -355,7 +355,7 @@ export default function Customers({ currentUser }) {
     const matchChatter = showAll || isAdmin ||
     c.assigned_chatter === currentUser?.email ||
     custModels.some((mid) => myModelIds.includes(mid));
-    const matchModel = modelFilter === "all" || custModels.includes(modelFilter);
+    const matchModel = modelFilter === "all" || custModels.includes(modelFilter) || custModels.length === 0;
     return matchSearch && matchChatter && matchModel;
   }).sort((a, b) => {
     // Payday customers always on top
