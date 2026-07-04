@@ -187,7 +187,10 @@ export default function Customers({ currentUser }) {
 
   const audienceByModel = useMemo(() => {
     if (laModelFilter === "all") return audience;
-    return audience.filter((a) => getAudienceModelIds(a).includes(laModelFilter));
+    return audience.filter((a) => {
+      const ids = getAudienceModelIds(a);
+      return ids.includes(laModelFilter) || ids.length === 0;
+    });
   }, [audience, laModelFilter, customerModelMap]);
 
   const filteredAudience = useMemo(() => {
@@ -531,7 +534,10 @@ export default function Customers({ currentUser }) {
               Total ({audience.length})
             </button>
             {models.map((m) => {
-              const count = audience.filter((a) => getAudienceModelIds(a).includes(m.id)).length;
+              const count = audience.filter((a) => {
+                const ids = getAudienceModelIds(a);
+                return ids.includes(m.id) || ids.length === 0;
+              }).length;
               return (
                 <button
                   key={m.id}
