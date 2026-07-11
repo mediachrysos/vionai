@@ -66,7 +66,8 @@ export default function Layout({ children, currentPageName }) {
             payment_count: (cust.payment_count || 0) + 1,
           };
           if (data.service_type) {
-            updates.sent_content = cust.sent_content ? `${cust.sent_content}\n${data.service_type}` : data.service_type;
+            const entry = data.model_name ? `${data.model_name}: ${data.service_type}` : data.service_type;
+            updates.sent_content = cust.sent_content ? `${cust.sent_content}\n${entry}` : entry;
           }
           await base44.entities.Customer.update(data.customer_id, updates);
         }

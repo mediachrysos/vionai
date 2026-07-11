@@ -396,7 +396,7 @@ export default function CustomerDetail({ currentUser }) {
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-slate-200">{(p.amount || 0).toLocaleString()} Kč</p>
                         <p className="text-xs text-slate-500 truncate">
-                          {[p.chatter_name || p.chatter_email, p.payment_date ? format(new Date(p.payment_date), "d. M. yyyy") : null].filter(Boolean).join(" · ")}
+                          {[p.model_name, p.chatter_name || p.chatter_email, p.payment_date ? format(new Date(p.payment_date), "d. M. yyyy") : null].filter(Boolean).join(" · ")}
                         </p>
                         {p.service_type && <p className="text-xs text-[#C9A227] truncate">{p.service_type}</p>}
                       </div>
