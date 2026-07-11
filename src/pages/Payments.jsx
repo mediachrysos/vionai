@@ -66,10 +66,14 @@ export default function Payments({ currentUser }) {
       if (data.customer_id) {
         const cust = customers.find(c => c.id === data.customer_id);
         if (cust) {
-          await base44.entities.Customer.update(data.customer_id, {
+          const updates = {
             total_spent: (cust.total_spent || 0) + (data.amount || 0),
             payment_count: (cust.payment_count || 0) + 1,
-          });
+          };
+          if (data.service_type) {
+            updates.sent_content = cust.sent_content ? `${cust.sent_content}\n${data.service_type}` : data.service_type;
+          }
+          await base44.entities.Customer.update(data.customer_id, updates);
         }
       }
       return payment;

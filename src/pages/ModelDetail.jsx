@@ -38,20 +38,13 @@ export default function ModelDetail({ currentUser }) {
     enabled: !!id
   });
 
-  // Derive unique customers from payments (assigned_models is an array, can't filter server-side)
+  // Same logic as Look-alike Audience: customers assigned to this model, plus unassigned (default) customers shown on every model
   const customers = useMemo(() => {
-    const seen = new Set();
-    const result = [];
-    payments.forEach(p => {
-      if (p.customer_id && !seen.has(p.customer_id)) {
-        seen.add(p.customer_id);
-        const c = allCustomers.find(c => c.id === p.customer_id);
-        if (c) result.push(c);
-        else result.push({ id: p.customer_id, full_name: p.customer_name || "—" });
-      }
+    return allCustomers.filter(c => {
+      const assigned = c.assigned_models || [];
+      return assigned.includes(id) || assigned.length === 0;
     });
-    return result;
-  }, [payments, allCustomers]);
+  }, [allCustomers, id]);
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
   const { data: bankAccounts = [] } = useQuery({ queryKey: ["bankAccounts"], queryFn: () => base44.entities.BankAccount.filter({ is_active: true }) });
 
