@@ -398,6 +398,7 @@ export default function CustomerDetail({ currentUser }) {
                         <p className="text-xs text-slate-500 truncate">
                           {[p.chatter_name || p.chatter_email, p.payment_date ? format(new Date(p.payment_date), "d. M. yyyy") : null].filter(Boolean).join(" · ")}
                         </p>
+                        {p.service_type && <p className="text-xs text-[#C9A227] truncate">{p.service_type}</p>}
                       </div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0 ml-2">
