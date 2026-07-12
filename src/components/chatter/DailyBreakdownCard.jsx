@@ -15,7 +15,7 @@ export default function DailyBreakdownCard({ monthPayments, dailyGoalAmount, dai
         className="w-full flex items-center justify-between p-4">
         
         <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-[#C9A227] hidden" /> Přehled po dnech (hodiny, tržba, výplata)
+          <BarChart3 className="w-4 h-4 text-[#C9A227] hidden" /> Daily breakdown (hours, revenue, payout)
         </h3>
         {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
       </button>
