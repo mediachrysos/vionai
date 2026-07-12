@@ -116,32 +116,32 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       </div>
 
       {/* Add form — always visible */}
-      <div className="px-5 py-3 border-b border-white/10 bg-white/5 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end hidden">
-        <Input
-          placeholder="Name *"
-          value={form.full_name}
-          onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-          className="h-8 text-xs bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600" />
-        
-        <Select value={form.model_id} onValueChange={(v) => setForm({ ...form, model_id: v })}>
-          <SelectTrigger className="h-8 text-xs bg-white/5 border-white/10 text-slate-300">
-            <SelectValue placeholder="Select model *" />
-          </SelectTrigger>
-          <SelectContent>
-            {models.map((m) =>
-            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-            )}
-          </SelectContent>
-        </Select>
-        <Button
-          onClick={() => saveMutation.mutate({ full_name: form.full_name, assigned_models: form.model_id ? [form.model_id] : [], assigned_chatter: chatterEmail })}
-          disabled={!form.full_name || saveMutation.isPending}
-          size="sm"
-          className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:opacity-90 text-white h-8 text-xs">
-          
-          {saveMutation.isPending ? "..." : "Add customer"}
-        </Button>
-      </div>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
 
       {/* Table */}
       {isLoading ?
