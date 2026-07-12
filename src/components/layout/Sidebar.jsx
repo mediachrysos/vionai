@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
-  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock, Globe
+  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock, Globe, Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/ThemeContext";
@@ -17,6 +17,7 @@ const allPages = [
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
   { name: "Chatting Space", icon: MessageSquare, page: "ChatterPortal" },
   { name: "Admin Portal", icon: Settings, page: "AdminUsers" },
+  { name: "Customer Scraper", icon: Search, page: "CustomerScraper" },
 ];
 
 const defaultLawyerPages = ["Finance"];
