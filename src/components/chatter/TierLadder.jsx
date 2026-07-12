@@ -96,9 +96,17 @@ export default function TierLadder({
             {currentTier.commission > 0 && <span className="text-[10px] text-slate-500">· {currentTier.commission}% commission</span>}
           </div>
           {nextTier ? (
-            <p className="text-[10px] text-slate-600 mt-1">{missingToNext.toLocaleString()} more to reach "{nextTier.name}"</p>
+            <div className="mt-2">
+              <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#C9A227] to-[#A8841C] rounded-full transition-all"
+                  style={{ width: `${Math.min(100, Math.max(0, ((todayRevenue - currentTier.min) / (nextTier.min - currentTier.min)) * 100))}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-600 mt-1.5">{missingToNext.toLocaleString()} more to reach "{nextTier.name}"</p>
+            </div>
           ) : (
-            <p className="text-[10px] text-slate-600 mt-1">Max tier reached</p>
+            <p className="text-[10px] text-slate-600 mt-1">Max tier reached — top rate on all payments</p>
           )}
         </div>
         {showWorkSession && (
@@ -113,9 +121,9 @@ export default function TierLadder({
         {/* Left half — payout today, styled like monthly payout tiles */}
         <div className="rounded-xl bg-white/[0.02] p-3 flex flex-col items-center text-center justify-center">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Payout today</p>
-          <div className="w-full flex flex-col items-center text-center bg-gradient-to-br from-[#C9A227] to-[#A8841C] rounded-xl px-4 py-4 gap-1 shadow-md">
+          <div className="w-full flex flex-col items-center text-center bg-gradient-to-br from-[#C9A227] to-[#A8841C] rounded-xl px-3 py-2.5 gap-1 shadow-md">
             <span className="text-[9px] text-white/80 font-semibold uppercase tracking-wider">Payout</span>
-            <span className="text-2xl font-bold text-white tabular-nums">{Math.round(payout).toLocaleString()} <span className="text-xs font-normal opacity-70">CZK</span></span>
+            <span className="text-base font-bold text-white tabular-nums">{Math.round(payout).toLocaleString()} <span className="text-xs font-normal opacity-70">CZK</span></span>
           </div>
 
           {dailyGoalEnabled && dailyGoalAmount > 0 && (
