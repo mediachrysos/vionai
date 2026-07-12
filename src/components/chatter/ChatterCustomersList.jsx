@@ -39,11 +39,8 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     queryKey: ["chatter-customers", chatterEmail, validModelIds.join(",")],
     queryFn: async () => {
       const allCustomers = await base44.entities.Customer.list("-created_date", 5000);
-      return allCustomers.filter(c => {
-        if (c.assigned_chatter === chatterEmail) return true;
-        if (validModelIds.length > 0 && c.assigned_models?.some(mid => mid != null && validModelIds.includes(mid))) return true;
-        return false;
-      });
+      if (validModelIds.length === 0) return [];
+      return allCustomers.filter(c => c.assigned_models?.some(mid => mid != null && validModelIds.includes(mid)));
     },
     enabled: !!chatterEmail,
     staleTime: 0
