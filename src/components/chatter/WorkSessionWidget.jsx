@@ -69,6 +69,25 @@ export default function WorkSessionWidget({ email, compact }) {
       ended_at: new Date().toISOString(),
       minutes_worked: minutes15,
     });
+
+    // Feed worked hours into ChatterDailyPerformance so the hourly payout actually reflects time worked
+    const addedHours = minutes15 / 60;
+    if (addedHours > 0) {
+      const existing = await base44.entities.ChatterDailyPerformance.filter({ chatter_email: email, date: today });
+      if (existing.length > 0) {
+        await base44.entities.ChatterDailyPerformance.update(existing[0].id, {
+          hours_worked: (existing[0].hours_worked || 0) + addedHours,
+        });
+      } else {
+        await base44.entities.ChatterDailyPerformance.create({
+          chatter_email: email,
+          date: today,
+          hours_worked: addedHours,
+        });
+      }
+      qc.invalidateQueries({ queryKey: ["chatter-daily-perf", email] });
+    }
+
     qc.invalidateQueries({ queryKey: ["work-sessions-today", email, today] });
   };
 
