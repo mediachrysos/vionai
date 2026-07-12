@@ -135,8 +135,13 @@ export default function Customers({ currentUser }) {
   const customerIdsWithPayments = useMemo(() => new Set(allPayments.map((p) => p.customer_id).filter(Boolean)), [allPayments]);
 
   const pendingCustomers = useMemo(() => {
-    return customers.filter((c) => !customerIdsWithPayments.has(c.id));
-  }, [customers, customerIdsWithPayments]);
+    return customers.filter((c) => {
+      if (customerIdsWithPayments.has(c.id)) return false;
+      if (isAdmin) return true;
+      const custModels = c.assigned_models || (c.assigned_model ? [c.assigned_model] : []);
+      return c.assigned_chatter === currentUser?.email || custModels.some((mid) => myModelIds.includes(mid));
+    });
+  }, [customers, customerIdsWithPayments, isAdmin, currentUser, myModelIds]);
 
   const [pendingSearch, setPendingSearch] = useState("");
 
