@@ -4,17 +4,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Video, Camera, ChevronDown, ChevronUp, ExternalLink, X, Plus, Trash2, CalendarDays } from "lucide-react";
 
 const PRIORITY_CONFIG = {
-  low: { label: "Low", bg: "bg-gray-100", text: "text-gray-500" },
-  normal: { label: "Normal", bg: "bg-blue-50", text: "text-blue-600" },
-  high: { label: "High", bg: "bg-amber-50", text: "text-[#C9A227]" },
-  urgent: { label: "Urgent", bg: "bg-red-50", text: "text-red-600" }
+  low: { label: "Low", bg: "bg-gray-500/15", text: "text-gray-400", border: "border-gray-500/30" },
+  normal: { label: "Normal", bg: "bg-blue-500/15", text: "text-blue-400", border: "border-blue-500/30" },
+  high: { label: "High", bg: "bg-[#C9A227]/15", text: "text-[#C9A227]", border: "border-[#C9A227]/30" },
+  urgent: { label: "Urgent", bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/30" }
 };
 
 const STATUS_CONFIG = {
-  pending: { label: "Pending", bg: "bg-amber-50", text: "text-amber-600" },
-  in_progress: { label: "In progress", bg: "bg-blue-50", text: "text-blue-600" },
-  done: { label: "Done ✓", bg: "bg-green-50", text: "text-green-600" },
-  rejected: { label: "Rejected", bg: "bg-red-50", text: "text-red-500" }
+  pending: { label: "Pending", bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/30" },
+  in_progress: { label: "In progress", bg: "bg-blue-500/15", text: "text-blue-400", border: "border-blue-500/30" },
+  done: { label: "Done ✓", bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/30" },
+  rejected: { label: "Rejected", bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/30" }
 };
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -370,7 +370,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                     </span>
                   </div>
 
-                  <div className="divide-y divide-white/5">
+                  <div className="px-3 py-2 space-y-2">
                     {grouped[dateKey].map((r) => {
                 const pCfg = PRIORITY_CONFIG[r.priority] || PRIORITY_CONFIG.normal;
                 const sCfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
@@ -379,18 +379,18 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                 const isDeleting = deletingId === r.id;
 
                 return (
-                  <div key={r.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-white/5 transition-colors">
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                  <div key={r.id} className="rounded-xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/10 transition-colors px-3.5 py-3 flex items-start gap-3">
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
                     isVideo ? "bg-[#C9A227]/15 border border-[#C9A227]/30" : "bg-blue-500/15 border border-blue-500/30"}`
                     }>
                             <TypeIcon className={`w-4 h-4 ${isVideo ? "text-[#C9A227]" : "text-blue-400"}`} />
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <p className="text-sm font-semibold text-slate-200">{r.title}</p>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <p className="text-sm font-semibold text-slate-100">{r.title}</p>
                               {r.assigned_designer_name &&
-                        <span className="text-[10px] text-slate-500 bg-white/10 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
+                        <span className="text-[10px] text-slate-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
                         }
                               {r.model_name &&
                         <span className="text-[10px] text-[#C9A227] bg-[#C9A227]/10 border border-[#C9A227]/30 px-1.5 py-0.5 rounded-full">{r.model_name}</span>
@@ -398,14 +398,14 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                             </div>
 
                             {r.description &&
-                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{r.description}</p>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{r.description}</p>
                       }
 
-                            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${pCfg.bg} ${pCfg.text}`}>{pCfg.label}</span>
-                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sCfg.bg} ${sCfg.text}`}>{sCfg.label}</span>
+                            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${pCfg.bg} ${pCfg.text} ${pCfg.border}`}>{pCfg.label}</span>
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${sCfg.bg} ${sCfg.text} ${sCfg.border}`}>{sCfg.label}</span>
                               {r.admin_note &&
-                        <span className="text-[10px] text-gray-500 italic">💬 {r.admin_note}</span>
+                        <span className="text-[10px] text-slate-500 italic">💬 {r.admin_note}</span>
                         }
                               {r.result_url &&
                         <a href={r.result_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#C9A227] hover:underline flex items-center gap-0.5 font-medium">
@@ -413,7 +413,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                                 </a>
                         }
                               {r.reference_url &&
-                        <a href={r.reference_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5">
+                        <a href={r.reference_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:underline flex items-center gap-0.5">
                                   <ExternalLink className="w-2.5 h-2.5" /> Ref
                                 </a>
                         }
@@ -438,7 +438,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
                     <button
                       onClick={() => setDeletingId(r.id)}
-                      className="flex-shrink-0 mt-0.5 text-gray-300 hover:text-red-400 transition-colors"
+                      className="flex-shrink-0 mt-0.5 text-slate-500 hover:text-red-400 transition-colors"
                       title="Smazat request">
                       
                                 <Trash2 className="w-3.5 h-3.5" />
