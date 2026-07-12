@@ -115,12 +115,10 @@ export default function Layout({ children, currentPageName }) {
           if (meRoles.includes("lawyer")) pageSet.add("Finance");
           if (meRoles.includes("chatter")) {
             pageSet.add("ChatterPortal");
-            pageSet.add("Customers");
           }
           if (meRoles.includes("grafik")) pageSet.add("SocialMediaContent");
           if (pageSet.size === 0 && !meRoles.includes("grafik")) {
             pageSet.add("ChatterPortal");
-            pageSet.add("Customers");
           }
           allowedPages = Array.from(pageSet);
         }

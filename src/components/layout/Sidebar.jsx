@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Users, TrendingUp, CreditCard, Layers,
+  LayoutDashboard, TrendingUp, CreditCard, Layers,
   MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock, Globe, Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,6 @@ import { useTheme } from "@/lib/ThemeContext";
 
 const allPages = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
-  { name: "Customers", icon: Users, page: "Customers" },
   { name: "Finance", icon: TrendingUp, page: "Finance" },
   { name: "Wallet", icon: CreditCard, page: "Wallet" },
   { name: "Graphic Space", icon: Layers, page: "SocialMediaContent" },
@@ -46,9 +45,9 @@ export default function Sidebar({ currentPage, user, onLogout }) {
   } else {
     const pageSet = new Set();
     if (isLawyer) defaultLawyerPages.forEach(p => pageSet.add(p));
-    if (isChatter) ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
+    if (isChatter) pageSet.add("ChatterPortal");
     if (isDesigner) pageSet.add("SocialMediaContent");
-    if (pageSet.size === 0 && !isDesigner) ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
+    if (pageSet.size === 0 && !isDesigner) pageSet.add("ChatterPortal");
     items = allPages.filter(p => pageSet.has(p.page));
   }
 
