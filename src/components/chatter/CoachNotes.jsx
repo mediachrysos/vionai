@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { MessageSquare, Plus, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { format } from "date-fns";
-import { cs } from "date-fns/locale";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
@@ -237,7 +236,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
                           {isToday ?
                       <span className="text-[10px] font-bold tracking-wide text-white bg-[#C9A227] rounded-full px-2.5 py-0.5">TODAY</span> :
                       currentNote.note_date ?
-                      <span className="text-[11px] text-slate-500 bg-white/10 rounded-full px-2 py-0.5">{format(new Date(currentNote.note_date), "d. MMM yyyy", { locale: cs })}</span> :
+                      <span className="text-[11px] text-slate-500 bg-white/10 rounded-full px-2 py-0.5">{format(new Date(currentNote.note_date), "d MMM yyyy")}</span> :
                       null}
                           <button onClick={() => {onDelete(currentNote.id);setNoteIdx((i) => Math.max(0, i - 1));}}
                       className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-600 hover:text-red-400">

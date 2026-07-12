@@ -25,7 +25,7 @@ function formatWeekLabel(weekStart) {
   const start = new Date(weekStart);
   const end = new Date(weekStart);
   end.setDate(end.getDate() + 6);
-  return `${start.getDate()}. ${start.toLocaleString("cs-CZ", { month: "long" })} – ${end.getDate()}. ${end.toLocaleString("cs-CZ", { month: "long", year: "numeric" })}`;
+  return `${start.getDate()} ${start.toLocaleString("en-US", { month: "long" })} – ${end.getDate()} ${end.toLocaleString("en-US", { month: "long", year: "numeric" })}`;
 }
 
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

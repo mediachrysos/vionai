@@ -79,9 +79,9 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
   function formatDate(dateStr) {
     if (!dateStr) return null;
     const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
-    if (days === 0) return "dnes";
-    if (days === 1) return "včera";
-    return `před ${days} dny`;
+    if (days === 0) return "today";
+    if (days === 1) return "yesterday";
+    return `${days} days ago`;
   }
 
   return (
@@ -101,17 +101,17 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
       <div className="px-4 pb-4 space-y-3 border-t border-white/10">
           <div className="flex gap-2 mt-3">
             <Button size="sm" onClick={handleCopyScraper} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white text-xs h-8">
-              {copied ? <><Check className="w-3.5 h-3.5 mr-1.5" />Zkopírováno!</> : <><Copy className="w-3.5 h-3.5 mr-1.5" />Scraper kód</>}
+              {copied ? <><Check className="w-3.5 h-3.5 mr-1.5" />Copied!</> : <><Copy className="w-3.5 h-3.5 mr-1.5" />Scraper code</>}
             </Button>
           </div>
           <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={"Jan Novák\nMarie Svobodová\n..."}
+          placeholder={"John Smith\nJane Doe\n..."}
           className="min-h-[120px] font-mono text-sm bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600" />
         
           <Button size="sm" onClick={handleSearch} disabled={!input.trim()} className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] text-white text-xs h-8">
-            <Search className="w-3.5 h-3.5 mr-1.5" /> Najít shody
+            <Search className="w-3.5 h-3.5 mr-1.5" /> Find matches
           </Button>
 
           {results &&
@@ -120,11 +120,11 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
               <div className="rounded-xl border border-white/10 overflow-hidden">
                 <div className="px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-white/5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-xs font-semibold text-slate-300">Nalezené shody</span>
+                  <span className="text-xs font-semibold text-slate-300">Matches found</span>
                   <span className="ml-auto text-xs text-slate-500">{results.matched.length}</span>
                 </div>
                 {results.matched.length === 0 ?
-            <p className="text-xs text-slate-600 px-3 py-2">Žádné shody</p> :
+            <p className="text-xs text-slate-600 px-3 py-2">No matches</p> :
 
             <div className="divide-y divide-white/5">
                     {results.matched.map((r) =>
@@ -134,7 +134,7 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium text-slate-200 truncate">{r.customer.full_name}</p>
-                          <p className="text-[10px] text-slate-500">{(r.customer.total_spent || 0).toLocaleString()} Kč · {formatDate(lastPaymentDate[r.customer.id])}</p>
+                          <p className="text-[10px] text-slate-500">{(r.customer.total_spent || 0).toLocaleString()} CZK · {formatDate(lastPaymentDate[r.customer.id])}</p>
                         </div>
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 flex-shrink-0">✓</span>
                       </div>
@@ -148,7 +148,7 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
           <div className="rounded-xl border border-purple-500/20 overflow-hidden">
                   <div className="px-3 py-2 border-b border-purple-500/20 flex items-center gap-2 bg-purple-500/10">
                     <Ghost className="w-3.5 h-3.5 text-purple-400" />
-                    <span className="text-xs font-semibold text-slate-300">Duchové</span>
+                    <span className="text-xs font-semibold text-slate-300">Ghosts</span>
                     <span className="ml-auto text-xs text-slate-500">{results.matchedHistorical.length}</span>
                   </div>
                   <div className="divide-y divide-white/5">
@@ -156,7 +156,7 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
               <div key={i} className="px-3 py-2 flex items-center gap-2">
                         <Ghost className="w-4 h-4 text-purple-400 flex-shrink-0" />
                         <p className="text-xs text-slate-300">{r.historical.full_name}</p>
-                        <span className="ml-auto text-[10px] text-purple-400">{(r.historical.total_spent || 0).toLocaleString()} Kč</span>
+                        <span className="ml-auto text-[10px] text-purple-400">{(r.historical.total_spent || 0).toLocaleString()} CZK</span>
                       </div>
               )}
                   </div>
@@ -167,11 +167,11 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
               <div className="rounded-xl border border-white/10 overflow-hidden">
                 <div className="px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-white/5">
                   <XCircle className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="text-xs font-semibold text-slate-300">Bez shody</span>
+                  <span className="text-xs font-semibold text-slate-300">No match</span>
                   <span className="ml-auto text-xs text-slate-500">{results.unmatched.length}</span>
                 </div>
                 {results.unmatched.length === 0 ?
-            <p className="text-xs text-slate-500 px-3 py-2">Vše nalezeno 🎉</p> :
+            <p className="text-xs text-slate-500 px-3 py-2">All found 🎉</p> :
 
             <div className="divide-y divide-white/5">
                     {results.unmatched.map((name, i) =>

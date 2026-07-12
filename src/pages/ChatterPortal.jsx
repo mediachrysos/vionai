@@ -107,7 +107,7 @@ function AdminChattingSpace({ currentUser }) {
           <button
             onClick={() => setSelectedChatter(null)}
             className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-[#C9A227] transition-colors font-medium">
-            ← Zpět na přehled
+            ← Back to overview
           </button>
           <span className="text-white/10">|</span>
           <span className="text-xs text-slate-500">Viewing as: <span className="font-semibold text-[#C9A227]">{selectedChatter.nickname || selectedChatter.full_name}</span></span>
@@ -179,7 +179,7 @@ function AdminChattingSpace({ currentUser }) {
             {chatters.length === 0 ? (
               <div className="text-center py-20 text-slate-600">
                 <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                <p className="text-sm">Zatím žádní chatteři</p>
+                <p className="text-sm">No chatters yet</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -201,17 +201,17 @@ function AdminChattingSpace({ currentUser }) {
                           <p className="text-sm font-semibold text-slate-100 truncate">{u.nickname || u.full_name}</p>
                           <p className="text-xs text-slate-500 truncate">{u.email}</p>
                         </div>
-                        <span className="text-xs text-[#C9A227] opacity-0 group-hover:opacity-100 transition-opacity font-medium">Zobrazit →</span>
+                        <span className="text-xs text-[#C9A227] opacity-0 group-hover:opacity-100 transition-opacity font-medium">View →</span>
                       </div>
 
                       {/* Stats row */}
                       <div className="grid grid-cols-2 gap-3">
                         <div className="bg-white/5 rounded-xl px-3 py-2.5">
-                          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Tento měsíc</p>
-                          <p className="text-sm font-bold text-slate-100">{stats.monthTotal.toLocaleString()} Kč</p>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">This month</p>
+                          <p className="text-sm font-bold text-slate-100">{stats.monthTotal.toLocaleString()} CZK</p>
                         </div>
                         <div className="bg-white/5 rounded-xl px-3 py-2.5">
-                          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Plateb celkem</p>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Total payments</p>
                           <p className="text-sm font-bold text-slate-100">{stats.payments.length}</p>
                         </div>
                       </div>
@@ -219,7 +219,7 @@ function AdminChattingSpace({ currentUser }) {
                       {/* Progress bar */}
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <p className="text-[10px] text-slate-500">Měsíční cíl (150 000 Kč)</p>
+                          <p className="text-[10px] text-slate-500">Monthly goal (150,000 CZK)</p>
                           <p className="text-[10px] font-semibold text-[#C9A227]">{monthlyRevenuePct}%</p>
                         </div>
                         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">

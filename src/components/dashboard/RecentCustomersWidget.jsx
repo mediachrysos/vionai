@@ -11,10 +11,10 @@ const statusColors = {
 };
 
 const statusLabels = {
-  active: "Aktivní",
-  inactive: "Neaktivní",
+  active: "Active",
+  inactive: "Inactive",
   vip: "VIP",
-  blocked: "Blokovaný"
+  blocked: "Blocked"
 };
 
 export default function RecentCustomersWidget({ customers }) {
@@ -27,11 +27,11 @@ export default function RecentCustomersWidget({ customers }) {
         <div className="bg-slate-900 rounded-xl w-9 h-9 flex items-center justify-center">
           <img src="https://res.cloudinary.com/drkudvyog/image/upload/v1774266700/Chrysos_icon_1_qefgru.png" alt="" className="w-6 h-6 object-contain" />
         </div>
-        <h3 className="text-sm font-semibold text-white">Noví zákazníci</h3>
+        <h3 className="text-sm font-semibold text-white">New customers</h3>
       </div>
       <div className="p-5">
       {recent.length === 0 ?
-        <p className="text-xs text-slate-500 text-center py-6">Žádní zákazníci</p> :
+        <p className="text-xs text-slate-500 text-center py-6">No customers</p> :
 
         <div className="space-y-2 max-h-[13.5rem] overflow-y-auto pr-1">
           {recent.map((c) =>

@@ -23,10 +23,10 @@ function formatWeekLabel(weekStart) {
   const start = new Date(weekStart);
   const end = new Date(weekStart);
   end.setDate(end.getDate() + 6);
-  return `${start.getDate()}. ${start.toLocaleString("cs-CZ", { month: "short" })} – ${end.getDate()}. ${end.toLocaleString("cs-CZ", { month: "short" })}`;
+  return `${start.getDate()} ${start.toLocaleString("en-US", { month: "short" })} – ${end.getDate()} ${end.toLocaleString("en-US", { month: "short" })}`;
 }
 
-const DAY_NAMES = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
+const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function ShiftOverviewWidget({ users = [] }) {
   const [weekStart, setWeekStart] = useState(getMonday(new Date()));
@@ -90,7 +90,7 @@ export default function ShiftOverviewWidget({ users = [] }) {
         <div className="w-6 h-6 rounded-lg bg-slate-700 flex items-center justify-center">
           <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
         </div>
-        <h3 className="text-sm font-semibold text-slate-200">Směny chatterů</h3>
+        <h3 className="text-sm font-semibold text-slate-200">Chatter shifts</h3>
         <div className="ml-auto flex items-center gap-1">
           <button
             onClick={() => { const d = new Date(weekStart); d.setDate(d.getDate() - 7); setWeekStart(d.toISOString().split("T")[0]); }}
@@ -147,7 +147,7 @@ export default function ShiftOverviewWidget({ users = [] }) {
                         onClick={() => handleToggle(chatter, date)}
                         disabled={!!toggling}
                         className="mx-auto block"
-                        title={hasShift ? "Odebrat směnu" : "Přidat směnu"}
+                        title={hasShift ? "Remove shift" : "Add shift"}
                       >
                         {hasShift ? (
                           <div className="flex flex-col items-center gap-0.5">
@@ -173,7 +173,7 @@ export default function ShiftOverviewWidget({ users = [] }) {
             ))}
             {/* Summary row */}
             <tr className="bg-white/5 border-t border-white/10">
-              <td className="px-4 py-1.5 text-[10px] text-slate-500 font-medium">Celkem</td>
+              <td className="px-4 py-1.5 text-[10px] text-slate-500 font-medium">Total</td>
               {dayCounts.map((count, i) => (
                 <td key={i} className="text-center py-1.5">
                   <span className={`text-[10px] font-bold ${count > 0 ? "text-slate-300" : "text-slate-700"}`}>{count}</span>

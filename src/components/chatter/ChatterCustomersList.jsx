@@ -91,12 +91,12 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 overflow-hidden">
       {/* Header */}
       <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-3 flex-wrap">
-        <h3 className="font-semibold text-slate-200 text-sm">Zákazníci ({customers.length})</h3>
+        <h3 className="font-semibold text-slate-200 text-sm">Customers ({customers.length})</h3>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
             <Input
-              placeholder="Hledat..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
@@ -107,9 +107,9 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="last_payment">Poslední platba</SelectItem>
-              <SelectItem value="most_paid">Nejvíc zaplatil</SelectItem>
-              <SelectItem value="newest">Nejnovější</SelectItem>
+              <SelectItem value="last_payment">Last payment</SelectItem>
+              <SelectItem value="most_paid">Most paid</SelectItem>
+              <SelectItem value="newest">Newest</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -118,14 +118,14 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       {/* Add form — always visible */}
       <div className="px-5 py-3 border-b border-white/10 bg-white/5 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
         <Input
-          placeholder="Jméno *"
+          placeholder="Name *"
           value={form.full_name}
           onChange={(e) => setForm({ ...form, full_name: e.target.value })}
           className="h-8 text-xs bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
         />
         <Select value={form.model_id} onValueChange={(v) => setForm({ ...form, model_id: v })}>
           <SelectTrigger className="h-8 text-xs bg-white/5 border-white/10 text-slate-300">
-            <SelectValue placeholder="Vybrat modelku *" />
+            <SelectValue placeholder="Select model *" />
           </SelectTrigger>
           <SelectContent>
             {models.map(m => (
@@ -139,25 +139,25 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
           size="sm"
           className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:opacity-90 text-white h-8 text-xs"
         >
-          {saveMutation.isPending ? "..." : "Vytvořit odkaz"}
+          {saveMutation.isPending ? "..." : "Add customer"}
         </Button>
       </div>
 
       {/* Table */}
       {isLoading ? (
-        <p className="text-xs text-slate-500 text-center py-8">Načítám...</p>
+        <p className="text-xs text-slate-500 text-center py-8">Loading...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-slate-500 text-center py-8">Zatím žádní zákazníci</p>
+        <p className="text-xs text-slate-500 text-center py-8">No customers yet</p>
       ) : (
         <div className="overflow-x-auto overflow-y-auto max-h-[480px]">
           <table className="w-full">
             <thead className="sticky top-0 z-10">
               <tr className="border-b border-white/10 bg-[#1e1e1e] backdrop-blur-sm">
-                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Jméno</th>
-                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Name</th>
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Model</th>
                 <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
-                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Celkem / Platby</th>
-                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Poslední platba</th>
+                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Total / Payments</th>
+                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Last payment</th>
               </tr>
             </thead>
             <tbody>
@@ -197,14 +197,14 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                       {c.pay_day_of_month ? <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> : <span className="text-slate-700">—</span>}
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <p className="text-sm font-semibold text-slate-200">{(st.total || 0).toLocaleString()} Kč</p>
-                      <p className="text-xs text-slate-500">{st.count || 0}× platby</p>
+                      <p className="text-sm font-semibold text-slate-200">{(st.total || 0).toLocaleString()} CZK</p>
+                      <p className="text-xs text-slate-500">{st.count || 0}× payments</p>
                     </td>
                     <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                       {daysSinceLast !== null ? (
                         <div>
-                          <p className="text-xs font-medium text-slate-400">{st.lastAmount?.toLocaleString()} Kč</p>
-                          <p className="text-xs text-slate-600">před {daysSinceLast} dny</p>
+                          <p className="text-xs font-medium text-slate-400">{st.lastAmount?.toLocaleString()} CZK</p>
+                          <p className="text-xs text-slate-600">{daysSinceLast} days ago</p>
                         </div>
                       ) : <span className="text-xs text-slate-700">—</span>}
                     </td>
