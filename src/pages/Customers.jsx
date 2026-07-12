@@ -11,7 +11,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CustomerFormModal from "../components/customers/CustomerFormModal";
 import OnboardingLinkForm from "../components/customers/OnboardingLinkForm";
-import MonthlyGoalBar from "../components/ui-custom/MonthlyGoalBar";
 import PageHeader from "../components/ui-custom/PageHeader";
 import EmptyState from "../components/ui-custom/EmptyState";
 import ChatterFilterToggle, { useChatterFilter } from "../components/ui-custom/ChatterFilterToggle";
@@ -397,8 +396,6 @@ export default function Customers({ currentUser }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-      <MonthlyGoalBar />
-
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1 w-full border border-white/10">
         <button
