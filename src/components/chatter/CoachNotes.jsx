@@ -79,20 +79,14 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
   const currentSlide = SLIDES[slideIdx];
 
   return (
-    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 h-full overflow-hidden flex flex-col">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 h-full overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-5 py-4 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-2">
-          
-
-          
-          <h3 className="text-sm font-semibold text-white">My notes</h3>
-        </div>
+      <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-4 py-3 flex items-center gap-2 flex-shrink-0">
+        <h3 className="text-xs font-bold text-white">My notes</h3>
         <button
           onClick={() => {setShowForm((v) => !v);setForm(emptyForm());setCustomerSearch("");setSlideIdx(0);}}
-          className="h-7 w-7 flex items-center justify-center rounded-lg text-white hover:bg-white/20 transition-colors">
-          
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          className="ml-auto h-6 w-6 flex items-center justify-center rounded-lg text-white hover:bg-white/20 transition-colors">
+          {showForm ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
         </button>
       </div>
 

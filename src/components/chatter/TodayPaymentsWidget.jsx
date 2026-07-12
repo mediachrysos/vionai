@@ -22,7 +22,7 @@ export default function TodayPaymentsWidget({ payments }) {
   );
 
   return (
-    <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden flex flex-col">
+    <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden flex flex-col h-full">
       {/* Header */}
       <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2 flex-shrink-0">
         <h3 className="text-xs font-bold text-slate-200">Today's payments</h3>
