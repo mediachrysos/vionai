@@ -77,6 +77,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
 
   const paidCustomers = customers.filter((c) => (customerStats[c.id]?.count || 0) > 0);
   const pendingCustomers = customers.filter((c) => (customerStats[c.id]?.count || 0) === 0);
+  const paydayCustomers = customers.filter((c) => c.pay_day_of_month === todayDay);
 
   const filtered = (tab === "customers" ? paidCustomers : pendingCustomers).filter((c) =>
   (modelFilter === "all" || c.assigned_models?.includes(modelFilter)) &&
@@ -96,6 +97,18 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
 
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 overflow-hidden">
+      {/* Payday banner */}
+      {paydayCustomers.length > 0 && (
+        <div className="px-5 py-2.5 border-b border-[#C9A227]/20 bg-[#C9A227]/10 flex items-center gap-2 flex-wrap">
+          <span className="text-sm font-semibold text-[#C9A227]">💰 {paydayCustomers.length} customer{paydayCustomers.length > 1 ? "s" : ""} have payday today:</span>
+          <div className="flex flex-wrap gap-1.5">
+            {paydayCustomers.map((c) => (
+              <span key={c.id} className="text-xs font-medium text-[#C9A227] bg-[#C9A227]/15 border border-[#C9A227]/30 rounded-full px-2 py-0.5">{c.full_name}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1 border border-white/10">
