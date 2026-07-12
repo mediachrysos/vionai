@@ -104,6 +104,7 @@ export default function CustomerDetail({ currentUser }) {
   users.forEach((u) => {userMap[u.email] = u.full_name || u.email;});
 
   const assignedModelNames = (customer?.assigned_models || []).map((mid) => modelMap[mid]).filter(Boolean);
+  const visibleOnboardingRequests = isAdmin || chatterModelIds.length === 0 ? onboardingRequests : onboardingRequests.filter((req) => chatterModelIds.includes(req.assigned_model));
 
   if (!customer) return (
     <div className="h-full flex items-center justify-center text-slate-500 text-sm">Loading...</div>);
@@ -439,12 +440,12 @@ export default function CustomerDetail({ currentUser }) {
       </div>
 
       {/* Onboarding */}
-      {onboardingRequests.length > 0 &&
+      {visibleOnboardingRequests.length > 0 &&
       <div className="mt-4 bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
           <h3 className="text-sm font-semibold text-slate-200 mb-3">Onboarding</h3>
 
           <div className="space-y-2">
-            {onboardingRequests.map((req) =>
+            {visibleOnboardingRequests.map((req) =>
           <div key={req.id} className="flex items-start gap-3 p-3 rounded-lg bg-white/3 border border-white/6">
                 <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 text-sm">📋</div>
                 <div className="flex-1 min-w-0">
