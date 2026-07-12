@@ -26,9 +26,13 @@ async function fetchWithTimeout(url, ms) {
 
 async function embedFont(doc) {
   const mirrors = [
+    // Prefer the simpler "hinted" static build first — it uses a plain cmap table that
+    // stricter PDF renderers (e.g. WhatsApp/Telegram in-chat preview) can read correctly.
+    // The fontmake-generated "static/" builds from the variable font can include cmap
+    // formats that those renderers mis-map, which is what caused garbled/"morse code" text.
+    ['https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf', 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf'],
     ['https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Regular.ttf', 'https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Bold.ttf'],
     ['https://cdn.jsdelivr.net/gh/google/fonts@main/apache/roboto/static/Roboto-Regular.ttf', 'https://cdn.jsdelivr.net/gh/google/fonts@main/apache/roboto/static/Roboto-Bold.ttf'],
-    ['https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf', 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf'],
   ];
   // Try each mirror up to 2 times before moving on — most failures are transient network blips
   for (const [rUrl, bUrl] of mirrors) {
@@ -38,6 +42,13 @@ async function embedFont(doc) {
         if (!r.ok || !b.ok) continue;
         const [rBuf, bBuf] = await Promise.all([r.arrayBuffer(), b.arrayBuffer()]);
         if (rBuf.byteLength < 50000 || bBuf.byteLength < 50000) continue;
+        // Reject anything that isn't a real TrueType sfnt — a truncated/HTML error body could
+        // otherwise slip through and produce a corrupt embedded font (renders fine in lenient
+        // viewers, garbled "dashes" in strict ones).
+        const rSig = new Uint8Array(rBuf.slice(0, 4));
+        const bSig = new Uint8Array(bBuf.slice(0, 4));
+        const isSfnt = (sig) => (sig[0] === 0 && sig[1] === 1 && sig[2] === 0 && sig[3] === 0) || String.fromCharCode(...sig) === 'true' || String.fromCharCode(...sig) === 'OTTO';
+        if (!isSfnt(rSig) || !isSfnt(bSig)) continue;
         doc.addFileToVFS('Roboto-Regular.ttf', bufToBase64(rBuf));
         doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
         doc.addFileToVFS('Roboto-Bold.ttf', bufToBase64(bBuf));
