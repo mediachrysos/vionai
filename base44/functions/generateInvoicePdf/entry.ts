@@ -155,14 +155,14 @@ Deno.serve(async (req) => {
     doc.text(t(invoice.supplier_company_name || ''), L, y);
     doc.text(t(invoice.customer_name || ''), MID, y);
 
-    y += 5.5;
-    fn(9, DGRAY);
+    y += 5.6;
+    fb(9, DGRAY);
     if (invoice.supplier_address) {
       const lines = doc.splitTextToSize(t(invoice.supplier_address), MID - L - 8);
       doc.text(lines, L, y);
     }
     if (invoice.customer_email) {
-      fn(9, DGRAY);
+      fb(9, DGRAY);
       doc.text(invoice.customer_email, MID, y);
     }
 
@@ -171,23 +171,23 @@ Deno.serve(async (req) => {
     fn(9, GRAY);
     if (invoice.supplier_ico) {
       doc.text(t('IČO'), L, icoY);
-      fn(9, BLACK);
+      fb(9, BLACK);
       doc.text(invoice.supplier_ico, L + 22, icoY);
-      icoY += 5.5;
+      icoY += 5.6;
     }
     if (invoice.supplier_dic) {
       fn(9, GRAY);
       doc.text(t('DIČ'), L, icoY);
-      fn(9, BLACK);
+      fb(9, BLACK);
       doc.text(invoice.supplier_dic, L + 22, icoY);
-      icoY += 5.5;
+      icoY += 5.6;
     }
     if (invoice.supplier_phone) {
       fn(9, GRAY);
       doc.text(t('Telefon'), L, icoY);
-      fn(9, BLACK);
+      fb(9, BLACK);
       doc.text(invoice.supplier_phone, L + 22, icoY);
-      icoY += 5.5;
+      icoY += 5.6;
     }
 
     // ── PAYMENT DETAILS ───────────────────────────────────────
@@ -203,26 +203,26 @@ Deno.serve(async (req) => {
 
     const detailRow = (label, value, rowY, labelX, valX, valAlign = 'left') => {
       fn(8.5, GRAY); doc.text(t(label), labelX, rowY);
-      fn(8.5, BLACK); doc.text(t(value || '—'), valX, rowY, { align: valAlign });
+      fb(8.5, BLACK); doc.text(t(value || '—'), valX, rowY, { align: valAlign });
     };
 
     let dy = y;
     if (invoice.payment_method) {
       detailRow('Způsob platby', invoice.payment_method, dy, C1, C2);
     }
-    dy += 5.5;
+    dy += 5.6;
 
     // Right group: dates
     let ry = y;
     detailRow('Datum vystavení', invoice.issue_date || '', ry, C3, C4, 'right');
-    ry += 5.5;
+    ry += 5.6;
     if (invoice.due_date) {
       detailRow('Datum splatnosti', invoice.due_date, ry, C3, C4, 'right');
-      ry += 5.5;
+      ry += 5.6;
     }
     if (invoice.taxable_supply_date) {
       detailRow(t('Datum zdan. plnění'), invoice.taxable_supply_date, ry, C3, C4, 'right');
-      ry += 5.5;
+      ry += 5.6;
     }
 
     // ── ITEMS TABLE ───────────────────────────────────────────
