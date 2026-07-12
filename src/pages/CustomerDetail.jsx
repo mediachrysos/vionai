@@ -356,25 +356,38 @@ export default function CustomerDetail({ currentUser }) {
               <span className="w-4 h-4 flex-shrink-0 mt-2 text-slate-600">🎭</span>
               <div className="flex-1">
                 <p className="text-xs text-slate-500 mb-1.5">Assigned models</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {visibleModels.map((m) => {
-                    const selected = (customer.assigned_models || []).includes(m.id);
-                    return (
-                      <button
-                        key={m.id}
-                        onClick={() => toggleModel(m.id)}
-                        className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
-                          selected
-                            ? "bg-[#C9A227]/15 border-[#C9A227]/40 text-[#C9A227]"
-                            : "bg-white/4 border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-400"
-                        }`}
-                      >
-                        {m.name}
-                      </button>
-                    );
-                  })}
-                  {visibleModels.length === 0 && <span className="text-xs text-slate-600">No models available</span>}
-                </div>
+                {isAdmin ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {visibleModels.map((m) => {
+                      const selected = (customer.assigned_models || []).includes(m.id);
+                      return (
+                        <button
+                          key={m.id}
+                          onClick={() => toggleModel(m.id)}
+                          className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
+                            selected
+                              ? "bg-[#C9A227]/15 border-[#C9A227]/40 text-[#C9A227]"
+                              : "bg-white/4 border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-400"
+                          }`}
+                        >
+                          {m.name}
+                        </button>
+                      );
+                    })}
+                    {visibleModels.length === 0 && <span className="text-xs text-slate-600">No models available</span>}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {(customer.assigned_models || []).filter((mid) => chatterModelIds.includes(mid)).map((mid) => (
+                      <span key={mid} className="text-xs px-2.5 py-1 rounded-full border bg-[#C9A227]/15 border-[#C9A227]/40 text-[#C9A227]">
+                        {modelMap[mid]}
+                      </span>
+                    ))}
+                    {(customer.assigned_models || []).filter((mid) => chatterModelIds.includes(mid)).length === 0 && (
+                      <span className="text-xs text-slate-600">No models available</span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
