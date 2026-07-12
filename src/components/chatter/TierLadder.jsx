@@ -83,42 +83,37 @@ export default function TierLadder({
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-4 h-full flex flex-col">
       {/* Header */}
-      <div className="mb-3">
+      <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-200">Today's performance</h3>
+        {showWorkSession && <h3 className="text-sm font-semibold text-slate-200">Working?</h3>}
       </div>
 
       {/* Current tier + working session grouped together */}
       <div className={`flex ${showWorkSession ? "divide-x divide-white/10" : ""} border-b border-white/10 pb-4 mb-4`}>
-        <div className="flex-1 px-4 py-3.5 flex flex-col justify-center">
-          <p className="text-sm font-semibold text-slate-200 mb-2">Current tier</p>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0 shadow-md">
-              <Award className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <span className="text-base font-bold text-[#C9A227] leading-tight block">{currentTier.name}</span>
-              {currentTier.commission > 0 && <span className="text-[10px] text-slate-500">{currentTier.commission}% commission</span>}
-            </div>
+        <div className="flex-1 px-4 py-3.5 flex flex-col items-center gap-3">
+          <div className={`flex items-center justify-center gap-2 w-full rounded-xl py-3 ${nextTier ? "bg-[#C9A227]/10 border border-[#C9A227]/20" : "bg-white/5 border border-white/10"}`}>
+            <Award className="w-4 h-4 text-[#C9A227] flex-shrink-0" />
+            <span className="text-xl font-bold text-[#C9A227] tabular-nums leading-none">{currentTier.name}</span>
           </div>
+          {currentTier.commission > 0 && <p className="text-[10px] text-slate-500 -mt-1">{currentTier.commission}% commission</p>}
           {nextTier ? (
-            <div className="mt-3">
+            <div className="w-full">
               <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all shadow-[0_0_8px_rgba(201,162,39,0.5)]"
                   style={{ width: `${Math.min(100, Math.max(0, ((todayRevenue - currentTier.min) / (nextTier.min - currentTier.min)) * 100))}%` }}
                 />
               </div>
-              <p className="text-[10px] text-slate-500 mt-1.5">
+              <p className="text-[10px] text-slate-500 mt-1.5 text-center">
                 <span className="font-semibold text-slate-300">{missingToNext.toLocaleString()}</span> more to reach <span className="font-semibold text-[#C9A227]">"{nextTier.name}"</span>
               </p>
             </div>
           ) : (
-            <p className="text-[10px] text-slate-500 mt-2">Max tier reached — top rate on all payments</p>
+            <p className="text-[10px] text-slate-500 text-center">Max tier reached — top rate on all payments</p>
           )}
         </div>
         {showWorkSession && (
           <div className="flex-1 px-4 py-3.5 flex flex-col justify-center">
-            <p className="text-sm font-semibold text-slate-200 mb-2">Working?</p>
             <WorkSessionWidget email={email} compact />
           </div>
         )}
