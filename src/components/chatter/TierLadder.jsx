@@ -18,9 +18,9 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-4 h-full flex flex-col shadow-sm">
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-3">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0 shadow-sm shadow-amber-900/30 hidden">
-          <Flame className="w-4 h-4 text-white" />
-        </div>
+        
+
+        
         <div className="min-w-0">
           <h3 className="text-sm font-bold text-slate-100">Today's performance</h3>
           <p className="text-[11px] text-[#C9A227] font-medium truncate">{microcopy()}</p>
