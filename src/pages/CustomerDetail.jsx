@@ -61,9 +61,13 @@ export default function CustomerDetail({ currentUser }) {
 
   const roles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = roles.includes("admin");
-  const chatterModelIds = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-  const visibleModels = isAdmin || chatterModelIds.length === 0 ? models : models.filter((m) => chatterModelIds.includes(m.id));
-  const visiblePayments = isAdmin || chatterModelIds.length === 0 ? payments : payments.filter((p) => chatterModelIds.includes(p.model_id));
+  const chatterModelIds = React.useMemo(() => {
+    const fromModels = models.filter((m) => m.assigned_chatters?.includes(currentUser?.email)).map((m) => m.id);
+    const fromUser = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+    return [...new Set([...fromModels, ...fromUser])].filter((id) => id != null && id !== "");
+  }, [models, currentUser]);
+  const visibleModels = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
+  const visiblePayments = isAdmin ? payments : payments.filter((p) => chatterModelIds.includes(p.model_id));
 
   const { data: onboardingRequests = [] } = useQuery({
     queryKey: ["onboarding-requests", id, customer?.full_name],
@@ -108,7 +112,7 @@ export default function CustomerDetail({ currentUser }) {
   users.forEach((u) => {userMap[u.email] = u.full_name || u.email;});
 
   const assignedModelNames = (customer?.assigned_models || []).map((mid) => modelMap[mid]).filter(Boolean);
-  const visibleOnboardingRequests = isAdmin || chatterModelIds.length === 0 ? onboardingRequests : onboardingRequests.filter((req) => chatterModelIds.includes(req.assigned_model));
+  const visibleOnboardingRequests = isAdmin ? onboardingRequests : onboardingRequests.filter((req) => chatterModelIds.includes(req.assigned_model));
 
   if (!customer) return (
     <div className="h-full flex items-center justify-center text-slate-500 text-sm">Loading...</div>);
