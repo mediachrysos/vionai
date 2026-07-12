@@ -83,11 +83,14 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
     staleTime: 30000
   });
 
-  // Extra safety — only ever show this chatter's own requests, never another chatter's
-  const requests = useMemo(
-    () => rawRequests.filter((r) => r.chatter_email === chatterEmail),
-    [rawRequests, chatterEmail]
-  );
+  // Extra safety — only ever show this chatter's own requests, never another chatter's,
+  // and only for models this chatter is assigned to (or requests with no model set)
+  const requests = useMemo(() => {
+    const allowedModelIds = new Set(models.map((m) => m.id));
+    return rawRequests.filter((r) =>
+      r.chatter_email === chatterEmail && (!r.model_id || allowedModelIds.has(r.model_id))
+    );
+  }, [rawRequests, chatterEmail, models]);
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
