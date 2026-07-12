@@ -257,16 +257,16 @@ export default function SocialMediaContent({ currentUser }) {
   if (!isAdmin && !myEmail) return null;
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] p-6">
+    <div className="min-h-screen bg-[#1a1a1a] p-4 sm:p-6 pt-16 lg:pt-6 pb-24">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-xl font-bold text-slate-100">Graphic Space</h1>
             <p className="text-sm text-slate-500 mt-0.5">Weekly Designer Schedule</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {isAdmin && activeDashboard && (
               <button
                 onClick={() => { setShowEditor(e => !e); setShowDashboardManager(false); }}

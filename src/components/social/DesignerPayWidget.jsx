@@ -238,7 +238,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
 
       {/* Admin: add payout */}
       {isAdmin &&
-      <div className="flex gap-2 items-center border-t border-white/10 pt-3">
+      <div className="flex flex-wrap gap-2 items-center border-t border-white/10 pt-3">
           <Input
           value={payoutAmount}
           onChange={(e) => setPayoutAmount(e.target.value)}
@@ -251,7 +251,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
           value={payoutNote}
           onChange={(e) => setPayoutNote(e.target.value)}
           placeholder="Note (optional)"
-          className="h-8 text-xs flex-1 min-w-0" />
+          className="h-8 text-xs flex-1 min-w-[100px]" />
         
           <button
           onClick={handleAddPayout}
@@ -273,7 +273,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
             <Gift className="w-3.5 h-3.5" /> Add bonus to earned
           </button>
           {showBonusForm &&
-        <div className="flex gap-2 items-center mt-2">
+        <div className="flex flex-wrap gap-2 items-center mt-2">
               <Input
             value={bonusAmount}
             onChange={(e) => setBonusAmount(e.target.value)}
@@ -286,7 +286,7 @@ export default function DesignerPayWidget({ designerEmail, dashboard, isAdmin, o
             value={bonusNote}
             onChange={(e) => setBonusNote(e.target.value)}
             placeholder="Note (optional)"
-            className="h-8 text-xs flex-1 min-w-0" />
+            className="h-8 text-xs flex-1 min-w-[100px]" />
           
               <button
             onClick={handleAddBonus}
