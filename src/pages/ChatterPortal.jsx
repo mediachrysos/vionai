@@ -354,8 +354,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
       )}
 
       {/* Hero */}
-      <div className="bg-[#1e1e1e] border-b border-white/10 px-4 lg:px-8 pt-6 pb-5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
+      <div className="bg-[#1e1e1e] border-b border-white/10 pt-6 pb-5">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
             <ProfilePhotoUpload user={currentUser} isAdminView={isAdminView} size="w-10 h-10" />
             <p className="text-slate-200 text-sm font-semibold">{displayName}</p>
