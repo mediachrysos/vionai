@@ -379,12 +379,18 @@ export default function CustomerDetail({ currentUser }) {
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-1.5">
-                    {(customer.assigned_models || []).filter((mid) => chatterModelIds.includes(mid)).map((mid) => (
+                    {[...new Set([
+                      ...(customer.assigned_models || []).filter((mid) => chatterModelIds.includes(mid)),
+                      ...visiblePayments.map((p) => p.model_id).filter(Boolean)
+                    ])].map((mid) => (
                       <span key={mid} className="text-xs px-2.5 py-1 rounded-full border bg-[#C9A227]/15 border-[#C9A227]/40 text-[#C9A227]">
                         {modelMap[mid]}
                       </span>
                     ))}
-                    {(customer.assigned_models || []).filter((mid) => chatterModelIds.includes(mid)).length === 0 && (
+                    {[...new Set([
+                      ...(customer.assigned_models || []).filter((mid) => chatterModelIds.includes(mid)),
+                      ...visiblePayments.map((p) => p.model_id).filter(Boolean)
+                    ])].length === 0 && (
                       <span className="text-xs text-slate-600">No models available</span>
                     )}
                   </div>
