@@ -335,8 +335,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
       )}
 
       {/* Hero */}
-      <div className="bg-[#1e1e1e] border-b border-white/10 px-6 pt-6 pb-5">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+      <div className="bg-[#1e1e1e] border-b border-white/10 px-4 lg:px-8 pt-6 pb-5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest">Chatting Space</p>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
@@ -347,10 +347,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 lg:px-6 pt-6 pb-12 space-y-4">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6 pb-12 space-y-4">
 
         {/* Notes + Onboarding link — 2 columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <CoachNotes
             notes={notes}
             chatterEmail={email}
@@ -365,8 +365,8 @@ function ChatterView({ currentUser, isAdminView = false }) {
           </div>
         </div>
 
-        {/* Dnešní výkonnost + Výplata — side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Today's performance + Payout — side by side */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
             <TierLadder
               todayRevenue={todayRevenue}
@@ -393,7 +393,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
           monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
 
         {/* Today's payments + Graphic Requests — side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
           <TodayPaymentsWidget payments={payments} />
           <GraphicRequestWidget
             chatterEmail={email}
@@ -408,7 +408,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
         <ChatterShiftPicker email={email} name={displayName} />
 
         {/* Today stats + Recent payments */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <StatsCard
             todayRevenue={todayRevenue}
             hoursWorked={hoursToday}
