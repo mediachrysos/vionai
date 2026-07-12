@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, ChevronUp, Plus, X, Award, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import WorkSessionWidget from "./WorkSessionWidget";
 import { calcDailyPayout, getNextTier, getTierForRevenue } from "./tierUtils";
@@ -92,7 +92,6 @@ export default function TierLadder({
       <div className={`flex ${showWorkSession ? "divide-x divide-white/10" : ""} border-b border-white/10 pb-4 mb-4`}>
         <div className="flex-1 px-4 py-3.5 flex flex-col items-center justify-center gap-3">
           <div className={`flex items-center justify-center gap-2 w-full rounded-xl py-3 ${nextTier ? "bg-[#C9A227]/10 border border-[#C9A227]/20" : "bg-white/5 border border-white/10"}`}>
-            <Award className="w-4 h-4 text-[#C9A227] flex-shrink-0" />
             <span className="text-xl font-bold text-[#C9A227] tabular-nums leading-none">{currentTier.name}</span>
           </div>
           {currentTier.commission > 0 && <p className="text-[10px] text-slate-500 -mt-1">{currentTier.commission}% commission</p>}
@@ -105,7 +104,6 @@ export default function TierLadder({
                 />
               </div>
               <div className="flex items-center justify-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-[#C9A227]/10 border border-[#C9A227]/20 shadow-[0_0_12px_rgba(201,162,39,0.25)]">
-                <Sparkles className="w-3 h-3 text-[#C9A227] animate-pulse flex-shrink-0" />
                 <p className="text-[10px] text-slate-400 text-center whitespace-nowrap">
                   <span className="font-bold text-[#C9A227]">{missingToNext.toLocaleString()}</span> more to reach <span className="font-bold text-[#C9A227]">"{nextTier.name}"</span>
                 </p>
