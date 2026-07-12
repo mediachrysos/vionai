@@ -330,7 +330,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         {/* Earnings card */}
         <div className="bg-[#252525] rounded-xl p-4 border border-white/10">
           <p className="text-sm text-slate-400 font-medium mb-1">Earnings</p>
-          <p className="text-2xl font-bold text-white">{fmt(totalGross)} <span className="text-base font-medium text-slate-400">{currency}</span></p>
+          <p className="text-2xl font-bold text-white">{totalGross.toLocaleString()} <span className="text-base font-medium text-slate-400">{currency}</span></p>
           <p className="text-xs text-slate-500 mb-3">{dateRangeLabel}</p>
           <MiniSparkline data={data} dataKey="gross" color="#C9A227" />
         </div>
@@ -339,7 +339,7 @@ export default function AnalyticsChart({ payments = [], adSpends = [], models = 
         <div className="bg-[#252525] rounded-xl p-4 border border-white/10">
           <p className="text-sm text-slate-400 font-medium mb-1">This month</p>
           <div className="flex items-start gap-2">
-            <p className="text-2xl font-bold text-white">{fmt(thisMonthGross)} <span className="text-base font-medium text-slate-400">{currency}</span></p>
+            <p className="text-2xl font-bold text-white">{thisMonthGross.toLocaleString()} <span className="text-base font-medium text-slate-400">{currency}</span></p>
             {monthDiff !== 0 &&
             <span className={`mt-1 text-xs font-semibold px-2 py-0.5 rounded-md bg-[hsl(var(--card-foreground))] ${monthDiff < 0 ? "bg-red-900/50 text-red-400" : "bg-emerald-900/50 text-emerald-400"}`}>
                 {monthDiff < 0 ? "– " : "+ "}{Math.abs(monthDiff).toLocaleString()}
