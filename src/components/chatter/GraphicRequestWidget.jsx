@@ -232,7 +232,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                       </div>
                       <div>
                         <p className={`text-xs font-semibold ${form.content_type === type ? "text-[#C9A227]" : "text-slate-400"}`}>{label}</p>
-                        <p className="text-[10px] text-slate-600 hidden">{sub}</p>
+                        
                       </div>
                     </button>);
               })}
