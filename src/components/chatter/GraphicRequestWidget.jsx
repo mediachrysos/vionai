@@ -100,7 +100,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
   const requests = useMemo(() => {
     const allowedModelIds = new Set(models.map((m) => m.id));
     return rawRequests.filter((r) =>
-      r.chatter_email === chatterEmail && (!r.model_id || allowedModelIds.has(r.model_id))
+    r.chatter_email === chatterEmail && (!r.model_id || allowedModelIds.has(r.model_id))
     );
   }, [rawRequests, chatterEmail, models]);
 
@@ -215,24 +215,24 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               map(({ type, icon: TypeIcon, label }) => {
                 const sub = designerMap[type]?.name ? `→ ${designerMap[type].name}` : "→ unassigned";
                 return (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setForm((p) => ({ ...p, content_type: type }))}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 transition-all text-left ${
-                form.content_type === type ?
-                "border-[#C9A227] bg-[#C9A227]/10" :
-                "border-white/10 bg-white/5 hover:border-white/20"}`
-                }>
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setForm((p) => ({ ...p, content_type: type }))}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 transition-all text-left ${
+                    form.content_type === type ?
+                    "border-[#C9A227] bg-[#C9A227]/10" :
+                    "border-white/10 bg-white/5 hover:border-white/20"}`
+                    }>
                 
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                form.content_type === type ? "bg-[#C9A227]" : "bg-white/10"}`
-                }>
+                    form.content_type === type ? "bg-[#C9A227]" : "bg-white/10"}`
+                    }>
                         <TypeIcon className={`w-4 h-4 ${form.content_type === type ? "text-white" : "text-slate-500"}`} />
                       </div>
                       <div>
                         <p className={`text-xs font-semibold ${form.content_type === type ? "text-[#C9A227]" : "text-slate-400"}`}>{label}</p>
-                        <p className="text-[10px] text-slate-600">{sub}</p>
+                        <p className="text-[10px] text-slate-600 hidden">{sub}</p>
                       </div>
                     </button>);
               })}
