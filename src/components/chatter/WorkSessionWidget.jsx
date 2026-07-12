@@ -78,20 +78,21 @@ export default function WorkSessionWidget({ email, compact }) {
 
   if (compact) {
     return (
-      <div className="flex items-center justify-between w-full">
+      <div className="flex flex-col gap-2 w-full">
         <div className="flex items-center gap-2">
           {isWorking && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />}
-          <p className="text-lg font-bold text-slate-100 tabular-nums">{isWorking ? sessionTime : "00:00"}</p>
+          <p className="text-2xl font-bold text-slate-100 tabular-nums leading-none">{isWorking ? sessionTime : "00:00"}</p>
         </div>
         <Button
           onClick={toggle}
-          className={`h-8 w-8 rounded-full flex items-center justify-center transition-all p-0 flex-shrink-0 ${
+          className={`w-full h-11 rounded-xl flex items-center justify-center gap-2 font-semibold text-sm transition-all ${
             isWorking
               ? "bg-red-500/90 hover:bg-red-500 text-white"
               : "bg-[#C9A227] hover:bg-[#A8841C] text-white"
           }`}
         >
-          {isWorking ? <Square className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
+          {isWorking ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          {isWorking ? "Stop" : "Start work"}
         </Button>
       </div>
     );

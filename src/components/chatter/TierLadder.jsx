@@ -89,13 +89,13 @@ export default function TierLadder({
 
       {/* Today's stats — payout and working session grouped together */}
       <div className={`grid ${showWorkSession ? "grid-cols-2" : "grid-cols-1"} gap-2 mb-4`}>
-        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1">Payout today</p>
-          <p className={`text-base font-bold leading-none tabular-nums ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-[11px] font-normal opacity-70">CZK</span></p>
+        <div className="rounded-xl px-4 py-3.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
+          <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1.5">Payout today</p>
+          <p className={`text-2xl font-bold leading-none tabular-nums ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-xs font-normal opacity-70">CZK</span></p>
         </div>
         {showWorkSession && (
-          <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
-            <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1">Working?</p>
+          <div className="rounded-xl px-4 py-3.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1.5">Working?</p>
             <WorkSessionWidget email={email} compact />
           </div>
         )}
