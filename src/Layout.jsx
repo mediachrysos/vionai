@@ -170,7 +170,13 @@ export default function Layout({ children, currentPageName }) {
         }
       }
     });
-    return () => { unsubPayment(); unsubCustomer(); unsubTaskSubmit(); };
+    // Keep current user's own data (e.g. assigned_model_ids changed by admin) live-updated
+    const unsubUser = base44.entities.User.subscribe((event) => {
+      if (event.type === "update" && event.data && user?.id && event.data.id === user.id) {
+        setUser((prev) => ({ ...prev, ...event.data }));
+      }
+    });
+    return () => { unsubPayment(); unsubCustomer(); unsubTaskSubmit(); unsubUser(); };
   }, [user]);
 
   // CustomerOnboarding is a public page — skip auth entirely
