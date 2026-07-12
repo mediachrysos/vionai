@@ -259,7 +259,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
   const qc = useQueryClient();
   const [nickname, setNickname] = useState(currentUser?.nickname || "");
   const [showNicknameModal, setShowNicknameModal] = useState(!isAdminView && !currentUser?.nickname);
-  const [viewTab, setViewTab] = useState("space");
 
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
@@ -366,25 +365,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6 space-y-4">
-        <div className="flex gap-1 bg-white/5 rounded-xl p-1 border border-white/10 w-fit">
-          <button
-            onClick={() => setViewTab("space")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewTab === "space" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
-            <MessageSquare className="w-4 h-4" /> My Space
-          </button>
-          <button
-            onClick={() => setViewTab("customers")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewTab === "customers" ? "bg-[#C9A227] text-white shadow" : "text-slate-400 hover:text-slate-200"}`}>
-            <UserCircle className="w-4 h-4" /> Customers
-          </button>
-        </div>
-      </div>
-
-      {viewTab === "customers" ? (
-        <Customers currentUser={currentUser} />
-      ) : (
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12 space-y-4">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12 pt-6 space-y-4">
 
         {/* Notes + Onboarding link — 2 columns */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -454,7 +435,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
           chatterEmail={email}
           assignedModelIds={chatterModelIds} />
       </div>
-      )}
     </div>
   );
 }
