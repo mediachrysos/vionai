@@ -94,12 +94,8 @@ export default function TierLadder({
         <p className="text-[11px] text-slate-500 mt-0.5">{microcopy()}</p>
       </div>
 
-      {/* Today's stats — chatted, payout, and working session grouped together */}
-      <div className={`grid ${showWorkSession ? "grid-cols-3" : "grid-cols-2"} gap-2 mb-4`}>
-        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1">Chatted</p>
-          <p className="text-base font-bold text-slate-100 leading-none tabular-nums">{todayRevenue.toLocaleString()} <span className="text-[11px] font-normal text-slate-500">CZK</span></p>
-        </div>
+      {/* Today's stats — payout and working session grouped together */}
+      <div className={`grid ${showWorkSession ? "grid-cols-2" : "grid-cols-1"} gap-2 mb-4`}>
         <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
           <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1">Payout today</p>
           <p className={`text-base font-bold leading-none tabular-nums ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-[11px] font-normal opacity-70">CZK</span></p>
@@ -114,9 +110,9 @@ export default function TierLadder({
 
       <div className="grid lg:grid-cols-2 gap-4 flex-1">
         {/* Left half — tier ladder + daily goal */}
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center text-center">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Current tier</p>
-          <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-[#C9A227]/10 border border-[#C9A227]/20">
+          <div className="w-full flex items-center gap-3 rounded-xl px-3.5 py-3 bg-[#C9A227]/10 border border-[#C9A227]/20">
             <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-[#C9A227]/15 flex items-center justify-center text-xs font-bold text-[#C9A227]">
               {currentTier.index + 1}
             </span>
@@ -151,18 +147,18 @@ export default function TierLadder({
         </div>
 
         {/* Right half — monthly payout summary */}
-        <div className="rounded-xl bg-white/[0.02] p-3 flex flex-col">
+        <div className="rounded-xl bg-white/[0.02] p-3 flex flex-col items-center text-center">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Monthly payout</p>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col bg-[#C9A227]/10 border border-[#C9A227]/20 rounded-xl px-3 py-2.5 gap-1">
+          <div className="grid grid-cols-3 gap-2 w-full">
+            <div className="flex flex-col items-center text-center bg-[#C9A227]/10 border border-[#C9A227]/20 rounded-xl px-3 py-2.5 gap-1">
               <span className="text-[9px] text-[#C9A227]/80 font-semibold uppercase tracking-wider">Earned</span>
               <span className="text-base font-bold text-[#C9A227] tabular-nums">{earned.toLocaleString()}</span>
             </div>
-            <div className="flex flex-col bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2.5 gap-1">
+            <div className="flex flex-col items-center text-center bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2.5 gap-1">
               <span className="text-[9px] text-emerald-400/80 font-semibold uppercase tracking-wider">Paid out</span>
               <span className="text-base font-bold text-emerald-400 tabular-nums">{totalPaid.toLocaleString()}</span>
             </div>
-            <div className={`flex flex-col rounded-xl px-3 py-2.5 gap-1 border ${remaining > 0 ? "bg-rose-500/10 border-rose-500/20" : "bg-white/5 border-white/10"}`}>
+            <div className={`flex flex-col items-center text-center rounded-xl px-3 py-2.5 gap-1 border ${remaining > 0 ? "bg-rose-500/10 border-rose-500/20" : "bg-white/5 border-white/10"}`}>
               <span className={`text-[9px] font-semibold uppercase tracking-wider ${remaining > 0 ? "text-rose-400/80" : "text-slate-500"}`}>To pay</span>
               <span className={`text-base font-bold tabular-nums ${remaining > 0 ? "text-rose-400" : "text-slate-500"}`}>{remaining.toLocaleString()}</span>
             </div>
