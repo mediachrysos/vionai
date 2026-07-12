@@ -18,7 +18,7 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-4 h-full flex flex-col shadow-sm">
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-3">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0 shadow-sm shadow-amber-900/30">
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center flex-shrink-0 shadow-sm shadow-amber-900/30 hidden">
           <Flame className="w-4 h-4 text-white" />
         </div>
         <div className="min-w-0">
@@ -54,33 +54,33 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
           return (
             <div key={i} className="relative flex items-start gap-2.5">
               {/* Connecting line */}
-              {!isLast && (
-                <div
-                  className={`absolute left-[9px] top-5 w-px h-[calc(100%-4px)] ${
-                    isCompleted ? "bg-emerald-500/40" : "bg-white/10"
-                  }`}
-                />
-              )}
+              {!isLast &&
+              <div
+                className={`absolute left-[9px] top-5 w-px h-[calc(100%-4px)] ${
+                isCompleted ? "bg-emerald-500/40" : "bg-white/10"}`
+                } />
+
+              }
               <div
                 className={`relative w-[18px] h-[18px] rounded-full flex items-center justify-center text-[8px] font-bold flex-shrink-0 mt-1.5 ring-4 ring-[#1e1e1e] ${
-                  isActive
-                    ? "bg-[#C9A227] text-white"
-                    : isCompleted
-                    ? "bg-emerald-500 text-white"
-                    : "bg-white/10 text-slate-500"
-                }`}
-              >
+                isActive ?
+                "bg-[#C9A227] text-white" :
+                isCompleted ?
+                "bg-emerald-500 text-white" :
+                "bg-white/10 text-slate-500"}`
+                }>
+                
                 {isCompleted ? <Check className="w-2.5 h-2.5" /> : i + 1}
               </div>
               <div
                 className={`flex-1 min-w-0 flex items-center justify-between gap-2 rounded-xl px-3 py-2 border transition-all ${
-                  isActive
-                    ? "border-[#C9A227]/40 bg-gradient-to-r from-[#C9A227]/[0.12] to-transparent"
-                    : isCompleted
-                    ? "border-emerald-500/20 bg-emerald-500/5"
-                    : "border-white/5 bg-white/[0.02]"
-                }`}
-              >
+                isActive ?
+                "border-[#C9A227]/40 bg-gradient-to-r from-[#C9A227]/[0.12] to-transparent" :
+                isCompleted ?
+                "border-emerald-500/20 bg-emerald-500/5" :
+                "border-white/5 bg-white/[0.02]"}`
+                }>
+                
                 <div className="min-w-0">
                   <p className={`text-[11.5px] font-semibold truncate ${isActive ? "text-[#C9A227]" : isCompleted ? "text-emerald-400" : "text-slate-400"}`}>{tier.name}</p>
                   <p className="text-[9px] text-slate-600 truncate">
@@ -90,29 +90,29 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
                 </div>
                 {isActive && <span className="flex-shrink-0 text-[8px] font-bold text-[#C9A227] bg-[#C9A227]/15 px-1.5 py-0.5 rounded-full">ACTIVE</span>}
               </div>
-            </div>
-          );
+            </div>);
+
         })}
       </div>
 
-      {dailyGoalEnabled && dailyGoalAmount > 0 && (
-        <div className="mt-4 pt-4 border-t border-white/10">
+      {dailyGoalEnabled && dailyGoalAmount > 0 &&
+      <div className="mt-4 pt-4 border-t border-white/10">
           <div className="flex justify-between text-xs text-slate-500 mb-1.5">
             <span>Daily goal</span>
-            <span className="font-semibold text-[#C9A227]">{Math.min(100, Math.round((todayRevenue / dailyGoalAmount) * 100))}%</span>
+            <span className="font-semibold text-[#C9A227]">{Math.min(100, Math.round(todayRevenue / dailyGoalAmount * 100))}%</span>
           </div>
           <div className="h-2 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all"
-              style={{ width: `${Math.min(100, (todayRevenue / dailyGoalAmount) * 100)}%` }}
-            />
+            className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all"
+            style={{ width: `${Math.min(100, todayRevenue / dailyGoalAmount * 100)}%` }} />
+          
           </div>
           <div className="flex justify-between text-[10px] text-slate-600 mt-1">
             <span>{todayRevenue.toLocaleString()}</span>
             <span>{dailyGoalAmount.toLocaleString()}</span>
           </div>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
