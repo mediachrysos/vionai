@@ -35,6 +35,7 @@ export default function CustomerDetail({ currentUser }) {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get("id");
   const [uploadingFor, setUploadingFor] = useState(null);
+  const [creatingFor, setCreatingFor] = useState(null);
   const [phoneCode, setPhoneCode] = useState("+420");
   const [phoneLocal, setPhoneLocal] = useState("");
   const fileInputRef = useRef(null);
@@ -53,6 +54,9 @@ export default function CustomerDetail({ currentUser }) {
   });
 
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list() });
+  const { data: generatedInvoices = [] } = useQuery({ queryKey: ["invoices"], queryFn: () => base44.entities.Invoice.list("-created_date", 2000) });
+  const invoiceMap = {};
+  generatedInvoices.forEach((inv) => { if (inv.related_payment_id) invoiceMap[inv.related_payment_id] = inv; });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
 
   const roles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
@@ -142,6 +146,29 @@ export default function CustomerDetail({ currentUser }) {
     await updateMutation.mutateAsync({ invoices: [...existingInvoices, { payment_id: paymentId, file_url, file_name: file.name }] });
     setUploadingFor(null);
     e.target.value = "";
+  };
+
+  const handleCreateInvoice = async (paymentId) => {
+    setCreatingFor(paymentId);
+    try {
+      const response = await base44.functions.invoke('createInvoiceFromPayment', { payment_id: paymentId });
+      if (response.data.error) alert(response.data.error);
+      qc.invalidateQueries({ queryKey: ["invoices"] });
+    } catch (error) {
+      alert('Chyba: ' + error.message);
+    } finally {
+      setCreatingFor(null);
+    }
+  };
+
+  const handleDownloadInvoicePdf = async (invoice) => {
+    const response = await base44.functions.invoke('generateInvoicePdf', { invoice_id: invoice.id });
+    const pdfUrl = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = `faktura-${invoice.invoice_number}.pdf`;
+    link.click();
+    URL.revokeObjectURL(pdfUrl);
   };
 
   const removeInvoice = async (fileUrl) => {
@@ -394,6 +421,7 @@ export default function CustomerDetail({ currentUser }) {
           <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
               {visiblePayments.map((p) => {
               const invoice = (customer.invoices || []).find((inv) => inv.payment_id === p.id);
+              const genInvoice = invoiceMap[p.id];
               return (
                 <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-white/4 transition-colors group">
                     <div className="flex items-center gap-2.5 min-w-0">
@@ -409,6 +437,19 @@ export default function CustomerDetail({ currentUser }) {
                       </div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                      {genInvoice ?
+                    <button
+                      onClick={() => handleDownloadInvoicePdf(genInvoice)}
+                      className="flex items-center gap-1.5 text-xs text-[#C9A227] hover:text-[#A8841C] bg-[#C9A227]/10 hover:bg-[#C9A227]/15 border border-[#C9A227]/25 rounded-lg px-2.5 py-1 transition-all mr-1">
+                          <Download className="w-3 h-3" /><span>č. {genInvoice.invoice_number}</span>
+                        </button> :
+                    <button
+                      onClick={() => handleCreateInvoice(p.id)}
+                      disabled={creatingFor === p.id}
+                      className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-[#C9A227] bg-white/5 hover:bg-[#C9A227]/10 border border-white/10 hover:border-[#C9A227]/30 rounded-lg px-2.5 py-1 transition-all mr-1">
+                          {creatingFor === p.id ? <span>Creating...</span> : <><FileText className="w-3 h-3" /><span>Create invoice</span></>}
+                        </button>
+                    }
                       {invoice ?
                     <div className="flex items-center gap-1">
                           <a href={invoice.file_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-[#C9A227] hover:underline">
