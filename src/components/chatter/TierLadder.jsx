@@ -96,17 +96,17 @@ export default function TierLadder({
 
       {/* Today's stats — chatted, payout, and working session grouped together */}
       <div className={`grid ${showWorkSession ? "grid-cols-3" : "grid-cols-2"} gap-2 mb-4`}>
-        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] flex flex-col justify-center">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-1">Chatted</p>
-          <p className="text-base font-semibold text-slate-100 leading-none">{todayRevenue.toLocaleString()} <span className="text-[11px] font-normal text-slate-500">CZK</span></p>
+        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
+          <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1">Chatted</p>
+          <p className="text-base font-bold text-slate-100 leading-none tabular-nums">{todayRevenue.toLocaleString()} <span className="text-[11px] font-normal text-slate-500">CZK</span></p>
         </div>
-        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] flex flex-col justify-center">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-1">Payout today</p>
-          <p className={`text-base font-semibold leading-none ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-[11px] font-normal opacity-70">CZK</span></p>
+        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
+          <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1">Payout today</p>
+          <p className={`text-base font-bold leading-none tabular-nums ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-[11px] font-normal opacity-70">CZK</span></p>
         </div>
         {showWorkSession && (
-          <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] flex flex-col justify-center">
-            <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-1">Working?</p>
+          <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] border border-white/5 flex flex-col justify-center">
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1">Working?</p>
             <WorkSessionWidget email={email} compact />
           </div>
         )}
@@ -116,35 +116,18 @@ export default function TierLadder({
         {/* Left half — tier ladder + daily goal */}
         <div className="flex flex-col">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Current tier</p>
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2.5 rounded-xl px-3 py-2 bg-[#C9A227]/10">
-              <span className="text-[10px] font-semibold w-4 text-center text-[#C9A227]">
-                {currentTier.index + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-[11.5px] font-medium truncate text-[#C9A227]">{currentTier.name}</p>
-                <p className="text-[9px] text-slate-600 truncate">
-                  {currentTier.max !== null && currentTier.max !== undefined ? `${currentTier.min.toLocaleString()}–${currentTier.max.toLocaleString()}` : `${currentTier.min.toLocaleString()}+`}
-                  {currentTier.commission > 0 && ` · ${currentTier.commission}% commission`}
-                </p>
-              </div>
-              <span className="flex-shrink-0 text-[8px] font-semibold text-[#C9A227] bg-[#C9A227]/15 px-1.5 py-0.5 rounded-full">ACTIVE</span>
+          <div className="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-[#C9A227]/10 border border-[#C9A227]/20">
+            <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-[#C9A227]/15 flex items-center justify-center text-xs font-bold text-[#C9A227]">
+              {currentTier.index + 1}
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold truncate text-[#C9A227]">{currentTier.name}</p>
+              <p className="text-[10px] text-slate-500 truncate">
+                {currentTier.max !== null && currentTier.max !== undefined ? `${currentTier.min.toLocaleString()}–${currentTier.max.toLocaleString()}` : `${currentTier.min.toLocaleString()}+`}
+                {currentTier.commission > 0 && ` · ${currentTier.commission}% commission`}
+              </p>
             </div>
-            {nextTier && (
-              <div className="flex items-center gap-2.5 rounded-xl px-3 py-2 bg-white/[0.02]">
-                <span className="text-[10px] font-semibold w-4 text-center text-slate-600">
-                  {currentTier.index + 2}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11.5px] font-medium truncate text-slate-400">{nextTier.name}</p>
-                  <p className="text-[9px] text-slate-600 truncate">
-                    {nextTier.max !== null && nextTier.max !== undefined ? `${nextTier.min.toLocaleString()}–${nextTier.max.toLocaleString()}` : `${nextTier.min.toLocaleString()}+`}
-                    {nextTier.commission > 0 && ` · ${nextTier.commission}% commission`}
-                  </p>
-                </div>
-                <span className="flex-shrink-0 text-[8px] font-semibold text-slate-500">NEXT</span>
-              </div>
-            )}
+            <span className="flex-shrink-0 text-[9px] font-bold text-[#C9A227] bg-[#C9A227]/15 px-2 py-1 rounded-full tracking-wide">ACTIVE</span>
           </div>
 
           {dailyGoalEnabled && dailyGoalAmount > 0 && (
@@ -171,17 +154,17 @@ export default function TierLadder({
         <div className="rounded-xl bg-white/[0.02] p-3 flex flex-col">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Monthly payout</p>
           <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col items-center bg-[#C9A227]/10 rounded-xl px-2 py-2.5 gap-0.5">
-              <span className="text-[9px] text-[#C9A227]/70 font-medium uppercase tracking-wide">Earned</span>
-              <span className="text-sm font-bold text-[#C9A227] tabular-nums">{earned.toLocaleString()}</span>
+            <div className="flex flex-col bg-[#C9A227]/10 border border-[#C9A227]/20 rounded-xl px-3 py-2.5 gap-1">
+              <span className="text-[9px] text-[#C9A227]/80 font-semibold uppercase tracking-wider">Earned</span>
+              <span className="text-base font-bold text-[#C9A227] tabular-nums">{earned.toLocaleString()}</span>
             </div>
-            <div className="flex flex-col items-center bg-emerald-500/10 rounded-xl px-2 py-2.5 gap-0.5">
-              <span className="text-[9px] text-emerald-400/70 font-medium uppercase tracking-wide">Paid out</span>
-              <span className="text-sm font-bold text-emerald-400 tabular-nums">{totalPaid.toLocaleString()}</span>
+            <div className="flex flex-col bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2.5 gap-1">
+              <span className="text-[9px] text-emerald-400/80 font-semibold uppercase tracking-wider">Paid out</span>
+              <span className="text-base font-bold text-emerald-400 tabular-nums">{totalPaid.toLocaleString()}</span>
             </div>
-            <div className={`flex flex-col items-center rounded-xl px-2 py-2.5 gap-0.5 ${remaining > 0 ? "bg-rose-500/10" : "bg-white/5"}`}>
-              <span className={`text-[9px] font-medium uppercase tracking-wide ${remaining > 0 ? "text-rose-400/70" : "text-slate-500"}`}>To pay</span>
-              <span className={`text-sm font-bold tabular-nums ${remaining > 0 ? "text-rose-400" : "text-slate-500"}`}>{remaining.toLocaleString()}</span>
+            <div className={`flex flex-col rounded-xl px-3 py-2.5 gap-1 border ${remaining > 0 ? "bg-rose-500/10 border-rose-500/20" : "bg-white/5 border-white/10"}`}>
+              <span className={`text-[9px] font-semibold uppercase tracking-wider ${remaining > 0 ? "text-rose-400/80" : "text-slate-500"}`}>To pay</span>
+              <span className={`text-base font-bold tabular-nums ${remaining > 0 ? "text-rose-400" : "text-slate-500"}`}>{remaining.toLocaleString()}</span>
             </div>
           </div>
 
