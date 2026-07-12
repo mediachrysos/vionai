@@ -290,6 +290,15 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   const StatusIcon = statusCfg.icon;
   const isAdmin = userRoles.includes("admin");
   const isDesigner = userRoles.includes("grafik");
+  const isChatter = userRoles.includes("chatter");
+
+  // Keep local state in sync when the underlying user record changes (e.g. real-time updates)
+  useEffect(() => {
+    setAllowedPages(user.allowed_pages || []);
+    setAssignedIds((user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : [])).filter((id) => id != null && id !== ""));
+    setUserRoles(user.roles?.length > 0 ? user.roles : user.role ? [user.role] : ["user"]);
+    setNickname(user.nickname || "");
+  }, [user.allowed_pages, user.assigned_model_ids, user.assigned_model, user.roles, user.role, user.nickname]);
 
   const toggleRole = (roleVal) => {
     let next;
@@ -519,7 +528,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
         </div>
       }
 
-      {models.filter((m) => m.status === "active").length > 0 &&
+      {isChatter && models.filter((m) => m.status === "active").length > 0 &&
       <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
           <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mr-1">Models</span>
           {models.filter((m) => m.status === "active").map((m) => {
