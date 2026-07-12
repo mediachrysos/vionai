@@ -398,7 +398,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
           <GraphicRequestWidget
             chatterEmail={email}
             chatterName={displayName}
-            models={models} />
+            models={models.filter((m) => {
+              const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+              return ids.length === 0 || ids.includes(m.id);
+            })} />
         </div>
 
         {/* Shift calendar */}
