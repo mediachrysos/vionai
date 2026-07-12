@@ -8,6 +8,7 @@ import NicknameSetupModal from "../components/ui-custom/NicknameSetupModal";
 import OnboardingLinkForm from "../components/customers/OnboardingLinkForm";
 import { DEFAULT_TIERS } from "../components/chatter/tierUtils";
 import TierLadder from "../components/chatter/TierLadder";
+import DailyBreakdownCard from "../components/chatter/DailyBreakdownCard";
 import MonthlyPaceCard from "../components/chatter/MonthlyPaceCard";
 import TodayPaymentsWidget from "../components/chatter/TodayPaymentsWidget";
 import { ChatterShiftPicker, AdminShiftCalendar } from "../components/chatter/ShiftCalendar";
@@ -404,6 +405,14 @@ function ChatterView({ currentUser, isAdminView = false }) {
             isAdmin={false}
             showWorkSession={true} />
         </div>
+
+        {/* Daily breakdown — hours, revenue, payout per day */}
+        <DailyBreakdownCard
+          monthPayments={monthPayments}
+          dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+          dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
+          hoursMap={hoursMap}
+          tiers={tiers} />
 
         {/* Monthly pace */}
         <MonthlyPaceCard

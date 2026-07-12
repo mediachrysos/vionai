@@ -4,33 +4,26 @@ import { calcDailyPayout, getTierForRevenue, groupPaymentsByDate } from "./tierU
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
 
-const STATUS_BADGE = {
-  0: { label: "No payout", cls: "bg-gray-100 text-gray-500" },
-  1: { label: "Hourly unlocked", cls: "bg-amber-50 text-[#C9A227] border border-[#e8d99a]" },
-  2: { label: "5% unlocked", cls: "bg-amber-100 text-amber-700 border border-amber-300" },
-  3: { label: "10% unlocked", cls: "bg-yellow-100 text-yellow-700 border border-yellow-400" },
-};
-
 export default function DailyBreakdownCard({ monthPayments, dailyGoalAmount, dailyGoalEnabled, hoursMap, tiers }) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const dayGroups = groupPaymentsByDate(monthPayments);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] mb-4">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10">
       <button
-        onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center justify-between p-5 pb-4"
+        onClick={() => setExpanded((v) => !v)}
+        className="w-full flex items-center justify-between p-4"
       >
-        <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-[#C9A227]" /> Přehled po dnech
+        <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+          <BarChart3 className="w-4 h-4 text-[#C9A227]" /> Přehled po dnech (hodiny, tržba, výplata)
         </h3>
-        {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+        {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5">
+        <div className="px-4 pb-4">
           {dayGroups.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-6">Zatím žádná data</p>
+            <p className="text-sm text-slate-600 text-center py-6">Zatím žádná data</p>
           ) : (
             <div className="space-y-2">
               {dayGroups.map((day) => {
@@ -38,46 +31,39 @@ export default function DailyBreakdownCard({ monthPayments, dailyGoalAmount, dai
                 const { payout } = calcDailyPayout(day.revenue, hours, tiers);
                 const tier = getTierForRevenue(day.revenue, tiers);
                 const goalPct = dailyGoalEnabled && dailyGoalAmount > 0 ? Math.round((day.revenue / dailyGoalAmount) * 100) : null;
-                const targetHit = goalPct !== null && goalPct >= 100;
-                const badge = STATUS_BADGE[tier.index];
                 let dateLabel = day.date;
                 try { dateLabel = format(new Date(day.date), "d. M. yyyy", { locale: cs }); } catch {}
 
                 return (
-                  <div key={day.date} className="bg-gray-50 rounded-xl border border-gray-100 p-3.5 flex flex-wrap gap-3 items-center justify-between hover:border-[#e8d99a] transition-colors">
-                    <div className="min-w-[80px]">
-                      <p className="text-xs font-semibold text-gray-700">{dateLabel}</p>
+                  <div key={day.date} className="bg-white/[0.03] rounded-xl border border-white/5 p-3.5 flex flex-wrap gap-x-6 gap-y-1.5 items-center justify-between">
+                    <p className="text-xs font-semibold text-slate-300 min-w-[85px]">{dateLabel}</p>
+
+                    <div>
+                      <p className="text-[10px] text-slate-500">Vychatováno</p>
+                      <p className="text-sm font-bold text-slate-100">{day.revenue.toLocaleString()} Kč</p>
                     </div>
-                    <div className="flex flex-wrap gap-x-6 gap-y-1 flex-1">
-                      <div>
-                        <p className="text-[10px] text-gray-400">Revenue</p>
-                        <p className="text-sm font-bold text-gray-900">{day.revenue.toLocaleString()} Kč</p>
-                      </div>
-                      {hours > 0 && (
-                        <div>
-                          <p className="text-[10px] text-gray-400">Hodiny</p>
-                          <p className="text-sm font-bold text-gray-700">{hours} h</p>
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-[10px] text-gray-400">Tier</p>
-                        <p className="text-xs font-semibold text-[#C9A227]">{tier.name}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400">Payout</p>
-                        <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-gray-400"}`}>{Math.round(payout).toLocaleString()} Kč</p>
-                      </div>
-                      {goalPct !== null && (
-                        <div>
-                          <p className="text-[10px] text-gray-400">Cíl</p>
-                          <p className={`text-xs font-semibold ${targetHit ? "text-emerald-600" : "text-rose-400"}`}>{goalPct}%</p>
-                        </div>
-                      )}
+
+                    <div>
+                      <p className="text-[10px] text-slate-500">Hodiny</p>
+                      <p className="text-sm font-bold text-slate-300">{hours ? `${hours}h` : "—"}</p>
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${badge.cls}`}>{badge.label}</span>
-                      {targetHit && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Target hit ✓</span>}
+
+                    <div>
+                      <p className="text-[10px] text-slate-500">Tier</p>
+                      <p className="text-xs font-semibold text-[#C9A227]">{tier.name}</p>
                     </div>
+
+                    <div>
+                      <p className="text-[10px] text-slate-500">Výplata</p>
+                      <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-slate-600"}`}>{Math.round(payout).toLocaleString()} Kč</p>
+                    </div>
+
+                    {goalPct !== null && (
+                      <div>
+                        <p className="text-[10px] text-slate-500">Cíl</p>
+                        <p className={`text-xs font-semibold ${goalPct >= 100 ? "text-emerald-400" : "text-rose-400"}`}>{goalPct}%</p>
+                      </div>
+                    )}
                   </div>
                 );
               })}
