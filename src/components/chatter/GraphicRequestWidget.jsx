@@ -181,7 +181,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
       </button>
 
       {expanded &&
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/10 h-[420px] flex flex-col overflow-y-auto">
 
           {/* ── Form ── */}
           {showForm &&
