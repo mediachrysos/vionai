@@ -83,7 +83,7 @@ export default function TierLadder({
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-4 h-full flex flex-col">
       {/* Header */}
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex items-center gap-4">
         <h3 className="text-sm font-semibold text-slate-200">Today's performance</h3>
         {showWorkSession && <h3 className="text-sm font-semibold text-slate-200">Working?</h3>}
       </div>
