@@ -34,6 +34,7 @@ const parsePhone = (phone) => {
 export default function CustomerDetail({ currentUser }) {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get("id");
+  const isChattingScope = urlParams.get("scope") === "chatting";
   const [uploadingFor, setUploadingFor] = useState(null);
   const [creatingFor, setCreatingFor] = useState(null);
   const [phoneCode, setPhoneCode] = useState("+420");
@@ -60,7 +61,7 @@ export default function CustomerDetail({ currentUser }) {
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
 
   const roles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
-  const isAdmin = roles.includes("admin");
+  const isAdmin = roles.includes("admin") && !isChattingScope;
   const chatterModelIds = React.useMemo(() => {
     const fromModels = models.filter((m) => m.assigned_chatters?.includes(currentUser?.email)).map((m) => m.id);
     const fromUser = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);

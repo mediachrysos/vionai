@@ -213,7 +213,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               return (
                 <tr
                   key={c.id}
-                  onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
+                  onClick={() => navigate(`/CustomerDetail?id=${c.id}&scope=chatting`)}
                   className={`border-b cursor-pointer transition-colors ${isPayday ? "bg-[#C9A227]/10 border-[#C9A227]/20 hover:bg-[#C9A227]/15" : "border-white/5 hover:bg-white/5"}`}>
                   
                     <td className="px-5 py-3.5">
