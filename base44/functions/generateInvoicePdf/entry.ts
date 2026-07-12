@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 import { jsPDF } from 'npm:jspdf@4.0.0';
 
-// Fallback: strip Czech diacritics so text never renders corrupted if the font can't be embedded
+// Fallback: strip Czech diacritics so text never renders corrupted/missing if the font can't be embedded
 function stripDiacritics(str) {
   if (!str) return str;
   const map = { 'á':'a','č':'c','ď':'d','é':'e','ě':'e','í':'i','ň':'n','ó':'o','ř':'r','š':'s','ť':'t','ú':'u','ů':'u','ý':'y','ž':'z',
@@ -9,33 +9,55 @@ function stripDiacritics(str) {
   return str.replace(/[áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]/g, (c) => map[c] || c);
 }
 
+// Manual thousands separator — avoids relying on locale/ICU formatting quirks
+function formatNumber(n) {
+  const rounded = Math.round(n || 0);
+  return String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+const FONT_MIRRORS = [
+  {
+    regular: 'https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Regular.ttf',
+    bold: 'https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Bold.ttf',
+  },
+  {
+    regular: 'https://cdn.jsdelivr.net/gh/google/fonts@main/apache/roboto/static/Roboto-Regular.ttf',
+    bold: 'https://cdn.jsdelivr.net/gh/google/fonts@main/apache/roboto/static/Roboto-Bold.ttf',
+  },
+  {
+    regular: 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf',
+    bold: 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf',
+  },
+];
+
 async function embedFont(doc) {
-  try {
-    const [r2, b2] = await Promise.all([
-      fetch('https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Regular.ttf'),
-      fetch('https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Bold.ttf'),
-    ]);
-    if (!r2.ok || !b2.ok) return false;
-    const [rBuf, bBuf] = await Promise.all([r2.arrayBuffer(), b2.arrayBuffer()]);
-    // Sanity check — a real Roboto TTF is well over 50KB; anything smaller means we got an error page, not a font
-    if (rBuf.byteLength < 50000 || bBuf.byteLength < 50000) return false;
-    const toBase64 = (buf) => {
-      const bytes = new Uint8Array(buf);
-      let binary = '';
-      const chunkSize = 8192;
-      for (let i = 0; i < bytes.length; i += chunkSize) {
-        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-      }
-      return btoa(binary);
-    };
-    doc.addFileToVFS('Roboto-Regular.ttf', toBase64(rBuf));
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-    doc.addFileToVFS('Roboto-Bold.ttf', toBase64(bBuf));
-    doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
-    return true;
-  } catch (_) {
-    return false;
+  const toBase64 = (buf) => {
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    const chunkSize = 8192;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
+    return btoa(binary);
+  };
+
+  for (const mirror of FONT_MIRRORS) {
+    try {
+      const [r2, b2] = await Promise.all([fetch(mirror.regular), fetch(mirror.bold)]);
+      if (!r2.ok || !b2.ok) continue;
+      const [rBuf, bBuf] = await Promise.all([r2.arrayBuffer(), b2.arrayBuffer()]);
+      // Sanity check — a real Roboto TTF is well over 50KB; anything smaller means we got an error page, not a font
+      if (rBuf.byteLength < 50000 || bBuf.byteLength < 50000) continue;
+      doc.addFileToVFS('Roboto-Regular.ttf', toBase64(rBuf));
+      doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+      doc.addFileToVFS('Roboto-Bold.ttf', toBase64(bBuf));
+      doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
+      return true;
+    } catch (_) {
+      continue;
+    }
   }
+  return false;
 }
 
 Deno.serve(async (req) => {
@@ -56,6 +78,7 @@ Deno.serve(async (req) => {
     const F = roboto ? 'Roboto' : 'helvetica';
     // Only strip diacritics when we had to fall back to a font that can't render them
     const t = roboto ? (s) => s : (s) => stripDiacritics(s);
+    const money = (n) => `${formatNumber(n)} ${t('Kč')}`;
 
     const W = doc.internal.pageSize.getWidth();
     const H = doc.internal.pageSize.getHeight();
@@ -87,7 +110,7 @@ Deno.serve(async (req) => {
     // ── HEADER ───────────────────────────────────────────────
     let y = 26;
     setBold(22, GOLD);
-    doc.text('FAKTURA', L, y);
+    doc.text(t('FAKTURA'), L, y);
     setNormal(9, GRAY);
     doc.text(t('Číslo dokladu'), R, y - 10, { align: 'right' });
     setBold(13);
@@ -178,7 +201,7 @@ Deno.serve(async (req) => {
     y += 9;
     setBold(10.5);
     doc.text(t(invoice.item_name || 'Služba'), L, y);
-    doc.text(`${(invoice.total_amount || 0).toLocaleString('cs-CZ')} Kč`, R, y, { align: 'right' });
+    doc.text(money(invoice.total_amount), R, y, { align: 'right' });
 
     if (invoice.item_description) {
       y += 5.5;
@@ -196,7 +219,7 @@ Deno.serve(async (req) => {
     setNormal(9, GRAY);
     doc.text(t('CELKEM K ÚHRADĚ'), R - 62, y, { align: 'right' });
     setBold(17, GOLD);
-    doc.text(`${(invoice.total_amount || 0).toLocaleString('cs-CZ')},00 Kč`, R, y + 1, { align: 'right' });
+    doc.text(money(invoice.total_amount), R, y + 1, { align: 'right' });
 
     // ── POZNÁMKA ──────────────────────────────────────────────
     if (invoice.note) {
