@@ -291,6 +291,12 @@ function ChatterView({ currentUser, isAdminView = false }) {
     staleTime: 30000
   });
 
+  const chatterModelIds = React.useMemo(() => {
+    const fromModels = models.filter((m) => m.assigned_chatters?.includes(email)).map((m) => m.id);
+    const fromUser = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+    return [...new Set([...fromModels, ...fromUser])].filter((id) => id != null && id !== "");
+  }, [models, email, currentUser]);
+
   const activeRule = rules.find((r) => r.is_active) || null;
   const tiers = DEFAULT_TIERS;
 
@@ -414,7 +420,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
         {/* Chatter's customers */}
         <ChatterCustomersList
           chatterEmail={email}
-          assignedModelIds={(currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter(id => id != null && id !== "")} />
+          assignedModelIds={chatterModelIds} />
       </div>
     </div>
   );
