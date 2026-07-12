@@ -14,7 +14,6 @@ import ChatterScraperEmbed from "../components/chatter/ChatterScraperEmbed";
 import CoachNotes from "../components/chatter/CoachNotes";
 import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
 import StatsCard from "../components/chatter/StatsCard";
-import ChatterPayWidget from "../components/chatting/ChatterPayWidget";
 import ChatterCustomersList from "../components/chatter/ChatterCustomersList";
 import GraphicRequestWidget from "../components/chatter/GraphicRequestWidget";
 import { usePayments } from "@/hooks/usePayments";
@@ -365,22 +364,15 @@ function ChatterView({ currentUser, isAdminView = false }) {
           </div>
         </div>
 
-        {/* Today's performance + Payout — side by side */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
-            <TierLadder
-              todayRevenue={todayRevenue}
-              hoursWorked={hoursToday}
-              dailyGoalAmount={activeRule?.daily_goal_amount || 0}
-              dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
-              tiers={tiers}
-              email={email} />
-          </div>
-
-          <ChatterPayWidget
-            chatterEmail={email}
+        {/* Today's performance + monthly payout — combined */}
+        <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">
+          <TierLadder
+            todayRevenue={todayRevenue}
             hoursWorked={hoursToday}
-            totalChatted={todayRevenue}
+            dailyGoalAmount={activeRule?.daily_goal_amount || 0}
+            dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
+            tiers={tiers}
+            email={email}
             monthPayments={monthPayments}
             isAdmin={false}
             showWorkSession={true} />

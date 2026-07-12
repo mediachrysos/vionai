@@ -1,16 +1,89 @@
-import React from "react";
+import React, { useState } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import WorkSessionWidget from "./WorkSessionWidget";
 import { calcDailyPayout, getNextTier, getTierForRevenue } from "./tierUtils";
 
-export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount, dailyGoalEnabled, tiers, email }) {
+function getCurrentPeriod() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+// Sums monthly payout day-by-day. Hourly component only applies to today (we don't track past hours).
+function calcMonthlyEarned(monthPayments, hoursWorked, tiers) {
+  const today = new Date().toISOString().split("T")[0];
+  const byDay = {};
+  for (const p of monthPayments) {
+    const day = p.payment_date || p.created_date?.split("T")[0];
+    if (!day) continue;
+    byDay[day] = (byDay[day] || 0) + (p.amount || 0);
+  }
+  let total = 0;
+  for (const [day, revenue] of Object.entries(byDay)) {
+    const hours = day === today ? hoursWorked || 0 : 0;
+    const { payout } = calcDailyPayout(revenue, hours, tiers);
+    total += payout;
+  }
+  return total;
+}
+
+export default function TierLadder({
+  todayRevenue,
+  hoursWorked,
+  dailyGoalAmount,
+  dailyGoalEnabled,
+  tiers,
+  email,
+  monthPayments,
+  isAdmin = false,
+  showWorkSession = false,
+}) {
+  const qc = useQueryClient();
+  const [payoutAmount, setPayoutAmount] = useState("");
+  const [payoutNote, setPayoutNote] = useState("");
+  const [addingPayout, setAddingPayout] = useState(false);
+  const [showPayouts, setShowPayouts] = useState(false);
+
   const currentTier = getTierForRevenue(todayRevenue, tiers);
   const nextTier = getNextTier(todayRevenue, tiers);
   const { payout } = calcDailyPayout(todayRevenue, hoursWorked, tiers);
   const missingToNext = nextTier ? Math.max(0, nextTier.min - todayRevenue) : 0;
 
+  const { data: payouts = [] } = useQuery({
+    queryKey: ["chatterPayouts", email],
+    queryFn: () => base44.entities.ChatterPayout.filter({ chatter_email: email }),
+    enabled: !!email,
+    staleTime: 30000,
+  });
+
+  const earned = Math.round(
+    monthPayments ? calcMonthlyEarned(monthPayments, hoursWorked, tiers) : payout
+  );
+  const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
+  const remaining = earned - totalPaid;
+
   const microcopy = () => {
     if (!nextTier) return "Max tier reached — top rate on all payments";
     if (currentTier.index === 0) return `Missing ${missingToNext.toLocaleString()} to unlock hourly rate`;
     return `${missingToNext.toLocaleString()} more to reach "${nextTier.name}"`;
+  };
+
+  const handleAddPayout = async () => {
+    const amount = parseFloat(payoutAmount);
+    if (isNaN(amount) || amount <= 0) return;
+    setAddingPayout(true);
+    await base44.entities.ChatterPayout.create({
+      chatter_email: email,
+      amount,
+      period: getCurrentPeriod(),
+      note: payoutNote,
+    });
+    setPayoutAmount("");
+    setPayoutNote("");
+    setAddingPayout(false);
+    qc.invalidateQueries({ queryKey: ["chatterPayouts", email] });
   };
 
   return (
@@ -21,7 +94,7 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
         <p className="text-[11px] text-slate-500 mt-0.5">{microcopy()}</p>
       </div>
 
-      {/* Stats row */}
+      {/* Daily stats row */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div className="rounded-xl px-3 py-2.5 bg-white/[0.03]">
           <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-1">Chatted</p>
@@ -34,7 +107,7 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
       </div>
 
       {/* Tier steps */}
-      <div className="flex flex-col gap-1.5 flex-1">
+      <div className="flex flex-col gap-1.5">
         {tiers.map((tier, i) => {
           const isActive = currentTier.index === i;
           const isCompleted = currentTier.index > i;
@@ -79,6 +152,91 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
           </div>
         </div>
       )}
+
+      {/* Monthly payout status */}
+      <div className="mt-4 pt-4 border-t border-white/10">
+        <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Monthly payout</p>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col items-center bg-[#C9A227]/10 rounded-xl px-2 py-2.5 gap-0.5">
+            <span className="text-[9px] text-[#C9A227]/70 font-medium uppercase tracking-wide">Earned</span>
+            <span className="text-sm font-bold text-[#C9A227] tabular-nums">{earned.toLocaleString()}</span>
+          </div>
+          <div className="flex flex-col items-center bg-emerald-500/10 rounded-xl px-2 py-2.5 gap-0.5">
+            <span className="text-[9px] text-emerald-400/70 font-medium uppercase tracking-wide">Paid out</span>
+            <span className="text-sm font-bold text-emerald-400 tabular-nums">{totalPaid.toLocaleString()}</span>
+          </div>
+          <div className={`flex flex-col items-center rounded-xl px-2 py-2.5 gap-0.5 ${remaining > 0 ? "bg-rose-500/10" : "bg-white/5"}`}>
+            <span className={`text-[9px] font-medium uppercase tracking-wide ${remaining > 0 ? "text-rose-400/70" : "text-slate-500"}`}>To pay</span>
+            <span className={`text-sm font-bold tabular-nums ${remaining > 0 ? "text-rose-400" : "text-slate-500"}`}>{remaining.toLocaleString()}</span>
+          </div>
+        </div>
+
+        {showWorkSession && (
+          <div className="flex items-center justify-center gap-4 pt-3 mt-3 border-t border-white/10">
+            <WorkSessionWidget email={email} />
+          </div>
+        )}
+
+        {isAdmin && (
+          <div className="flex gap-2 items-center pt-3 mt-3 border-t border-white/10">
+            <Input
+              value={payoutAmount}
+              onChange={(e) => setPayoutAmount(e.target.value)}
+              placeholder="Amount"
+              type="number"
+              min="0"
+              className="h-8 text-xs w-24 flex-shrink-0 bg-white/5 border-white/10 text-slate-200"
+            />
+            <Input
+              value={payoutNote}
+              onChange={(e) => setPayoutNote(e.target.value)}
+              placeholder="Note (optional)"
+              className="h-8 text-xs flex-1 min-w-0 bg-white/5 border-white/10 text-slate-200"
+            />
+            <button
+              onClick={handleAddPayout}
+              disabled={addingPayout || !payoutAmount}
+              className="flex items-center gap-1 text-xs font-semibold bg-[#C9A227] hover:bg-[#A8841C] disabled:opacity-40 text-white px-3 h-8 rounded-lg flex-shrink-0 transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" /> Pay
+            </button>
+          </div>
+        )}
+
+        {payouts.length > 0 && (
+          <div className="mt-2">
+            <button
+              onClick={() => setShowPayouts((v) => !v)}
+              className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              {showPayouts ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              Payout history ({payouts.length})
+            </button>
+            {showPayouts && (
+              <div className="mt-2 space-y-1">
+                {[...payouts].reverse().map((p) => (
+                  <div key={p.id} className="flex items-center justify-between text-xs bg-white/5 rounded-lg px-3 py-2 gap-2">
+                    <span className="text-slate-500 flex-shrink-0">{p.created_date?.split("T")[0] || p.period}</span>
+                    {p.note && <span className="text-slate-500 truncate flex-1">{p.note}</span>}
+                    <span className="font-semibold text-emerald-400">+{p.amount.toLocaleString()}</span>
+                    {isAdmin && (
+                      <button
+                        onClick={async () => {
+                          await base44.entities.ChatterPayout.delete(p.id);
+                          qc.invalidateQueries({ queryKey: ["chatterPayouts", email] });
+                        }}
+                        className="text-slate-600 hover:text-red-400 transition-colors flex-shrink-0"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
