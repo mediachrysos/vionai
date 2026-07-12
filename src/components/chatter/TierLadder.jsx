@@ -83,8 +83,9 @@ export default function TierLadder({
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 p-4 h-full flex flex-col">
       {/* Header */}
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex items-center gap-4">
         <h3 className="text-sm font-semibold text-slate-200">Today's performance</h3>
+        {showWorkSession && <h3 className="text-sm font-semibold text-slate-200">Working?</h3>}
       </div>
 
       {/* Current tier + working session grouped together */}
@@ -114,7 +115,6 @@ export default function TierLadder({
         </div>
         {showWorkSession && (
           <div className="flex-1 px-4 py-3.5 flex flex-col justify-center">
-            <p className="text-sm font-semibold text-slate-200 text-left mb-2">Working?</p>
             <WorkSessionWidget email={email} compact />
           </div>
         )}
