@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 export default function ChatterCustomersList({ chatterEmail, assignedModelIds = [] }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("last_payment");
+  const [tab, setTab] = useState("customers");
   const [form, setForm] = useState({ full_name: "", model_id: assignedModelIds[0] || "" });
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -73,7 +74,10 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
   const today = new Date();
   const todayDay = today.getDate();
 
-  const filtered = customers.filter((c) =>
+  const paidCustomers = customers.filter((c) => (customerStats[c.id]?.count || 0) > 0);
+  const pendingCustomers = customers.filter((c) => (customerStats[c.id]?.count || 0) === 0);
+
+  const filtered = (tab === "customers" ? paidCustomers : pendingCustomers).filter((c) =>
   !search ||
   c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
   c.email?.toLowerCase().includes(search.toLowerCase())
@@ -92,7 +96,18 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 overflow-hidden">
       {/* Header */}
       <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-3 flex-wrap">
-        <h3 className="font-semibold text-slate-200 text-sm">Customers ({customers.length})</h3>
+        <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1 border border-white/10">
+          <button
+            onClick={() => setTab("customers")}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${tab === "customers" ? "bg-[#C9A227] text-white" : "text-slate-400 hover:text-slate-200"}`}>
+            Customers ({paidCustomers.length})
+          </button>
+          <button
+            onClick={() => setTab("pending")}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${tab === "pending" ? "bg-[#C9A227] text-white" : "text-slate-400 hover:text-slate-200"}`}>
+            Pending ({pendingCustomers.length})
+          </button>
+        </div>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
