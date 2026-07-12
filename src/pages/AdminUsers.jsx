@@ -261,8 +261,7 @@ const PAGE_OPTIONS = [
 { page: "Wallet", label: "Wallet" },
 { page: "SocialMediaContent", label: "Graphic Space" },
 { page: "ChatterPortal", label: "Chatting Space" },
-{ page: "AdminUsers", label: "Admin Portal" },
-{ page: "CustomerScraper", label: "Customer Scraper" }];
+{ page: "AdminUsers", label: "Admin Portal" }];
 
 
 // Pages auto-managed per role — kept in sync whenever a role is toggled, so stale
