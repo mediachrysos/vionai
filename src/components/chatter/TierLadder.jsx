@@ -32,7 +32,7 @@ export default function TierLadder({ todayRevenue, hoursWorked, dailyGoalAmount,
           <p className="text-sm font-bold text-slate-100">{todayRevenue.toLocaleString()}</p>
         </div>
         <div className="bg-white/5 rounded-lg p-2">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-0.5">Payout dnes</p>
+          <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-0.5">Payout today</p>
           <p className={`text-sm font-bold ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()}</p>
         </div>
       </div>

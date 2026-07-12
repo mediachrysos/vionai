@@ -1,9 +1,9 @@
 // Default tiers — used when no custom rule is set
 export const DEFAULT_TIERS = [
-  { name: "Bez výplaty", min: 0, max: 1999, hourly: 0, commission: 0 },
-  { name: "120 Kč/h", min: 2000, max: 4999, hourly: 120, commission: 0 },
-  { name: "120 Kč/h + 5 %", min: 5000, max: 9999, hourly: 120, commission: 5 },
-  { name: "120 Kč/h + 10 %", min: 10000, max: null, hourly: 120, commission: 10 },
+  { name: "No payout", min: 0, max: 1999, hourly: 0, commission: 0 },
+  { name: "120 CZK/h", min: 2000, max: 4999, hourly: 120, commission: 0 },
+  { name: "120 CZK/h + 5 %", min: 5000, max: 9999, hourly: 120, commission: 5 },
+  { name: "120 CZK/h + 10 %", min: 10000, max: null, hourly: 120, commission: 10 },
 ];
 
 export function getTierForRevenue(revenue, tiers = DEFAULT_TIERS) {
