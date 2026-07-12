@@ -17,6 +17,7 @@ import RecentPaymentsCard from "../components/chatter/RecentPaymentsCard";
 import StatsCard from "../components/chatter/StatsCard";
 import ChatterCustomersList from "../components/chatter/ChatterCustomersList";
 import GraphicRequestWidget from "../components/chatter/GraphicRequestWidget";
+import ProfilePhotoUpload from "../components/chatter/ProfilePhotoUpload";
 import { usePayments } from "@/hooks/usePayments";
 import KpiCard from "../components/chatters/KpiCard";
 import PeriodSelector, { getPeriodDates } from "../components/chatters/PeriodSelector";
@@ -354,48 +355,41 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
       {/* Hero */}
       <div className="bg-[#1e1e1e] border-b border-white/10 px-4 lg:px-8 pt-6 pb-5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <p className="text-[#C9A227] text-xs font-semibold uppercase tracking-widest">Chatting Space</p>
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C9A227] to-[#A8841C] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-              {(displayName || "?")[0].toUpperCase()}
-            </div>
+            <ProfilePhotoUpload user={currentUser} isAdminView={isAdminView} size="w-10 h-10" />
             <p className="text-slate-200 text-sm font-semibold">{displayName}</p>
           </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12 pt-6 space-y-4">
-
-        {/* Today's payments */}
-        <TodayPaymentsWidget payments={payments} />
-
-        {/* Notes + Graphic requests — side by side */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
-          <CoachNotes
-            notes={notes}
-            chatterEmail={email}
-            onAdd={handleAddNote}
-            onDelete={handleDeleteNote} />
-          <GraphicRequestWidget
-            chatterEmail={email}
-            chatterName={displayName}
-            models={models.filter((m) => {
-              const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-              return ids.length === 0 || ids.includes(m.id);
-            })} />
-        </div>
-
-        {/* Customer Scraper */}
-        <ChatterScraperEmbed chatterEmail={email} />
-
-        {/* Onboarding link */}
-        <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-6 flex flex-col justify-center">
           <OnboardingLinkForm currentUser={currentUser} models={models.filter((m) => {
             const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
             return ids.length === 0 || ids.includes(m.id);
           })} />
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12 pt-6 space-y-4">
+
+        {/* Today's payments + My notes — side by side */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
+          <TodayPaymentsWidget payments={payments} />
+          <CoachNotes
+            notes={notes}
+            chatterEmail={email}
+            onAdd={handleAddNote}
+            onDelete={handleDeleteNote} />
+        </div>
+
+        {/* Graphic requests */}
+        <GraphicRequestWidget
+          chatterEmail={email}
+          chatterName={displayName}
+          models={models.filter((m) => {
+            const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+            return ids.length === 0 || ids.includes(m.id);
+          })} />
+
+        {/* Customer Scraper */}
+        <ChatterScraperEmbed chatterEmail={email} />
 
         {/* Today's performance + monthly payout — combined */}
         <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl overflow-hidden">

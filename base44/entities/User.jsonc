@@ -49,6 +49,10 @@
       "type": "string",
       "description": "P\u0159ezd\u00edvka u\u017eivatele zobrazovan\u00e1 v aplikaci"
     },
+    "profile_photo": {
+      "type": "string",
+      "description": "URL profilov\u00e9 fotky u\u017eivatele"
+    },
     "space_id": {
       "type": "string",
       "description": "ID of the Space this user belongs to"
