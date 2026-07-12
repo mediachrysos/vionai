@@ -3,11 +3,6 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Video, Camera, ChevronDown, ChevronUp, ExternalLink, X, Plus, Trash2, CalendarDays } from "lucide-react";
 
-const DESIGNER_MAP = {
-  video: { email: "mythzee2002@gmail.com", name: "Ishaq" },
-  photo: { email: "soufiane00souissi@gmail.com", name: "Soufiane" }
-};
-
 const PRIORITY_CONFIG = {
   low: { label: "Low", bg: "bg-gray-100", text: "text-gray-500" },
   normal: { label: "Normal", bg: "bg-blue-50", text: "text-blue-600" },
@@ -76,6 +71,23 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
   const days = useMemo(() => getNextDays(14), []);
 
+  // Live designer routing — pulled from actual SocialDashboard records, not hardcoded
+  const { data: dashboards = [] } = useQuery({
+    queryKey: ["socialDashboards"],
+    queryFn: () => base44.entities.SocialDashboard.list("order", 50),
+    staleTime: 30000
+  });
+
+  const designerMap = useMemo(() => {
+    const map = {};
+    dashboards.forEach((d) => {
+      if (d.content_type && d.designer_email && !map[d.content_type]) {
+        map[d.content_type] = { email: d.designer_email, name: d.designer_name || d.designer_email };
+      }
+    });
+    return map;
+  }, [dashboards]);
+
   const { data: rawRequests = [] } = useQuery({
     queryKey: ["graphic-requests", chatterEmail],
     queryFn: () => base44.entities.GraphicRequest.filter({ chatter_email: chatterEmail }, "-created_date", 50),
@@ -95,7 +107,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
   const createMutation = useMutation({
     mutationFn: async (data) => {
       const model = models.find((m) => m.id === data.model_id);
-      const designer = DESIGNER_MAP[data.content_type];
+      const designer = designerMap[data.content_type];
       return base44.entities.GraphicRequest.create({
         ...data,
         chatter_email: chatterEmail,
@@ -198,9 +210,11 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                 <label className="text-xs font-semibold text-slate-400 block mb-2">Content type *</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-              { type: "video", icon: Video, label: "Video", sub: "→ Ishaq" },
-              { type: "photo", icon: Camera, label: "Photo", sub: "→ Soufiane" }].
-              map(({ type, icon: TypeIcon, label, sub }) =>
+              { type: "video", icon: Video, label: "Video" },
+              { type: "photo", icon: Camera, label: "Photo" }].
+              map(({ type, icon: TypeIcon, label }) => {
+                const sub = designerMap[type]?.name ? `→ ${designerMap[type].name}` : "→ unassigned";
+                return (
               <button
                 key={type}
                 type="button"
@@ -220,8 +234,8 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                         <p className={`text-xs font-semibold ${form.content_type === type ? "text-[#C9A227]" : "text-slate-400"}`}>{label}</p>
                         <p className="text-[10px] text-slate-600">{sub}</p>
                       </div>
-                    </button>
-              )}
+                    </button>);
+              })}
                 </div>
               </div>
 
@@ -239,14 +253,14 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                     key={d.iso}
                     type="button"
                     onClick={() => setForm((p) => ({ ...p, request_date: d.iso }))}
-                    className={`flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-xl border-2 transition-all ${
+                    className={`flex-shrink-0 w-14 flex flex-col items-center justify-center px-1 py-2 rounded-xl border-2 transition-all ${
                     selected ?
                     "border-[#C9A227] bg-[#C9A227] text-white shadow-sm" :
                     "border-white/10 bg-white/5 hover:border-white/20 text-slate-400"}`
                     }>
                     
-                        <span className={`text-[10px] font-semibold uppercase tracking-wide ${selected ? "text-white/80" : "text-slate-500"}`}>
-                          {d.isToday ? "Today" : d.isTomorrow ? "Tomorrow" : d.dayName}
+                        <span className={`text-[9px] font-semibold uppercase tracking-wide leading-tight text-center ${selected ? "text-white/80" : "text-slate-500"}`}>
+                          {d.isToday ? "Today" : d.isTomorrow ? "Tomrw" : d.dayName}
                         </span>
                         <span className={`text-sm font-bold leading-tight ${selected ? "text-white" : "text-slate-300"}`}>
                           {d.dayNum}

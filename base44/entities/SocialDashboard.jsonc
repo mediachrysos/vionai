@@ -14,6 +14,14 @@
       "type": "string",
       "description": "Designer name for display"
     },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "video",
+        "photo"
+      ],
+      "description": "Content type this designer handles \u2014 used to route chatter graphic requests"
+    },
     "order": {
       "type": "integer",
       "default": 0,

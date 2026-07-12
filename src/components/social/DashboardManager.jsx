@@ -67,6 +67,7 @@ export default function DashboardManager({ dashboards, designers, onRefresh }) {
 function DashboardRow({ dashboard, designers, onUpdate, onDelete }) {
   const [name, setName] = useState(dashboard.name);
   const [designerEmail, setDesignerEmail] = useState(dashboard.designer_email || "");
+  const [contentType, setContentType] = useState(dashboard.content_type || "");
   const [autoDuplicate, setAutoDuplicate] = useState(!!dashboard.auto_duplicate);
   const [dirty, setDirty] = useState(false);
 
@@ -76,6 +77,7 @@ function DashboardRow({ dashboard, designers, onUpdate, onDelete }) {
       name,
       designer_email: designerEmail || null,
       designer_name: designer?.full_name || designerEmail || null,
+      content_type: contentType || null,
       auto_duplicate: autoDuplicate,
     });
     setDirty(false);
@@ -98,6 +100,15 @@ function DashboardRow({ dashboard, designers, onUpdate, onDelete }) {
           {designers.map(d => (
             <option key={d.email} value={d.email}>{d.full_name || d.email}</option>
           ))}
+        </select>
+        <select
+          value={contentType}
+          onChange={e => { setContentType(e.target.value); setDirty(true); }}
+          className="text-xs h-8 border border-gray-200 rounded-md px-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-amber-300"
+        >
+          <option value="">— No content type —</option>
+          <option value="video">Video</option>
+          <option value="photo">Photo</option>
         </select>
         {dirty && (
           <Button size="sm" onClick={handleSave} className="bg-[#C9A227] hover:bg-[#A8841C] text-white h-8 gap-1">
