@@ -367,20 +367,34 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12 pt-6 space-y-4">
 
-        {/* Notes + Onboarding link — 2 columns */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {/* Today's payments */}
+        <TodayPaymentsWidget payments={payments} />
+
+        {/* Notes + Graphic requests — side by side */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
           <CoachNotes
             notes={notes}
             chatterEmail={email}
             onAdd={handleAddNote}
             onDelete={handleDeleteNote} />
-
-          <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-6 flex flex-col justify-center">
-            <OnboardingLinkForm currentUser={currentUser} models={models.filter((m) => {
+          <GraphicRequestWidget
+            chatterEmail={email}
+            chatterName={displayName}
+            models={models.filter((m) => {
               const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
               return ids.length === 0 || ids.includes(m.id);
             })} />
-          </div>
+        </div>
+
+        {/* Customer Scraper */}
+        <ChatterScraperEmbed chatterEmail={email} />
+
+        {/* Onboarding link */}
+        <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-6 flex flex-col justify-center">
+          <OnboardingLinkForm currentUser={currentUser} models={models.filter((m) => {
+            const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+            return ids.length === 0 || ids.includes(m.id);
+          })} />
         </div>
 
         {/* Today's performance + monthly payout — combined */}
@@ -403,18 +417,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
           monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
           monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
 
-        {/* Today's payments + Graphic Requests — side by side */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
-          <TodayPaymentsWidget payments={payments} />
-          <GraphicRequestWidget
-            chatterEmail={email}
-            chatterName={displayName}
-            models={models.filter((m) => {
-              const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-              return ids.length === 0 || ids.includes(m.id);
-            })} />
-        </div>
-
         {/* Shift calendar */}
         <ChatterShiftPicker email={email} name={displayName} />
 
@@ -426,9 +428,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
             nextTierRevenue={5000} />
           <RecentPaymentsCard payments={payments} />
         </div>
-
-        {/* Customer Scraper */}
-        <ChatterScraperEmbed chatterEmail={email} />
 
         {/* Chatter's customers */}
         <ChatterCustomersList
