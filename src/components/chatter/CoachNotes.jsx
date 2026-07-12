@@ -79,7 +79,7 @@ export default function CoachNotes({ notes, chatterEmail, onAdd, onDelete }) {
   const currentSlide = SLIDES[slideIdx];
 
   return (
-    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 h-full overflow-hidden flex flex-col">
+    <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 h-[300px] overflow-hidden flex flex-col">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-4 py-3 flex items-center gap-2 flex-shrink-0">
         <h3 className="text-xs font-bold text-white">My notes</h3>
