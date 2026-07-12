@@ -305,14 +305,24 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
     let newAllowedPages = [...allowedPages];
     if (roleVal === "chatter") {
       if (next.includes("chatter")) {
-        // Add ChatterPortal if not already there
-        if (!newAllowedPages.includes("ChatterPortal")) {
-          newAllowedPages = [...newAllowedPages, "ChatterPortal"];
-          setAllowedPages(newAllowedPages);
-        }
+        // Add ChatterPortal + Customers if not already there
+        ["ChatterPortal", "Customers"].forEach((p) => {
+          if (!newAllowedPages.includes(p)) newAllowedPages.push(p);
+        });
+        setAllowedPages(newAllowedPages);
       } else {
         // Remove ChatterPortal when chatter role removed
         newAllowedPages = newAllowedPages.filter((p) => p !== "ChatterPortal");
+        setAllowedPages(newAllowedPages);
+      }
+    }
+    if (roleVal === "grafik") {
+      if (next.includes("grafik")) {
+        // Designer only gets Graphic Space — no customer access
+        if (!newAllowedPages.includes("SocialMediaContent")) newAllowedPages.push("SocialMediaContent");
+        setAllowedPages(newAllowedPages);
+      } else {
+        newAllowedPages = newAllowedPages.filter((p) => p !== "SocialMediaContent");
         setAllowedPages(newAllowedPages);
       }
     }

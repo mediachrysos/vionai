@@ -46,9 +46,9 @@ export default function Sidebar({ currentPage, user, onLogout }) {
   } else {
     const pageSet = new Set();
     if (isLawyer) defaultLawyerPages.forEach(p => pageSet.add(p));
-    if (isChatter || isDesigner) ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
+    if (isChatter) ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
     if (isDesigner) pageSet.add("SocialMediaContent");
-    if (pageSet.size === 0) ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
+    if (pageSet.size === 0 && !isDesigner) ["ChatterPortal", "Customers"].forEach(p => pageSet.add(p));
     items = allPages.filter(p => pageSet.has(p.page));
   }
 
