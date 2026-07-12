@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, ChevronUp, Plus, X, Award } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, X, Award, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import WorkSessionWidget from "./WorkSessionWidget";
 import { calcDailyPayout, getNextTier, getTierForRevenue } from "./tierUtils";
@@ -90,23 +90,26 @@ export default function TierLadder({
 
       {/* Current tier + working session grouped together */}
       <div className={`flex ${showWorkSession ? "divide-x divide-white/10" : ""} border-b border-white/10 pb-4 mb-4`}>
-        <div className="flex-1 px-4 py-3.5 flex flex-col items-center gap-3">
+        <div className="flex-1 px-4 py-3.5 flex flex-col items-center justify-center gap-3">
           <div className={`flex items-center justify-center gap-2 w-full rounded-xl py-3 ${nextTier ? "bg-[#C9A227]/10 border border-[#C9A227]/20" : "bg-white/5 border border-white/10"}`}>
             <Award className="w-4 h-4 text-[#C9A227] flex-shrink-0" />
             <span className="text-xl font-bold text-[#C9A227] tabular-nums leading-none">{currentTier.name}</span>
           </div>
           {currentTier.commission > 0 && <p className="text-[10px] text-slate-500 -mt-1">{currentTier.commission}% commission</p>}
           {nextTier ? (
-            <div className="w-full">
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+            <div className="w-full flex flex-col items-center">
+              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] rounded-full transition-all shadow-[0_0_8px_rgba(201,162,39,0.5)]"
                   style={{ width: `${Math.min(100, Math.max(0, ((todayRevenue - currentTier.min) / (nextTier.min - currentTier.min)) * 100))}%` }}
                 />
               </div>
-              <p className="text-[10px] text-slate-500 mt-1.5 text-center">
-                <span className="font-semibold text-slate-300">{missingToNext.toLocaleString()}</span> more to reach <span className="font-semibold text-[#C9A227]">"{nextTier.name}"</span>
-              </p>
+              <div className="flex items-center justify-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-[#C9A227]/10 border border-[#C9A227]/20 shadow-[0_0_12px_rgba(201,162,39,0.25)]">
+                <Sparkles className="w-3 h-3 text-[#C9A227] animate-pulse flex-shrink-0" />
+                <p className="text-[10px] text-slate-400 text-center whitespace-nowrap">
+                  <span className="font-bold text-[#C9A227]">{missingToNext.toLocaleString()}</span> more to reach <span className="font-bold text-[#C9A227]">"{nextTier.name}"</span>
+                </p>
+              </div>
             </div>
           ) : (
             <p className="text-[10px] text-slate-500 text-center">Max tier reached — top rate on all payments</p>
