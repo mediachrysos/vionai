@@ -162,7 +162,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
           
 
           
-          <span className="text-sm font-semibold text-slate-200">Graphic requests</span>
+          <span className="text-xs font-bold text-slate-200">Graphic requests</span>
           {pendingCount > 0 &&
           <span className="bg-[#C9A227]/20 text-[#C9A227] border border-[#C9A227]/30 text-xs font-bold px-2 py-0.5 rounded-full">
               {pendingCount}

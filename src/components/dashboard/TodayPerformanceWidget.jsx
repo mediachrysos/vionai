@@ -55,7 +55,7 @@ export default function TodayPerformanceWidget({ payments, chatters, models }) {
       {/* Header */}
       <div className="px-5 py-3.5 border-b border-white/10 flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-slate-100">Today's Performance</h3>
+          <h3 className="text-xs font-bold text-slate-100">Today's Performance</h3>
           <p className="text-xs text-slate-500">{new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}</p>
         </div>
         <div className="text-right">
