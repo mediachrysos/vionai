@@ -64,12 +64,6 @@ export default function TierLadder({
   const totalPaid = payouts.reduce((s, p) => s + (p.amount || 0), 0);
   const remaining = earned - totalPaid;
 
-  const microcopy = () => {
-    if (!nextTier) return "Max tier reached — top rate on all payments";
-    if (currentTier.index === 0) return `Missing ${missingToNext.toLocaleString()} to unlock hourly rate`;
-    return `${missingToNext.toLocaleString()} more to reach "${nextTier.name}"`;
-  };
-
   const handleAddPayout = async () => {
     const amount = parseFloat(payoutAmount);
     if (isNaN(amount) || amount <= 0) return;
@@ -91,7 +85,6 @@ export default function TierLadder({
       {/* Header */}
       <div className="mb-3">
         <h3 className="text-sm font-semibold text-slate-200">Today's performance</h3>
-        <p className="text-[11px] text-slate-500 mt-0.5">{microcopy()}</p>
       </div>
 
       {/* Today's stats — payout and working session grouped together */}
@@ -125,6 +118,22 @@ export default function TierLadder({
             </div>
             <span className="flex-shrink-0 text-[9px] font-bold text-[#C9A227] bg-[#C9A227]/15 px-2 py-1 rounded-full tracking-wide">ACTIVE</span>
           </div>
+
+          {nextTier ? (
+            <div className="w-full mt-3">
+              <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#C9A227] rounded-full transition-all"
+                  style={{ width: `${Math.min(100, Math.max(0, ((todayRevenue - currentTier.min) / (nextTier.min - currentTier.min)) * 100))}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1.5">
+                {missingToNext.toLocaleString()} more to reach "{nextTier.name}"
+              </p>
+            </div>
+          ) : (
+            <p className="text-[10px] text-slate-500 mt-3">Max tier reached — top rate on all payments</p>
+          )}
 
           {dailyGoalEnabled && dailyGoalAmount > 0 && (
             <div className="mt-4 pt-4 border-t border-white/10">
