@@ -76,12 +76,18 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
 
   const days = useMemo(() => getNextDays(14), []);
 
-  const { data: requests = [] } = useQuery({
+  const { data: rawRequests = [] } = useQuery({
     queryKey: ["graphic-requests", chatterEmail],
     queryFn: () => base44.entities.GraphicRequest.filter({ chatter_email: chatterEmail }, "-created_date", 50),
     enabled: !!chatterEmail,
     staleTime: 30000
   });
+
+  // Extra safety — only ever show this chatter's own requests, never another chatter's
+  const requests = useMemo(
+    () => rawRequests.filter((r) => r.chatter_email === chatterEmail),
+    [rawRequests, chatterEmail]
+  );
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
