@@ -265,6 +265,14 @@ const PAGE_OPTIONS = [
 { page: "CustomerScraper", label: "Customer Scraper" }];
 
 
+// Pages auto-managed per role — kept in sync whenever a role is toggled, so stale
+// section-access checkboxes from previous roles no longer stick around.
+const ROLE_PAGE_MAP = {
+  chatter: ["ChatterPortal", "Customers"],
+  lawyer: ["Finance"],
+  grafik: ["SocialMediaContent"]
+};
+
 const ALL_ROLES = [
 { value: "admin", label: "👑 Admin" },
 { value: "chatter", label: "💬 Chatter" },
@@ -310,30 +318,18 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
     }
     setUserRoles(next);
 
-    // Auto-manage allowed_pages based on roles
+    // Auto-manage allowed_pages based on roles — add/remove this role's pages
     let newAllowedPages = [...allowedPages];
-    if (roleVal === "chatter") {
-      if (next.includes("chatter")) {
-        // Add ChatterPortal + Customers if not already there
-        ["ChatterPortal", "Customers"].forEach((p) => {
+    const rolePages = ROLE_PAGE_MAP[roleVal];
+    if (rolePages) {
+      if (next.includes(roleVal)) {
+        rolePages.forEach((p) => {
           if (!newAllowedPages.includes(p)) newAllowedPages.push(p);
         });
-        setAllowedPages(newAllowedPages);
       } else {
-        // Remove ChatterPortal when chatter role removed
-        newAllowedPages = newAllowedPages.filter((p) => p !== "ChatterPortal");
-        setAllowedPages(newAllowedPages);
+        newAllowedPages = newAllowedPages.filter((p) => !rolePages.includes(p));
       }
-    }
-    if (roleVal === "grafik") {
-      if (next.includes("grafik")) {
-        // Designer only gets Graphic Space — no customer access
-        if (!newAllowedPages.includes("SocialMediaContent")) newAllowedPages.push("SocialMediaContent");
-        setAllowedPages(newAllowedPages);
-      } else {
-        newAllowedPages = newAllowedPages.filter((p) => p !== "SocialMediaContent");
-        setAllowedPages(newAllowedPages);
-      }
+      setAllowedPages(newAllowedPages);
     }
 
     // Keep primary `role` as first in array for backwards compat
