@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 export default function ChatterCustomersList({ chatterEmail, assignedModelIds = [] }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("last_payment");
+  const [modelFilter, setModelFilter] = useState("all");
   const [tab, setTab] = useState("customers");
   const [form, setForm] = useState({ full_name: "", model_id: assignedModelIds[0] || "" });
   const qc = useQueryClient();
@@ -78,9 +79,10 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
   const pendingCustomers = customers.filter((c) => (customerStats[c.id]?.count || 0) === 0);
 
   const filtered = (tab === "customers" ? paidCustomers : pendingCustomers).filter((c) =>
-  !search ||
+  (modelFilter === "all" || c.assigned_models?.includes(modelFilter)) &&
+  (!search ||
   c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-  c.email?.toLowerCase().includes(search.toLowerCase())
+  c.email?.toLowerCase().includes(search.toLowerCase()))
   ).sort((a, b) => {
     const sa = customerStats[a.id] || {};
     const sb = customerStats[b.id] || {};
@@ -118,6 +120,17 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               className="pl-9 h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600" />
             
           </div>
+          {models.length > 1 && (
+            <Select value={modelFilter} onValueChange={setModelFilter}>
+              <SelectTrigger className="h-8 text-xs w-40 bg-white/5 border-white/10 text-slate-300">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All models</SelectItem>
+                {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-300">
               <SelectValue />
