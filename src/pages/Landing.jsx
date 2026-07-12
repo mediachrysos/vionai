@@ -4,7 +4,7 @@ export default function Landing() {
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-8 bg-[#1a1a1a] text-slate-100 px-6 text-center">
       <h1 className="text-3xl sm:text-5xl font-bold max-w-3xl leading-tight">
-        It's shit for now, but it'll get better.
+        Let's get this started.
       </h1>
       <button
         onClick={() => base44.auth.redirectToLogin("/Dashboard")}
