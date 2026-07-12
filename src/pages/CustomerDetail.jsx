@@ -55,6 +55,12 @@ export default function CustomerDetail({ currentUser }) {
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list() });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
 
+  const roles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
+  const isAdmin = roles.includes("admin");
+  const chatterModelIds = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+  const visibleModels = isAdmin || chatterModelIds.length === 0 ? models : models.filter((m) => chatterModelIds.includes(m.id));
+  const visiblePayments = isAdmin || chatterModelIds.length === 0 ? payments : payments.filter((p) => chatterModelIds.includes(p.model_id));
+
   const { data: onboardingRequests = [] } = useQuery({
     queryKey: ["onboarding-requests", id, customer?.full_name],
     queryFn: async () => {
@@ -103,13 +109,13 @@ export default function CustomerDetail({ currentUser }) {
     <div className="h-full flex items-center justify-center text-slate-500 text-sm">Loading...</div>);
 
 
-  const totalSpent = payments.reduce((s, p) => s + (p.amount || 0), 0);
-  const lastPayment = payments[0];
+  const totalSpent = visiblePayments.reduce((s, p) => s + (p.amount || 0), 0);
+  const lastPayment = visiblePayments[0];
 
   const exportPayments = () => {
     const rows = [
     ["Datum", "Částka (Kč)", "Modelka", "Typ služby", "Stav"],
-    ...payments.map((p) => [
+    ...visiblePayments.map((p) => [
     p.payment_date || p.created_date?.split("T")[0] || "",
     p.amount || 0,
     p.model_name || "",
@@ -179,7 +185,7 @@ export default function CustomerDetail({ currentUser }) {
       {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <StatCard label="Total spent" value={`${totalSpent.toLocaleString()} Kč`} />
-        <StatCard label="Payments" value={payments.length} />
+        <StatCard label="Payments" value={visiblePayments.length} />
         <StatCard
           label="Last payment"
           value={lastPayment ? `${(lastPayment.amount || 0).toLocaleString()} Kč` : "—"}
@@ -319,7 +325,7 @@ export default function CustomerDetail({ currentUser }) {
               <div className="flex-1">
                 <p className="text-xs text-slate-500 mb-1.5">Assigned models</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {models.map((m) => {
+                  {visibleModels.map((m) => {
                     const selected = (customer.assigned_models || []).includes(m.id);
                     return (
                       <button
@@ -335,7 +341,7 @@ export default function CustomerDetail({ currentUser }) {
                       </button>
                     );
                   })}
-                  {models.length === 0 && <span className="text-xs text-slate-600">No models available</span>}
+                  {visibleModels.length === 0 && <span className="text-xs text-slate-600">No models available</span>}
                 </div>
               </div>
             </div>
@@ -381,11 +387,11 @@ export default function CustomerDetail({ currentUser }) {
             </div>
           </div>
 
-          {payments.length === 0 ?
+          {visiblePayments.length === 0 ?
           <p className="text-sm text-slate-600 text-center py-8">No payments yet</p> :
 
           <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
-              {payments.map((p) => {
+              {visiblePayments.map((p) => {
               const invoice = (customer.invoices || []).find((inv) => inv.payment_id === p.id);
               return (
                 <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-white/4 transition-colors group">
@@ -472,7 +478,7 @@ export default function CustomerDetail({ currentUser }) {
         </div>
       }
 
-      {payments.map((p) =>
+      {visiblePayments.map((p) =>
       <input key={p.id} type="file" accept=".pdf" id={`file-input-${p.id}`} className="hidden" onChange={(e) => handleInvoiceUpload(e, p.id)} />
       )}
     </div>);

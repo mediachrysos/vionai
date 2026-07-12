@@ -50,6 +50,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     const stats = {};
     allPayments.forEach((p) => {
       if (!p.customer_id) return;
+      if (validModelIds.length > 0 && !validModelIds.includes(p.model_id)) return;
       if (!stats[p.customer_id]) stats[p.customer_id] = { total: 0, lastDate: null, lastAmount: null, count: 0 };
       stats[p.customer_id].total += p.amount || 0;
       stats[p.customer_id].count += 1;
@@ -59,7 +60,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       }
     });
     return stats;
-  }, [allPayments]);
+  }, [allPayments, validModelIds]);
 
   const saveMutation = useMutation({
     mutationFn: (data) => base44.entities.Customer.create(data),
@@ -165,7 +166,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               const st = customerStats[c.id] || {};
               const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
               const isPayday = c.pay_day_of_month === todayDay;
-              const mids = c.assigned_models || [];
+              const mids = (c.assigned_models || []).filter((mid) => validModelIds.includes(mid));
               const modelNames = mids.map((mid) => modelMap[mid]).filter(Boolean);
 
               return (
