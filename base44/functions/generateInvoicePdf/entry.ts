@@ -14,23 +14,37 @@ function bufToBase64(buf) {
   return btoa(binary);
 }
 
+async function fetchWithTimeout(url, ms) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { signal: ctrl.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function embedFont(doc) {
   const mirrors = [
     ['https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Regular.ttf', 'https://raw.githubusercontent.com/google/fonts/main/apache/roboto/static/Roboto-Bold.ttf'],
     ['https://cdn.jsdelivr.net/gh/google/fonts@main/apache/roboto/static/Roboto-Regular.ttf', 'https://cdn.jsdelivr.net/gh/google/fonts@main/apache/roboto/static/Roboto-Bold.ttf'],
+    ['https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf', 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf'],
   ];
+  // Try each mirror up to 2 times before moving on — most failures are transient network blips
   for (const [rUrl, bUrl] of mirrors) {
-    try {
-      const [r, b] = await Promise.all([fetch(rUrl), fetch(bUrl)]);
-      if (!r.ok || !b.ok) continue;
-      const [rBuf, bBuf] = await Promise.all([r.arrayBuffer(), b.arrayBuffer()]);
-      if (rBuf.byteLength < 50000 || bBuf.byteLength < 50000) continue;
-      doc.addFileToVFS('Roboto-Regular.ttf', bufToBase64(rBuf));
-      doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-      doc.addFileToVFS('Roboto-Bold.ttf', bufToBase64(bBuf));
-      doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
-      return true;
-    } catch (_) { continue; }
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const [r, b] = await Promise.all([fetchWithTimeout(rUrl, 12000), fetchWithTimeout(bUrl, 12000)]);
+        if (!r.ok || !b.ok) continue;
+        const [rBuf, bBuf] = await Promise.all([r.arrayBuffer(), b.arrayBuffer()]);
+        if (rBuf.byteLength < 50000 || bBuf.byteLength < 50000) continue;
+        doc.addFileToVFS('Roboto-Regular.ttf', bufToBase64(rBuf));
+        doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+        doc.addFileToVFS('Roboto-Bold.ttf', bufToBase64(bBuf));
+        doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
+        return true;
+      } catch (_) { continue; }
+    }
   }
   return false;
 }
@@ -50,9 +64,9 @@ async function tryLoadImage(url) {
 
 function formatMoney(n) {
   const num = (n || 0).toFixed(2).replace('.', ',');
-  // insert non-breaking space as thousands separator
+  // regular space as thousands separator — non-breaking space renders as garbage in some fonts
   const parts = num.split(',');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   return parts.join(',');
 }
 
@@ -79,7 +93,7 @@ Deno.serve(async (req) => {
     const [roboto, logoData] = await Promise.all([embedFont(doc), tryLoadImage(logoUrl)]);
     const F = roboto ? 'Roboto' : 'helvetica';
     const t = roboto ? (s) => (s || '') : (s) => stripDiacritics(s || '');
-    const curr = (n) => `${formatMoney(n)}\u00a0${t('Kč')}`;
+    const curr = (n) => `${formatMoney(n)} ${t('Kč')}`;
 
     // ── Dimensions ────────────────────────────────────────────
     const W = doc.internal.pageSize.getWidth();   // 210
