@@ -395,7 +395,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
             onDelete={handleDeleteNote} />
 
           <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-6 flex flex-col justify-center">
-            <OnboardingLinkForm models={models.filter((m) => {
+            <OnboardingLinkForm currentUser={currentUser} models={models.filter((m) => {
               const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
               return ids.length === 0 || ids.includes(m.id);
             })} />

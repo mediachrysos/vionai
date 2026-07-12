@@ -620,7 +620,7 @@ export default function Customers({ currentUser }) {
                 {merging ? "Merging..." : `👥 Merge duplicates (${duplicateNames.size / 2 | 0}+)`}
               </Button>
               }
-            <OnboardingLinkForm models={models} />
+            <OnboardingLinkForm currentUser={currentUser} models={models} />
           </div>
         </div>
         <p className="text-sm text-slate-500">{filtered.length} customers total</p>

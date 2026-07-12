@@ -9,7 +9,7 @@ function generateToken() {
   return Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
 }
 
-export default function OnboardingLinkForm({ models = [] }) {
+export default function OnboardingLinkForm({ models = [], currentUser }) {
   const [name, setName] = useState("");
   const [assignedModel, setAssignedModel] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ export default function OnboardingLinkForm({ models = [] }) {
       token,
       status: "pending",
       assigned_model: assignedModel,
-      assigned_chatter: null,
+      assigned_chatter: currentUser?.role === "admin" ? null : currentUser?.email || null,
       company,
       expires_at: expiresAt
     });
