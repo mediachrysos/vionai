@@ -78,10 +78,10 @@ export default function WorkSessionWidget({ email, compact }) {
 
   if (compact) {
     return (
-      <div className="flex flex-col gap-2 w-full">
-        <div className="flex items-center gap-2">
-          {isWorking && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />}
-          <p className="text-2xl font-bold text-slate-100 tabular-nums leading-none">{isWorking ? sessionTime : "00:00"}</p>
+      <div className="flex flex-col items-center gap-3 w-full">
+        <div className={`flex items-center justify-center gap-2 w-full rounded-xl py-3 ${isWorking ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-white/5 border border-white/10"}`}>
+          {isWorking && <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />}
+          <p className={`text-3xl font-bold tabular-nums leading-none ${isWorking ? "text-emerald-400" : "text-slate-100"}`}>{isWorking ? sessionTime : "00:00"}</p>
         </div>
         <Button
           onClick={toggle}

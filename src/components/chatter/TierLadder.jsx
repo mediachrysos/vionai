@@ -111,7 +111,7 @@ export default function TierLadder({
         </div>
         {showWorkSession && (
           <div className="flex-1 px-4 py-3.5 flex flex-col justify-center">
-            <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1.5">Working?</p>
+            <p className="text-sm font-semibold text-slate-200 mb-2">Working?</p>
             <WorkSessionWidget email={email} compact />
           </div>
         )}
