@@ -56,7 +56,7 @@ function formatDateLabel(dateStr) {
 export default function GraphicRequestWidget({ chatterEmail, chatterName, models = [] }) {
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [form, setForm] = useState({
