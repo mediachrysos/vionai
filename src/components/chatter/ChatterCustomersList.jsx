@@ -123,8 +123,8 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="last_payment">Last payment</SelectItem>
-              <SelectItem value="most_paid">Most paid</SelectItem>
+              {tab !== "pending" && <SelectItem value="last_payment">Last payment</SelectItem>}
+              {tab !== "pending" && <SelectItem value="most_paid">Most paid</SelectItem>}
               <SelectItem value="newest">Newest</SelectItem>
             </SelectContent>
           </Select>
@@ -172,8 +172,8 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                 <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Name</th>
                 <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Model</th>
                 <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
-                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Total / Payments</th>
-                <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Last payment</th>
+                {tab !== "pending" && <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Total / Payments</th>}
+                {tab !== "pending" && <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Last payment</th>}
               </tr>
             </thead>
             <tbody>
@@ -212,10 +212,12 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                     <td className="px-5 py-3.5 text-center hidden md:table-cell">
                       {c.pay_day_of_month ? <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> : <span className="text-slate-700">—</span>}
                     </td>
+                    {tab !== "pending" &&
                     <td className="px-5 py-3.5 text-right">
                       <p className="text-sm font-semibold text-slate-200">{(st.total || 0).toLocaleString()} CZK</p>
                       <p className="text-xs text-slate-500">{st.count || 0}× payments</p>
-                    </td>
+                    </td>}
+                    {tab !== "pending" &&
                     <td className="px-5 py-3.5 text-right hidden xl:table-cell">
                       {daysSinceLast !== null ?
                     <div>
@@ -223,7 +225,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                           <p className="text-xs text-slate-600">{daysSinceLast} days ago</p>
                         </div> :
                     <span className="text-xs text-slate-700">—</span>}
-                    </td>
+                    </td>}
                   </tr>);
 
             })}
