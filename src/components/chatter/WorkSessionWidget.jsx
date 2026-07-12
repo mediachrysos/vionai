@@ -79,7 +79,7 @@ export default function WorkSessionWidget({ email, compact }) {
   if (compact) {
     return (
       <div className="flex items-center gap-2">
-        <p className="text-base font-bold text-gray-900">{isWorking ? sessionTime : "00:00"}</p>
+        <p className="text-base font-bold text-slate-100">{isWorking ? sessionTime : "00:00"}</p>
         <Button
           onClick={toggle}
           className={`h-7 w-7 rounded-full flex items-center justify-center transition-all p-0 ${
