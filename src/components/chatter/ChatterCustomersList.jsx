@@ -137,7 +137,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
           onClick={() => saveMutation.mutate({ full_name: form.full_name, assigned_models: form.model_id ? [form.model_id] : [], assigned_chatter: chatterEmail })}
           disabled={!form.full_name || saveMutation.isPending}
           size="sm"
-          className="bg-emerald-600 hover:bg-emerald-700 h-8 text-xs"
+          className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:opacity-90 text-white h-8 text-xs"
         >
           {saveMutation.isPending ? "..." : "Vytvořit odkaz"}
         </Button>
@@ -152,7 +152,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
         <div className="overflow-x-auto overflow-y-auto max-h-[480px]">
           <table className="w-full">
             <thead className="sticky top-0 z-10">
-              <tr className="border-b border-white/10 bg-[#1e1e1e]/95 backdrop-blur-sm">
+              <tr className="border-b border-white/10 bg-[#1e1e1e] backdrop-blur-sm">
                 <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Jméno</th>
                 <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Modelka</th>
                 <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
