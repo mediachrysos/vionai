@@ -14,7 +14,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
   const qc = useQueryClient();
   const navigate = useNavigate();
 
-  const validModelIds = useMemo(() => assignedModelIds.filter(id => id != null && id !== ""), [assignedModelIds]);
+  const validModelIds = useMemo(() => assignedModelIds.filter((id) => id != null && id !== ""), [assignedModelIds]);
 
   const { data: allModels = [] } = useQuery({
     queryKey: ["models"],
@@ -22,10 +22,10 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     staleTime: 120000
   });
 
-  const models = allModels.filter(m => validModelIds.includes(m.id));
+  const models = allModels.filter((m) => validModelIds.includes(m.id));
   const modelMap = useMemo(() => {
     const map = {};
-    allModels.forEach(m => { map[m.id] = m.name; });
+    allModels.forEach((m) => {map[m.id] = m.name;});
     return map;
   }, [allModels]);
 
@@ -40,7 +40,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
     queryFn: async () => {
       const allCustomers = await base44.entities.Customer.list("-created_date", 5000);
       if (validModelIds.length === 0) return [];
-      return allCustomers.filter(c => c.assigned_models?.some(mid => mid != null && validModelIds.includes(mid)));
+      return allCustomers.filter((c) => c.assigned_models?.some((mid) => mid != null && validModelIds.includes(mid)));
     },
     enabled: !!chatterEmail,
     staleTime: 0
@@ -48,7 +48,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
 
   const customerStats = useMemo(() => {
     const stats = {};
-    allPayments.forEach(p => {
+    allPayments.forEach((p) => {
       if (!p.customer_id) return;
       if (!stats[p.customer_id]) stats[p.customer_id] = { total: 0, lastDate: null, lastAmount: null, count: 0 };
       stats[p.customer_id].total += p.amount || 0;
@@ -72,10 +72,10 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
   const today = new Date();
   const todayDay = today.getDate();
 
-  const filtered = customers.filter(c =>
-    !search ||
-    c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-    c.email?.toLowerCase().includes(search.toLowerCase())
+  const filtered = customers.filter((c) =>
+  !search ||
+  c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+  c.email?.toLowerCase().includes(search.toLowerCase())
   ).sort((a, b) => {
     const sa = customerStats[a.id] || {};
     const sb = customerStats[b.id] || {};
@@ -99,8 +99,8 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
-            />
+              className="pl-9 h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600" />
+            
           </div>
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="h-8 text-xs w-44 bg-white/5 border-white/10 text-slate-300">
@@ -116,40 +116,40 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       </div>
 
       {/* Add form — always visible */}
-      <div className="px-5 py-3 border-b border-white/10 bg-white/5 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+      <div className="px-5 py-3 border-b border-white/10 bg-white/5 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end hidden">
         <Input
           placeholder="Name *"
           value={form.full_name}
           onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-          className="h-8 text-xs bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600"
-        />
+          className="h-8 text-xs bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600" />
+        
         <Select value={form.model_id} onValueChange={(v) => setForm({ ...form, model_id: v })}>
           <SelectTrigger className="h-8 text-xs bg-white/5 border-white/10 text-slate-300">
             <SelectValue placeholder="Select model *" />
           </SelectTrigger>
           <SelectContent>
-            {models.map(m => (
-              <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-            ))}
+            {models.map((m) =>
+            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+            )}
           </SelectContent>
         </Select>
         <Button
           onClick={() => saveMutation.mutate({ full_name: form.full_name, assigned_models: form.model_id ? [form.model_id] : [], assigned_chatter: chatterEmail })}
           disabled={!form.full_name || saveMutation.isPending}
           size="sm"
-          className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:opacity-90 text-white h-8 text-xs"
-        >
+          className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] hover:opacity-90 text-white h-8 text-xs">
+          
           {saveMutation.isPending ? "..." : "Add customer"}
         </Button>
       </div>
 
       {/* Table */}
-      {isLoading ? (
-        <p className="text-xs text-slate-500 text-center py-8">Loading...</p>
-      ) : filtered.length === 0 ? (
-        <p className="text-xs text-slate-500 text-center py-8">No customers yet</p>
-      ) : (
-        <div className="overflow-x-auto overflow-y-auto max-h-[480px]">
+      {isLoading ?
+      <p className="text-xs text-slate-500 text-center py-8">Loading...</p> :
+      filtered.length === 0 ?
+      <p className="text-xs text-slate-500 text-center py-8">No customers yet</p> :
+
+      <div className="overflow-x-auto overflow-y-auto max-h-[480px]">
           <table className="w-full">
             <thead className="sticky top-0 z-10">
               <tr className="border-b border-white/10 bg-[#1e1e1e] backdrop-blur-sm">
@@ -162,18 +162,18 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
             </thead>
             <tbody>
               {filtered.map((c) => {
-                const st = customerStats[c.id] || {};
-                const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
-                const isPayday = c.pay_day_of_month === todayDay;
-                const mids = c.assigned_models || [];
-                const modelNames = mids.map(mid => modelMap[mid]).filter(Boolean);
+              const st = customerStats[c.id] || {};
+              const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
+              const isPayday = c.pay_day_of_month === todayDay;
+              const mids = c.assigned_models || [];
+              const modelNames = mids.map((mid) => modelMap[mid]).filter(Boolean);
 
-                return (
-                  <tr
-                    key={c.id}
-                    onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
-                    className={`border-b cursor-pointer transition-colors ${isPayday ? "bg-[#C9A227]/10 border-[#C9A227]/20 hover:bg-[#C9A227]/15" : "border-white/5 hover:bg-white/5"}`}
-                  >
+              return (
+                <tr
+                  key={c.id}
+                  onClick={() => navigate(`/CustomerDetail?id=${c.id}`)}
+                  className={`border-b cursor-pointer transition-colors ${isPayday ? "bg-[#C9A227]/10 border-[#C9A227]/20 hover:bg-[#C9A227]/15" : "border-white/5 hover:bg-white/5"}`}>
+                  
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         {isPayday && <div className="w-1 h-9 rounded-full bg-gradient-to-b from-[#C9A227] to-[#A8841C] -ml-1 flex-shrink-0" />}
@@ -187,11 +187,11 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                       </div>
                     </td>
                     <td className="px-5 py-3.5 hidden lg:table-cell">
-                      {modelNames.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {modelNames.map(n => <span key={n} className="text-xs bg-[#C9A227]/10 text-[#C9A227] border border-[#C9A227]/20 rounded-md px-1.5 py-0.5">{n}</span>)}
-                        </div>
-                      ) : <span className="text-slate-700">—</span>}
+                      {modelNames.length > 0 ?
+                    <div className="flex flex-wrap gap-1">
+                          {modelNames.map((n) => <span key={n} className="text-xs bg-[#C9A227]/10 text-[#C9A227] border border-[#C9A227]/20 rounded-md px-1.5 py-0.5">{n}</span>)}
+                        </div> :
+                    <span className="text-slate-700">—</span>}
                     </td>
                     <td className="px-5 py-3.5 text-center hidden md:table-cell">
                       {c.pay_day_of_month ? <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> : <span className="text-slate-700">—</span>}
@@ -201,20 +201,20 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                       <p className="text-xs text-slate-500">{st.count || 0}× payments</p>
                     </td>
                     <td className="px-5 py-3.5 text-right hidden xl:table-cell">
-                      {daysSinceLast !== null ? (
-                        <div>
+                      {daysSinceLast !== null ?
+                    <div>
                           <p className="text-xs font-medium text-slate-400">{st.lastAmount?.toLocaleString()} CZK</p>
                           <p className="text-xs text-slate-600">{daysSinceLast} days ago</p>
-                        </div>
-                      ) : <span className="text-xs text-slate-700">—</span>}
+                        </div> :
+                    <span className="text-xs text-slate-700">—</span>}
                     </td>
-                  </tr>
-                );
-              })}
+                  </tr>);
+
+            })}
             </tbody>
           </table>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
