@@ -430,6 +430,6 @@ export default function ChatterPortal({ currentUser }) {
   const roles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isChatter = roles.includes("chatter");
   const isAdmin = roles.includes("admin");
-  if (isAdmin && !isChatter) return <AdminChattingSpace currentUser={currentUser} />;
+  if (isAdmin) return <AdminChattingSpace currentUser={currentUser} />;
   return <ChatterView currentUser={currentUser} />;
 }
