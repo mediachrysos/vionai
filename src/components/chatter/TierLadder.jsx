@@ -96,13 +96,13 @@ export default function TierLadder({
 
       {/* Daily stats row */}
       <div className={`grid ${showWorkSession ? "grid-cols-3" : "grid-cols-2"} gap-2 mb-3`}>
-        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03]">
+        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] flex flex-col justify-center">
           <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-1">Chatted</p>
-          <p className="text-base font-semibold text-slate-100">{todayRevenue.toLocaleString()} <span className="text-[11px] font-normal text-slate-500">CZK</span></p>
+          <p className="text-base font-semibold text-slate-100 leading-none">{todayRevenue.toLocaleString()} <span className="text-[11px] font-normal text-slate-500">CZK</span></p>
         </div>
-        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03]">
+        <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] flex flex-col justify-center">
           <p className="text-[9px] text-slate-500 uppercase tracking-wide mb-1">Payout today</p>
-          <p className={`text-base font-semibold ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-[11px] font-normal opacity-70">CZK</span></p>
+          <p className={`text-base font-semibold leading-none ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-[11px] font-normal opacity-70">CZK</span></p>
         </div>
         {showWorkSession && (
           <div className="rounded-xl px-3 py-2.5 bg-white/[0.03] flex flex-col justify-center">
