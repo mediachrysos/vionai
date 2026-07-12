@@ -61,17 +61,15 @@ export default function WorkSessionWidget({ email, compact }) {
     const startedAt = new Date(activeSession.started_at);
     const totalMs = Date.now() - startedAt.getTime();
     const minutes = Math.floor(totalMs / 60000);
-    // Round down to 15-min blocks
-    const minutes15 = Math.floor(minutes / 15) * 15;
 
     await base44.entities.DesignerWorkSession.update(activeSession.id, {
       is_active: false,
       ended_at: new Date().toISOString(),
-      minutes_worked: minutes15,
+      minutes_worked: minutes,
     });
 
     // Feed worked hours into ChatterDailyPerformance so the hourly payout actually reflects time worked
-    const addedHours = minutes15 / 60;
+    const addedHours = minutes / 60;
     if (addedHours > 0) {
       const existing = await base44.entities.ChatterDailyPerformance.filter({ chatter_email: email, date: today });
       if (existing.length > 0) {
