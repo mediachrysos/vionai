@@ -88,7 +88,7 @@ export default function TierLadder({
       </div>
 
       {/* Today's stats — payout and working session grouped together */}
-      <div className={`flex ${showWorkSession ? "divide-x divide-white/10" : ""} rounded-xl bg-white/[0.03] border border-white/5 mb-4`}>
+      <div className={`flex ${showWorkSession ? "divide-x divide-white/10" : ""} border-b border-white/10 pb-4 mb-4`}>
         <div className="flex-1 px-4 py-3.5 flex flex-col justify-center">
           <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mb-1.5">Payout today</p>
           <p className={`text-2xl font-bold leading-none tabular-nums ${payout > 0 ? "text-[#C9A227]" : "text-slate-500"}`}>{Math.round(payout).toLocaleString()} <span className="text-xs font-normal opacity-70">CZK</span></p>
