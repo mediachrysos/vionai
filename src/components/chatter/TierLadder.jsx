@@ -115,32 +115,36 @@ export default function TierLadder({
       <div className="grid lg:grid-cols-2 gap-4 flex-1">
         {/* Left half — tier ladder + daily goal */}
         <div className="flex flex-col">
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Tier ladder</p>
+          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Current tier</p>
           <div className="flex flex-col gap-1.5">
-            {tiers.map((tier, i) => {
-              const isActive = currentTier.index === i;
-              const isCompleted = currentTier.index > i;
-              return (
-                <div
-                  key={i}
-                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2 ${
-                    isActive ? "bg-[#C9A227]/10" : "bg-white/[0.02]"
-                  }`}
-                >
-                  <span className={`text-[10px] font-semibold w-4 text-center ${isActive ? "text-[#C9A227]" : isCompleted ? "text-slate-400" : "text-slate-600"}`}>
-                    {i + 1}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-[11.5px] font-medium truncate ${isActive ? "text-[#C9A227]" : "text-slate-400"}`}>{tier.name}</p>
-                    <p className="text-[9px] text-slate-600 truncate">
-                      {tier.max !== null && tier.max !== undefined ? `${tier.min.toLocaleString()}–${tier.max.toLocaleString()}` : `${tier.min.toLocaleString()}+`}
-                      {tier.commission > 0 && ` · ${tier.commission}% commission`}
-                    </p>
-                  </div>
-                  {isActive && <span className="flex-shrink-0 text-[8px] font-semibold text-[#C9A227] bg-[#C9A227]/15 px-1.5 py-0.5 rounded-full">ACTIVE</span>}
+            <div className="flex items-center gap-2.5 rounded-xl px-3 py-2 bg-[#C9A227]/10">
+              <span className="text-[10px] font-semibold w-4 text-center text-[#C9A227]">
+                {currentTier.index + 1}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11.5px] font-medium truncate text-[#C9A227]">{currentTier.name}</p>
+                <p className="text-[9px] text-slate-600 truncate">
+                  {currentTier.max !== null && currentTier.max !== undefined ? `${currentTier.min.toLocaleString()}–${currentTier.max.toLocaleString()}` : `${currentTier.min.toLocaleString()}+`}
+                  {currentTier.commission > 0 && ` · ${currentTier.commission}% commission`}
+                </p>
+              </div>
+              <span className="flex-shrink-0 text-[8px] font-semibold text-[#C9A227] bg-[#C9A227]/15 px-1.5 py-0.5 rounded-full">ACTIVE</span>
+            </div>
+            {nextTier && (
+              <div className="flex items-center gap-2.5 rounded-xl px-3 py-2 bg-white/[0.02]">
+                <span className="text-[10px] font-semibold w-4 text-center text-slate-600">
+                  {currentTier.index + 2}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11.5px] font-medium truncate text-slate-400">{nextTier.name}</p>
+                  <p className="text-[9px] text-slate-600 truncate">
+                    {nextTier.max !== null && nextTier.max !== undefined ? `${nextTier.min.toLocaleString()}–${nextTier.max.toLocaleString()}` : `${nextTier.min.toLocaleString()}+`}
+                    {nextTier.commission > 0 && ` · ${nextTier.commission}% commission`}
+                  </p>
                 </div>
-              );
-            })}
+                <span className="flex-shrink-0 text-[8px] font-semibold text-slate-500">NEXT</span>
+              </div>
+            )}
           </div>
 
           {dailyGoalEnabled && dailyGoalAmount > 0 && (
