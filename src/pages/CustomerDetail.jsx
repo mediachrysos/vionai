@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ChattingCustomerCard from "@/components/customers/ChattingCustomerCard";
 
 const STATUS_STYLES = {
   active: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
@@ -121,6 +122,15 @@ export default function CustomerDetail({ currentUser }) {
 
   const totalSpent = visiblePayments.reduce((s, p) => s + (p.amount || 0), 0);
   const lastPayment = visiblePayments[0];
+
+  if (isChattingScope) {
+    return (
+      <ChattingCustomerCard
+        customer={customer}
+        payments={visiblePayments}
+        onUpdate={(data) => updateMutation.mutate(data)} />
+    );
+  }
 
   const exportPayments = () => {
     const rows = [

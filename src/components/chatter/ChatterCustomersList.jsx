@@ -7,6 +7,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+function PhoneCell({ customer, onSave }) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(customer.phone || "");
+
+  if (editing) {
+    return (
+      <input
+        autoFocus
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onClick={(e) => e.stopPropagation()}
+        onBlur={() => { setEditing(false); if (value !== customer.phone) onSave(value); }}
+        onKeyDown={(e) => { if (e.key === "Enter") e.target.blur(); }}
+        placeholder="+420..."
+        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-slate-200 w-32 outline-none focus:border-[#C9A227]/50" />
+
+    );
+  }
+
+  if (!customer.phone) {
+    return (
+      <button onClick={(e) => { e.stopPropagation(); setEditing(true); }} className="text-xs text-[#C9A227] hover:underline">
+        + Add phone
+      </button>);
+
+  }
+
+  return (
+    <button onClick={(e) => { e.stopPropagation(); setEditing(true); }} className="text-xs text-slate-300 hover:text-[#C9A227]">
+      {customer.phone}
+    </button>);
+
+}
+
 export default function ChatterCustomersList({ chatterEmail, assignedModelIds = [] }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("last_payment");
@@ -76,6 +110,11 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
       qc.invalidateQueries({ queryKey: ["chatter-customers"] });
       setForm({ full_name: "", model_id: validModelIds[0] || "" });
     }
+  });
+
+  const phoneMutation = useMutation({
+    mutationFn: ({ id, phone }) => base44.entities.Customer.update(id, { phone }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["chatter-customers"] })
   });
 
   const today = new Date();
@@ -202,7 +241,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
             <thead className="sticky top-0 z-10">
               <tr className="border-b border-white/10 bg-[#1e1e1e] backdrop-blur-sm">
                 <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Name</th>
-                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Model</th>
+                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Phone</th>
                 <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Pay Day</th>
                 {tab !== "pending" && <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Total / Payments</th>}
                 {tab !== "pending" && <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3 hidden xl:table-cell">Last payment</th>}
@@ -213,8 +252,6 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               const st = customerStats[c.id] || {};
               const daysSinceLast = st.lastDate ? Math.floor((Date.now() - new Date(st.lastDate)) / 86400000) : null;
               const isPayday = c.pay_day_of_month === todayDay;
-              const mids = (c.assigned_models || []).filter((mid) => validModelIds.includes(mid));
-              const modelNames = mids.map((mid) => modelMap[mid]).filter(Boolean);
 
               return (
                 <tr
@@ -235,11 +272,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
                       </div>
                     </td>
                     <td className="px-5 py-3.5 hidden lg:table-cell">
-                      {modelNames.length > 0 ?
-                    <div className="flex flex-wrap gap-1">
-                          {modelNames.map((n) => <span key={n} className="text-xs bg-[#C9A227]/10 text-[#C9A227] border border-[#C9A227]/20 rounded-md px-1.5 py-0.5">{n}</span>)}
-                        </div> :
-                    <span className="text-slate-700">—</span>}
+                      <PhoneCell customer={c} onSave={(phone) => phoneMutation.mutate({ id: c.id, phone })} />
                     </td>
                     <td className="px-5 py-3.5 text-center hidden md:table-cell">
                       {c.pay_day_of_month ? <span className="text-sm font-medium text-slate-300">Day {c.pay_day_of_month}</span> : <span className="text-slate-700">—</span>}
