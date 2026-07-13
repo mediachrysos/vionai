@@ -9,7 +9,7 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === "light" || saved === "dark") return saved;
-    return "dark"; // default
+    return "light"; // default
   });
 
   const [schedule, setSchedule] = useState(() => {
