@@ -149,8 +149,18 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
   const pendingCustomers = customers.filter((c) => (customerStats[c.id]?.count || 0) === 0);
   const paydayCustomers = customers.filter((c) => c.pay_day_of_month === todayDay);
 
+  const paidModelIdsByCustomer = useMemo(() => {
+    const map = {};
+    allPayments.forEach((p) => {
+      if (!p.customer_id || !p.model_id) return;
+      if (!map[p.customer_id]) map[p.customer_id] = new Set();
+      map[p.customer_id].add(p.model_id);
+    });
+    return map;
+  }, [allPayments]);
+
   const filtered = (tab === "customers" ? paidCustomers : pendingCustomers).filter((c) =>
-  (modelFilter === "all" || c.assigned_models?.includes(modelFilter)) &&
+  (modelFilter === "all" || c.assigned_models?.includes(modelFilter) || paidModelIdsByCustomer[c.id]?.has(modelFilter)) &&
   (!search ||
   c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
   c.email?.toLowerCase().includes(search.toLowerCase()))
