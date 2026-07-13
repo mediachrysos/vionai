@@ -26,10 +26,15 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   });
   const allCustomers = fetchedCustomers.length > 0 ? fetchedCustomers : customersProp;
 
-  // Chatters (non-admins) only see their own assigned models and the customers confirmed on them
+  // Chatters (non-admins) only see their own assigned models and the customers confirmed on them.
+  // A model can be assigned to a chatter either via User.assigned_model_ids or via Model.assigned_chatters — check both.
   const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = currentRoles.includes("admin");
-  const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
+  const chatterModelIds = React.useMemo(() => {
+    const fromModels = models.filter((m) => m.assigned_chatters?.includes(currentUser?.email)).map((m) => m.id);
+    const fromUser = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
+    return [...new Set([...fromModels, ...fromUser])].filter((id) => id != null && id !== "");
+  }, [models, currentUser]);
   const models_ = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
   const customers = isAdmin ? allCustomers : allCustomers.filter((c) => Array.isArray(c.assigned_models) && c.assigned_models.some((mid) => chatterModelIds.includes(mid)));
   const [form, setForm] = useState({
@@ -89,12 +94,13 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     : customers;
 
   const selectCustomer = (c) => {
-    const modelMatch = models_.find((m) => m.id === c.assigned_model);
+    const matchedModelId = Array.isArray(c.assigned_models) ? c.assigned_models.find((mid) => models_.some((m) => m.id === mid)) : null;
+    const modelMatch = models_.find((m) => m.id === matchedModelId);
     setForm((prev) => ({
       ...prev,
       customer_id: c.id,
       customer_name: c.full_name,
-      model_id: c.assigned_model || prev.model_id,
+      model_id: matchedModelId || prev.model_id,
       model_name: modelMatch?.name || prev.model_name,
       // chatter_email stays as the logged-in user who is recording the payment —
       // never overwritten by the customer's assigned chatter.
