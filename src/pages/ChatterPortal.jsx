@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, BarChart2, Users, UserCircle } from "lucide-react";
+import { MessageSquare, BarChart2, Users, UserCircle, Pencil } from "lucide-react";
 import Customers from "./Customers";
 import PageHeader from "../components/ui-custom/PageHeader";
 import NicknameSetupModal from "../components/ui-custom/NicknameSetupModal";
@@ -361,6 +361,15 @@ function ChatterView({ currentUser, isAdminView = false }) {
           <div className="flex items-center gap-3">
             <ProfilePhotoUpload user={currentUser} isAdminView={isAdminView} size="w-10 h-10" />
             <p className="text-slate-200 text-sm font-semibold">{displayName}</p>
+            {!isAdminView && (
+              <button
+                onClick={() => setShowNicknameModal(true)}
+                className="text-slate-500 hover:text-[#C9A227] transition-colors"
+                title="Upravit přezdívku"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
           <OnboardingLinkForm currentUser={currentUser} models={models.filter((m) => {
             const ids = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
