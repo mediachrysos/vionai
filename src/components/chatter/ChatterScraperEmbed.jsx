@@ -32,6 +32,7 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
   const [input, setInput] = useState("");
   const [results, setResults] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [unmatchedOpen, setUnmatchedOpen] = useState(false);
   const navigate = useNavigate();
 
   const { data: customers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list("-created_date", 500), staleTime: 60000 });
@@ -56,7 +57,9 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
         matchedMap.set(found.id, { customer: found, inputNames: [name] });
       } else unmatched.push(name);
     });
-    const matched = Array.from(matchedMap.values());
+    const allMatched = Array.from(matchedMap.values());
+    const paid = allMatched.filter((r) => (r.customer.payment_count || 0) > 0 || (r.customer.total_spent || 0) > 0);
+    const confirmedOnly = allMatched.filter((r) => !((r.customer.payment_count || 0) > 0 || (r.customer.total_spent || 0) > 0));
     const stillUnmatched = [];
     const matchedHistorical = [];
     unmatched.forEach((name) => {
@@ -64,7 +67,8 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
       if (found) matchedHistorical.push({ historical: found, inputName: name });else
       stillUnmatched.push(name);
     });
-    setResults({ matched, unmatched: stillUnmatched, matchedHistorical });
+    setUnmatchedOpen(false);
+    setResults({ paid, confirmedOnly, unmatched: stillUnmatched, matchedHistorical });
   };
 
   const modelMap = {};
@@ -116,18 +120,18 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
 
           {results &&
         <div className="space-y-3">
-              {/* Matched */}
+              {/* Paid */}
               <div className="rounded-xl border border-white/10 overflow-hidden">
                 <div className="px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-white/5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-xs font-semibold text-slate-300">Matches found</span>
-                  <span className="ml-auto text-xs text-slate-500">{results.matched.length}</span>
+                  <span className="text-xs font-semibold text-slate-300">Sent money</span>
+                  <span className="ml-auto text-xs text-slate-500">{results.paid.length}</span>
                 </div>
-                {results.matched.length === 0 ?
+                {results.paid.length === 0 ?
             <p className="text-xs text-slate-600 px-3 py-2">No matches</p> :
 
             <div className="divide-y divide-white/5">
-                    {results.matched.map((r) =>
+                    {results.paid.map((r) =>
               <div key={r.customer.id} className="px-3 py-2 flex items-center gap-2 hover:bg-white/5 cursor-pointer transition-colors" onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}>
                         <div className="w-6 h-6 rounded-full bg-[#C9A227]/20 flex items-center justify-center text-[10px] font-bold text-[#C9A227] flex-shrink-0">
                           {r.customer.full_name?.[0]?.toUpperCase() || "?"}
@@ -137,6 +141,32 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
                           <p className="text-[10px] text-slate-500">{(r.customer.total_spent || 0).toLocaleString()} CZK · {formatDate(lastPaymentDate[r.customer.id])}</p>
                         </div>
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 flex-shrink-0">✓</span>
+                      </div>
+              )}
+                  </div>
+            }
+              </div>
+
+              {/* Confirmed link only, no payment yet */}
+              <div className="rounded-xl border border-amber-500/20 overflow-hidden">
+                <div className="px-3 py-2 border-b border-amber-500/20 flex items-center gap-2 bg-amber-500/10">
+                  <UserCircle className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="text-xs font-semibold text-slate-300">Confirmed, no payment yet</span>
+                  <span className="ml-auto text-xs text-slate-500">{results.confirmedOnly.length}</span>
+                </div>
+                {results.confirmedOnly.length === 0 ?
+            <p className="text-xs text-slate-600 px-3 py-2">No matches</p> :
+
+            <div className="divide-y divide-white/5">
+                    {results.confirmedOnly.map((r) =>
+              <div key={r.customer.id} className="px-3 py-2 flex items-center gap-2 hover:bg-white/5 cursor-pointer transition-colors" onClick={() => navigate(`/CustomerDetail?id=${r.customer.id}`)}>
+                        <div className="w-6 h-6 rounded-full bg-amber-500/15 flex items-center justify-center text-[10px] font-bold text-amber-400 flex-shrink-0">
+                          {r.customer.full_name?.[0]?.toUpperCase() || "?"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-slate-200 truncate">{r.customer.full_name}</p>
+                          <p className="text-[10px] text-slate-500">Link confirmed · no payment yet</p>
+                        </div>
                       </div>
               )}
                   </div>
@@ -163,14 +193,19 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
                 </div>
           }
 
-              {/* Unmatched */}
+              {/* Unmatched — collapsed by default */}
               <div className="rounded-xl border border-white/10 overflow-hidden">
-                <div className="px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-white/5">
+                <button
+              onClick={() => setUnmatchedOpen((v) => !v)}
+              className="w-full px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-white/5 hover:bg-white/10 transition-colors">
+
                   <XCircle className="w-3.5 h-3.5 text-slate-500" />
                   <span className="text-xs font-semibold text-slate-300">No match</span>
                   <span className="ml-auto text-xs text-slate-500">{results.unmatched.length}</span>
-                </div>
-                {results.unmatched.length === 0 ?
+                  {unmatchedOpen ? <ChevronUp className="w-3.5 h-3.5 text-slate-500" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
+                </button>
+                {unmatchedOpen &&
+            (results.unmatched.length === 0 ?
             <p className="text-xs text-slate-500 px-3 py-2">All found 🎉</p> :
 
             <div className="divide-y divide-white/5">
@@ -180,7 +215,8 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
                         <p className="text-xs text-slate-500 italic">{name}</p>
                       </div>
               )}
-                  </div>
+                  </div>)
+
             }
               </div>
             </div>
