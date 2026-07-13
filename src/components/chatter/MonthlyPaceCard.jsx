@@ -18,9 +18,10 @@ export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd,
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex-1 min-w-[220px]">
-          <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase mb-2.5">Monthly Goal</p>
+      <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase mb-2.5">Monthly Goal</p>
+
+      <div className="flex items-center gap-4">
+        <div className="flex-1">
           <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full bg-[#C9A227]/70 transition-all duration-700"
@@ -28,8 +29,8 @@ export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd,
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <p className="text-lg font-semibold text-slate-700 tabular-nums">
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <p className="text-lg font-semibold text-slate-700 tabular-nums whitespace-nowrap">
             {monthRevenue.toLocaleString()} CZK
             <span className="text-sm font-normal text-slate-400"> / {monthlyGoalAmount.toLocaleString()} CZK</span>
           </p>
@@ -39,20 +40,18 @@ export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd,
         </div>
       </div>
 
-      <div className="flex items-center gap-3 flex-wrap mt-3.5 pt-3.5 border-t border-slate-100">
+      <div className="grid grid-cols-3 gap-4 mt-4 pt-3.5 border-t border-slate-100">
         <div>
-          <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Remaining days </span>
-          <span className="text-xs font-semibold text-slate-600">{daysLeft}</span>
+          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mb-0.5">Remaining days</p>
+          <p className="text-sm font-semibold text-slate-600">{daysLeft}</p>
         </div>
-        <span className="text-slate-200">|</span>
         <div>
-          <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Daily needed </span>
-          <span className={`text-xs font-semibold ${avgNeeded > 0 ? "text-[#C9A227]" : "text-slate-600"}`}>{avgNeeded.toLocaleString()} CZK</span>
+          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mb-0.5">Daily needed</p>
+          <p className={`text-sm font-semibold ${avgNeeded > 0 ? "text-[#C9A227]" : "text-slate-600"}`}>{avgNeeded.toLocaleString()} CZK</p>
         </div>
-        <span className="text-slate-200">|</span>
         <div>
-          <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Remaining </span>
-          <span className="text-xs font-semibold text-slate-600">{remaining.toLocaleString()} CZK</span>
+          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mb-0.5">Remaining</p>
+          <p className="text-sm font-semibold text-slate-600">{remaining.toLocaleString()} CZK</p>
         </div>
       </div>
     </div>
