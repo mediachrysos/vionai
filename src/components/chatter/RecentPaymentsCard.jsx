@@ -12,7 +12,7 @@ function getPaymentTag(payment, allPaymentsForCustomer) {
 export default function RecentPaymentsCard({ payments, title = "Recent payments" }) {
   if (!payments || payments.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4">
+      <div className="bg-white rounded-2xl border border-[#ececec] shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-6 mb-4 hidden">
         <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
           <CreditCard className="w-4 h-4 text-[#C9A227]" /> {title}
         </h3>
