@@ -17,42 +17,42 @@ export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd,
   const pct = Math.min(100, Math.round(monthRevenue / monthlyGoalAmount * 100));
 
   return (
-    <div className="bg-[#f3f3f4] rounded-2xl border border-black/5 shadow-sm p-5">
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-[220px]">
-          <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-2.5">Monthly Goal</p>
-          <div className="h-2 bg-black/10 rounded-full overflow-hidden max-w-xs">
+          <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase mb-2.5">Monthly Goal</p>
+          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden max-w-xs">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] transition-all duration-700"
+              className="h-full rounded-full bg-[#C9A227]/70 transition-all duration-700"
               style={{ width: `${pct}%` }} />
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <p className="text-xl font-bold text-slate-800 tabular-nums">
+          <p className="text-lg font-semibold text-slate-700 tabular-nums">
             {monthRevenue.toLocaleString()} CZK
             <span className="text-sm font-normal text-slate-400"> / {monthlyGoalAmount.toLocaleString()} CZK</span>
           </p>
-          <div className="w-10 h-10 rounded-full border-2 border-[#C9A227]/40 bg-[#C9A227]/10 flex items-center justify-center flex-shrink-0">
-            <span className="text-[11px] font-bold text-[#C9A227]">{pct}%</span>
+          <div className="w-9 h-9 rounded-full border border-[#C9A227]/30 bg-[#C9A227]/5 flex items-center justify-center flex-shrink-0">
+            <span className="text-[10px] font-semibold text-[#C9A227]">{pct}%</span>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 flex-wrap mt-4 pt-4 border-t border-black/5">
+      <div className="flex items-center gap-3 flex-wrap mt-3.5 pt-3.5 border-t border-slate-100">
         <div>
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Remaining days </span>
-          <span className="text-sm font-bold text-slate-700">{daysLeft}</span>
+          <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Remaining days </span>
+          <span className="text-xs font-semibold text-slate-600">{daysLeft}</span>
         </div>
-        <span className="text-slate-300">|</span>
+        <span className="text-slate-200">|</span>
         <div>
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Daily needed </span>
-          <span className={`text-sm font-bold ${avgNeeded > 0 ? "text-[#C9A227]" : "text-slate-700"}`}>{avgNeeded.toLocaleString()} CZK</span>
+          <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Daily needed </span>
+          <span className={`text-xs font-semibold ${avgNeeded > 0 ? "text-[#C9A227]" : "text-slate-600"}`}>{avgNeeded.toLocaleString()} CZK</span>
         </div>
-        <span className="text-slate-300">|</span>
+        <span className="text-slate-200">|</span>
         <div>
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Remaining </span>
-          <span className="text-sm font-bold text-slate-700">{remaining.toLocaleString()} CZK</span>
+          <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Remaining </span>
+          <span className="text-xs font-semibold text-slate-600">{remaining.toLocaleString()} CZK</span>
         </div>
       </div>
     </div>
