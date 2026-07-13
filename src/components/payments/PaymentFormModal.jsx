@@ -39,8 +39,8 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
   const models_ = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
   const paidCustomerIds = React.useMemo(() =>
-    new Set(allPayments.filter((p) => p.customer_id && chatterModelIds.includes(p.model_id)).map((p) => p.customer_id)),
-    [allPayments, chatterModelIds]);
+    new Set(allPayments.filter((p) => p.customer_id && (chatterModelIds.includes(p.model_id) || p.chatter_email === currentUser?.email)).map((p) => p.customer_id)),
+    [allPayments, chatterModelIds, currentUser?.email]);
   const customers = isAdmin ? allCustomers : allCustomers.filter((c) =>
     c.assigned_chatter === currentUser?.email ||
     (Array.isArray(c.assigned_models) && c.assigned_models.some((mid) => chatterModelIds.includes(mid))) ||
