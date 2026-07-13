@@ -25,18 +25,27 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     staleTime: 30000,
   });
   const allCustomers = fetchedCustomers.length > 0 ? fetchedCustomers : customersProp;
+  const { data: allPayments = [] } = useQuery({
+    queryKey: ["payments"],
+    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
+    enabled: open,
+    staleTime: 30000,
+  });
 
-  // Chatters (non-admins) only see their own assigned models and the customers confirmed on them.
-  // A model can be assigned to a chatter either via User.assigned_model_ids or via Model.assigned_chatters — check both.
+  // Chatters (non-admins) only see their own assigned models (source of truth: User.assigned_model_ids)
+  // and the customers confirmed on them — either directly assigned, or with a past payment for one of their models.
   const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = currentRoles.includes("admin");
-  const chatterModelIds = React.useMemo(() => {
-    const fromModels = models.filter((m) => m.assigned_chatters?.includes(currentUser?.email)).map((m) => m.id);
-    const fromUser = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-    return [...new Set([...fromModels, ...fromUser])].filter((id) => id != null && id !== "");
-  }, [models, currentUser]);
+  const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
   const models_ = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
-  const customers = isAdmin ? allCustomers : allCustomers.filter((c) => Array.isArray(c.assigned_models) && c.assigned_models.some((mid) => chatterModelIds.includes(mid)));
+  const paidCustomerIds = React.useMemo(() =>
+    new Set(allPayments.filter((p) => p.customer_id && chatterModelIds.includes(p.model_id)).map((p) => p.customer_id)),
+    [allPayments, chatterModelIds]);
+  const customers = isAdmin ? allCustomers : allCustomers.filter((c) =>
+    c.assigned_chatter === currentUser?.email ||
+    (Array.isArray(c.assigned_models) && c.assigned_models.some((mid) => chatterModelIds.includes(mid))) ||
+    paidCustomerIds.has(c.id)
+  );
   const [form, setForm] = useState({
     customer_id: "", customer_name: "", amount: "", service_type: "",
     model_id: "", model_name: "", chatter_email: "", chatter_name: "",
