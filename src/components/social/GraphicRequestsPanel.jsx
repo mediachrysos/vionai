@@ -34,20 +34,17 @@ function todayStr() {
   return new Date().toISOString().split("T")[0];
 }
 
-export default function GraphicRequestsPanel({ designerEmail, isAdmin }) {
+export default function GraphicRequestsPanel({ isAdmin }) {
   const qc = useQueryClient();
   const [expanded, setExpanded] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [filterDate, setFilterDate] = useState("");
 
+  // Shared/default across the whole graphic space — no per-designer filtering
   const { data: requests = [] } = useQuery({
-    queryKey: ["graphic-requests-designer", designerEmail, isAdmin],
-    queryFn: () => {
-      if (isAdmin) return base44.entities.GraphicRequest.list("-created_date", 200);
-      return base44.entities.GraphicRequest.filter({ assigned_designer_email: designerEmail }, "-created_date", 200);
-    },
-    enabled: !!designerEmail || isAdmin,
+    queryKey: ["graphic-requests-all"],
+    queryFn: () => base44.entities.GraphicRequest.list("-created_date", 200),
     staleTime: 30000,
   });
 

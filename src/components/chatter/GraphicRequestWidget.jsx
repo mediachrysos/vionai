@@ -213,8 +213,7 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
               { type: "video", icon: Video, label: "Video" },
               { type: "photo", icon: Camera, label: "Photo" }].
               map(({ type, icon: TypeIcon, label }) => {
-                const sub = designerMap[type]?.name ? `→ ${designerMap[type].name}` : "→ unassigned";
-                return (
+              return (
                   <button
                     key={type}
                     type="button"
@@ -389,9 +388,6 @@ export default function GraphicRequestWidget({ chatterEmail, chatterName, models
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <p className="text-sm font-semibold text-slate-100">{r.title}</p>
-                              {r.assigned_designer_name &&
-                        <span className="text-[10px] text-slate-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-full">→ {r.assigned_designer_name}</span>
-                        }
                               {r.model_name &&
                         <span className="text-[10px] text-[#C9A227] bg-[#C9A227]/10 border border-[#C9A227]/30 px-1.5 py-0.5 rounded-full">{r.model_name}</span>
                         }

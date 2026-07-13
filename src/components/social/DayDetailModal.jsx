@@ -397,11 +397,10 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
   // Fetch graphic requests for this day
   const dayDate = getDayDate(weekStart, dayKey);
   const { data: dayGraphicRequests = [] } = useQuery({
-    queryKey: ["graphic-requests-day", dayDate, designerEmail, isAdmin],
+    queryKey: ["graphic-requests-day", dayDate],
     queryFn: () => {
       if (!dayDate) return [];
-      if (isAdmin) return base44.entities.GraphicRequest.filter({ request_date: dayDate }, "-created_date", 50);
-      return base44.entities.GraphicRequest.filter({ request_date: dayDate, assigned_designer_email: designerEmail }, "-created_date", 50);
+      return base44.entities.GraphicRequest.filter({ request_date: dayDate }, "-created_date", 50);
     },
     enabled: open && !!dayDate,
     staleTime: 0,

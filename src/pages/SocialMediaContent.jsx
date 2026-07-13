@@ -49,6 +49,10 @@ function formatWeekLabel(weekStart) {
   return `${d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })} – ${end.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`;
 }
 
+// All designers share the same weekly tasks / submissions — one common space for content,
+// while each designer still has their own dashboard for time tracking and salary.
+const SHARED_TASKS_KEY = "shared_graphic_space";
+
 export default function SocialMediaContent({ currentUser }) {
   const [weekStart, setWeekStart] = useState(() => getMondayOf(new Date()));
   const [selectedDay, setSelectedDay] = useState(null);
@@ -104,8 +108,6 @@ export default function SocialMediaContent({ currentUser }) {
   const activeDesignerEmail = isAdmin
     ? (activeDashboard?.designer_email || null)
     : myEmail;
-  // Always use dashboard:id as the program key — consistent for both admin and designer
-  const programQueryKey = activeDashboard ? `dashboard:${activeDashboard.id}` : null;
 
   const { data: models = [] } = useQuery({
     queryKey: ["models"],
@@ -113,50 +115,22 @@ export default function SocialMediaContent({ currentUser }) {
     staleTime: 120000,
   });
 
+  // Tasks & submissions are shared by ALL designers — one common weekly program, not per-dashboard
   const { data: programs = [] } = useQuery({
-    queryKey: ["weeklyProgram", weekStart, programQueryKey],
-    queryFn: async () => {
-      // Fetch both dashboard:id and designer email records in parallel, merge & deduplicate
-      const promises = [
-        base44.entities.WeeklyProgram.filter({
-          week_start: weekStart,
-          designer_email: `dashboard:${activeDashboard.id}`,
-        }),
-      ];
-      if (activeDashboard.designer_email) {
-        promises.push(base44.entities.WeeklyProgram.filter({
-          week_start: weekStart,
-          designer_email: activeDashboard.designer_email,
-        }));
-      }
-      const results = await Promise.all(promises);
-      const all = results.flat();
-      // Deduplicate by id, return all (sorted by updated_date descending)
-      const seen = new Set();
-      return all.filter(r => { if (seen.has(r.id)) return false; seen.add(r.id); return true; })
-                .sort((a, b) => new Date(b.updated_date || 0) - new Date(a.updated_date || 0));
-    },
-    enabled: !!activeDashboard,
+    queryKey: ["weeklyProgram", weekStart],
+    queryFn: () => base44.entities.WeeklyProgram.filter({
+      week_start: weekStart,
+      designer_email: SHARED_TASKS_KEY,
+    }),
     staleTime: 0,
   });
 
   const { data: submissions = [] } = useQuery({
-    queryKey: ["daySubmissions", weekStart, programQueryKey],
-    queryFn: async () => {
-      const byDashboardId = await base44.entities.DaySubmission.filter({
-        week_start: weekStart,
-        designer_email: `dashboard:${activeDashboard.id}`,
-      });
-      if (byDashboardId.length > 0) return byDashboardId;
-      if (activeDashboard.designer_email) {
-        return base44.entities.DaySubmission.filter({
-          week_start: weekStart,
-          designer_email: activeDashboard.designer_email,
-        });
-      }
-      return [];
-    },
-    enabled: !!activeDashboard,
+    queryKey: ["daySubmissions", weekStart],
+    queryFn: () => base44.entities.DaySubmission.filter({
+      week_start: weekStart,
+      designer_email: SHARED_TASKS_KEY,
+    }),
   });
 
   // Take the most recently updated program in case of duplicates
@@ -170,14 +144,10 @@ export default function SocialMediaContent({ currentUser }) {
     return m;
   }, [submissions]);
 
-  // Graphic requests for the active designer — to show on day cards
+  // Graphic requests — shared/default for everyone in the graphic space, no per-designer filtering
   const { data: graphicRequests = [] } = useQuery({
-    queryKey: ["graphic-requests-designer", activeDesignerEmail, isAdmin],
-    queryFn: () => {
-      if (isAdmin) return base44.entities.GraphicRequest.list("-created_date", 200);
-      return base44.entities.GraphicRequest.filter({ assigned_designer_email: activeDesignerEmail }, "-created_date", 200);
-    },
-    enabled: !!activeDesignerEmail || isAdmin,
+    queryKey: ["graphic-requests-all"],
+    queryFn: () => base44.entities.GraphicRequest.list("-created_date", 200),
     staleTime: 30000,
   });
 
@@ -216,32 +186,30 @@ export default function SocialMediaContent({ currentUser }) {
   }, [weekStart]);
 
   const refresh = () => {
-    qc.invalidateQueries({ queryKey: ["weeklyProgram", weekStart, programQueryKey] });
-    qc.invalidateQueries({ queryKey: ["daySubmissions", weekStart, programQueryKey] });
+    qc.invalidateQueries({ queryKey: ["weeklyProgram", weekStart] });
+    qc.invalidateQueries({ queryKey: ["daySubmissions", weekStart] });
   };
 
-  // Auto-duplicate: when navigating forward to a week with no program, copy as draft
+  // Auto-duplicate: when navigating forward to a week with no shared program, copy as draft
   const handleWeekChange = async (newWeekStart, prevWeekStart) => {
     setWeekStart(newWeekStart);
     // Only auto-duplicate when going forward
     if (newWeekStart <= prevWeekStart) return;
-    if (!activeDashboard) return;
-    const email = effectiveDesignerEmail;
     // Check if next week already has a program
     const existing = await base44.entities.WeeklyProgram.filter({
       week_start: newWeekStart,
-      designer_email: email,
+      designer_email: SHARED_TASKS_KEY,
     });
     if (existing.length > 0) return; // Already has tasks — don't overwrite
     // Fetch previous week's program
     const prevPrograms = await base44.entities.WeeklyProgram.filter({
       week_start: prevWeekStart,
-      designer_email: email,
+      designer_email: SHARED_TASKS_KEY,
     });
     if (prevPrograms.length === 0) return;
     const prev = prevPrograms[0];
     const DAYS_KEYS = ["mon","tue","wed","thu","fri","sat","sun"];
-    const data = { week_start: newWeekStart, designer_email: email, is_draft: true };
+    const data = { week_start: newWeekStart, designer_email: SHARED_TASKS_KEY, is_draft: true };
     DAYS_KEYS.forEach(key => { data[`${key}_tasks`] = (prev[`${key}_tasks`] || []).map(t => ({ ...t })); });
     await base44.entities.WeeklyProgram.create(data);
     setTimeout(() => {
@@ -363,8 +331,7 @@ export default function SocialMediaContent({ currentUser }) {
             weekStart={weekStart}
             program={program}
             models={models}
-            designerEmail={effectiveDesignerEmail}
-            designerName={activeDashboard?.designer_name || activeDashboard?.name}
+            designerEmail={SHARED_TASKS_KEY}
             isDraft={!!program?.is_draft}
             onSaved={() => { refresh(); }}
           />
@@ -420,8 +387,7 @@ export default function SocialMediaContent({ currentUser }) {
           tasks={program?.[`${selectedDay}_tasks`] || []}
           submission={submissionMap[selectedDay]}
           weekStart={weekStart}
-          designerEmail={effectiveDesignerEmail}
-          designerName={activeDashboard?.designer_name || effectiveDesignerEmail}
+          designerEmail={SHARED_TASKS_KEY}
           isAdmin={isAdmin}
           onRefresh={refresh}
           models={models}
