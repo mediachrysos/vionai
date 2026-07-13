@@ -387,36 +387,44 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
     const added = assignedIds.filter((id) => !committedIds.includes(id));
     const removed = committedIds.filter((id) => !assignedIds.includes(id));
     setSavingModels(true);
-    await onUpdate(user.id, { assigned_model_ids: assignedIds });
+    try {
+      await onUpdate(user.id, { assigned_model_ids: assignedIds });
 
-    // Sync assigned_chatter on affected customers
-    const customers = await base44.entities.Customer.list("-created_date", 5000);
-    const toAdd = customers.filter((c) => Array.isArray(c.assigned_models) && added.some((id) => c.assigned_models.includes(id)));
-    const toRemove = customers.filter((c) =>
-    c.assigned_chatter === user.email &&
-    Array.isArray(c.assigned_models) &&
-    removed.some((id) => c.assigned_models.includes(id)) &&
-    !added.some((id) => c.assigned_models.includes(id))
-    );
-    const changes = [
-    ...toAdd.map((c) => ({ id: c.id, data: { assigned_chatter: user.email } })),
-    ...toRemove.map((c) => ({ id: c.id, data: { assigned_chatter: "" } }))];
+      // Sync assigned_chatter on affected customers
+      const customers = await base44.entities.Customer.list("-created_date", 5000);
+      const toAdd = customers.filter((c) => Array.isArray(c.assigned_models) && added.some((id) => c.assigned_models.includes(id)));
+      const toRemove = customers.filter((c) =>
+      c.assigned_chatter === user.email &&
+      Array.isArray(c.assigned_models) &&
+      removed.some((id) => c.assigned_models.includes(id)) &&
+      !added.some((id) => c.assigned_models.includes(id))
+      );
+      const changes = [
+      ...toAdd.map((c) => ({ id: c.id, data: { assigned_chatter: user.email } })),
+      ...toRemove.map((c) => ({ id: c.id, data: { assigned_chatter: "" } }))];
 
 
-    setSyncProgress({ done: 0, total: changes.length });
-    const batchSize = 5;
-    for (let i = 0; i < changes.length; i += batchSize) {
-      const batch = changes.slice(i, i + batchSize);
-      await Promise.all(batch.map((item) => base44.entities.Customer.update(item.id, item.data)));
-      setSyncProgress({ done: Math.min(i + batchSize, changes.length), total: changes.length });
-      if (i + batchSize < changes.length) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
+      setSyncProgress({ done: 0, total: changes.length });
+      // Small sequential batches with a longer pause to stay well under the API rate limit
+      const batchSize = 2;
+      for (let i = 0; i < changes.length; i += batchSize) {
+        const batch = changes.slice(i, i + batchSize);
+        for (const item of batch) {
+          await base44.entities.Customer.update(item.id, item.data);
+        }
+        setSyncProgress({ done: Math.min(i + batchSize, changes.length), total: changes.length });
+        if (i + batchSize < changes.length) {
+          await new Promise((resolve) => setTimeout(resolve, 600));
+        }
       }
-    }
 
-    setCommittedIds(assignedIds);
-    setSavingModels(false);
-    setSyncProgress(null);
+      setCommittedIds(assignedIds);
+    } catch (error) {
+      alert("Save failed: " + error.message + ". Please wait a moment and try again.");
+    } finally {
+      setSavingModels(false);
+      setSyncProgress(null);
+    }
   };
 
   const togglePage = (page) => {
