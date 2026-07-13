@@ -1,5 +1,4 @@
 import React from "react";
-import { Target } from "lucide-react";
 
 export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd, monthlyGoalAmount, monthlyGoalEnabled }) {
   if (!monthlyGoalEnabled || !monthlyGoalAmount || !periodStart || !periodEnd) {
@@ -18,33 +17,43 @@ export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd,
   const pct = Math.min(100, Math.round(monthRevenue / monthlyGoalAmount * 100));
 
   return (
-    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 p-5 hover:border-violet-700/30 transition-colors">
-      <div className="flex items-center gap-2 mb-5">
-        <div className="w-7 h-7 rounded-lg bg-violet-950/50 flex items-center justify-center">
-          <Target className="w-3.5 h-3.5 text-violet-400" />
+    <div className="bg-[#f3f3f4] rounded-2xl border border-black/5 shadow-sm p-5">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex-1 min-w-[220px]">
+          <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-2.5">Monthly Goal</p>
+          <div className="h-2 bg-black/10 rounded-full overflow-hidden max-w-xs">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-[#C9A227] to-[#e8c84a] transition-all duration-700"
+              style={{ width: `${pct}%` }} />
+          </div>
         </div>
-        <h3 className="text-sm font-semibold text-slate-200">Monthly goal</h3>
-        <span className="ml-auto text-xs font-semibold bg-violet-950/50 text-violet-300 border border-violet-700/30 px-2 py-0.5 rounded-full">{pct}%</span>
-      </div>
-      <div className="space-y-3">
-        <div>
-          <p className="text-2xl font-semibold text-slate-100 tracking-tight">{monthRevenue.toLocaleString()}</p>
-          <p className="text-xs text-slate-500 mt-0.5">of {monthlyGoalAmount.toLocaleString()} monthly goal</p>
-        </div>
-        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-600 to-violet-400 transition-all duration-700"
-            style={{ width: `${pct}%` }} />
-        </div>
-        {remaining > 0 && (
-          <p className="text-xs text-slate-500">
-            Remaining <span className="text-violet-400 font-medium">{remaining.toLocaleString()}</span>
-            {daysLeft > 0 && <> · <span className="text-violet-400 font-medium">{avgNeeded.toLocaleString()}</span>/day for {daysLeft} days left</>}
+
+        <div className="flex items-center gap-3">
+          <p className="text-xl font-bold text-slate-800 tabular-nums">
+            {monthRevenue.toLocaleString()} CZK
+            <span className="text-sm font-normal text-slate-400"> / {monthlyGoalAmount.toLocaleString()} CZK</span>
           </p>
-        )}
-        {remaining === 0 && (
-          <p className="text-xs text-emerald-400 font-medium">Goal reached! 🎉</p>
-        )}
+          <div className="w-10 h-10 rounded-full border-2 border-[#C9A227]/40 bg-[#C9A227]/10 flex items-center justify-center flex-shrink-0">
+            <span className="text-[11px] font-bold text-[#C9A227]">{pct}%</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 flex-wrap mt-4 pt-4 border-t border-black/5">
+        <div>
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Remaining days </span>
+          <span className="text-sm font-bold text-slate-700">{daysLeft}</span>
+        </div>
+        <span className="text-slate-300">|</span>
+        <div>
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Daily needed </span>
+          <span className={`text-sm font-bold ${avgNeeded > 0 ? "text-[#C9A227]" : "text-slate-700"}`}>{avgNeeded.toLocaleString()} CZK</span>
+        </div>
+        <span className="text-slate-300">|</span>
+        <div>
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Remaining </span>
+          <span className="text-sm font-bold text-slate-700">{remaining.toLocaleString()} CZK</span>
+        </div>
       </div>
     </div>
   );
