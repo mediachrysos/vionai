@@ -314,7 +314,13 @@ function ChatterView({ currentUser, isAdminView = false }) {
   }, [currentUser]);
 
   const activeRule = rules.find((r) => r.is_active) || null;
-  const tiers = DEFAULT_TIERS;
+  const tiers = activeRule?.custom_tiers?.length > 0 ? activeRule.custom_tiers : DEFAULT_TIERS;
+
+  const calendarMonthEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0];
+  const goalStart = activeRule?.monthly_goal_start_date || monthStart;
+  const goalEnd = activeRule?.monthly_goal_end_date || calendarMonthEnd;
+  const goalPayments = payments.filter((p) => { const d = p.payment_date || p.created_date?.split("T")[0]; return d && d >= goalStart && d <= goalEnd; });
+  const goalRevenue = goalPayments.reduce((s, p) => s + (p.amount || 0), 0);
 
   const hoursMap = {};
   dailyPerf.forEach((d) => { hoursMap[d.date] = d.hours_worked || 0; });
@@ -426,7 +432,9 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
         {/* Monthly pace */}
         <MonthlyPaceCard
-          monthRevenue={monthRevenue}
+          periodRevenue={goalRevenue}
+          periodStart={goalStart}
+          periodEnd={goalEnd}
           monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
           monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
+import { DEFAULT_TIERS } from "../chatter/tierUtils";
 
 const DEFAULT_RULE = {
   is_active: true,
@@ -9,9 +10,12 @@ const DEFAULT_RULE = {
   daily_goal_amount: 5000,
   monthly_goal_enabled: false,
   monthly_goal_amount: 150000,
+  monthly_goal_start_date: "",
+  monthly_goal_end_date: "",
   monthly_bonus_enabled: false,
   monthly_bonus_amount: 0,
   monthly_bonus_condition_revenue: 0,
+  custom_tiers: [],
   notes: ""
 };
 
@@ -60,9 +64,10 @@ export default function ChatterRulesAdmin() {
   useEffect(() => {
     if (rules.length > 0) {
       const active = rules.find((r) => r.is_active) || rules[0];
-      setForm({ ...DEFAULT_RULE, ...active });
+      const tiers = active.custom_tiers?.length > 0 ? active.custom_tiers : DEFAULT_TIERS.map((t) => ({ ...t }));
+      setForm({ ...DEFAULT_RULE, ...active, custom_tiers: tiers });
     } else {
-      setForm(DEFAULT_RULE);
+      setForm({ ...DEFAULT_RULE, custom_tiers: DEFAULT_TIERS.map((t) => ({ ...t })) });
     }
   }, [rules, selectedEmail]);
 
@@ -96,6 +101,25 @@ export default function ChatterRulesAdmin() {
     </div>;
 
 
+  const updateTier = (idx, key, value) => {
+    setForm((f) => {
+      const tiers = [...f.custom_tiers];
+      tiers[idx] = { ...tiers[idx], [key]: key === "name" ? value : value === "" ? null : Number(value) };
+      return { ...f, custom_tiers: tiers };
+    });
+  };
+
+  const addTier = () => {
+    setForm((f) => ({
+      ...f,
+      custom_tiers: [...f.custom_tiers, { name: "New tier", min: 0, max: null, hourly: 0, commission: 0 }]
+    }));
+  };
+
+  const removeTier = (idx) => {
+    setForm((f) => ({ ...f, custom_tiers: f.custom_tiers.filter((_, i) => i !== idx) }));
+  };
+
   return (
     <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm overflow-hidden">
       <button
@@ -103,9 +127,6 @@ export default function ChatterRulesAdmin() {
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 transition-colors group">
         
         <div className="flex items-center gap-3 text-sm font-semibold text-slate-200">
-          
-
-          
           Chatter Performance Settings (tiers, goals, bonuses)
         </div>
         {open ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
@@ -147,7 +168,16 @@ export default function ChatterRulesAdmin() {
               onChange={(v) => setForm((f) => ({ ...f, monthly_goal_enabled: v }))}
               label="Monthly goal enabled" />
             
-                {form.monthly_goal_enabled && field("monthly_goal_amount", "Monthly goal (CZK)")}
+                {form.monthly_goal_enabled &&
+            <>
+                    {field("monthly_goal_amount", "Monthly goal (CZK)")}
+                    <div className="grid grid-cols-2 gap-3">
+                      {field("monthly_goal_start_date", "Period start", "date")}
+                      {field("monthly_goal_end_date", "Period end", "date")}
+                    </div>
+                    <p className="text-[10px] text-slate-500">Leave empty to use the current calendar month.</p>
+                  </>
+            }
               </div>
 
               {/* Monthly bonus */}
@@ -176,22 +206,68 @@ export default function ChatterRulesAdmin() {
             
               </div>
 
-              {/* Info about tiers */}
-              <div className="bg-amber-950/20 rounded-xl border border-amber-700/30 p-4">
-                <p className="text-xs font-semibold text-amber-400 mb-2">Payout tiers (fixed)</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-              { range: "0–1 999 Kč", rate: "0 Kč/h, 0% provize" },
-              { range: "2 000–4 999 Kč", rate: "120 Kč/h" },
-              { range: "5 000–9 999 Kč", rate: "120 Kč/h + 5%" },
-              { range: "10 000+ Kč", rate: "120 Kč/h + 10%" }].
-              map((t) =>
-              <div key={t.range} className="text-[10px]">
-                      <span className="font-semibold text-slate-300">{t.range}</span>
-                      <br /><span className="text-slate-500">{t.rate}</span>
+              {/* Editable payout tiers */}
+              <div className="bg-amber-950/20 rounded-xl border border-amber-700/30 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-amber-400">Payout tiers (editable)</p>
+                  <button
+                onClick={addTier}
+                className="flex items-center gap-1 text-[10px] font-semibold text-amber-400 hover:text-amber-300 transition-colors">
+                
+                    <Plus className="w-3 h-3" /> Add tier
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-[1.3fr_0.8fr_0.8fr_0.8fr_0.8fr_auto] gap-2 text-[9px] font-semibold text-slate-500 uppercase tracking-wide px-1">
+                    <span>Name</span>
+                    <span>Min (CZK)</span>
+                    <span>Max (CZK)</span>
+                    <span>Hourly</span>
+                    <span>Commission %</span>
+                    <span></span>
+                  </div>
+                  {form.custom_tiers.map((t, idx) =>
+              <div key={idx} className="grid grid-cols-[1.3fr_0.8fr_0.8fr_0.8fr_0.8fr_auto] gap-2 items-center">
+                      <input
+                  value={t.name || ""}
+                  onChange={(e) => updateTier(idx, "name", e.target.value)}
+                  className="h-8 border border-white/10 rounded-lg px-2 text-xs bg-[#1e1e1e] text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#C9A227]/50" />
+                
+                      <input
+                  type="number"
+                  value={t.min ?? 0}
+                  onChange={(e) => updateTier(idx, "min", e.target.value)}
+                  className="h-8 border border-white/10 rounded-lg px-2 text-xs bg-[#1e1e1e] text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#C9A227]/50" />
+                
+                      <input
+                  type="number"
+                  placeholder="∞"
+                  value={t.max ?? ""}
+                  onChange={(e) => updateTier(idx, "max", e.target.value)}
+                  className="h-8 border border-white/10 rounded-lg px-2 text-xs bg-[#1e1e1e] text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#C9A227]/50" />
+                
+                      <input
+                  type="number"
+                  value={t.hourly ?? 0}
+                  onChange={(e) => updateTier(idx, "hourly", e.target.value)}
+                  className="h-8 border border-white/10 rounded-lg px-2 text-xs bg-[#1e1e1e] text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#C9A227]/50" />
+                
+                      <input
+                  type="number"
+                  value={t.commission ?? 0}
+                  onChange={(e) => updateTier(idx, "commission", e.target.value)}
+                  className="h-8 border border-white/10 rounded-lg px-2 text-xs bg-[#1e1e1e] text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#C9A227]/50" />
+                
+                      <button
+                  onClick={() => removeTier(idx)}
+                  className="text-slate-600 hover:text-red-400 transition-colors">
+                  
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
               )}
                 </div>
+                <p className="text-[10px] text-slate-500">Tiers apply by daily revenue. Leave "Max" empty for the top tier (unlimited).</p>
               </div>
 
               <button

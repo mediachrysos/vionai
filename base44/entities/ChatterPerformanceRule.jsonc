@@ -34,6 +34,16 @@
       "type": "number",
       "default": 150000
     },
+    "monthly_goal_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start of the period the monthly goal applies to (defaults to calendar month if empty)"
+    },
+    "monthly_goal_end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "End of the period the monthly goal applies to (defaults to calendar month if empty)"
+    },
     "monthly_bonus_enabled": {
       "type": "boolean",
       "default": false
@@ -45,6 +55,13 @@
     "monthly_bonus_condition_revenue": {
       "type": "number",
       "default": 0
+    },
+    "custom_tiers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Custom payout tiers for this chatter: [{name, min, max, hourly, commission}]. Empty = use default tiers."
     },
     "notes": {
       "type": "string"

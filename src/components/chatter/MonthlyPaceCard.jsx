@@ -1,31 +1,22 @@
 import React from "react";
 import { Calendar } from "lucide-react";
 
-export default function MonthlyPaceCard({ monthRevenue, monthlyGoalAmount, monthlyGoalEnabled }) {
-  if (!monthlyGoalEnabled || !monthlyGoalAmount) {
+export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd, monthlyGoalAmount, monthlyGoalEnabled }) {
+  if (!monthlyGoalEnabled || !monthlyGoalAmount || !periodStart || !periodEnd) {
     return null;
-
-
-
-
-
-
-
-
-
-
-
-
   }
 
-  const now = new Date();
-  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const dayOfMonth = now.getDate();
-  const daysLeft = daysInMonth - dayOfMonth;
+  const monthRevenue = periodRevenue || 0;
+  const start = new Date(`${periodStart}T00:00:00`);
+  const end = new Date(`${periodEnd}T00:00:00`);
+  const today = new Date();
+  const totalDays = Math.max(1, Math.round((end - start) / 86400000) + 1);
+  const dayOfPeriod = Math.min(totalDays, Math.max(1, Math.round((today - start) / 86400000) + 1));
+  const daysLeft = Math.max(0, totalDays - dayOfPeriod);
   const remaining = Math.max(0, monthlyGoalAmount - monthRevenue);
   const avgNeeded = daysLeft > 0 ? Math.round(remaining / daysLeft) : 0;
-  const avgCurrent = dayOfMonth > 0 ? Math.round(monthRevenue / dayOfMonth) : 0;
-  const expectedAtPace = avgCurrent * daysInMonth;
+  const avgCurrent = dayOfPeriod > 0 ? Math.round(monthRevenue / dayOfPeriod) : 0;
+  const expectedAtPace = avgCurrent * totalDays;
   const paceGap = expectedAtPace - monthlyGoalAmount;
   const pct = Math.min(100, Math.round(monthRevenue / monthlyGoalAmount * 100));
   const isAhead = paceGap >= 0;
