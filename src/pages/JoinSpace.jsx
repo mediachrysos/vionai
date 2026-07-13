@@ -9,13 +9,31 @@ export default function JoinSpace() {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("idle"); // idle | success | pending | already_in
 
+  const [autoJoining, setAutoJoining] = useState(true);
+
   useEffect(() => {
-    const pendingCode = sessionStorage.getItem("pending_invite_code");
-    if (pendingCode) {
-      sessionStorage.removeItem("pending_invite_code");
-      setCode(pendingCode);
-      processJoin(pendingCode);
-    }
+    const init = async () => {
+      const pendingCode = sessionStorage.getItem("pending_invite_code");
+      if (pendingCode) {
+        sessionStorage.removeItem("pending_invite_code");
+        setCode(pendingCode);
+        setAutoJoining(false);
+        processJoin(pendingCode);
+        return;
+      }
+      // Single-workspace app — if there's exactly one active space, join it automatically
+      // instead of asking the user to type an invite code they don't have.
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const spaces = await base44.entities.Space.filter({ status: "active" });
+        if (spaces.length === 1) {
+          processJoin(spaces[0].invite_code);
+          return;
+        }
+      }
+      setAutoJoining(false);
+    };
+    init();
   }, []);
 
   const processJoin = async (inviteCode) => {
@@ -91,6 +109,14 @@ export default function JoinSpace() {
         </p>
         <p className="text-xs text-slate-600">Once approved and assigned a role, you'll have full access.</p>
       </FullPageCard>
+    );
+  }
+
+  if (autoJoining || loading) {
+    return (
+      <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-slate-600 border-t-[#C9A227] rounded-full animate-spin" />
+      </div>
     );
   }
 
