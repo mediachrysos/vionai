@@ -33,6 +33,7 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
   const [results, setResults] = useState(null);
   const [copied, setCopied] = useState(false);
   const [unmatchedOpen, setUnmatchedOpen] = useState(false);
+  const [confirmedOpen, setConfirmedOpen] = useState(false);
   const navigate = useNavigate();
 
   const { data: customers = [] } = useQuery({ queryKey: ["customers"], queryFn: () => base44.entities.Customer.list("-created_date", 500), staleTime: 60000 });
@@ -68,6 +69,7 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
       stillUnmatched.push(name);
     });
     setUnmatchedOpen(false);
+    setConfirmedOpen(false);
     setResults({ paid, confirmedOnly, unmatched: stillUnmatched, matchedHistorical });
   };
 
@@ -147,14 +149,19 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
             }
               </div>
 
-              {/* Confirmed link only, no payment yet */}
+              {/* Confirmed link only, no payment yet — collapsed by default */}
               <div className="rounded-xl border border-amber-500/20 overflow-hidden">
-                <div className="px-3 py-2 border-b border-amber-500/20 flex items-center gap-2 bg-amber-500/10">
+                <button
+              onClick={() => setConfirmedOpen((v) => !v)}
+              className="w-full px-3 py-2 border-b border-amber-500/20 flex items-center gap-2 bg-amber-500/10 hover:bg-amber-500/15 transition-colors">
+
                   <UserCircle className="w-3.5 h-3.5 text-amber-400" />
                   <span className="text-xs font-semibold text-slate-300">Confirmed, no payment yet</span>
                   <span className="ml-auto text-xs text-slate-500">{results.confirmedOnly.length}</span>
-                </div>
-                {results.confirmedOnly.length === 0 ?
+                  {confirmedOpen ? <ChevronUp className="w-3.5 h-3.5 text-slate-500" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
+                </button>
+                {confirmedOpen &&
+            (results.confirmedOnly.length === 0 ?
             <p className="text-xs text-slate-600 px-3 py-2">No matches</p> :
 
             <div className="divide-y divide-white/5">
@@ -169,7 +176,8 @@ export default function ChatterScraperEmbed({ chatterEmail }) {
                         </div>
                       </div>
               )}
-                  </div>
+                  </div>)
+
             }
               </div>
 
