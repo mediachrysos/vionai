@@ -375,10 +375,10 @@ function ChatterView({ currentUser, isAdminView = false }) {
       <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12 pt-6 space-y-4">
 
         {/* Hero widget */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
+        <div className="bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-sm px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
             <ProfilePhotoUpload user={currentUser} isAdminView={isAdminView} size="w-10 h-10" />
-            <p className="text-slate-700 text-sm font-semibold">{displayName}</p>
+            <p className="text-slate-100 text-sm font-semibold">{displayName}</p>
             {!isAdminView && (
               <button
                 onClick={() => setShowNicknameModal(true)}

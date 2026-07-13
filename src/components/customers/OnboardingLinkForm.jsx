@@ -50,7 +50,7 @@ export default function OnboardingLinkForm({ models = [], currentUser }) {
            placeholder="Customer name..."
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="h-9 text-sm bg-white border-slate-200 text-slate-700 placeholder:text-slate-400"
+          className="h-9 text-sm"
         />
       </div>
 
@@ -58,7 +58,7 @@ export default function OnboardingLinkForm({ models = [], currentUser }) {
         <div className="min-w-44">
           <label className="text-xs font-semibold text-slate-500 block mb-1.5">Model *</label>
            <Select value={assignedModel} onValueChange={setAssignedModel}>
-             <SelectTrigger className="h-9 text-sm bg-white border-slate-200 text-slate-700">
+             <SelectTrigger className="h-9 text-sm">
                <SelectValue placeholder="Select model..." />
             </SelectTrigger>
             <SelectContent>
