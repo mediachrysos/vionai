@@ -386,6 +386,14 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-12 pt-6 space-y-4">
 
+        {/* Monthly pace */}
+        <MonthlyPaceCard
+          periodRevenue={goalRevenue}
+          periodStart={goalStart}
+          periodEnd={goalEnd}
+          monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
+          monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
+
         {/* Today's payments + My notes — side by side */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
           <TodayPaymentsWidget payments={payments} />
@@ -429,14 +437,6 @@ function ChatterView({ currentUser, isAdminView = false }) {
           dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
           hoursMap={hoursMap}
           tiers={tiers} />
-
-        {/* Monthly pace */}
-        <MonthlyPaceCard
-          periodRevenue={goalRevenue}
-          periodStart={goalStart}
-          periodEnd={goalEnd}
-          monthlyGoalAmount={activeRule?.monthly_goal_amount || 0}
-          monthlyGoalEnabled={!!activeRule?.monthly_goal_enabled} />
 
         {/* Shift calendar */}
         <ChatterShiftPicker email={email} name={displayName} />
