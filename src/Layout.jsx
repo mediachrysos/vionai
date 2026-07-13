@@ -125,8 +125,11 @@ export default function Layout({ children, currentPageName }) {
           allowedPages = Array.from(pageSet);
         }
 
+        // Detail pages are reached by navigating from an already-allowed list page
+        // (Customers, ChatterPortal, SocialMediaContent...) — never gate them directly.
+        const ALWAYS_ALLOWED_DETAIL_PAGES = ["CustomerDetail", "ModelDetail", "ChatterDetail"];
         const currentPath = window.location.pathname.replace("/", "") || "Dashboard";
-        if (!allowedPages.includes(currentPath)) {
+        if (!allowedPages.includes(currentPath) && !ALWAYS_ALLOWED_DETAIL_PAGES.includes(currentPath)) {
           const firstPage = allowedPages[0] || "ChatterPortal";
           window.location.replace(`/${firstPage}`);
         }
