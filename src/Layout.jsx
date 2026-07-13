@@ -59,7 +59,9 @@ export default function Layout({ children, currentPageName }) {
 
       const payment = await base44.entities.Payment.create(data);
       if (data.customer_id) {
-        const cust = customers.find(c => c.id === data.customer_id);
+        // Fetch fresh to avoid stale cache race condition (same fix as BankAccount below)
+        const freshCustomers = await base44.entities.Customer.filter({ id: data.customer_id });
+        const cust = freshCustomers[0];
         if (cust) {
           const updates = {
             total_spent: (cust.total_spent || 0) + (data.amount || 0),
