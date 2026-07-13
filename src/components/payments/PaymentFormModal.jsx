@@ -96,7 +96,8 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
       customer_name: c.full_name,
       model_id: c.assigned_model || prev.model_id,
       model_name: modelMatch?.name || prev.model_name,
-      chatter_email: c.assigned_chatter || prev.chatter_email,
+      // chatter_email stays as the logged-in user who is recording the payment —
+      // never overwritten by the customer's assigned chatter.
       bank_account_id: modelMatch?.assigned_bank_account_ids?.length === 1 ? modelMatch.assigned_bank_account_ids[0] : prev.bank_account_id,
       account_name: modelMatch?.assigned_bank_account_ids?.length === 1
         ? bankAccounts.find((a) => a.id === modelMatch.assigned_bank_account_ids[0])?.name || prev.account_name
