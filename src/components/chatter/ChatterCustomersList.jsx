@@ -14,6 +14,13 @@ const parsePhone = (phone) => {
   return { code: "+420", local: phone };
 };
 
+const formatPhoneDisplay = (phone) => {
+  const { code, local } = parsePhone(phone);
+  const digits = (local || "").replace(/\s/g, "");
+  const grouped = digits.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+  return grouped ? `${code} ${grouped}` : code;
+};
+
 function PhoneCell({ customer, onSave }) {
   const [editing, setEditing] = useState(false);
   const parsed = parsePhone(customer.phone);
@@ -54,7 +61,7 @@ function PhoneCell({ customer, onSave }) {
 
   return (
     <button onClick={(e) => { e.stopPropagation(); setEditing(true); }} className="text-xs text-slate-300 hover:text-[#C9A227] flex items-center gap-1">
-      {parsed.code === "+421" ? "🇸🇰" : "🇨🇿"} {customer.phone}
+      {parsed.code === "+421" ? "🇸🇰" : "🇨🇿"} {formatPhoneDisplay(customer.phone)}
     </button>);
 
 }
