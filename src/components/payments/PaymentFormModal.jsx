@@ -24,7 +24,14 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     enabled: open,
     staleTime: 30000,
   });
-  const customers = fetchedCustomers.length > 0 ? fetchedCustomers : customersProp;
+  const allCustomers = fetchedCustomers.length > 0 ? fetchedCustomers : customersProp;
+
+  // Chatters (non-admins) only see their own assigned models and the customers confirmed on them
+  const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
+  const isAdmin = currentRoles.includes("admin");
+  const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
+  const models_ = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
+  const customers = isAdmin ? allCustomers : allCustomers.filter((c) => Array.isArray(c.assigned_models) && c.assigned_models.some((mid) => chatterModelIds.includes(mid)));
   const [form, setForm] = useState({
     customer_id: "", customer_name: "", amount: "", service_type: "",
     model_id: "", model_name: "", chatter_email: "", chatter_name: "",
@@ -82,7 +89,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     : customers;
 
   const selectCustomer = (c) => {
-    const modelMatch = models.find((m) => m.id === c.assigned_model);
+    const modelMatch = models_.find((m) => m.id === c.assigned_model);
     setForm((prev) => ({
       ...prev,
       customer_id: c.id,
@@ -100,7 +107,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   };
 
   const handleModelChange = (modelId) => {
-    const m = models.find((x) => x.id === modelId);
+    const m = models_.find((x) => x.id === modelId);
     const allowedIds = m?.assigned_bank_account_ids || [];
     const singleAllowed = allowedIds.length === 1 ? bankAccounts.find((a) => a.id === allowedIds[0]) : null;
     setForm((prev) => ({
@@ -112,7 +119,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     }));
   };
 
-  const selectedModel = models.find((m) => m.id === form.model_id);
+  const selectedModel = models_.find((m) => m.id === form.model_id);
   const allowedBankAccounts = selectedModel?.assigned_bank_account_ids?.length > 0
     ? bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id))
     : bankAccounts;
@@ -250,7 +257,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
               <Select value={form.model_id} onValueChange={handleModelChange}>
                 <SelectTrigger><SelectValue placeholder="Select model" /></SelectTrigger>
                 <SelectContent>
-                  {models.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                  {models_.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
