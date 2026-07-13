@@ -57,6 +57,19 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
   const [saving, setSaving] = useState(false);
   const searchRef = useRef(null);
+  const customerFieldRef = useRef(null);
+
+  // Close the customer dropdown when clicking anywhere outside the search field/list
+  useEffect(() => {
+    if (!showCustomerDropdown) return;
+    const handleClickOutside = (e) => {
+      if (customerFieldRef.current && !customerFieldRef.current.contains(e.target)) {
+        setShowCustomerDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showCustomerDropdown]);
 
   useEffect(() => {
     if (open) {
@@ -186,7 +199,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
             </div>
           )}
           {mode === "payment" && (
-          <div className="relative">
+          <div className="relative" ref={customerFieldRef}>
             <Label>Customer *</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
