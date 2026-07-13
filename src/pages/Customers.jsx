@@ -324,10 +324,9 @@ export default function Customers({ currentUser }) {
     const rows = [
     ["Name", "Email", "Phone", "Bank", "Account Number", "Pay Day", "Total", "Payments"],
     ...customers.
-    filter((c) => (customerStats[c.id]?.total || 0) > 0).
+    filter((c) => (c.total_spent || 0) > 0).
     map((c) => {
-      const st = customerStats[c.id] || {};
-      return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, st.total || 0, allPayments.filter((p) => p.customer_id === c.id).length];
+      return [c.full_name, c.email, c.phone, c.bank_name, c.bank_account_number, c.pay_day_of_month, c.total_spent || 0, c.payment_count || 0];
     })];
 
     const csv = rows.map((r) => r.map((v) => `"${v ?? ""}"`).join(",")).join("\n");
@@ -376,7 +375,7 @@ export default function Customers({ currentUser }) {
     const sa = customerStats[a.id] || {};
     const sb = customerStats[b.id] || {};
     if (sortBy === "most_paid") {
-      return (sb.total || 0) - (sa.total || 0);
+      return (b.total_spent || 0) - (a.total_spent || 0);
     }
     if (sortBy === "pay_day") {
       const todayDay = today.getDate();
@@ -673,8 +672,8 @@ export default function Customers({ currentUser }) {
                   const merged = mergedStats[c.id];
                   const st = merged ? { total: merged.total, lastDate: null, lastAmount: null } : customerStats[c.id] || {};
                   const rawSt = customerStats[c.id] || {};
-                  const displayTotal = merged ? merged.total : rawSt.total || 0;
-                  const displayCount = merged ? merged.count : customerPaymentCount[c.id] || 0;
+                  const displayTotal = merged ? merged.total : c.total_spent || 0;
+                  const displayCount = merged ? merged.count : c.payment_count || 0;
                   const daysSinceLast = rawSt.lastDate ? Math.floor((Date.now() - new Date(rawSt.lastDate)) / 86400000) : null;
                   const isExpanded = expandedMerge === c.id;
 
