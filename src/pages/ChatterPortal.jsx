@@ -307,10 +307,11 @@ function ChatterView({ currentUser, isAdminView = false }) {
   });
 
   const chatterModelIds = React.useMemo(() => {
-    const fromModels = models.filter((m) => m.assigned_chatters?.includes(email)).map((m) => m.id);
+    // Source of truth is the per-chatter assignment set in All Users (AdminUsers) —
+    // not the Model.assigned_chatters list, which can go stale.
     const fromUser = currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : []);
-    return [...new Set([...fromModels, ...fromUser])].filter((id) => id != null && id !== "");
-  }, [models, email, currentUser]);
+    return [...new Set(fromUser)].filter((id) => id != null && id !== "");
+  }, [currentUser]);
 
   const activeRule = rules.find((r) => r.is_active) || null;
   const tiers = DEFAULT_TIERS;
