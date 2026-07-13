@@ -34,7 +34,7 @@ export default function DailyBreakdownCard({ monthPayments, dailyGoalAmount, dai
           {dayGroups.length === 0 ?
         <p className="text-sm text-slate-600 text-center py-6">No data yet</p> :
 
-        <div className="space-y-2">
+        <div className="space-y-2 max-h-[350px] overflow-y-auto pr-1">
               {dayGroups.map((day) => {
             const hours = hoursMap?.[day.date] || 0;
             const { payout } = calcDailyPayout(day.revenue, hours, tiers);
