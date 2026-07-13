@@ -68,6 +68,17 @@ function AdminChattingSpace({ currentUser }) {
     return uRoles.includes("chatter") || u.allowed_pages?.includes("ChatterPortal");
   }), [users]);
 
+  // If returning from a customer detail page with a ?chatter= param, jump straight back into that chatter's space
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatterEmail = urlParams.get("chatter");
+    if (chatterEmail && chatters.length > 0 && !selectedChatter) {
+      const match = chatters.find((u) => u.email === chatterEmail);
+      if (match) setSelectedChatter(match);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatters]);
+
   const { start, end, prevStart, prevEnd } = getPeriodDates(period);
 
   const periodPayments = useMemo(() =>

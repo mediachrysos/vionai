@@ -83,6 +83,9 @@ function PackageTile({ item, onSave, onDelete }) {
 }
 
 export default function ChattingCustomerCard({ customer, payments, onUpdate }) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const chatterEmail = urlParams.get("chatter");
+  const backUrl = createPageUrl("ChatterPortal") + (chatterEmail ? `?chatter=${encodeURIComponent(chatterEmail)}` : "");
   const [groups, setGroups] = useState(() => parseContent(customer.sent_content));
   const [phoneCode, setPhoneCode] = useState("+420");
   const [phoneLocal, setPhoneLocal] = useState("");
@@ -126,7 +129,7 @@ export default function ChattingCustomerCard({ customer, payments, onUpdate }) {
 
   return (
     <div className="p-4 lg:p-8 max-w-5xl mx-auto space-y-5">
-      <Link to={createPageUrl("ChatterPortal")} className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#C9A227] mb-1 transition-colors">
+      <Link to={backUrl} className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#C9A227] mb-1 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" /> Back to chatting space
       </Link>
 

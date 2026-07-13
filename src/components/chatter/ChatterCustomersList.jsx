@@ -7,22 +7,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+const parsePhone = (phone) => {
+  if (!phone) return { code: "+420", local: "" };
+  if (phone.startsWith("+421")) return { code: "+421", local: phone.slice(4) };
+  if (phone.startsWith("+420")) return { code: "+420", local: phone.slice(4) };
+  return { code: "+420", local: phone };
+};
+
 function PhoneCell({ customer, onSave }) {
   const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState(customer.phone || "");
+  const parsed = parsePhone(customer.phone);
+  const [code, setCode] = useState(parsed.code);
+  const [local, setLocal] = useState(parsed.local);
 
   if (editing) {
     return (
-      <input
-        autoFocus
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+      <div
         onClick={(e) => e.stopPropagation()}
-        onBlur={() => { setEditing(false); if (value !== customer.phone) onSave(value); }}
-        onKeyDown={(e) => { if (e.key === "Enter") e.target.blur(); }}
-        placeholder="+420..."
-        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-slate-200 w-32 outline-none focus:border-[#C9A227]/50" />
-
+        className="flex items-center border border-white/10 rounded focus-within:border-[#C9A227]/50">
+        <select
+          value={code}
+          onChange={(e) => { setCode(e.target.value); onSave(e.target.value + local); }}
+          className="bg-white/5 text-xs text-slate-300 outline-none py-1 pl-1.5 pr-0.5 cursor-pointer rounded-l">
+          <option value="+420">🇨🇿 +420</option>
+          <option value="+421">🇸🇰 +421</option>
+        </select>
+        <input
+          autoFocus
+          value={local}
+          onChange={(e) => setLocal(e.target.value)}
+          onBlur={() => { setEditing(false); const newPhone = code + local.replace(/\s/g, ""); if (newPhone !== customer.phone) onSave(newPhone); }}
+          onKeyDown={(e) => { if (e.key === "Enter") e.target.blur(); }}
+          placeholder="Number"
+          className="bg-white/5 rounded-r px-1.5 py-1 text-xs text-slate-200 w-24 outline-none" />
+      </div>
     );
   }
 
@@ -35,8 +53,8 @@ function PhoneCell({ customer, onSave }) {
   }
 
   return (
-    <button onClick={(e) => { e.stopPropagation(); setEditing(true); }} className="text-xs text-slate-300 hover:text-[#C9A227]">
-      {customer.phone}
+    <button onClick={(e) => { e.stopPropagation(); setEditing(true); }} className="text-xs text-slate-300 hover:text-[#C9A227] flex items-center gap-1">
+      {parsed.code === "+421" ? "🇸🇰" : "🇨🇿"} {customer.phone}
     </button>);
 
 }
@@ -256,7 +274,7 @@ export default function ChatterCustomersList({ chatterEmail, assignedModelIds = 
               return (
                 <tr
                   key={c.id}
-                  onClick={() => navigate(`/CustomerDetail?id=${c.id}&scope=chatting`)}
+                  onClick={() => navigate(`/CustomerDetail?id=${c.id}&scope=chatting&chatter=${encodeURIComponent(chatterEmail)}`)}
                   className={`border-b cursor-pointer transition-colors ${isPayday ? "bg-[#C9A227]/10 border-[#C9A227]/20 hover:bg-[#C9A227]/15" : "border-white/5 hover:bg-white/5"}`}>
                   
                     <td className="px-5 py-3.5">
