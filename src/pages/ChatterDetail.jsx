@@ -1,10 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { usePayments } from "@/hooks/usePayments";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
+import ShiftEditRow from "@/components/chatter/ShiftEditRow";
+import DailyHoursEditor from "@/components/chatter/DailyHoursEditor";
+import BonusPayoutForm from "@/components/chatter/BonusPayoutForm";
 
 function relTime(dateStr, createdDate) {
   const base = createdDate || dateStr;
@@ -29,6 +32,7 @@ export default function ChatterDetail({ currentUser }) {
   const params = new URLSearchParams(window.location.search);
   const chatterId = params.get("id");
 
+  const qcClient = useQueryClient();
   const [chartRange, setChartRange] = useState(30);
   const [pmtSort, setPmtSort] = useState("newest");
   const [pmtModelFilter, setPmtModelFilter] = useState("all");
@@ -223,26 +227,7 @@ export default function ChatterDetail({ currentUser }) {
                 const dayRev = myPayments
                   .filter(p => (p.payment_date || p.created_date?.split("T")[0]) === shift.date)
                   .reduce((s, p) => s + (p.amount || 0), 0);
-                return (
-                  <div key={shift.id} className={`flex items-center justify-between px-3 py-2.5 rounded-lg border ${isToday ? "bg-amber-950/15 border-amber-700/20" : "bg-[#252525] border-white/6"}`}>
-                    <div>
-                      <p className="text-xs font-medium text-slate-200">
-                        {new Date(shift.date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
-                      </p>
-                      {shift.note && <p className="text-[10px] text-slate-500">{shift.note}</p>}
-                    </div>
-                    <div className="text-right">
-                      {dayRev > 0 ? (
-                        <p className="text-xs font-semibold text-emerald-400">{dayRev.toLocaleString("cs-CZ")} CZK</p>
-                      ) : (
-                        <p className="text-[10px] text-slate-600">No payments</p>
-                      )}
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isToday ? "bg-amber-800/40 text-amber-300" : "bg-emerald-900/30 text-emerald-500"}`}>
-                        {isToday ? "Active" : "Completed"}
-                      </span>
-                    </div>
-                  </div>
-                );
+                return <ShiftEditRow key={shift.id} shift={shift} dayRev={dayRev} isToday={isToday} />;
               })}
             </div>
           )}
@@ -292,9 +277,13 @@ export default function ChatterDetail({ currentUser }) {
         </div>
       </div>
 
+      {/* Daily Hours */}
+      <DailyHoursEditor email={chatterId} />
+
       {/* Payout History */}
       <div className="bg-[#1e1e1e] border border-white/8 rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-slate-200 mb-4">Payout History</h2>
+        <h2 className="text-sm font-semibold text-slate-200 mb-4">Payout History & Bonus</h2>
+        <BonusPayoutForm email={chatterId} />
         {myPayouts.length === 0 ? (
           <p className="text-xs text-slate-600">Payout calculation pending</p>
         ) : (
@@ -303,7 +292,17 @@ export default function ChatterDetail({ currentUser }) {
               .sort((a, b) => (b.period || "").localeCompare(a.period || ""))
               .slice(0, 8)
               .map(po => (
-                <div key={po.id} className="bg-[#252525] rounded-xl border border-white/6 px-4 py-3">
+                <div key={po.id} className="bg-[#252525] rounded-xl border border-white/6 px-4 py-3 relative">
+                  <button
+                    onClick={async () => {
+                      if (!window.confirm("Delete this payout?")) return;
+                      await base44.entities.ChatterPayout.delete(po.id);
+                      qcClient.invalidateQueries({ queryKey: ["chatterPayouts"] });
+                    }}
+                    className="absolute top-2 right-2 text-slate-600 hover:text-red-400 transition-colors text-[10px]"
+                  >
+                    ✕
+                  </button>
                   <p className="text-[10px] text-slate-500 uppercase tracking-wider">{po.period || "—"}</p>
                   <p className="text-sm font-bold text-white mt-1">{po.amount?.toLocaleString("cs-CZ")} CZK</p>
                   {po.note && <p className="text-[10px] text-slate-500 mt-1 truncate">{po.note}</p>}
