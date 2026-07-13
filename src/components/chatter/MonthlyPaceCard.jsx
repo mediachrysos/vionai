@@ -21,7 +21,7 @@ export default function MonthlyPaceCard({ periodRevenue, periodStart, periodEnd,
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-[220px]">
           <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase mb-2.5">Monthly Goal</p>
-          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden max-w-xs">
+          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full bg-[#C9A227]/70 transition-all duration-700"
               style={{ width: `${pct}%` }} />
