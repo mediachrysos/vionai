@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarWidget } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X, Search, Bot, ExternalLink } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X, Search, Bot, ExternalLink, Save, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
@@ -286,6 +286,12 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   const [assignedIds, setAssignedIds] = useState(
     (user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : [])).filter((id) => id != null && id !== "")
   );
+  const [committedIds, setCommittedIds] = useState(
+    (user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : [])).filter((id) => id != null && id !== "")
+  );
+  const [savingModels, setSavingModels] = useState(false);
+  const [syncProgress, setSyncProgress] = useState(null);
+  const [elapsedSec, setElapsedSec] = useState(0);
   const [userRoles, setUserRoles] = useState(
     user.roles?.length > 0 ? user.roles : user.role ? [user.role] : ["user"]
   );
@@ -303,6 +309,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   useEffect(() => {
     setAllowedPages(user.allowed_pages || []);
     setAssignedIds((user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : [])).filter((id) => id != null && id !== ""));
+    setCommittedIds((user.assigned_model_ids || (user.assigned_model ? [user.assigned_model] : [])).filter((id) => id != null && id !== ""));
     setUserRoles(user.roles?.length > 0 ? user.roles : user.role ? [user.role] : ["user"]);
     setNickname(user.nickname || "");
   }, [user.allowed_pages, user.assigned_model_ids, user.assigned_model, user.roles, user.role, user.nickname]);
@@ -357,32 +364,59 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
     setDashboards(updated);
   };
 
-  const toggleModel = async (modelId) => {
-    const isAdding = !assignedIds.includes(modelId);
-    const next = isAdding ?
-    [...assignedIds, modelId] :
-    assignedIds.filter((id) => id !== modelId);
-    setAssignedIds(next);
-    await onUpdate(user.id, { assigned_model_ids: next });
+  // Toggling only stages the change locally — persisted via handleSaveModels ("Save")
+  const toggleModel = (modelId) => {
+    setAssignedIds((prev) =>
+    prev.includes(modelId) ? prev.filter((id) => id !== modelId) : [...prev, modelId]
+    );
+  };
 
-    // Sync assigned_chatter on customers that have this model assigned
+  const hasModelChanges =
+  assignedIds.length !== committedIds.length ||
+  assignedIds.some((id) => !committedIds.includes(id)) ||
+  committedIds.some((id) => !assignedIds.includes(id));
+
+  useEffect(() => {
+    if (!savingModels) return;
+    setElapsedSec(0);
+    const timer = setInterval(() => setElapsedSec((s) => s + 1), 1000);
+    return () => clearInterval(timer);
+  }, [savingModels]);
+
+  const handleSaveModels = async () => {
+    const added = assignedIds.filter((id) => !committedIds.includes(id));
+    const removed = committedIds.filter((id) => !assignedIds.includes(id));
+    setSavingModels(true);
+    await onUpdate(user.id, { assigned_model_ids: assignedIds });
+
+    // Sync assigned_chatter on affected customers
     const customers = await base44.entities.Customer.list("-created_date", 5000);
-    const toUpdate = isAdding ?
-    customers.filter((c) => Array.isArray(c.assigned_models) && c.assigned_models.includes(modelId)) :
-    customers.filter((c) => c.assigned_chatter === user.email && Array.isArray(c.assigned_models) && c.assigned_models.includes(modelId));
-    // Batch updates in groups of 5 to avoid rate limit
+    const toAdd = customers.filter((c) => Array.isArray(c.assigned_models) && added.some((id) => c.assigned_models.includes(id)));
+    const toRemove = customers.filter((c) =>
+    c.assigned_chatter === user.email &&
+    Array.isArray(c.assigned_models) &&
+    removed.some((id) => c.assigned_models.includes(id)) &&
+    !added.some((id) => c.assigned_models.includes(id))
+    );
+    const changes = [
+    ...toAdd.map((c) => ({ id: c.id, data: { assigned_chatter: user.email } })),
+    ...toRemove.map((c) => ({ id: c.id, data: { assigned_chatter: "" } }))];
+
+
+    setSyncProgress({ done: 0, total: changes.length });
     const batchSize = 5;
-    for (let i = 0; i < toUpdate.length; i += batchSize) {
-      const batch = toUpdate.slice(i, i + batchSize);
-      await Promise.all(
-        batch.map((c) =>
-        base44.entities.Customer.update(c.id, { assigned_chatter: isAdding ? user.email : "" })
-        )
-      );
-      if (i + batchSize < toUpdate.length) {
+    for (let i = 0; i < changes.length; i += batchSize) {
+      const batch = changes.slice(i, i + batchSize);
+      await Promise.all(batch.map((item) => base44.entities.Customer.update(item.id, item.data)));
+      setSyncProgress({ done: Math.min(i + batchSize, changes.length), total: changes.length });
+      if (i + batchSize < changes.length) {
         await new Promise((resolve) => setTimeout(resolve, 200));
       }
     }
+
+    setCommittedIds(assignedIds);
+    setSavingModels(false);
+    setSyncProgress(null);
   };
 
   const togglePage = (page) => {
@@ -522,21 +556,45 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
       }
 
       {isChatter && models.filter((m) => m.status === "active").length > 0 &&
-      <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-t border-white/10 bg-[#252525]">
-          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mr-1">Models</span>
-          {models.filter((m) => m.status === "active").map((m) => {
-          const assigned = assignedIds.includes(m.id);
-          return (
-            <button key={m.id} onClick={() => toggleModel(m.id)}
-            className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
-            assigned ?
-            "bg-amber-950/50 text-amber-300 border-amber-700/30" :
-            "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"}`
-            }>
-                {assigned && <span className="mr-1 text-amber-400">✓</span>}{m.name}
-              </button>);
+      <div className="flex flex-col gap-2 px-4 py-2.5 border-t border-white/10 bg-[#252525]">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mr-1">Models</span>
+            {models.filter((m) => m.status === "active").map((m) => {
+            const assigned = assignedIds.includes(m.id);
+            return (
+              <button key={m.id} onClick={() => toggleModel(m.id)} disabled={savingModels}
+              className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all disabled:opacity-50 ${
+              assigned ?
+              "bg-amber-950/50 text-amber-300 border-amber-700/30" :
+              "bg-[#1e1e1e] text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"}`
+              }>
+                  {assigned && <span className="mr-1 text-amber-400">✓</span>}{m.name}
+                </button>);
 
-        })}
+          })}
+            {hasModelChanges &&
+          <button onClick={handleSaveModels} disabled={savingModels}
+          className="ml-1 flex items-center gap-1.5 text-xs px-3 py-1 rounded-lg font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors disabled:opacity-60">
+                {savingModels ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                {savingModels ? "Saving..." : "Save"}
+              </button>
+          }
+          </div>
+          {savingModels &&
+        <div className="flex items-center gap-2 text-[11px] text-slate-400">
+              <Clock className="w-3 h-3" />
+              <span>{elapsedSec}s elapsed</span>
+              {syncProgress && syncProgress.total > 0 &&
+          <>
+                  <span className="text-slate-600">·</span>
+                  <span>Updating customers {syncProgress.done}/{syncProgress.total}</span>
+                  <div className="flex-1 max-w-[120px] h-1.5 rounded-full bg-white/10 overflow-hidden">
+                    <div className="h-full bg-emerald-500 transition-all" style={{ width: `${syncProgress.total ? syncProgress.done / syncProgress.total * 100 : 0}%` }} />
+                  </div>
+                </>
+          }
+            </div>
+        }
         </div>
       }
 
