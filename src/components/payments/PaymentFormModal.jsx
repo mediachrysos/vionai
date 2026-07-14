@@ -13,15 +13,17 @@ import { useQuery } from "@tanstack/react-query";
 
 const quickAmounts = [100, 200, 300, 500, 700, 1000];
 
-export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers: customersProp = [], models, users, currentUser, existingPayment }) {
+export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers: customersProp = [], models, users, currentUser, existingPayment, bankAccounts: bankAccountsProp = [] }) {
   // Role detection first — used in queries below
   const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = currentRoles.includes("admin");
 
-  const { data: bankAccounts = [] } = useQuery({
-    queryKey: ["bankAccountsAll"],
-    queryFn: () => base44.entities.BankAccount.list()
+  const { data: bankAccountsFetched = [] } = useQuery({
+    queryKey: ["bankAccounts"],
+    queryFn: () => base44.entities.BankAccount.list(),
+    staleTime: 60000,
   });
+  const bankAccounts = bankAccountsFetched.length > 0 ? bankAccountsFetched : bankAccountsProp;
   const { data: fetchedCustomers = [] } = useQuery({
     queryKey: ["customers"],
     queryFn: () => base44.entities.Customer.list("-created_date", 9999),
