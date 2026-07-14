@@ -16,21 +16,22 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = currentRoles.includes("admin");
 
-  // Always fetch bank accounts directly — don't rely on props which may be empty on first render
-  const { data: fetchedBankAccounts = [] } = useQuery({
+  const { data: fetchedBankAccounts = [], isLoading: loadingAccounts } = useQuery({
     queryKey: ["bankAccounts"],
     queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
     staleTime: 60000,
   });
+  // Use fetched data first, fall back to props
   const bankAccounts = fetchedBankAccounts.length > 0 ? fetchedBankAccounts : bankAccountsProp;
 
-  const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
-  const { data: fetchedModels = [] } = useQuery({
+  const { data: fetchedModels = [], isLoading: loadingModels } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list(),
     staleTime: 120000,
   });
   const allModels = fetchedModels.length > 0 ? fetchedModels : (models || []);
+
+  const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
   const models_ = isAdmin ? allModels : allModels.filter((m) => chatterModelIds.includes(m.id));
   const customers = isAdmin ? customersProp : customersProp.filter((c) => {
     if (c.assigned_chatter === currentUser?.email) return true;
@@ -155,12 +156,14 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   }, [isAdmin, models_]);
 
   const allowedBankAccounts = (() => {
+    // Wait for data to load before filtering — show all if still loading
+    if (loadingAccounts || loadingModels) return bankAccounts;
     // If a specific model is selected and has account restrictions, filter by that model
     if (selectedModel?.assigned_bank_account_ids?.length > 0) {
       const filtered = bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id));
       if (filtered.length > 0) return filtered;
     }
-    // For chatters: show union of all accounts allowed across their models
+    // For chatters: show union of all accounts allowed across their assigned models
     if (!isAdmin && chatterAllowedAccountIds) {
       const filtered = bankAccounts.filter((a) => chatterAllowedAccountIds.has(a.id));
       if (filtered.length > 0) return filtered;
@@ -329,7 +332,9 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 const acc = bankAccounts.find((a) => a.id === v);
                 setForm((prev) => ({ ...prev, bank_account_id: v, account_name: acc?.name || "" }));
               }}>
-              <SelectTrigger><SelectValue placeholder="Select account" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder={loadingAccounts || loadingModels ? "Loading..." : "Select account"} />
+              </SelectTrigger>
               <SelectContent>
                 {allowedBankAccounts.map((a) =>
                   <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
