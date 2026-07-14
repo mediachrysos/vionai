@@ -47,18 +47,7 @@
         "role": "admin"
       }
     },
-    "read": {
-      "$or": [
-        {
-          "data.designer_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
+    "read": {},
     "update": {
       "user_condition": {
         "role": "admin"
