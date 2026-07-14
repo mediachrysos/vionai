@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,18 +37,19 @@ export default function PaymentFormModal({
   existingPayment,
 }) {
   const isAdmin = (currentUser?.roles || (currentUser?.role ? [currentUser.role] : [])).includes("admin");
+  const qc = useQueryClient();
 
-  // Always fetch fresh bank accounts directly — fixes RLS issue for chatters
+  // Always fetch fresh — staleTime:0 ensures we never use a stale empty cache
   const { data: bankAccounts = [] } = useQuery({
     queryKey: ["bankAccounts"],
     queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
-    staleTime: 60000,
+    staleTime: 0,
   });
 
   const { data: allModels = [] } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list(),
-    staleTime: 120000,
+    staleTime: 0,
   });
 
   // Chatter's assigned model IDs
@@ -78,9 +79,11 @@ export default function PaymentFormModal({
   const [saving, setSaving] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Reset form when modal opens
+  // Reset form when modal opens + invalidate stale cache
   useEffect(() => {
     if (!open) return;
+    qc.invalidateQueries({ queryKey: ["bankAccounts"] });
+    qc.invalidateQueries({ queryKey: ["models"] });
     setMode("payment");
     if (existingPayment) {
       setForm({
@@ -163,7 +166,6 @@ export default function PaymentFormModal({
 
   // Bank accounts available for selection based on selected model
   const allowedBankAccounts = useMemo(() => {
-    if (bankAccounts.length === 0) return [];
     const selectedModel = allModels.find((m) => m.id === form.model_id);
     if (selectedModel?.assigned_bank_account_ids?.length > 0) {
       const filtered = bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id));

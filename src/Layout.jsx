@@ -17,7 +17,7 @@ export default function Layout({ children, currentPageName }) {
   const { data: models = [] } = useQuery({ queryKey: ["models"], queryFn: () => base44.entities.Model.list(), enabled: !!user, staleTime: 120000 });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list(), enabled: !!user, staleTime: 120000 });
 
-  const { data: bankAccounts = [] } = useQuery({ queryKey: ["bankAccounts"], queryFn: () => base44.entities.BankAccount.filter({ is_active: true }), enabled: !!user, staleTime: 60000 });
+  const { data: bankAccounts = [] } = useQuery({ queryKey: ["bankAccounts"], queryFn: () => base44.entities.BankAccount.filter({ is_active: true }), enabled: !!user, staleTime: 0 });
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
