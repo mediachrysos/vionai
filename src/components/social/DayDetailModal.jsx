@@ -313,13 +313,10 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
   const { data: liveSubmission, refetch } = useQuery({
     queryKey,
     queryFn: async () => {
-      // Try dashboard:id format first, then designer email fallback
-      const results = await base44.entities.DaySubmission.filter({
-        week_start: weekStart,
-        day_key: dayKey,
-        designer_email: designerEmail,
-      });
-      return results[0] || submissionProp || null;
+      // Use backend (asServiceRole) to bypass RLS for shared_graphic_space submissions
+      const res = await base44.functions.invoke("getSharedProgram", { week_start: weekStart });
+      const subs = res.data?.submissions || [];
+      return subs.find(s => s.day_key === dayKey) || submissionProp || null;
     },
     enabled: open,
     staleTime: 0,
@@ -347,46 +344,31 @@ export default function DayDetailModal({ open, onClose, dayName, tasks = [], sub
     onRefresh();
   };
 
-  const getOrCreateSubmission = async (extraData = {}) => {
-    if (submission?.id) return submission;
-    return await base44.entities.DaySubmission.create({
+  const handleSaveLink = async (taskIdx, link) => {
+    await base44.functions.invoke("saveSharedSubmission", {
       week_start: weekStart, day_key: dayKey, day_name: dayName,
       designer_email: designerEmail,
-      task_submissions: [], ...extraData,
+      task_idx: taskIdx, link,
     });
-  };
-
-  const handleSaveLink = async (taskIdx, link) => {
-    const sub = await getOrCreateSubmission();
-    const taskSubs = [...(sub.task_submissions || [])];
-    const existing = taskSubs.findIndex(t => t.task_idx === taskIdx);
-    const entry = {
-      task_idx: taskIdx,
-      submitted_link: link,
-      status: "submitted",
-      admin_note: "",
-      submitted_at: new Date().toISOString(),
-    };
-    if (existing >= 0) taskSubs[existing] = { ...taskSubs[existing], ...entry };
-    else taskSubs.push(entry);
-    await base44.entities.DaySubmission.update(sub.id, { task_submissions: taskSubs });
     refreshAll();
   };
 
   const handleAdminAction = async (taskIdx, actionType, note) => {
-    if (!submission?.id) return;
-    const taskSubs = [...(submission.task_submissions || [])];
-    const existing = taskSubs.findIndex(t => t.task_idx === taskIdx);
-    const update = { status: actionType, admin_note: note, reviewed_at: new Date().toISOString() };
-    if (existing >= 0) taskSubs[existing] = { ...taskSubs[existing], ...update };
-    await base44.entities.DaySubmission.update(submission.id, { task_submissions: taskSubs });
+    await base44.functions.invoke("saveSharedSubmission", {
+      week_start: weekStart, day_key: dayKey, day_name: dayName,
+      designer_email: designerEmail,
+      task_idx: taskIdx, action_type: actionType, admin_note: note,
+    });
     refreshAll();
   };
 
   const handleSaveAdminLink = async () => {
     setSavingAdminLink(true);
-    const sub = await getOrCreateSubmission();
-    await base44.entities.DaySubmission.update(sub.id, { admin_link: adminLink });
+    await base44.functions.invoke("saveSharedSubmission", {
+      week_start: weekStart, day_key: dayKey, day_name: dayName,
+      designer_email: designerEmail,
+      admin_link: adminLink,
+    });
     setSavingAdminLink(false);
     refreshAll();
   };
