@@ -86,11 +86,9 @@ export default function PaymentFormModal({
   const [mode, setMode] = useState("payment");
   const [customerSearch, setCustomerSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [saving, setSaving] = useState(false);
   const dropdownRef = useRef(null);
-  const accountDropdownRef = useRef(null);
   const modelDropdownRef = useRef(null);
 
   // Reset form when modal opens
@@ -124,7 +122,6 @@ export default function PaymentFormModal({
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setShowDropdown(false);
-      if (accountDropdownRef.current && !accountDropdownRef.current.contains(e.target)) setShowAccountDropdown(false);
       if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target)) setShowModelDropdown(false);
     };
     document.addEventListener("mousedown", handler);
@@ -366,50 +363,36 @@ export default function PaymentFormModal({
             </div>
           )}
 
-          {/* Account + Date */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label>Target account</Label>
-              {/* Custom account dropdown — bypasses Radix portal z-index issues */}
-              <div className="relative mt-1" ref={accountDropdownRef}>
+          {/* Account badges */}
+          <div>
+            <Label>Target account</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {allowedBankAccounts.map((a) => (
                 <button
+                  key={a.id}
                   type="button"
-                  onClick={() => setShowAccountDropdown((v) => !v)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-md border border-white/10 bg-[#1e1e1e] text-sm hover:border-white/20"
+                  onClick={() => setForm((prev) => ({ ...prev, bank_account_id: a.id, account_name: a.name }))}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    form.bank_account_id === a.id
+                      ? "bg-[#C9A227] text-white"
+                      : "bg-slate-800 text-slate-400 border border-white/10 hover:bg-slate-700"
+                  }`}
                 >
-                  <span className={form.bank_account_id ? "text-slate-200" : "text-slate-500"}>
-                    {allowedBankAccounts.find((a) => a.id === form.bank_account_id)?.name || "Select account"}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  {a.name}
                 </button>
-                {showAccountDropdown && (
-                  <div className="absolute z-[200] w-full mt-1 bg-[#252525] border border-white/10 rounded-lg shadow-xl max-h-48 overflow-y-auto">
-                    {allowedBankAccounts.map((a) => (
-                      <button
-                        key={a.id}
-                        type="button"
-                        onClick={() => {
-                          setForm((prev) => ({ ...prev, bank_account_id: a.id, account_name: a.name }));
-                          setShowAccountDropdown(false);
-                        }}
-                        className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm text-slate-200"
-                      >
-                        {a.name}
-                      </button>
-                    ))}
-                    {allowedBankAccounts.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">No accounts available</p>}
-                  </div>
-                )}
-              </div>
+              ))}
+              {allowedBankAccounts.length === 0 && <p className="text-sm text-slate-500">No accounts available</p>}
             </div>
-            <div>
-              <Label>Payment date</Label>
-              <DatePicker
-                value={form.payment_date}
-                onChange={(v) => setForm((prev) => ({ ...prev, payment_date: v }))}
-                openUpward
-              />
-            </div>
+          </div>
+
+          {/* Date */}
+          <div>
+            <Label>Payment date</Label>
+            <DatePicker
+              value={form.payment_date}
+              onChange={(v) => setForm((prev) => ({ ...prev, payment_date: v }))}
+              openUpward
+            />
           </div>
 
           {/* Actions */}
