@@ -42,15 +42,25 @@ export default function PaymentFormModal({
   const [localBankAccounts, setLocalBankAccounts] = useState([]);
   const [localModels, setLocalModels] = useState([]);
 
-  // Fetch directly on open — bypasses any stale cache entirely
+  // Fetch directly on open via backend function (service role) — guaranteed for all users
   useEffect(() => {
     if (!open) return;
-    base44.entities.BankAccount.list().then((all) => setLocalBankAccounts(all.filter((a) => a.is_active !== false))).catch(() => {});
-    base44.entities.Model.list().then(setLocalModels).catch(() => {});
+    base44.functions.invoke('getBankAccounts', {})
+      .then((res) => {
+        const accounts = res?.data?.accounts || [];
+        setLocalBankAccounts(accounts.length > 0 ? accounts : (bankAccountsProp || []).filter((a) => a.is_active !== false));
+      })
+      .catch(() => {
+        setLocalBankAccounts((bankAccountsProp || []).filter((a) => a.is_active !== false));
+      });
+    base44.entities.Model.list()
+      .then(setLocalModels)
+      .catch(() => { setLocalModels(modelsProp); });
   }, [open]);
 
-  const bankAccounts = localBankAccounts;
-  const allModels = localModels;
+  // Always prefer freshly fetched data; fallback to props
+  const bankAccounts = localBankAccounts.length > 0 ? localBankAccounts : (bankAccountsProp || []).filter((a) => a.is_active !== false);
+  const allModels = localModels.length > 0 ? localModels : (modelsProp || []);
 
   // Chatter's assigned model IDs
   const chatterModelIds = useMemo(() => (
