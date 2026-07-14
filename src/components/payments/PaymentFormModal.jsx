@@ -43,14 +43,12 @@ export default function PaymentFormModal({
     queryKey: ["bankAccounts"],
     queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
     staleTime: 60000,
-    enabled: open,
   });
 
   const { data: allModels = [] } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list(),
     staleTime: 120000,
-    enabled: open,
   });
 
   // Chatter's assigned model IDs
