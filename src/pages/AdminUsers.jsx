@@ -160,7 +160,7 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
           <h1 className="text-xl font-bold text-slate-100">Admin Portal</h1>
           <p className="text-sm text-slate-500">Manage users, payments and permissions</p>
         </div>
-        <InviteCodeBanner spaceId={currentUser?.space_id} />
+        <InviteCodeBanner currentUser={currentUser} />
       </div>
 
       <Section
@@ -981,16 +981,25 @@ function InvoiceSettingsInline() {
 
 }
 
-function InviteCodeBanner({ spaceId }) {
+function InviteCodeBanner({ currentUser }) {
   const [inviteCode, setInviteCode] = useState(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!spaceId) return;
-    base44.entities.Space.filter({ id: spaceId }).then((spaces) => {
+    if (!currentUser) return;
+    const load = async () => {
+      // Try by space_id first, then by owner_email
+      let spaces = [];
+      if (currentUser.space_id) {
+        spaces = await base44.entities.Space.filter({ id: currentUser.space_id }).catch(() => []);
+      }
+      if (!spaces?.[0] && currentUser.email) {
+        spaces = await base44.entities.Space.filter({ owner_email: currentUser.email }).catch(() => []);
+      }
       if (spaces?.[0]?.invite_code) setInviteCode(spaces[0].invite_code);
-    }).catch(() => {});
-  }, [spaceId]);
+    };
+    load();
+  }, [currentUser?.space_id, currentUser?.email]);
 
   if (!inviteCode) return null;
 
