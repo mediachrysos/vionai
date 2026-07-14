@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,18 +39,18 @@ export default function PaymentFormModal({
   const isAdmin = (currentUser?.roles || (currentUser?.role ? [currentUser.role] : [])).includes("admin");
   const qc = useQueryClient();
 
-  // Always fetch fresh — staleTime:0 ensures we never use a stale empty cache
-  const { data: bankAccounts = [] } = useQuery({
-    queryKey: ["bankAccounts"],
-    queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
-    staleTime: 0,
-  });
+  const [localBankAccounts, setLocalBankAccounts] = useState([]);
+  const [localModels, setLocalModels] = useState([]);
 
-  const { data: allModels = [] } = useQuery({
-    queryKey: ["models"],
-    queryFn: () => base44.entities.Model.list(),
-    staleTime: 0,
-  });
+  // Fetch directly on open — bypasses any stale cache entirely
+  useEffect(() => {
+    if (!open) return;
+    base44.entities.BankAccount.filter({ is_active: true }).then(setLocalBankAccounts).catch(() => {});
+    base44.entities.Model.list().then(setLocalModels).catch(() => {});
+  }, [open]);
+
+  const bankAccounts = localBankAccounts;
+  const allModels = localModels;
 
   // Chatter's assigned model IDs
   const chatterModelIds = useMemo(() => (
@@ -79,11 +79,9 @@ export default function PaymentFormModal({
   const [saving, setSaving] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Reset form when modal opens + invalidate stale cache
+  // Reset form when modal opens
   useEffect(() => {
     if (!open) return;
-    qc.invalidateQueries({ queryKey: ["bankAccounts"] });
-    qc.invalidateQueries({ queryKey: ["models"] });
     setMode("payment");
     if (existingPayment) {
       setForm({
