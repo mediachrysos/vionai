@@ -155,9 +155,11 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   };
 
   const selectedModel = models_.find((m) => m.id === form.model_id);
-  const allowedBankAccounts = selectedModel?.assigned_bank_account_ids?.length > 0
+  const filteredByModel = selectedModel?.assigned_bank_account_ids?.length > 0
     ? bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id))
     : bankAccounts;
+  // Fallback to all accounts if the model's assigned accounts don't match any active account
+  const allowedBankAccounts = filteredByModel.length > 0 ? filteredByModel : bankAccounts;
 
   const handleSubmit = async () => {
     setSaving(true);
