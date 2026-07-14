@@ -146,12 +146,10 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         </div>);
   }
 
-  // Users truly waiting for invite code: no space_id AND no account_status AND only default role
-  const noSpace = users.filter((u) => !u.space_id && !u.account_status && (!u.roles || u.roles.length === 0 || (u.roles.length === 1 && u.roles[0] === "user")) && u.role !== "admin");
-  // Users who entered the invite code and are waiting for approval
-  const pending = users.filter((u) => u.space_id && u.account_status === "pending");
-  // Everyone else (active members, old users without space_id but with roles, etc.)
-  const others = users.filter((u) => !noSpace.find(n => n.id === u.id) && !pending.find(p => p.id === u.id));
+  // Anyone pending approval (with or without space_id)
+  const pending = users.filter((u) => u.account_status === "pending" && u.role !== "admin");
+  // Everyone else
+  const others = users.filter((u) => !pending.find(p => p.id === u.id));
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-4">
