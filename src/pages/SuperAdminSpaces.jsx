@@ -38,6 +38,8 @@ export default function SuperAdminSpaces({ currentUser }) {
     });
   }, []);
 
+  const noCodeUsers = allUsers.filter(u => !u.space_id && u.account_status !== "approved" && u.role !== "admin");
+
   // Real member count per space from User entity
   const memberCountFor = (spaceId) => allUsers.filter(u => u.space_id === spaceId).length;
 
@@ -132,7 +134,7 @@ export default function SuperAdminSpaces({ currentUser }) {
     );
   }
 
-  const pendingCount = spaceRequests.length + pendingUsers.length;
+  const pendingCount = spaceRequests.length + pendingUsers.length + noCodeUsers.length;
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] p-6">
@@ -293,6 +295,35 @@ export default function SuperAdminSpaces({ currentUser }) {
                             <CheckCircle className="w-3 h-3" /> Approve
                           </button>
                         </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Users without invite code yet */}
+            {noCodeUsers.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Registered — No Invite Code Yet ({noCodeUsers.length})</p>
+                <div className="space-y-2">
+                  {noCodeUsers.map((user) => (
+                    <div key={user.id} className="bg-[#1e1e1e] border border-white/10 rounded-xl px-4 py-3 opacity-70">
+                      <div className="flex items-center gap-4">
+                        <div className="w-9 h-9 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-slate-400">
+                          {(user.full_name || "?").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-300">{user.full_name || "Unknown"}</p>
+                          <p className="text-xs text-slate-500">{user.email}</p>
+                        </div>
+                        <span className="text-xs text-slate-500 bg-slate-800 border border-white/10 px-2.5 py-1 rounded-full">
+                          Waiting for invite code
+                        </span>
+                        <button onClick={() => { base44.entities.User.delete(user.id); setAllUsers(p => p.filter(u => u.id !== user.id)); }}
+                          className="h-8 px-3 text-xs font-semibold border border-red-900/40 text-red-400 hover:bg-red-950/30 rounded-lg transition-colors flex items-center gap-1">
+                          <X className="w-3 h-3" /> Delete
+                        </button>
                       </div>
                     </div>
                   ))}
