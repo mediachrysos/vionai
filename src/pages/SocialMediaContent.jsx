@@ -303,27 +303,25 @@ export default function SocialMediaContent({ currentUser }) {
         )}
 
         {/* Week nav */}
-        {(activeDesignerEmail || isAdmin) && (
-          <div className="flex items-center gap-3 bg-[#1e1e1e] rounded-2xl border border-white/10 px-4 py-3">
-            <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center">
-              <ChevronLeft className="w-4 h-4 text-slate-400" />
-            </button>
-            <div className="flex-1 flex flex-col items-center">
-              <p className="text-sm font-semibold text-slate-200">{formatWeekLabel(weekStart)}</p>
-              {program?.is_draft && (
-                <span className="text-[10px] text-amber-400 flex items-center gap-1 mt-0.5">
-                  <Copy className="w-2.5 h-2.5" /> návrh z minulého týdne
-                </span>
-              )}
-            </div>
-            <button onClick={() => { const next = addWeeks(weekStart, 1); handleWeekChange(next, weekStart); }} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center">
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </button>
-            <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-amber-950/30">
-              This week
-            </button>
+        <div className="flex items-center gap-3 bg-[#1e1e1e] rounded-2xl border border-white/10 px-4 py-3">
+          <button onClick={() => setWeekStart(w => addWeeks(w, -1))} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center">
+            <ChevronLeft className="w-4 h-4 text-slate-400" />
+          </button>
+          <div className="flex-1 flex flex-col items-center">
+            <p className="text-sm font-semibold text-slate-200">{formatWeekLabel(weekStart)}</p>
+            {program?.is_draft && (
+              <span className="text-[10px] text-amber-400 flex items-center gap-1 mt-0.5">
+                <Copy className="w-2.5 h-2.5" /> návrh z minulého týdne
+              </span>
+            )}
           </div>
-        )}
+          <button onClick={() => { const next = addWeeks(weekStart, 1); handleWeekChange(next, weekStart); }} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center">
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+          </button>
+          <button onClick={() => setWeekStart(getMondayOf(new Date()))} className="text-xs text-[#C9A227] font-medium px-2 py-1 rounded-lg hover:bg-amber-950/30">
+            This week
+          </button>
+        </div>
 
         {/* Admin editor */}
         {isAdmin && showEditor && activeDashboard && (
@@ -354,8 +352,8 @@ export default function SocialMediaContent({ currentUser }) {
           </div>
         )}
 
-        {/* Weekly grid */}
-        {!!activeDashboard ? (
+        {/* Weekly grid — always visible for designers (tasks are shared), admin needs a selected dashboard */}
+        {(!!activeDashboard || !isAdmin) ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {DAYS.map(({ key, label }) => (
               <DayCard
@@ -372,7 +370,7 @@ export default function SocialMediaContent({ currentUser }) {
           </div>
         ) : (
           <div className="text-center py-16 text-slate-600 text-sm">
-            {isAdmin ? "Select a dashboard." : "You have no dashboard assigned yet."}
+            Select a dashboard.
           </div>
         )}
       </div>
