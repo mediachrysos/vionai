@@ -19,8 +19,8 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   const isAdmin = currentRoles.includes("admin");
 
   const { data: bankAccounts = [] } = useQuery({
-    queryKey: ["bankAccounts"],
-    queryFn: () => base44.entities.BankAccount.filter({ is_active: true })
+    queryKey: ["bankAccountsAll"],
+    queryFn: () => base44.entities.BankAccount.list()
   });
   const { data: fetchedCustomers = [] } = useQuery({
     queryKey: ["customers"],
