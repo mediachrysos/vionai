@@ -21,16 +21,7 @@ export default function JoinSpace() {
         processJoin(pendingCode);
         return;
       }
-      // Single-workspace app — if there's exactly one active space, join it automatically
-      // instead of asking the user to type an invite code they don't have.
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const spaces = await base44.entities.Space.filter({ status: "active" });
-        if (spaces.length === 1) {
-          processJoin(spaces[0].invite_code);
-          return;
-        }
-      }
+      // Always require the user to enter the invite code manually
       setAutoJoining(false);
     };
     init();
