@@ -363,27 +363,29 @@ export default function PaymentFormModal({
             </div>
           )}
 
-          {/* Account badges */}
-          <div>
-            <Label>Target account</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {allowedBankAccounts.map((a) => (
-                <button
-                  key={a.id}
-                  type="button"
-                  onClick={() => setForm((prev) => ({ ...prev, bank_account_id: a.id, account_name: a.name }))}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    form.bank_account_id === a.id
-                      ? "bg-[#C9A227] text-white"
-                      : "bg-slate-800 text-slate-400 border border-white/10 hover:bg-slate-700"
-                  }`}
-                >
-                  {a.name}
-                </button>
-              ))}
-              {allowedBankAccounts.length === 0 && <p className="text-sm text-slate-500">No accounts available</p>}
+          {/* Account badges — only shown after model is selected */}
+          {form.model_id && (
+            <div>
+              <Label>Target account</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {allowedBankAccounts.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, bank_account_id: a.id, account_name: a.name }))}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      form.bank_account_id === a.id
+                        ? "bg-[#C9A227] text-white"
+                        : "bg-slate-800 text-slate-400 border border-white/10 hover:bg-slate-700"
+                    }`}
+                  >
+                    {a.name}
+                  </button>
+                ))}
+                {allowedBankAccounts.length === 0 && <p className="text-sm text-slate-500">No accounts available</p>}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Date */}
           <div>
