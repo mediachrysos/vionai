@@ -144,7 +144,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   };
 
   const handleModelChange = (modelId) => {
-    const m = models_.find((x) => x.id === modelId);
+    const m = [...(models_ || []), ...(models || [])].find((x) => x.id === modelId);
     const allowedIds = m?.assigned_bank_account_ids || [];
     const singleAllowed = allowedIds.length === 1 ? bankAccounts.find((a) => a.id === allowedIds[0]) : null;
     setForm((prev) => ({
@@ -156,11 +156,10 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     }));
   };
 
-  const selectedModel = models_.find((m) => m.id === form.model_id);
+  const selectedModel = [...(models_ || []), ...(models || [])].find((m) => m.id === form.model_id);
   const filteredByModel = selectedModel?.assigned_bank_account_ids?.length > 0
     ? bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id))
     : bankAccounts;
-  // Fallback to all accounts if the model's assigned accounts don't match any active account
   const allowedBankAccounts = filteredByModel.length > 0 ? filteredByModel : bankAccounts;
 
   const handleSubmit = async () => {
