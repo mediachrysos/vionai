@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarWidget } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X, Search, Bot, ExternalLink, Save, Loader2 } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X, Search, Bot, ExternalLink, Save, Loader2, Copy, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
@@ -164,6 +164,8 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
           <p className="text-sm text-slate-500">Manage users, payments and permissions</p>
         </div>
       </div>
+
+      <InviteCodeBanner spaceId={currentUser?.space_id} />
 
       <Section
         label="Users"
@@ -981,6 +983,45 @@ function InvoiceSettingsInline() {
       </Button>
     </div>);
 
+}
+
+function InviteCodeBanner({ spaceId }) {
+  const [inviteCode, setInviteCode] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!spaceId) return;
+    base44.entities.Space.filter({ id: spaceId }).then((spaces) => {
+      if (spaces?.[0]?.invite_code) setInviteCode(spaces[0].invite_code);
+    }).catch(() => {});
+  }, [spaceId]);
+
+  if (!inviteCode) return null;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(inviteCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-amber-950/30 border border-amber-700/30 rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
+      <div>
+        <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-0.5">Your Space Invite Code</p>
+        <p className="text-xs text-slate-500">Share this code with team members so they can join your workspace</p>
+      </div>
+      <div className="flex items-center gap-3 flex-shrink-0">
+        <span className="font-mono font-bold text-xl text-amber-300 tracking-widest bg-amber-950/50 border border-amber-700/30 px-4 py-2 rounded-xl">{inviteCode}</span>
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/10 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:border-white/20 transition-colors bg-[#1e1e1e]"
+        >
+          {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function BankAccountsInline({ accounts, setAccounts }) {
