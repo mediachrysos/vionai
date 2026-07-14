@@ -18,12 +18,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = currentRoles.includes("admin");
 
-  const { data: bankAccounts = bankAccountsProp } = useQuery({
-    queryKey: ["bankAccounts"],
-    queryFn: () => base44.entities.BankAccount.list(),
-    initialData: bankAccountsProp.length > 0 ? bankAccountsProp : undefined,
-    staleTime: 30000,
-  });
+  const bankAccounts = bankAccountsProp;
   const { data: fetchedCustomers = [] } = useQuery({
     queryKey: ["customers"],
     queryFn: () => base44.entities.Customer.list("-created_date", 9999),
