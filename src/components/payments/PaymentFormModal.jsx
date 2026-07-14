@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Search, UserPlus, CreditCard, Wallet } from "lucide-react";
+import { Search, UserPlus, CreditCard, Wallet, ChevronDown } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
 
 const QUICK_AMOUNTS = [100, 200, 300, 500, 700, 1000];
@@ -76,8 +76,12 @@ export default function PaymentFormModal({
   const [mode, setMode] = useState("payment");
   const [customerSearch, setCustomerSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [saving, setSaving] = useState(false);
   const dropdownRef = useRef(null);
+  const accountDropdownRef = useRef(null);
+  const modelDropdownRef = useRef(null);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -106,17 +110,16 @@ export default function PaymentFormModal({
     }
   }, [open]);
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
-    if (!showDropdown) return;
     const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setShowDropdown(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setShowDropdown(false);
+      if (accountDropdownRef.current && !accountDropdownRef.current.contains(e.target)) setShowAccountDropdown(false);
+      if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target)) setShowModelDropdown(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [showDropdown]);
+  }, []);
 
   // Filtered customer list for search
   const selectedCustomer = visibleCustomers.find((c) => c.id === form.customer_id);
@@ -183,7 +186,7 @@ export default function PaymentFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-visible p-0">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
         {/* Header */}
         <div className="bg-gradient-to-r from-[#C9A227] to-[#A8841C] px-6 py-5 rounded-t-lg">
           <div className="flex items-center gap-3">
@@ -309,14 +312,34 @@ export default function PaymentFormModal({
                 onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
                 placeholder="Custom amount"
               />
-              <Select value={form.model_id} onValueChange={handleModelChange}>
-                <SelectTrigger><SelectValue placeholder="Select model" /></SelectTrigger>
-                <SelectContent>
-                  {visibleModels.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Custom model dropdown */}
+              <div className="relative" ref={modelDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setShowModelDropdown((v) => !v)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-md border border-white/10 bg-[#1e1e1e] text-sm text-slate-200 hover:border-white/20"
+                >
+                  <span className={form.model_id ? "text-slate-200" : "text-slate-500"}>
+                    {visibleModels.find((m) => m.id === form.model_id)?.name || "Select model"}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                </button>
+                {showModelDropdown && (
+                  <div className="absolute z-[200] w-full mt-1 bg-[#252525] border border-white/10 rounded-lg shadow-xl max-h-48 overflow-y-auto">
+                    {visibleModels.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => { handleModelChange(m.id); setShowModelDropdown(false); }}
+                        className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm text-slate-200"
+                      >
+                        {m.name}
+                      </button>
+                    ))}
+                    {visibleModels.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">No models</p>}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -337,22 +360,37 @@ export default function PaymentFormModal({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Target account</Label>
-              <Select
-                value={form.bank_account_id}
-                onValueChange={(v) => {
-                  const acc = bankAccounts.find((a) => a.id === v);
-                  setForm((prev) => ({ ...prev, bank_account_id: v, account_name: acc?.name || "" }));
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select account" />
-                </SelectTrigger>
-                <SelectContent>
-                  {allowedBankAccounts.map((a) => (
-                    <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Custom account dropdown — bypasses Radix portal z-index issues */}
+              <div className="relative mt-1" ref={accountDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setShowAccountDropdown((v) => !v)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-md border border-white/10 bg-[#1e1e1e] text-sm hover:border-white/20"
+                >
+                  <span className={form.bank_account_id ? "text-slate-200" : "text-slate-500"}>
+                    {allowedBankAccounts.find((a) => a.id === form.bank_account_id)?.name || "Select account"}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                </button>
+                {showAccountDropdown && (
+                  <div className="absolute z-[200] w-full mt-1 bg-[#252525] border border-white/10 rounded-lg shadow-xl max-h-48 overflow-y-auto">
+                    {allowedBankAccounts.map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => {
+                          setForm((prev) => ({ ...prev, bank_account_id: a.id, account_name: a.name }));
+                          setShowAccountDropdown(false);
+                        }}
+                        className="w-full text-left px-4 py-2.5 hover:bg-white/5 text-sm text-slate-200"
+                      >
+                        {a.name}
+                      </button>
+                    ))}
+                    {allowedBankAccounts.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">No accounts available</p>}
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <Label>Payment date</Label>
