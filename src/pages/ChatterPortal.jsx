@@ -282,14 +282,15 @@ function ChatterView({ currentUser, isAdminView = false }) {
   const today = new Date().toISOString().split("T")[0];
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
 
-  const { data: rawPayments = [] } = useQuery({
-    queryKey: ["chatter-payments", email],
-    queryFn: () => base44.entities.Payment.filter({ chatter_email: email }, "-created_date", 5000),
+  const { data: payments = [] } = useQuery({
+    queryKey: ["chatter-payments-strict", email],
+    queryFn: async () => {
+      const res = await base44.functions.invoke("getChatterPayments", { chatter_email: email });
+      return res.data?.payments || [];
+    },
     enabled: !!email,
     staleTime: 30000
   });
-  // Ensure we only see payments strictly belonging to this chatter
-  const payments = rawPayments.filter((p) => p.chatter_email === email);
 
   const { data: payouts = [] } = useQuery({
     queryKey: ["chatterPayouts", email],
