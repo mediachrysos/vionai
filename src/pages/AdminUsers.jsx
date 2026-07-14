@@ -297,6 +297,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
   const [editingNickname, setEditingNickname] = useState(false);
   const [savingNickname, setSavingNickname] = useState(false);
   const status = user.account_status || "pending";
+  const isApproved = status === "active" || status === "approved";
   const statusCfg = statusConfig[status] || statusConfig.pending;
   const StatusIcon = statusCfg.icon;
   const isAdmin = userRoles.includes("admin");
@@ -491,7 +492,7 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
 
         {/* Actions */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          {status !== "active" &&
+          {!isApproved &&
           <button onClick={() => onUpdate(user.id, { account_status: "active" })}
           className="h-7 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">
               Approve
