@@ -984,29 +984,36 @@ function InvoiceSettingsInline() {
 function InviteCodeBanner({ currentUser }) {
   const [inviteCode, setInviteCode] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser?.email) return;
     const load = async () => {
-      // Try by space_id first, then by owner_email
       let spaces = [];
       if (currentUser.space_id) {
         spaces = await base44.entities.Space.filter({ id: currentUser.space_id }).catch(() => []);
       }
-      if (!spaces?.[0] && currentUser.email) {
+      if (!spaces?.[0]) {
         spaces = await base44.entities.Space.filter({ owner_email: currentUser.email }).catch(() => []);
       }
       if (spaces?.[0]?.invite_code) setInviteCode(spaces[0].invite_code);
     };
     load();
-  }, [currentUser?.space_id, currentUser?.email]);
+  }, [currentUser?.email, currentUser?.space_id]);
 
   if (!inviteCode) return null;
 
-  const handleCopy = () => {
+  const handleCopyCode = () => {
     navigator.clipboard.writeText(inviteCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopyLink = () => {
+    const link = `${window.location.origin}/JoinSpace?code=${inviteCode}`;
+    navigator.clipboard.writeText(link);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
   };
 
   return (
@@ -1016,11 +1023,19 @@ function InviteCodeBanner({ currentUser }) {
         <span className="font-mono font-bold text-sm text-amber-300 tracking-widest">{inviteCode}</span>
       </div>
       <button
-        onClick={handleCopy}
+        onClick={handleCopyCode}
         className="flex items-center justify-center w-7 h-7 rounded-lg border border-amber-700/30 text-amber-400 hover:bg-amber-950/50 transition-colors"
         title="Copy invite code"
       >
         {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+      </button>
+      <button
+        onClick={handleCopyLink}
+        className="flex items-center gap-1 h-7 px-2 rounded-lg border border-amber-700/30 text-[10px] font-semibold text-amber-400 hover:bg-amber-950/50 transition-colors whitespace-nowrap"
+        title="Copy invite link"
+      >
+        {copiedLink ? <Check className="w-3 h-3 text-emerald-400" /> : <ExternalLink className="w-3 h-3" />}
+        {copiedLink ? "Copied!" : "Copy link"}
       </button>
     </div>
   );

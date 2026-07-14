@@ -13,6 +13,16 @@ export default function JoinSpace() {
 
   useEffect(() => {
     const init = async () => {
+      // Check URL param ?code=... first (from admin's "Copy link")
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCode = urlParams.get("code");
+      if (urlCode) {
+        const upper = urlCode.trim().toUpperCase();
+        setCode(upper);
+        setAutoJoining(false);
+        processJoin(upper);
+        return;
+      }
       const pendingCode = sessionStorage.getItem("pending_invite_code");
       if (pendingCode) {
         sessionStorage.removeItem("pending_invite_code");
@@ -21,7 +31,6 @@ export default function JoinSpace() {
         processJoin(pendingCode);
         return;
       }
-      // Always require the user to enter the invite code manually
       setAutoJoining(false);
     };
     init();
