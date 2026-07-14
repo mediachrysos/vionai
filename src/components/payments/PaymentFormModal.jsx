@@ -14,6 +14,10 @@ import { useQuery } from "@tanstack/react-query";
 const quickAmounts = [100, 200, 300, 500, 700, 1000];
 
 export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers: customersProp = [], models, users, currentUser, existingPayment }) {
+  // Role detection first — used in queries below
+  const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
+  const isAdmin = currentRoles.includes("admin");
+
   const { data: bankAccounts = [] } = useQuery({
     queryKey: ["bankAccounts"],
     queryFn: () => base44.entities.BankAccount.filter({ is_active: true })
@@ -26,16 +30,18 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   });
   const allCustomers = fetchedCustomers.length > 0 ? fetchedCustomers : customersProp;
   const { data: allPayments = [] } = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => base44.entities.Payment.list("-created_date", 5000),
-    enabled: open,
+    queryKey: ["payments-modal", currentUser?.email, isAdmin],
+    queryFn: async () => {
+      if (isAdmin) return base44.entities.Payment.list("-created_date", 5000);
+      const res = await base44.functions.invoke("getChatterPayments", { chatter_email: currentUser?.email });
+      return res.data?.payments || [];
+    },
+    enabled: open && !!currentUser?.email,
     staleTime: 30000,
   });
 
   // Chatters (non-admins) only see their own assigned models (source of truth: User.assigned_model_ids)
   // and the customers confirmed on them — either directly assigned, or with a past payment for one of their models.
-  const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
-  const isAdmin = currentRoles.includes("admin");
   const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
   const models_ = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
   const paidCustomerIds = React.useMemo(() =>
