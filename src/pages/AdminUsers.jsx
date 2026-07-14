@@ -96,7 +96,8 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
 
   useEffect(() => {
     if (!currentUser) return;
-    if (currentUser?.role !== "admin") {setLoading(false);return;}
+    const roles = currentUser?.roles?.length > 0 ? currentUser.roles : (currentUser?.role ? [currentUser.role] : []);
+    if (!roles.includes("admin")) {setLoading(false);return;}
     // Small delay to avoid rate limit conflicts with layout-level fetches
     const timer = setTimeout(async () => {
       const [u, m, a, db] = await Promise.all([
@@ -134,7 +135,8 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
       </div>);
   }
 
-  if (currentUser?.role !== "admin") {
+  const currentUserRoles = currentUser?.roles?.length > 0 ? currentUser.roles : (currentUser?.role ? [currentUser.role] : []);
+  if (!currentUserRoles.includes("admin")) {
     return (
       <div className="flex items-center justify-center h-screen">
           <div className="text-center">
