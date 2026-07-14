@@ -39,34 +39,21 @@ export default function JoinSpace() {
         base44.auth.redirectToLogin("/JoinSpace");
         return;
       }
-      const me = await base44.auth.me();
 
-      if (me.space_id) {
+      const res = await base44.functions.invoke("joinSpace", { invite_code: trimmed });
+      const data = res.data;
+
+      if (data.already_in) {
         setStatus("already_in");
-        setLoading(false);
         return;
       }
-
-      const spaces = await base44.entities.Space.filter({ invite_code: trimmed });
-      if (!spaces || spaces.length === 0) {
-        setError("Invalid invite code. Please check and try again.");
-        setLoading(false);
+      if (data.error) {
+        setError(data.error);
         return;
       }
-      const space = spaces[0];
-      if (space.status !== "active") {
-        setError("This space is currently inactive. Contact the space owner.");
-        setLoading(false);
-        return;
+      if (data.success) {
+        setStatus("pending");
       }
-
-      // Assign user to space, set pending status for admin approval
-      await base44.auth.updateMe({
-        space_id: space.id,
-        account_status: "pending",
-      });
-
-      setStatus("pending");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
