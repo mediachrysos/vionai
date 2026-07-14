@@ -134,7 +134,7 @@ export default function SuperAdminSpaces({ currentUser }) {
     );
   }
 
-  const pendingCount = spaceRequests.length + pendingUsers.length + noCodeUsers.length;
+  const pendingCount = spaceRequests.length + pendingUsers.length;
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] p-6">
@@ -209,7 +209,7 @@ export default function SuperAdminSpaces({ currentUser }) {
         {/* Spaces Tab */}
         {activeTab === "spaces" && (
           <div className="space-y-3">
-            {spaces.length === 0 && <div className="text-center py-16 text-slate-600 text-sm">No spaces yet.</div>}
+            {spaces.length === 0 && noCodeUsers.length === 0 && <div className="text-center py-16 text-slate-600 text-sm">No spaces yet.</div>}
             {spaces.map((space) => {
               const memberCount = memberCountFor(space.id);
               return (
@@ -263,6 +263,34 @@ export default function SuperAdminSpaces({ currentUser }) {
                 </div>
               );
             })}
+            {/* Users without invite code yet — shown in Spaces tab */}
+            {noCodeUsers.length > 0 && (
+              <div className="mt-4">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Registered — No Space Yet ({noCodeUsers.length})</p>
+                <div className="space-y-2">
+                  {noCodeUsers.map((user) => (
+                    <div key={user.id} className="bg-[#1e1e1e] border border-white/10 rounded-xl px-4 py-3 opacity-60">
+                      <div className="flex items-center gap-4">
+                        <div className="w-9 h-9 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-slate-400">
+                          {(user.full_name || "?").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-400">{user.full_name || "Unknown"}</p>
+                          <p className="text-xs text-slate-600">{user.email}</p>
+                        </div>
+                        <span className="text-xs text-slate-600 bg-slate-800/50 border border-white/5 px-2.5 py-1 rounded-full">
+                          Waiting for invite code
+                        </span>
+                        <button onClick={() => { base44.entities.User.delete(user.id); setAllUsers(p => p.filter(u => u.id !== user.id)); }}
+                          className="h-8 px-3 text-xs font-semibold border border-red-900/40 text-red-400 hover:bg-red-950/30 rounded-lg transition-colors flex items-center gap-1">
+                          <X className="w-3 h-3" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -295,35 +323,6 @@ export default function SuperAdminSpaces({ currentUser }) {
                             <CheckCircle className="w-3 h-3" /> Approve
                           </button>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Users without invite code yet */}
-            {noCodeUsers.length > 0 && (
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Registered — No Invite Code Yet ({noCodeUsers.length})</p>
-                <div className="space-y-2">
-                  {noCodeUsers.map((user) => (
-                    <div key={user.id} className="bg-[#1e1e1e] border border-white/10 rounded-xl px-4 py-3 opacity-70">
-                      <div className="flex items-center gap-4">
-                        <div className="w-9 h-9 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-slate-400">
-                          {(user.full_name || "?").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-300">{user.full_name || "Unknown"}</p>
-                          <p className="text-xs text-slate-500">{user.email}</p>
-                        </div>
-                        <span className="text-xs text-slate-500 bg-slate-800 border border-white/10 px-2.5 py-1 rounded-full">
-                          Waiting for invite code
-                        </span>
-                        <button onClick={() => { base44.entities.User.delete(user.id); setAllUsers(p => p.filter(u => u.id !== user.id)); }}
-                          className="h-8 px-3 text-xs font-semibold border border-red-900/40 text-red-400 hover:bg-red-950/30 rounded-lg transition-colors flex items-center gap-1">
-                          <X className="w-3 h-3" /> Delete
-                        </button>
                       </div>
                     </div>
                   ))}
@@ -367,7 +366,7 @@ export default function SuperAdminSpaces({ currentUser }) {
               </div>
             )}
 
-            {pendingCount === 0 && (
+            {spaceRequests.length === 0 && pendingUsers.length === 0 && (
               <div className="text-center py-16 text-slate-600 text-sm flex flex-col items-center gap-2">
                 <CheckCircle className="w-8 h-8 text-slate-700" />
                 All caught up — no pending requests.
