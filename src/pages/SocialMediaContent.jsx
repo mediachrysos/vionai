@@ -120,9 +120,10 @@ export default function SocialMediaContent({ currentUser }) {
     queryKey: ["weeklyProgram", weekStart],
     queryFn: async () => {
       const res = await base44.functions.invoke("getSharedProgram", { week_start: weekStart });
-      return res.data;
+      return res.data || {};
     },
     staleTime: 0,
+    retry: 1,
   });
 
   const programs = sharedData.programs || [];
@@ -184,22 +185,15 @@ export default function SocialMediaContent({ currentUser }) {
     qc.invalidateQueries({ queryKey: ["weeklyProgram", weekStart] });
   };
 
-  // Auto-duplicate: when navigating forward to a week with no shared program, copy as draft
+  // Auto-duplicate: when navigating forward to a week with no shared program, copy as draft (admin only)
   const handleWeekChange = async (newWeekStart, prevWeekStart) => {
     setWeekStart(newWeekStart);
-    // Only auto-duplicate when going forward
+    if (!isAdmin) return; // Only admins can create/duplicate programs
     if (newWeekStart <= prevWeekStart) return;
-    // Check if next week already has a program
-    const existing = await base44.entities.WeeklyProgram.filter({
-      week_start: newWeekStart,
-      designer_email: SHARED_TASKS_KEY,
-    });
-    if (existing.length > 0) return; // Already has tasks — don't overwrite
-    // Fetch previous week's program
-    const prevPrograms = await base44.entities.WeeklyProgram.filter({
-      week_start: prevWeekStart,
-      designer_email: SHARED_TASKS_KEY,
-    });
+    const existingRes = await base44.functions.invoke("getSharedProgram", { week_start: newWeekStart });
+    if ((existingRes.data?.programs || []).length > 0) return;
+    const prevRes = await base44.functions.invoke("getSharedProgram", { week_start: prevWeekStart });
+    const prevPrograms = prevRes.data?.programs || [];
     if (prevPrograms.length === 0) return;
     const prev = prevPrograms[0];
     const DAYS_KEYS = ["mon","tue","wed","thu","fri","sat","sun"];
