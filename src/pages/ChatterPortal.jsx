@@ -282,12 +282,14 @@ function ChatterView({ currentUser, isAdminView = false }) {
   const today = new Date().toISOString().split("T")[0];
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
 
-  const { data: payments = [] } = useQuery({
+  const { data: rawPayments = [] } = useQuery({
     queryKey: ["chatter-payments", email],
     queryFn: () => base44.entities.Payment.filter({ chatter_email: email }, "-created_date", 5000),
     enabled: !!email,
     staleTime: 30000
   });
+  // Ensure we only see payments strictly belonging to this chatter
+  const payments = rawPayments.filter((p) => p.chatter_email === email);
 
   const { data: payouts = [] } = useQuery({
     queryKey: ["chatterPayouts", email],
@@ -441,7 +443,7 @@ function ChatterView({ currentUser, isAdminView = false }) {
 
         {/* Daily breakdown — hours, revenue, payout per day */}
         <DailyBreakdownCard
-          monthPayments={monthPayments}
+          monthPayments={payments}
           dailyGoalAmount={activeRule?.daily_goal_amount || 0}
           dailyGoalEnabled={!!activeRule?.daily_goal_enabled}
           hoursMap={hoursMap}
