@@ -164,18 +164,19 @@ export default function Layout({ children, currentPageName }) {
     );
   }
 
-  // Pending approval (skip for admins) — new users without account_status set are also pending
+  // Pending approval (skip for admins)
   const userRoles = user?.roles?.length > 0 ? user.roles : (user?.role ? [user.role] : []);
-  if ((user?.account_status === "pending" || !user?.account_status) && !userRoles.includes("admin")) {
-    // If user has no space_id yet AND account was never active, redirect to join a space (first-time onboarding only)
-    if (!user?.space_id && !user?.account_status) {
+  const isActive = user?.account_status === "active" || user?.account_status === "approved";
+  if (!isActive && !userRoles.includes("admin")) {
+    // New user with no status — send to JoinSpace waiting list
+    if (!user?.account_status) {
       if (window.location.pathname !== "/JoinSpace" && window.location.pathname !== "/RequestSpace") {
         window.location.replace("/JoinSpace");
         return null;
       }
       return <>{children}</>;
     }
-    // User has a space but is still pending admin approval
+    // User is pending — show waiting screen
     return (
       <div className="h-screen flex items-center justify-center bg-[#1a1a1a]">
         <div className="text-center max-w-sm p-8">

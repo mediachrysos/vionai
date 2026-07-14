@@ -62,7 +62,8 @@ function GoalDatePicker({ value, onChange, placeholder }) {
 
 const statusConfig = {
   pending: { label: "Pending approval", color: "bg-amber-950/50 text-amber-300 border border-amber-700/30", icon: Clock },
-  approved: { label: "Approved", color: "bg-emerald-950/50 text-emerald-400 border border-emerald-700/30", icon: CheckCircle },
+  active: { label: "Active", color: "bg-emerald-950/50 text-emerald-400 border border-emerald-700/30", icon: CheckCircle },
+  approved: { label: "Active", color: "bg-emerald-950/50 text-emerald-400 border border-emerald-700/30", icon: CheckCircle },
   blocked: { label: "Blocked", color: "bg-red-950/50 text-red-400 border border-red-700/30", icon: XCircle }
 };
 
@@ -490,8 +491,8 @@ function UserRow({ user, onUpdate, onDelete, models, dashboards = [], setDashboa
 
         {/* Actions */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          {status !== "approved" &&
-          <button onClick={() => onUpdate(user.id, { account_status: "approved" })}
+          {status !== "active" &&
+          <button onClick={() => onUpdate(user.id, { account_status: "active" })}
           className="h-7 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">
               Approve
             </button>
