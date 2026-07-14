@@ -45,7 +45,7 @@ export default function PaymentFormModal({
   // Fetch directly on open — bypasses any stale cache entirely
   useEffect(() => {
     if (!open) return;
-    base44.entities.BankAccount.filter({ is_active: true }).then(setLocalBankAccounts).catch(() => {});
+    base44.entities.BankAccount.list().then((all) => setLocalBankAccounts(all.filter((a) => a.is_active !== false))).catch(() => {});
     base44.entities.Model.list().then(setLocalModels).catch(() => {});
   }, [open]);
 
