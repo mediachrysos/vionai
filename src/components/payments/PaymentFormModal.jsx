@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +15,23 @@ const quickAmounts = [100, 200, 300, 500, 700, 1000];
 export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers: customersProp = [], models, users, currentUser, existingPayment, bankAccounts: bankAccountsProp = [] }) {
   const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = currentRoles.includes("admin");
-  const bankAccounts = bankAccountsProp;
+
+  // Always fetch bank accounts directly — don't rely on props which may be empty on first render
+  const { data: fetchedBankAccounts = [] } = useQuery({
+    queryKey: ["bankAccounts"],
+    queryFn: () => base44.entities.BankAccount.filter({ is_active: true }),
+    staleTime: 60000,
+  });
+  const bankAccounts = fetchedBankAccounts.length > 0 ? fetchedBankAccounts : bankAccountsProp;
 
   const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
-  const models_ = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
+  const { data: fetchedModels = [] } = useQuery({
+    queryKey: ["models"],
+    queryFn: () => base44.entities.Model.list(),
+    staleTime: 120000,
+  });
+  const allModels = fetchedModels.length > 0 ? fetchedModels : (models || []);
+  const models_ = isAdmin ? allModels : allModels.filter((m) => chatterModelIds.includes(m.id));
   const customers = isAdmin ? customersProp : customersProp.filter((c) => {
     if (c.assigned_chatter === currentUser?.email) return true;
     // assigned_models can be array of IDs or a single string
@@ -116,7 +131,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   };
 
   const handleModelChange = (modelId) => {
-    const m = [...(models_ || []), ...(models || [])].find((x) => x.id === modelId);
+    const m = allModels.find((x) => x.id === modelId);
     const allowedIds = m?.assigned_bank_account_ids || [];
     const singleAllowed = allowedIds.length === 1 ? bankAccounts.find((a) => a.id === allowedIds[0]) : null;
     setForm((prev) => ({
@@ -128,7 +143,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
     }));
   };
 
-  const selectedModel = [...(models_ || []), ...(models || [])].find((m) => m.id === form.model_id);
+  const selectedModel = allModels.find((m) => m.id === form.model_id);
   // For non-admins: collect all bank account IDs allowed across all their models
   const chatterAllowedAccountIds = React.useMemo(() => {
     if (isAdmin) return null; // null = no restriction
