@@ -1,53 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Search, UserPlus, CreditCard, Wallet } from "lucide-react";
 import DatePicker from "@/components/ui-custom/DatePicker";
-import { useQuery } from "@tanstack/react-query";
 
 const quickAmounts = [100, 200, 300, 500, 700, 1000];
 
 export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustomer, customers: customersProp = [], models, users, currentUser, existingPayment, bankAccounts: bankAccountsProp = [] }) {
-  // Role detection first — used in queries below
   const currentRoles = currentUser?.roles?.length > 0 ? currentUser.roles : currentUser?.role ? [currentUser.role] : [];
   const isAdmin = currentRoles.includes("admin");
-
   const bankAccounts = bankAccountsProp;
-  const { data: fetchedCustomers = [] } = useQuery({
-    queryKey: ["customers"],
-    queryFn: () => base44.entities.Customer.list("-created_date", 9999),
-    enabled: open,
-    staleTime: 30000,
-  });
-  const allCustomers = fetchedCustomers.length > 0 ? fetchedCustomers : customersProp;
-  const { data: allPayments = [] } = useQuery({
-    queryKey: ["payments-modal", currentUser?.email, isAdmin],
-    queryFn: async () => {
-      if (isAdmin) return base44.entities.Payment.list("-created_date", 5000);
-      const res = await base44.functions.invoke("getChatterPayments", { chatter_email: currentUser?.email });
-      return res.data?.payments || [];
-    },
-    enabled: open && !!currentUser?.email,
-    staleTime: 30000,
-  });
 
-  // Chatters (non-admins) only see their own assigned models (source of truth: User.assigned_model_ids)
-  // and the customers confirmed on them — either directly assigned, or with a past payment for one of their models.
   const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
   const models_ = isAdmin ? models : models.filter((m) => chatterModelIds.includes(m.id));
-  const paidCustomerIds = React.useMemo(() =>
-    new Set(allPayments.filter((p) => p.customer_id && (chatterModelIds.includes(p.model_id) || p.chatter_email === currentUser?.email)).map((p) => p.customer_id)),
-    [allPayments, chatterModelIds, currentUser?.email]);
-  const customers = isAdmin ? allCustomers : allCustomers.filter((c) =>
+  const customers = isAdmin ? customersProp : customersProp.filter((c) =>
     c.assigned_chatter === currentUser?.email ||
-    (Array.isArray(c.assigned_models) && c.assigned_models.some((mid) => chatterModelIds.includes(mid))) ||
-    paidCustomerIds.has(c.id)
+    (Array.isArray(c.assigned_models) && c.assigned_models.some((mid) => chatterModelIds.includes(mid)))
   );
   const [form, setForm] = useState({
     customer_id: "", customer_name: "", amount: "", service_type: "",
