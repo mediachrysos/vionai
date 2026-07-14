@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, CreditCard, Layers,
-  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock, Globe, Search
+  MessageSquare, Settings, LogOut, Menu, X, Sun, Moon, Clock,   Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/ThemeContext";
@@ -32,14 +32,9 @@ export default function Sidebar({ currentPage, user, onLogout }) {
   const isChatter = userRoles.includes("chatter");
   const isDesigner = userRoles.includes("grafik");
 
-  const isSuperAdmin = isAdmin && !user?.space_id;
-
   let items;
   if (isAdmin) {
-    items = [
-      ...allPages,
-      ...(isSuperAdmin ? [{ name: "All Spaces", icon: Globe, page: "SuperAdminSpaces" }] : []),
-    ];
+    items = [...allPages];
   } else if (user?.allowed_pages?.length > 0) {
     items = allPages.filter(p => user.allowed_pages.includes(p.page));
   } else {
