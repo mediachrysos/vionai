@@ -61,7 +61,7 @@ export default function SocialMediaContent({ currentUser }) {
   const [selectedDashboardId, setSelectedDashboardId] = useState(null);
   const qc = useQueryClient();
 
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin = currentUser?.role === "admin" || (currentUser?.roles || []).includes("admin");
   const myEmail = currentUser?.email;
 
   // Fetch all users (admin only)
