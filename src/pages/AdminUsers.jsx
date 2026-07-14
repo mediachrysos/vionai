@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarWidget } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X, Search, Bot, ExternalLink, Save, Loader2, KeyRound } from "lucide-react";
+import { Shield, Clock, CheckCircle, XCircle, Building2, Plus, ChevronDown, ChevronUp, Camera, Lock, Unlock, X, Search, Bot, ExternalLink, Save, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import LegalDocumentsEditor from "../components/admin/LegalDocumentsEditor";
@@ -176,33 +176,6 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
         <p className="text-sm text-slate-500 py-4 text-center">Loading...</p> :
 
         <>
-            {noSpace.length > 0 &&
-          <div className="mb-4">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
-                  <KeyRound className="w-3 h-3" /> No invite code yet ({noSpace.length})
-                </p>
-                <div className="space-y-2">
-                  {noSpace.map((u) => (
-                    <div key={u.id} className="flex items-center gap-3 px-4 py-3 bg-[#1e1e1e] rounded-xl border border-white/10 opacity-70">
-                      <div className="w-9 h-9 rounded-xl bg-slate-700 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-slate-400">{(u.full_name || u.email || "?")[0].toUpperCase()}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-300">{u.full_name || "—"}</p>
-                        <p className="text-xs text-slate-500 truncate">{u.email}</p>
-                      </div>
-                      <span className="text-xs text-slate-500 bg-slate-800 border border-white/10 px-2.5 py-1 rounded-full">
-                        Waiting for invite code
-                      </span>
-                      <button onClick={() => deleteUser(u.id, u.full_name || u.email)}
-                        className="h-7 px-3 text-xs font-semibold rounded-lg border border-red-900/40 text-red-400 hover:bg-red-950/30 transition-colors">
-                        Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-          }
             {pending.length > 0 &&
           <div className="mb-4">
                 <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1">
