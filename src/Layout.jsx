@@ -82,7 +82,17 @@ export default function Layout({ children, currentPageName }) {
         return;
       }
       const me = await base44.auth.me();
-      setUser(me);
+      // Merge with entity record to ensure custom fields (assigned_model_ids etc.) are present
+      try {
+        const entityUsers = await base44.entities.User.filter({ id: me.id });
+        if (entityUsers[0]) {
+          setUser({ ...me, ...entityUsers[0] });
+        } else {
+          setUser(me);
+        }
+      } catch {
+        setUser(me);
+      }
       setLoading(false);
 
       // Redirect non-admins to their first allowed page if they're on a page they can't access

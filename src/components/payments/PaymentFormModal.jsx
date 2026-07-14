@@ -31,7 +31,11 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   });
   const allModels = fetchedModels.length > 0 ? fetchedModels : (models || []);
 
-  const chatterModelIds = (currentUser?.assigned_model_ids || (currentUser?.assigned_model ? [currentUser.assigned_model] : [])).filter((id) => id != null && id !== "");
+  const chatterModelIds = (
+    currentUser?.assigned_model_ids ||
+    currentUser?.data?.assigned_model_ids ||
+    (currentUser?.assigned_model ? [currentUser.assigned_model] : [])
+  ).filter((id) => id != null && id !== "");
   const models_ = isAdmin ? allModels : allModels.filter((m) => chatterModelIds.includes(m.id));
   const customers = isAdmin ? customersProp : customersProp.filter((c) => {
     if (c.assigned_chatter === currentUser?.email) return true;
@@ -145,31 +149,32 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   };
 
   const selectedModel = allModels.find((m) => m.id === form.model_id);
-  // For non-admins: collect all bank account IDs allowed across all their models
-  const chatterAllowedAccountIds = React.useMemo(() => {
-    if (isAdmin) return null; // null = no restriction
-    const ids = new Set();
-    models_.forEach((m) => {
-      (m.assigned_bank_account_ids || []).forEach((id) => ids.add(id));
-    });
-    return ids.size > 0 ? ids : null; // null = allow all if no restrictions set
-  }, [isAdmin, models_]);
 
-  const allowedBankAccounts = (() => {
-    // Wait for data to load before filtering — show all if still loading
-    if (loadingAccounts || loadingModels) return bankAccounts;
-    // If a specific model is selected and has account restrictions, filter by that model
+  const allowedBankAccounts = React.useMemo(() => {
+    if (loadingAccounts || loadingModels || bankAccounts.length === 0) return bankAccounts;
+    // Admin: if model selected and has restrictions, filter by that model; otherwise show all
+    if (isAdmin) {
+      if (selectedModel?.assigned_bank_account_ids?.length > 0) {
+        const filtered = bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id));
+        if (filtered.length > 0) return filtered;
+      }
+      return bankAccounts;
+    }
+    // Chatter: if model selected and has restrictions, filter by that model
     if (selectedModel?.assigned_bank_account_ids?.length > 0) {
       const filtered = bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id));
       if (filtered.length > 0) return filtered;
     }
-    // For chatters: show union of all accounts allowed across their assigned models
-    if (!isAdmin && chatterAllowedAccountIds) {
-      const filtered = bankAccounts.filter((a) => chatterAllowedAccountIds.has(a.id));
-      if (filtered.length > 0) return filtered;
+    // Chatter: no model selected — show union of all accounts from all their models
+    const ids = new Set();
+    models_.forEach((m) => {
+      (m.assigned_bank_account_ids || []).forEach((id) => ids.add(id));
+    });
+    if (ids.size > 0) {
+      return bankAccounts.filter((a) => ids.has(a.id));
     }
     return bankAccounts;
-  })();
+  }, [isAdmin, selectedModel, models_, bankAccounts, loadingAccounts, loadingModels]);
 
   const handleSubmit = async () => {
     setSaving(true);
