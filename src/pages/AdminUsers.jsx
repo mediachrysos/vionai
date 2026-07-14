@@ -155,17 +155,13 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-4">
-      <div className="flex items-center gap-3 mb-2">
-        
-
-        
+      <div className="flex items-center justify-between gap-3 mb-2">
         <div>
           <h1 className="text-xl font-bold text-slate-100">Admin Portal</h1>
           <p className="text-sm text-slate-500">Manage users, payments and permissions</p>
         </div>
+        <InviteCodeBanner spaceId={currentUser?.space_id} />
       </div>
-
-      <InviteCodeBanner spaceId={currentUser?.space_id} />
 
       <Section
         label="Users"
@@ -1005,21 +1001,18 @@ function InviteCodeBanner({ spaceId }) {
   };
 
   return (
-    <div className="bg-amber-950/30 border border-amber-700/30 rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
-      <div>
-        <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-0.5">Your Space Invite Code</p>
-        <p className="text-xs text-slate-500">Share this code with team members so they can join your workspace</p>
+    <div className="flex items-center gap-2 bg-amber-950/30 border border-amber-700/30 rounded-xl px-3 py-2 flex-shrink-0">
+      <div className="text-right">
+        <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider leading-none mb-0.5">Invite Code</p>
+        <span className="font-mono font-bold text-sm text-amber-300 tracking-widest">{inviteCode}</span>
       </div>
-      <div className="flex items-center gap-3 flex-shrink-0">
-        <span className="font-mono font-bold text-xl text-amber-300 tracking-widest bg-amber-950/50 border border-amber-700/30 px-4 py-2 rounded-xl">{inviteCode}</span>
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/10 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:border-white/20 transition-colors bg-[#1e1e1e]"
-        >
-          {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-          {copied ? "Copied!" : "Copy"}
-        </button>
-      </div>
+      <button
+        onClick={handleCopy}
+        className="flex items-center justify-center w-7 h-7 rounded-lg border border-amber-700/30 text-amber-400 hover:bg-amber-950/50 transition-colors"
+        title="Copy invite code"
+      >
+        {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+      </button>
     </div>
   );
 }
