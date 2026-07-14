@@ -24,7 +24,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   // Use fetched data first, fall back to props
   const bankAccounts = fetchedBankAccounts.length > 0 ? fetchedBankAccounts : bankAccountsProp;
 
-  const { data: fetchedModels = [], isLoading: loadingModels } = useQuery({
+  const { data: fetchedModels = [] } = useQuery({
     queryKey: ["models"],
     queryFn: () => base44.entities.Model.list(),
     staleTime: 120000,
@@ -151,8 +151,8 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
   const selectedModel = allModels.find((m) => m.id === form.model_id);
 
   const allowedBankAccounts = React.useMemo(() => {
-    if (loadingAccounts || loadingModels || bankAccounts.length === 0) return bankAccounts;
-    // Admin: if model selected and has restrictions, filter by that model; otherwise show all
+    if (bankAccounts.length === 0) return [];
+    // Admin: if model selected and has restrictions, filter; otherwise show all
     if (isAdmin) {
       if (selectedModel?.assigned_bank_account_ids?.length > 0) {
         const filtered = bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id));
@@ -160,21 +160,23 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
       }
       return bankAccounts;
     }
-    // Chatter: if model selected and has restrictions, filter by that model
+    // Chatter with model selected: filter by that model's allowed accounts
     if (selectedModel?.assigned_bank_account_ids?.length > 0) {
       const filtered = bankAccounts.filter((a) => selectedModel.assigned_bank_account_ids.includes(a.id));
       if (filtered.length > 0) return filtered;
     }
-    // Chatter: no model selected — show union of all accounts from all their models
-    const ids = new Set();
-    models_.forEach((m) => {
-      (m.assigned_bank_account_ids || []).forEach((id) => ids.add(id));
-    });
-    if (ids.size > 0) {
-      return bankAccounts.filter((a) => ids.has(a.id));
+    // Chatter no model selected: union of all accounts from all their assigned models
+    if (models_.length > 0) {
+      const ids = new Set();
+      models_.forEach((m) => (m.assigned_bank_account_ids || []).forEach((id) => ids.add(id)));
+      if (ids.size > 0) {
+        const filtered = bankAccounts.filter((a) => ids.has(a.id));
+        if (filtered.length > 0) return filtered;
+      }
     }
+    // Fallback: show all active accounts
     return bankAccounts;
-  }, [isAdmin, selectedModel, models_, bankAccounts, loadingAccounts, loadingModels]);
+  }, [isAdmin, selectedModel, models_, bankAccounts]);
 
   const handleSubmit = async () => {
     setSaving(true);
@@ -338,7 +340,7 @@ export default function PaymentFormModal({ open, onClose, onSave, onAddNewCustom
                 setForm((prev) => ({ ...prev, bank_account_id: v, account_name: acc?.name || "" }));
               }}>
               <SelectTrigger>
-                <SelectValue placeholder={loadingAccounts || loadingModels ? "Loading..." : "Select account"} />
+                <SelectValue placeholder={loadingAccounts ? "Loading..." : "Select account"} />
               </SelectTrigger>
               <SelectContent>
                 {allowedBankAccounts.map((a) =>
