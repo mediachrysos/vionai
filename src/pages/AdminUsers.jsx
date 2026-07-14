@@ -148,10 +148,11 @@ export default function AdminUsers({ currentUser: currentUserProp }) {
   }
 
   // Users who haven't entered an invite code yet — not eligible for approval
-  const noSpace = users.filter((u) => !u.space_id && u.account_status !== "approved");
+  const noSpace = users.filter((u) => !u.space_id && u.role !== "admin");
   // Users who entered the invite code and are waiting for approval
   const pending = users.filter((u) => u.space_id && u.account_status === "pending");
-  const others = users.filter((u) => u.space_id && u.account_status === "approved");
+  // All users with a space who are not pending (approved, blocked, or any other status)
+  const others = users.filter((u) => u.space_id && u.account_status !== "pending");
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-4">
