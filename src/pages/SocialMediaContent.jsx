@@ -115,23 +115,18 @@ export default function SocialMediaContent({ currentUser }) {
     staleTime: 120000,
   });
 
-  // Tasks & submissions are shared by ALL designers — one common weekly program, not per-dashboard
-  const { data: programs = [] } = useQuery({
+  // Tasks & submissions are shared by ALL designers — fetched via backend to bypass RLS for non-admins
+  const { data: sharedData = {} } = useQuery({
     queryKey: ["weeklyProgram", weekStart],
-    queryFn: () => base44.entities.WeeklyProgram.filter({
-      week_start: weekStart,
-      designer_email: SHARED_TASKS_KEY,
-    }),
+    queryFn: async () => {
+      const res = await base44.functions.invoke("getSharedProgram", { week_start: weekStart });
+      return res.data;
+    },
     staleTime: 0,
   });
 
-  const { data: submissions = [] } = useQuery({
-    queryKey: ["daySubmissions", weekStart],
-    queryFn: () => base44.entities.DaySubmission.filter({
-      week_start: weekStart,
-      designer_email: SHARED_TASKS_KEY,
-    }),
-  });
+  const programs = sharedData.programs || [];
+  const submissions = sharedData.submissions || [];
 
   // Take the most recently updated program in case of duplicates
   const program = programs.length > 0
@@ -187,7 +182,6 @@ export default function SocialMediaContent({ currentUser }) {
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["weeklyProgram", weekStart] });
-    qc.invalidateQueries({ queryKey: ["daySubmissions", weekStart] });
   };
 
   // Auto-duplicate: when navigating forward to a week with no shared program, copy as draft
